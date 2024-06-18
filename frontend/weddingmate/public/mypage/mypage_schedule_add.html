@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+         body {
+	        font-family: 'Noto Sans KR', sans-serif;
+            font-size: 16px;
+            color: #555555;
+            transform : rotate(0.03deg);
+        }   
+         div.container0{
+            min-width: 1280px;
+        }
+        div.container-title{          
+            margin-left: 350px;
+            margin-right: 320px;
+            margin-top: 100px;
+            display: grid;
+            width: 1280px; /* 고정된 너비 */    
+            font-size: 24;
+            /* border: 1px solid blue; */
+        }
+        div.container1{          
+            margin-left: 350px;
+            margin-right: 320px;
+            margin-bottom: 20px;
+            display: grid;
+            align-items: center;
+            width: 1280px; /* 고정된 너비 */    
+            font-size: 24;
+            /* border: 1px solid blue; */
+        }
+        div.container2{
+            display: grid;
+            grid-template-columns: 100px auto;
+            align-items: center;
+            width: 600px; /* 고정된 너비 */    
+            margin-top: 30px; 
+            /* border: 1px solid red; */
+        }
+        div.container3{
+            display: grid;
+            grid-template-columns:  100px auto auto auto auto ;
+            align-items: center;
+            width: 600px; /* 고정된 너비 */    
+            margin-top: 30px; 
+            /* border: 1px solid red; */
+        }
+        div.container4{
+            display: grid;
+            justify-content: center; 
+            grid-template-columns: auto auto;
+            place-items: center;
+            grid-gap: 10px;
+            width: 600px; /* 고정된 너비 */  
+            margin-left:25px;  
+            margin-top: 60px; 
+            
+            /* border: 1px solid red; */
+        }
+        hr.title{
+            width: 100%;
+            height: 1px; /* Set the height to 1px */
+            background-color: #000000; /* Set a lighter color */
+            border: none; /* Remove border */
+        }
+        .name_input{
+            border-radius: 12px;
+            border: none;
+            width: 460px;
+            height: 60px;
+            background-color: #F5F5F5;
+        }
+        .date_input{
+            border-radius: 12px;
+            border: none;
+            width: 200px;
+            height: 60px;
+            background-color: #F5F5F5;
+        }
+        .time_input{
+            border-radius: 12px;
+            border: none;
+            width: 200px;
+            height: 60px;
+            background-color: #F5F5F5;
+        
+        }
+        button.schedule-save{
+            background-color: #F7CAC9;
+            color:white;
+            border: none;
+            border-radius: 12px;
+            width: 180px;
+            height: 60px;
+            
+        }
+        button.schedule-back{
+            background-color: #888888;
+            color:white;
+            border: none;
+            border-radius: 12px;
+            width: 180px;
+            height: 60px;
+        }
+        input::placeholder {
+            padding: 10px; 
+        }   
+        div.title-font{
+            display: grid;
+            place-items: center;
+            color: #333333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        form {
+            display: grid;
+            place-items: center;
+            width: 100%; /* 또는 원하는 너비 */
+        }
+    </style>
+     <!-- FontAwesome 라이브러리 추가 -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    
+<div class="container0">
+    <div class="container-title">
+        <div class="title-font">스케쥴 추가</div>
+        <hr class="title">
+    </div>
+    <div class="container1">
+        <form action="" >
+            <div class="container2">
+                <div>일정 제목</div>
+                    <input class="name_input" >
+                </div>
+            <div class="container3">
+                <div>일정 일시</div>
+                <input class="date_input" placeholder="날짜 선택">
+                <div>일</div>
+                <input class="time_input" placeholder="-- : --">
+                <div>분</div>
+            </div>
+            <div class="container4">
+                <button class="schedule-save">
+                    <b style="font-size: 18px;">일정 저장</b>
+                </button>
+                <button class="schedule-back">
+                    <b style="font-size: 18px;">취소</b>
+                </button>          
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

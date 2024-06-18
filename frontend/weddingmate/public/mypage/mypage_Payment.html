@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+         body {
+	        font-family: 'Noto Sans KR', sans-serif;
+            font-size: 16px;
+            color:#555555;
+            transform : rotate(0.03deg);
+        }   
+         div.container0{
+            min-width: 1280px;
+        }
+        div.container-title{          
+            margin-left: 350px;
+            margin-right: 320px;
+            margin-top: 100px;
+            display: grid;
+            width: 1280px; /* 고정된 너비 */    
+            font-size: 24;
+            /* border: 1px solid blue; */
+        }
+        div.mypage-bottom{
+            display: grid;
+            place-items: center;
+            margin-left: 350px;
+            margin-right: 320px;
+            margin-top: 100px;
+            width: 1280px; /* 고정된 너비 */  
+            /* border: 1px solid yellow; */
+        }
+        div.nav-page{
+            display: grid;
+            place-items: center;
+            grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+            margin-bottom: 30px;
+            color: #888888;
+            /* border: 1px solid pink; */
+        }
+        div.container1{          
+            margin-left: 350px;
+            margin-right: 320px;
+            margin-bottom: 50px;
+            display: grid;
+            width: 1280px; /* 고정된 너비 */    
+            font-size: 24;
+            /* border: 1px solid blue; */
+        }
+ 
+        div.container2{
+            display: grid;
+            grid-template-columns: 250px 600px 250px 250px;
+            align-items: start;
+            width: 1280px; /* 고정된 너비 */    
+            margin-top: 20px; 
+            padding: 10px;
+            box-sizing: border-box;
+            color:#888888;
+            /* border: 1px solid red; */
+        }
+        div.container3{
+            display: grid;
+            grid-template-columns: 250px 600px 250px 250px;
+            align-items: start;
+            width: 1280px; /* 고정된 너비 */    
+            padding: 10px;
+            box-sizing: border-box;
+            /* border: 1px solid red; */
+        }
+        hr.title{
+            width: 100%;
+            height: 1px; /* Set the height to 1px */
+            background-color: #333333; /* Set a lighter color */
+            border: none; /* Remove border */
+        }
+        hr.bar{
+            width: 100%;
+            height: 1px; /* Set the height to 1px */
+            background-color: #d3d3d3; /* Set a lighter color */
+            border: none; /* Remove border */
+        }
+        hr.text{
+            width: 100%;
+            height: 1px; /* Set the height to 1px */
+            background-color: #f5f5f5; /* Set a lighter color */
+            border: none; /* Remove border */
+        }
+
+        div.title-font{
+            display: grid;
+            place-items: center;
+            color: #333333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        button.mypage-back{
+            background-color: #888888;
+            color:white;
+            font-weight: bold;
+            border: none;
+            width: 120px;
+            height: 40px;
+        }
+   
+    </style>
+     <!-- FontAwesome 라이브러리 추가 -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>   
+<div class="container0">
+    <div class="container-title">
+        <div class="title-font">결제 내역</div>
+        <hr class="title">
+    </div>
+    <div class="container1">
+        <div class="container2">
+            <div>결제일</div>
+            <div>상품 정보</div>
+            <div>금액</div>
+            <div>청구서</div>
+        </div>
+        <hr class="bar">
+        <div class="container3">
+            <div>2024-06-01</div>
+            <div>더미견적함1</div>
+            <div>500,000</div>
+            <div><a href="#">청구서</a></div>
+        </div>
+        <hr class="text">
+        <div class="container3">
+            <div>2024-06-01</div>
+            <div>더미견적함2</div>
+            <div>1,000,000</div>
+            <div><a href="#">청구서</a></div>
+        </div>
+        <hr class="text">
+        </div>
+        <div class="mypage-bottom">
+            <div class="nav-page">
+                <div><<</div>
+                <div><</div>
+                <div>1</div>
+                <div style="color: pink;">2</div>
+                <div>3</div>
+                <div>></div>
+                <div>>></div>
+            </div>
+            <button class="mypage-back">마이페이지로</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
