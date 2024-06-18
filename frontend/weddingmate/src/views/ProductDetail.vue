@@ -85,8 +85,26 @@
 
         <!-- 콘텐츠 섹션 시작 -->
         <div class="productdetail_main_content">
+          테스트용 itemType
+          <select class="form-select my-2" v-model="selectedItemType">
+            <option value="" disabled selected>아이템 타입 선택</option>
+            <option value="dress">dress</option>
+            <option value="studio">studio</option>
+            <option value="makeup">makeup</option>
+            <option value="sdm_package">sdm_package</option>
+            <option value="giving_dress">giving_dress</option>
+            <option value="giving_mechine">giving_mechine</option>
+            <option value="snap">snap</option>
+            <option value="video">video</option>
+            <option value="flower">flower</option>
+            <option value="music">music</option>
+            <option value="mc">mc</option>
+            <option value="shoes">shoes</option>
+            <option value="gift">gift</option>
+            <option value="letter">letter</option>
+          </select>
           <!-- 상품 상세 -->
-          <div class="row my-5">
+          <div class="productdetail_main_content-div">
             <div class="col-md-6">
               <img
                 src="https://via.placeholder.com/600x400"
@@ -98,55 +116,215 @@
               <div class="productdetail_main_content_maker_div">
                 아아.. 이것은 제조사란 것이다...
               </div>
-              <div class="productdetail_main_content_name_div">Product Name</div>
+              <div class="productdetail_main_content_name_div">
+                Product Name
+              </div>
               <div>
                 <div class="main_content_starcount_div">★★★★★</div>
                 <div class="productdetail_main_content_reviewcount_div">
                   전체 리뷰 수 : (1000)
                 </div>
               </div>
-              <div>
-                <div class="productdetail_main_content_discount_div">20%</div>
-                <div class="productdetail_main_content_origin_price_div">10000</div>
-              </div>
-              <div class="productdetail_main_content_discount_price_div">80,000원</div>
-              <div class="productdetail_main_content_delivery_div">
-                <div class="productdetail_main_content_delivery_price_div">
-                  배송비 3,500원
+              <!-- 드레스 옵션 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('dress'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
                 </div>
-                <div class="productdetail_main_content_delivery_condition">
-                  (20,000원 이상 구매시 무료)
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
                 </div>
-                <div class="productdetail_main_content_delivery_kind">기타택배</div>
-              </div>
-              <div class="productdetail_main_content_maximum_quantity_div">
-                <div>최대구매수량</div>
-                <div>999개</div>
-              </div>
-              <div class="productdetail_main_content_selectoption_div">
-                옵션 선택
+                <div class="productdetail_main_content_delivery_div">
+                  <div class="productdetail_main_content_delivery_price_div">
+                    배송비 3,500원
+                  </div>
+                  <div class="productdetail_main_content_delivery_condition">
+                    (20,000원 이상 구매시 무료)
+                  </div>
+                  <div class="productdetail_main_content_delivery_kind">
+                    기타택배
+                  </div>
+                </div>
+                <div class="productdetail_main_content_maximum_quantity_div">
+                  <div>최대구매수량</div>
+                  <div>999개</div>
+                </div>
+                <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form>
                   <div class="my-1">
                     <select
-                      class="form-select"
-                      v-model="selectedSize"
-                      @change="onSizeChange"
-                    >
-                      <option selected disabled value="">사이즈</option>
-                      <option>Small</option>
-                      <option>Medium</option>
-                      <option>Large</option>
-                    </select>
-                    <select
+                      v-for="(optionGroup, index) in optionGroups"
+                      :key="index"
                       class="form-select my-2"
-                      v-if="showColorSelect"
-                      v-model="selectedColor"
+                      v-model="selectedOptions[index]"
+                      @change="onOptionChange(index)"
+                      :disabled="!isEnabled(index)"
+                      v-show="isVisible(index)"
                     >
-                      <option selected disabled value="">색상</option>
-                      <option>Red</option>
-                      <option>Blue</option>
-                      <option>Green</option>
+                      <option selected disabled value="">선택</option>
+                      <option
+                        v-for="option in optionGroup.options"
+                        :key="option"
+                        :value="option"
+                      >
+                        {{ option }}
+                      </option>
                     </select>
+                  </div>
+                  <!-- - + 수량 선택에 따른 금액 표시 -->
+                  <div class="collapse" :class="{ show: allOptionsSelected }">
+                    <div class="productdetail_main-content_product-card">
+                      <div
+                        class="productdetail_main-content_product-detail p-3"
+                      >
+                        {{ selectedOptions.join(" + ") }}
+                      </div>
+                      <div
+                        class="d-flex justify-content-between align-items-center bg-light p-3"
+                      >
+                        <div class="quantity-control d-flex align-items-center">
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                            @click="decreaseQuantity"
+                          >
+                            −
+                          </button>
+                          <input
+                            type="text"
+                            class="form-control text-center mx-2"
+                            v-model="quantity"
+                            readonly
+                          />
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                            @click="increaseQuantity"
+                          >
+                            ＋
+                          </button>
+                        </div>
+                        <div class="font-weight-bold">
+                          {{ formattedTotalPrice }}원
+                        </div>
+                      </div>
+                    </div>
+                    <div class="productdetail_total-price-div">
+                      <div class="productdetail_total-price-div_state-div">
+                        총 금액 :
+                      </div>
+                      <div class="productdetail_total-price-div_price-div">
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                  <div
+                    :class="[
+                      'productdetail_cal',
+                      selectedItemType_dress_custom,
+                    ]"
+                  >
+                    날짜 선택
+                    <img
+                      src="https://via.placeholder.com/640x400"
+                      class="img-fluid productdetail_cal_image-div"
+                      alt="Detailed Description Image"
+                    />
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="productdetail_button-container">
+                    <button class="productdetail_icon-button">
+                      <i class="far fa-heart"></i>
+                    </button>
+                    <button class="productdetail_icon-button">
+                      <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button
+                      class="productdetail_main-content_button-container_main-button"
+                    >
+                      물건담기
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- 스튜디오 옵션 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('studio'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+
+                <div class="productdetail_main_selectoption-div">옵션 선택</div>
+                <form>
+                  <div class="my-1">
+                    <select
+                      v-for="(optionGroup, index) in optionGroups"
+                      :key="index"
+                      class="form-select my-2"
+                      v-model="selectedOptions[index]"
+                      @change="onOptionChange(index)"
+                      :disabled="!isEnabled(index)"
+                      v-show="isVisible(index)"
+                    >
+                      <option selected disabled value="">선택</option>
+                      <option
+                        v-for="option in optionGroup.options"
+                        :key="option"
+                        :value="option"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <!-- 캘린더 -->
+                  <div :class="['productdetail_cal']">
+                    날짜 선택
+                    <img
+                      src="https://via.placeholder.com/640x400"
+                      class="img-fluid productdetail_cal_image-div"
+                      alt="Detailed Description Image"
+                    />
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
                   </div>
                   <div class="productdetail_button-container">
                     <button class="productdetail_icon-button">
@@ -155,11 +333,830 @@
                     <button class="productdetail_icon-button">
                       <i class="fas fa-share-alt"></i>
                     </button>
-                    <button class="productdetail_main-content_button-container_main-button">
+                    <button
+                      class="productdetail_main-content_button-container_main-button"
+                    >
                       물건담기
                     </button>
                   </div>
                 </form>
+              </div>
+
+              <!-- 메이크업 옵션 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('makeup'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+                <div class="productdetail_main_selectoption-div">옵션 선택</div>
+                <form>
+                  <div class="my-1">
+                    <select
+                      v-for="(optionGroup, index) in optionGroups"
+                      :key="index"
+                      class="form-select my-2"
+                      v-model="selectedOptions[index]"
+                      @change="onOptionChange(index)"
+                      :disabled="!isEnabled(index)"
+                      v-show="isVisible(index)"
+                    >
+                      <option selected disabled value="">선택</option>
+                      <option
+                        v-for="option in optionGroup.options"
+                        :key="option"
+                        :value="option"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <!-- 캘린더 -->
+
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                  <div class="productdetail_button-container">
+                    <button class="productdetail_icon-button">
+                      <i class="far fa-heart"></i>
+                    </button>
+                    <button class="productdetail_icon-button">
+                      <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button
+                      class="productdetail_main-content_button-container_main-button"
+                    >
+                      물건담기
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- 스드메 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('sdm_package'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+
+                <div class="productdetail_main_selectoption-div">
+                  포함 상품 & 패키지 특성
+                </div>
+                <!-- 스튜디오 -->
+                <div class="productdetail_main_content_sdmpacakge">
+                  <div class="productdetail_main_content_sdmpacakge-name">
+                    스튜디오 제조사 이름
+                  </div>
+                  <div class="productdetail_main_content_sdmpacakge-title">
+                    스튜디오 제목
+                  </div>
+                  <div
+                    class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate"
+                  >
+                    스튜디오 날짜 선택
+                  </div>
+                  <div
+                    :class="['productdetail_cal']"
+                    :style="{ marginTop: '10px' }"
+                  >
+                    <img
+                      src="https://via.placeholder.com/640x400"
+                      class="img-fluid productdetail_cal_image-div"
+                      alt="Detailed Description Image"
+                      :style="{ marginTop: '0px' }"
+                    />
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="productdetail_divider"></div>
+                <!-- 드레스 -->
+                <div class="productdetail_main_content_sdmpacakge">
+                  <div class="productdetail_main_content_sdmpacakge-name">
+                    드레스 제조사 이름
+                  </div>
+                  <div class="productdetail_main_content_sdmpacakge-title">
+                    드레스 제목
+                  </div>
+                  <div
+                    class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate"
+                  >
+                    드레스 날짜 선택
+                  </div>
+                  <div
+                    :class="['productdetail_cal']"
+                    :style="{ marginTop: '10px' }"
+                  >
+                    <img
+                      src="https://via.placeholder.com/640x400"
+                      class="img-fluid productdetail_cal_image-div"
+                      alt="Detailed Description Image"
+                      :style="{ marginTop: '0px' }"
+                    />
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="productdetail_divider"></div>
+
+                <!-- 메이크업 -->
+                <div class="productdetail_main_content_sdmpacakge">
+                  <div class="productdetail_main_content_sdmpacakge-name">
+                    메이크업 제조사 이름
+                  </div>
+                  <div class="productdetail_main_content_sdmpacakge-title">
+                    메이크업 제목
+                  </div>
+                  <div
+                    class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate"
+                  >
+                    메이크업 날짜 선택
+                  </div>
+                  <div
+                    :class="['productdetail_cal']"
+                    :style="{ marginTop: '10px' }"
+                  >
+                    <img
+                      src="https://via.placeholder.com/640x400"
+                      class="img-fluid productdetail_cal_image-div"
+                      alt="Detailed Description Image"
+                      :style="{ marginTop: '0px' }"
+                    />
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="productdetail_divider"></div>
+
+                <!-- 혜택 안내 -->
+                <div class="productdetail_package-container">
+                  <div class="productdetail_package-header">패키지 특전</div>
+                  <div class="productdetail_package-content">
+                    <div class="productdetail_package-item">
+                      <span>정상가</span>
+                      <span class="productdetail_price">5,825,000원</span>
+                    </div>
+                    <div class="productdetail_package-item">
+                      <span>할인가</span>
+                      <span class="productdetail_price">2,210,000원</span>
+                    </div>
+                    <div
+                      class="productdetail_package-item productdetail_discount"
+                    >
+                      <span>패키지 추가 할인</span>
+                      <span class="productdetail_price">-250,000원</span>
+                    </div>
+                    <div class="productdetail_package-item productdetail_total">
+                      <span>최종 혜택가</span>
+                      <span
+                        class="productdetail_price productdetail_final-price"
+                        >1,960,000원</span
+                      >
+                    </div>
+                  </div>
+                  <div class="productdetail_package-footer">
+                    <div class="productdetail_footer-title">패키지 구매시</div>
+                    <div class="productdetail_footer-total">
+                      총 5,545,435원 절약
+                    </div>
+                  </div>
+                </div>
+
+                <div class="productdetail_button-container">
+                  <button class="productdetail_icon-button">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="productdetail_icon-button">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </div>
+
+              <!-- 예복 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('giving_dress'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+                <div class="productdetail_main_content_delivery_div">
+                  <div class="productdetail_main_content_delivery_price_div">
+                    배송비 3,500원
+                  </div>
+                  <div class="productdetail_main_content_delivery_condition">
+                    (20,000원 이상 구매시 무료)
+                  </div>
+                  <div class="productdetail_main_content_delivery_kind">
+                    기타택배
+                  </div>
+                </div>
+                <div class="productdetail_main_content_maximum_quantity_div">
+                  <div>최대구매수량</div>
+                  <div>999개</div>
+                </div>
+                <div class="productdetail_main_selectoption-div">옵션 선택</div>
+                <form>
+                  <div class="my-1">
+                    <select
+                      v-for="(optionGroup, index) in optionGroups"
+                      :key="index"
+                      class="form-select my-2"
+                      v-model="selectedOptions[index]"
+                      @change="onOptionChange(index)"
+                      :disabled="!isEnabled(index)"
+                      v-show="isVisible(index)"
+                    >
+                      <option selected disabled value="">선택</option>
+                      <option
+                        v-for="option in optionGroup.options"
+                        :key="option"
+                        :value="option"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <!-- - + 수량 선택에 따른 금액 표시 -->
+                  <div class="collapse" :class="{ show: allOptionsSelected }">
+                    <div class="productdetail_main-content_product-card">
+                      <div
+                        class="productdetail_main-content_product-detail p-3"
+                      >
+                        {{ selectedOptions.join(" + ") }}
+                      </div>
+                      <div
+                        class="d-flex justify-content-between align-items-center bg-light p-3"
+                      >
+                        <div class="quantity-control d-flex align-items-center">
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                            @click="decreaseQuantity"
+                          >
+                            −
+                          </button>
+                          <input
+                            type="text"
+                            class="form-control text-center mx-2"
+                            v-model="quantity"
+                            readonly
+                          />
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                            @click="increaseQuantity"
+                          >
+                            ＋
+                          </button>
+                        </div>
+                        <div class="font-weight-bold">
+                          {{ formattedTotalPrice }}원
+                        </div>
+                      </div>
+                    </div>
+                    <div class="productdetail_total-price-div">
+                      <div class="productdetail_total-price-div_state-div">
+                        총 금액 :
+                      </div>
+                      <div class="productdetail_total-price-div_price-div">
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                  <div
+                    :class="[
+                      'productdetail_cal',
+                      selectedItemType_dress_custom,
+                    ]"
+                  >
+                    날짜 선택
+                    <img
+                      src="https://via.placeholder.com/640x400"
+                      class="img-fluid productdetail_cal_image-div"
+                      alt="Detailed Description Image"
+                    />
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="productdetail_button-container">
+                    <button class="productdetail_icon-button">
+                      <i class="far fa-heart"></i>
+                    </button>
+                    <button class="productdetail_icon-button">
+                      <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button
+                      class="productdetail_main-content_button-container_main-button"
+                    >
+                      물건담기
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- 가전 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('giving_mechine'),
+                ]"
+              >
+                <div class="productdetail_button-container">
+                  <button class="productdetail_icon-button">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="productdetail_icon-button">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </div>
+
+              <!-- 본식스냅 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('snap'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+
+                <div class="productdetail_button-container">
+                  <button class="productdetail_icon-button">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="productdetail_icon-button">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </div>
+
+              <!-- 영상 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('video'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+
+                <div class="productdetail_button-container">
+                  <button class="productdetail_icon-button">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="productdetail_icon-button">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </div>
+
+              <!-- 부케 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('flower'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+                <div class="productdetail_main_selectoption-div">옵션 선택</div>
+                <form>
+                  <div class="my-1">
+                    <select
+                      v-for="(optionGroup, index) in optionGroups"
+                      :key="index"
+                      class="form-select my-2"
+                      v-model="selectedOptions[index]"
+                      @change="onOptionChange(index)"
+                      :disabled="!isEnabled(index)"
+                      v-show="isVisible(index)"
+                    >
+                      <option selected disabled value="">선택</option>
+                      <option
+                        v-for="option in optionGroup.options"
+                        :key="option"
+                        :value="option"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <!-- 캘린더 -->
+
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                  <div class="productdetail_button-container">
+                    <button class="productdetail_icon-button">
+                      <i class="far fa-heart"></i>
+                    </button>
+                    <button class="productdetail_icon-button">
+                      <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button
+                      class="productdetail_main-content_button-container_main-button"
+                    >
+                      물건담기
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- 연주 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('music'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+
+                <div class="productdetail_button-container">
+                  <button class="productdetail_icon-button">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="productdetail_icon-button">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </div>
+
+              <!-- 사회자 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('mc'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+
+                <div class="productdetail_button-container">
+                  <button class="productdetail_icon-button">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="productdetail_icon-button">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </div>
+
+              <!-- 웨딩슈즈 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('shoes'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+                <div class="productdetail_main_content_delivery_div">
+                  <div class="productdetail_main_content_delivery_price_div">
+                    배송비 3,500원
+                  </div>
+                  <div class="productdetail_main_content_delivery_condition">
+                    (20,000원 이상 구매시 무료)
+                  </div>
+                  <div class="productdetail_main_content_delivery_kind">
+                    기타택배
+                  </div>
+                </div>
+                <div class="productdetail_main_content_maximum_quantity_div">
+                  <div>최대구매수량</div>
+                  <div>999개</div>
+                </div>
+                <div class="productdetail_main_selectoption-div">옵션 선택</div>
+                <form>
+                  <div class="my-1">
+                    <select
+                      v-for="(optionGroup, index) in optionGroups"
+                      :key="index"
+                      class="form-select my-2"
+                      v-model="selectedOptions[index]"
+                      @change="onOptionChange(index)"
+                      :disabled="!isEnabled(index)"
+                      v-show="isVisible(index)"
+                    >
+                      <option selected disabled value="">선택</option>
+                      <option
+                        v-for="option in optionGroup.options"
+                        :key="option"
+                        :value="option"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <!-- - + 수량 선택에 따른 금액 표시 -->
+                  <div class="collapse" :class="{ show: allOptionsSelected }">
+                    <div class="productdetail_main-content_product-card">
+                      <div
+                        class="productdetail_main-content_product-detail p-3"
+                      >
+                        {{ selectedOptions.join(" + ") }}
+                      </div>
+                      <div
+                        class="d-flex justify-content-between align-items-center bg-light p-3"
+                      >
+                        <div class="quantity-control d-flex align-items-center">
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                            @click="decreaseQuantity"
+                          >
+                            −
+                          </button>
+                          <input
+                            type="text"
+                            class="form-control text-center mx-2"
+                            v-model="quantity"
+                            readonly
+                          />
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                            @click="increaseQuantity"
+                          >
+                            ＋
+                          </button>
+                        </div>
+                        <div class="font-weight-bold">
+                          {{ formattedTotalPrice }}원
+                        </div>
+                      </div>
+                    </div>
+                    <div class="productdetail_total-price-div">
+                      <div class="productdetail_total-price-div_state-div">
+                        총 금액 :
+                      </div>
+                      <div class="productdetail_total-price-div_price-div">
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                  <div
+                    :class="[
+                      'productdetail_cal',
+                      selectedItemType_dress_custom,
+                    ]"
+                  >
+                    날짜 선택
+                    <img
+                      src="https://via.placeholder.com/640x400"
+                      class="img-fluid productdetail_cal_image-div"
+                      alt="Detailed Description Image"
+                    />
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="productdetail_button-container">
+                    <button class="productdetail_icon-button">
+                      <i class="far fa-heart"></i>
+                    </button>
+                    <button class="productdetail_icon-button">
+                      <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button
+                      class="productdetail_main-content_button-container_main-button"
+                    >
+                      물건담기
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- 답례품 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('gift'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+                <div class="productdetail_main_selectoption-div">옵션 선택</div>
+                <form>
+                  <div class="my-1">
+                    <select
+                      v-for="(optionGroup, index) in optionGroups"
+                      :key="index"
+                      class="form-select my-2"
+                      v-model="selectedOptions[index]"
+                      @change="onOptionChange(index)"
+                      :disabled="!isEnabled(index)"
+                      v-show="isVisible(index)"
+                    >
+                      <option selected disabled value="">선택</option>
+                      <option
+                        v-for="option in optionGroup.options"
+                        :key="option"
+                        :value="option"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+                  <!-- 캘린더 -->
+
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                  <div class="productdetail_button-container">
+                    <button class="productdetail_icon-button">
+                      <i class="far fa-heart"></i>
+                    </button>
+                    <button class="productdetail_icon-button">
+                      <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button
+                      class="productdetail_main-content_button-container_main-button"
+                    >
+                      물건담기
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- 청첩장 -->
+              <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('letter'),
+                ]"
+              >
+                <div>
+                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_origin_price_div">
+                    10000원
+                  </div>
+                </div>
+                <div class="productdetail_main_content_discount_price_div">
+                  80,000원
+                </div>
+
+                <div class="productdetail_button-container">
+                  <button class="productdetail_icon-button">
+                    <i class="far fa-heart"></i>
+                  </button>
+                  <button class="productdetail_icon-button">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                  >
+                    물건담기
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -167,7 +1164,7 @@
           <!-- 상세 설명 이미지 -->
           <div class="text-center productdetail_main-detail-image-div">
             <img
-              src="https://via.placeholder.com/1280x1700"
+              src="https://via.placeholder.com/1280x800"
               class="img-fluid"
               alt="Detailed Description Image"
             />
@@ -195,7 +1192,9 @@
                 </div>
                 <div class="productdetail_review-section_title-div">
                   <div class="productdetail_card-rating">★★★★★</div>
-                  <div class="productdetail_review-section_date-div">2024-06-11 15:54</div>
+                  <div class="productdetail_review-section_date-div">
+                    2024-06-11 15:54
+                  </div>
                 </div>
                 <img
                   src="https://via.placeholder.com/300x200"
@@ -246,7 +1245,9 @@
                 <tr v-for="n in 1" :key="n">
                   <td>배송문의</td>
                   <td class="productdetail_qna-section_status-title-div">
-                    <div class="productdetail_qna-status incomplete">미완료</div>
+                    <div class="productdetail_qna-status incomplete">
+                      미완료
+                    </div>
                     <div>미완료 UI 보려고 하나 더 만듦</div>
                   </td>
                   <td>일이삼사오육칠팔구십일이</td>
@@ -293,17 +1294,157 @@ export default {
       selectedColor: "",
       showColorSelect: false,
       qnaStatus: "completed",
+      quantity: 1,
+      unitPrice: 9999999999,
+
+      optionGroups: [],
+      selectedOptions: [],
+
+      selectedItemType: "",
+      selectedItemType_dress_custom: "collapse",
     };
   },
+
+  mounted() {
+    this.fetchOptions();
+  },
+
+  computed: {
+    // 가격 계산
+    totalPrice() {
+      return this.unitPrice * this.quantity;
+    },
+    formattedTotalPrice() {
+      return this.totalPrice.toLocaleString();
+    },
+    allOptionsSelected() {
+      return (
+        this.selectedOptions.length === this.optionGroups.length &&
+        this.selectedOptions.every((option) => option !== "")
+      );
+    },
+  },
+
   methods: {
     onSizeChange() {
       this.showColorSelect = this.selectedSize !== "";
+    },
+    // 가격 계산
+    increaseQuantity() {
+      this.quantity++;
+    },
+    decreaseQuantity() {
+      if (this.quantity > 1) {
+        this.quantity--;
+      }
+    },
+
+    getClass(type) {
+      // 드레스
+      if (type === "dress") {
+        return this.selectedItemType === "dress" ? "visible" : "collapse";
+      } 
+      // 스튜디오
+      else if (type === "studio") {
+        return this.selectedItemType === "studio" ? "visible" : "collapse";
+      } 
+      // 메이크업
+      else if (type === "makeup") {
+        return this.selectedItemType === "makeup" ? "visible" : "collapse";
+      } 
+      // 스드메
+      else if (type === "sdm_package") {
+        return this.selectedItemType === "sdm_package" ? "visible" : "collapse";
+      } 
+      // 예복
+      else if (type === "giving_dress") {
+        return this.selectedItemType === "giving_dress" ? "visible" : "collapse";
+      } 
+      // 가전
+      else if (type === "giving_mechine") {
+        return this.selectedItemType === "giving_mechine" ? "visible" : "collapse";
+      } 
+      // 본식스냅
+      else if (type === "snap") {
+        return this.selectedItemType === "snap" ? "visible" : "collapse";
+      }
+      // 영상
+      else if (type === "video") {
+        return this.selectedItemType === "video" ? "visible" : "collapse";
+      } 
+      // 부케
+      else if (type === "flower") {
+        return this.selectedItemType === "flower" ? "visible" : "collapse";
+      } 
+      // 연주
+      else if (type === "music") {
+        return this.selectedItemType === "music" ? "visible" : "collapse";
+      } 
+      // 사회자
+      else if (type === "mc") {
+        return this.selectedItemType === "mc" ? "visible" : "collapse";
+      } 
+      // 웨딩슈즈
+      else if (type === "shoes") {
+        return this.selectedItemType === "shoes" ? "visible" : "collapse";
+      } 
+      // 답례품
+      else if (type === "gift") {
+        return this.selectedItemType === "gift" ? "visible" : "collapse";
+      } 
+      // 청첩장
+      else if (type === "letter") {
+        return this.selectedItemType === "letter" ? "visible" : "collapse";
+      }
+
+      return "collapse";
+    },
+
+    fetchOptions() {
+      setTimeout(() => {
+        this.optionGroups = [
+          { name: "Size", options: ["Small", "Medium", "Large", "맞춤"] },
+          { name: "Color", options: ["Red", "Blue", "Green"] },
+          { name: "Material", options: ["Cotton", "Wool", "Silk"] },
+        ];
+        this.selectedOptions = Array(this.optionGroups.length).fill("");
+      }, 1000);
+    },
+    isEnabled(index) {
+      if (index === 0) return true;
+      return this.selectedOptions[index - 1] !== "";
+    },
+
+    isVisible(index) {
+      if (index === 0) return true;
+      if (this.selectedItemType_dress_custom === "visible" && index > 0) {
+        return false;
+      }
+      return this.selectedOptions[index - 1] !== "";
+    },
+
+    onOptionChange(index) {
+      if (this.selectedOptions[index] === "맞춤") {
+        this.selectedItemType_dress_custom = "visible";
+      } else {
+        this.selectedItemType_dress_custom = "collapse";
+      }
+
+      // 선택이 변경되면 해당 인덱스 이후의 모든 선택을 초기화
+      for (let i = index + 1; i < this.selectedOptions.length; i++) {
+        this.selectedOptions[i] = "";
+      }
     },
   },
 };
 </script>
 
 <style scoped>
+.productdetail_divider {
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
+}
+
 #productdetail_app {
   width: 100%;
   min-width: 1980px;
@@ -322,8 +1463,6 @@ export default {
   width: 100%;
   height: auto;
 }
-
-
 
 #common_main-banner_div {
   width: 100%;
@@ -371,7 +1510,6 @@ export default {
   width: calc(100% - 700px);
 }
 
-
 #productdetail_padding_0 {
   padding: 0px;
 }
@@ -386,16 +1524,38 @@ export default {
   padding-bottom: 23px;
 }
 
-
-
-
-
-
-
 /* 콘텐츠 섹션 시작 */
+
 .productdetail_main_content {
   width: calc(100% - 700px);
   margin: 0 auto;
+}
+
+/* 상품 상세 */
+
+.productdetail_cal {
+  margin-top: 30px;
+}
+
+.productdetail_cal-div_date-div {
+  margin-top: 18px;
+}
+
+.productdetail_cal-div_date {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.productdetail_cal_image-div {
+  margin-top: 8px;
+}
+
+.productdetail_main_content-div {
+  width: 100%;
+  max-width: 1280px;
+  display: flex;
+  margin: 0 auto;
+  margin-top: 100px;
 }
 
 .productdetail_main_content_maker_div {
@@ -425,7 +1585,8 @@ export default {
 
 .productdetail_main_content_origin_price_div {
   color: #888888;
-  display: inline;
+  display: inline-block;
+  text-decoration: line-through;
 }
 
 .productdetail_main_content_discount_price_div {
@@ -457,8 +1618,58 @@ export default {
   gap: 20px;
 }
 
-.productdetail_main_content_selectoption_div {
+.productdetail_main_selectoption-div {
   margin-top: 50px;
+}
+
+.productdetail_main_content_selectoption_div {
+  margin-top: 0px;
+}
+
+.productdetail_total-price-div {
+  flex-direction: row;
+  display: flex;
+  align-items: baseline;
+  margin-top: 30px;
+}
+
+.productdetail_total-price-div_state-div {
+  font-size: 16px;
+  margin-left: auto;
+}
+
+.productdetail_total-price-div_price-div {
+  font-size: 24px;
+  font-weight: bold;
+  margin-left: 20px;
+}
+
+.productdetail_main-content_product-card {
+  width: 100%;
+
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 25px;
+}
+
+.productdetail_main-content_product-detail {
+  /* background-color: #28a745; */
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.quantity-control input {
+  width: 50px;
+}
+
+.productdetail_main-quantity-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* 패딩을 0으로 설정하여 버튼의 내부 여백 제거 */
 }
 
 .productdetail_button-container {
@@ -494,6 +1705,90 @@ export default {
   border-radius: 10px;
   padding: 25px 90px;
   cursor: pointer;
+}
+
+.productdetail_main_selectoption-div {
+  font-size: 24px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* 스드메 */
+.productdetail_main_content_sdmpacakge {
+  margin-bottom: 30px;
+}
+
+.productdetail_main_content_sdmpacakge-name {
+  font-size: 14px;
+}
+
+.productdetail_main_content_sdmpacakge-title {
+  font-size: 16px;
+  font-weight: bolder;
+  margin-bottom: 5px;
+}
+
+.productdetail_calproductdetail_main_content_sdmpacakge-selectdate {
+  font-size: 14px;
+}
+
+/* 혜택 안내 */
+
+.productdetail_package-container {
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  padding: 30px;
+  margin: 0 auto;
+  margin-top: 40px;
+  text-align: left;
+}
+
+.productdetail_package-header {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.productdetail_package-content {
+  margin-bottom: 20px;
+}
+
+.productdetail_package-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #888888;
+}
+
+.productdetail_discount {
+  color: #ff481e;
+}
+
+.productdetail_total {
+  color: black;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.productdetail_package-footer {
+  border: 1px solid #f5c6cb;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.productdetail_footer-title {
+  font-size: 1.2em;
+  color: #c82333;
+  margin-bottom: 10px;
+}
+
+.productdetail_footer-total {
+  font-size: 1.5em;
+  color: #f4477b;
+  font-weight: bold;
 }
 
 /* 상세 설명 이미지 */
