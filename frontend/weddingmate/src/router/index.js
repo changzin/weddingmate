@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ProductDetail from '../views/ProductDetail.vue'
+import QnAWrite from '../views/QnAWrite.vue'
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
     path: '/productdetail',
     name: 'productdetail',
     component: ProductDetail
+  },
+  {
+    path: '/qnawrite',
+    name: 'qnawrite',
+    component: QnAWrite
   }
 ]
 
