@@ -117,11 +117,11 @@
             </div>
             <div class="mypage-bottom">
               <div class="nav-page">
-              <a href=""><div>&lt;&lt;</div></a>
-              <div>&lt;</div>
-              <div>{{page-1}}</div>
-              <div style="color: pink;">{{page}}</div>
-              <div>{{page+1}}</div>
+              <a href="" v-if="page != 1"><div>&lt;&lt;</div></a>
+              <a href="" v-if="page != 1"><div>&lt;</div></a>
+              <a><div>{{page-1}}</div></a>
+              <a><div style="color: pink; margin:0 auto;">{{page}}</div></a>
+              <a><div>{{page+1}}</div></a>
               <a href=""><div>&gt;</div></a>
               <a @click="nextBlock()"><div>&gt;&gt;</div></a>
               </div>
