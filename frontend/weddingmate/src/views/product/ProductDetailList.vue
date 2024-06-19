@@ -129,8 +129,8 @@
         <option value="gift">gift</option>
         <option value="letter">letter</option>
       </select>
-      <!-- 청첩장 배너 -->
-      <div :class="['temp', getClass('letter')]">
+      <!-- 청첩장 -->
+      <div :class="['productdetaillist-content', getClass('letter'), 'temp']">
         <img src="https://via.placeholder.com/1280x500" />
       </div>
 
@@ -142,26 +142,64 @@
         </div>
       </div>
 
-      <!-- 상품들 -->
-      <div class="reviewlist_review-section">
-        <div class="reviewlist_review-cards">
-          <button class="reviewlist_review-card" v-for="n in 12" :key="n">
-            <img
-              src="https://via.placeholder.com/300x200"
-              class="reviewlist_card-img-top"
-              alt="Review Image"
-            />
-            <div class="reviewlist_card-body">
-              <div class="reviewlist_review-section_title-div">
-                일이삼사오육칠팔구십일이
+      <!-- 청첩장상품 리스트 -->
+      <div :class="['productdetaillist-content', getClass('letter')]">
+        <!-- 상품들 -->
+        <div class="reviewlist_review-section">
+          <div class="reviewlist_review-cards">
+            <button class="reviewlist_review-card" v-for="n in 12" :key="n">
+              <img
+                src="https://via.placeholder.com/300x300"
+                class="reviewlist_card-img-top"
+                alt="Review Image"
+              />
+              <div class="reviewlist_card-body">
+                <div
+                  class="reviewlist_review-section_title-div letter-title-flex"
+                >
+                  <div class="letter-title-flex_title">
+                    아아 이것은 제목이란 것이다..아아 이것은 제목이란 것이다아아
+                    이것은 제목이란 것이다
+                  </div>
+                  <div class="letter-title-flex-dummy"></div>
+                  <div class="letter-title-flex_per">20%</div>
+                </div>
+
+                <p class="reviewlist_card-text">
+                  아아 이것은 설명이란
+                  것이다...ㅎㄹㅇㅎㄹㅇㅎㅇㅀㅎㄹㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㅎㅇㅀㄹㅇㅎㅇㅀㅇㅀㅁㄴㄹㄴㄹ
+                  ㄹㄴ이ㅓㅎ라ㅣㅓ흴아희 3줄까지 가능함
+                </p>
               </div>
-              <p class="reviewlist_card-text">
-                인생
-                리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
-                10줄까지 가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
-              </p>
-            </div>
-          </button>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 그외 상품 리스트 -->
+      <div :class="['productdetaillist-content', getClass('')]">
+        <!-- 상품들 -->
+        <div class="reviewlist_review-section">
+          <div class="reviewlist_review-cards">
+            <button class="reviewlist_review-card" v-for="n in 12" :key="n">
+              <img
+                src="https://via.placeholder.com/300x300"
+                class="reviewlist_card-img-top"
+                alt="Review Image"
+              />
+              <div class="reviewlist_card-body">
+                <div class="reviewlist_review-section_title-div">
+                  아아 이것은 제목이란 것이다..아아 이것은 제목이란 것이다아아
+                  이것은 제목이란 것이다
+                </div>
+                <p class="reviewlist_card-text">
+                  아아 이것은 설명이란
+                  것이다...ㅎㄹㅇㅎㄹㅇㅎㅇㅀㅎㄹㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㅎㅇㅀㄹㅇㅎㅇㅀㅇㅀㅁㄴㄹㄴㄹ
+                  ㄹㄴ이ㅓㅎ라ㅣㅓ흴아희 3줄까지 가능함
+                </p>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -213,11 +251,12 @@ export default {
     },
     // 본문
     getClass(type) {
-      // 청첩장
-      if (type === "letter") {
-        return this.selectedItemType === "letter" ? "visible" : "collapse";
-      }
-    },
+    if (type === "letter") {
+      return this.selectedItemType === "letter" ? "visible" : "collapse";
+    } else {
+      return this.selectedItemType !== "letter" ? "visible" : "collapse";
+    }
+  }
   },
 };
 </script>
@@ -237,6 +276,18 @@ export default {
   max-width: 1280px;
   margin: 0 auto;
 }
+
+/* visible */
+.productdetaillist-content {
+
+}
+
+.temp {
+    margin: 30px;
+}
+
+
+
 
 /* 검색 */
 .search-container-wrapper {
@@ -347,7 +398,7 @@ export default {
   border-radius: 8px;
   width: 23%;
   padding: 10px;
-  margin-bottom: 100px;
+  margin-bottom: 60px;
 }
 
 .reviewlist_card-header {
@@ -397,19 +448,44 @@ export default {
   color: #333;
   line-height: 1.5;
   text-align: left;
+  margin-bottom: 0px;
 }
 
 .reviewlist_review-section_title-div {
   font-size: 16px;
   font-weight: bold;
   text-align: left;
-
+  margin-bottom: 10px;
+  width: 100%;
 }
 
+.letter-title-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
 
+.letter-title-flex_title {
+  /* 이부분이 flex의 80% 할당 */
+  flex: 1;
+}
 
+.letter-title-flex-dummy {
+  flex: 0 0 3%;
+}
 
+.letter-title-flex_per {
+  /* 이부분이 flex의 20% 할당 */
+  flex: 0 0 20%;
+  color: #ff481e;
+  font-size: 28px;
+  text-align: center;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* 헤더 */
 /* 로그인 + 회원가입 + 로고 */
@@ -503,7 +579,7 @@ export default {
   background-color: #333333;
   color: #999999;
   padding: 20px 0;
-  margin-top: 100px;
+  margin-top: 50px;
   font-size: 14px;
 }
 
