@@ -10,21 +10,29 @@ exports.userList = async (req, res)=>{
         
         // request에 오는 param들은 전부 String 타입이기 때문에, db문에 끼워 넣으러면 숫자로 바꿔야 합니다.
         page = (!page) ? 0 : Number(page) - 1;
+        block = (!block) ? 'F' : block;
 
         let result = [];
         let query = "";
-        if (!block || block === 'F'){            
-            // user_create_date로 정렬 후, OFFSET만큼 뛰어넘은 다음 LIMIT 개수만큼 가져오는 쿼리문
-            query = "SELECT user_name, user_email, user_create_date, user_type, user_block FROM user ORDER BY user_create_date LIMIT 10 OFFSET ? ";                        
-            result = await db(query, [page*10]);
-        }
-        else{
-            query = "SELECT user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? ORDER BY user_create_date LIMIT 10 OFFSET ? ";            
-            // 쿼리문에 넣을 paramter들을 꼭 배열로 넣어야 합니다.
-            // page * 10 만큼을 OFFSET으로 잡는다는 의미
+        // user_create_date로 정렬 후, OFFSET만큼 뛰어넘은 다음 LIMIT 개수만큼 가져오는 쿼리문
+        query = "SELECT user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? ORDER BY user_create_date LIMIT 10 OFFSET ? ";            
+        // 쿼리문에 넣을 paramter들을 꼭 배열로 넣어야 합니다.
+        // page * 10 만큼을 OFFSET으로 잡는다는 의미
+
+        if(!keyword){
             result = await db(query, [block, page*10]);
         }
+        else{
+            if(mode === 'all'){
+                
+            }
+            else if (mode === 'name'){
 
+            }
+            else if (mode === 'email'){
+
+            }
+        }
         for(user of result){
             query = "SELECT SUM(order_info_price) AS sum FROM order_info WHERE box_id IN (SELECT box_id FROM box WHERE user_id in (SELECT user_id FROM user WHERE user_email=?));";
             let user_total_price = await db(query, [user.user_email]);

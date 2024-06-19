@@ -160,11 +160,13 @@ export default {
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
       this.makePageSetting();      
     },
+    // 차단 회원 불러오기
     async getBlockMemberList(){
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
       this.blockOption = !this.blockOption;
       this.makePageSetting();
     },
+    // 전체 회원 불러오기
     async getUnblockMemberList(){
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
       this.blockOption = !this.blockOption;
