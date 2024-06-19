@@ -205,7 +205,7 @@
       
       
       <!-- 페이지 -->
-      <div class="mypage-bottom">
+      <!-- <div class="mypage-bottom">
         <div class="nav-page">
           <div>&lt;&lt;</div>
           <div>&lt;</div>
@@ -218,8 +218,24 @@
           <div>&gt;&gt;</div>
         </div>
         <button class="mypage-back">마이페이지로</button>
-      </div>
+      </div> -->
     </div>
+
+     <div class="mypage-bottom">
+              <div class="nav-page justify-content-center">
+              <a :class="{notVisible : (page == 1)}" @click="prevBlock()"><div>&lt;&lt;</div></a>
+              <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
+              <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
+              <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
+              <a><div style="color: pink;">{{page}}</div></a>
+              <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
+              <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
+              <a :class="{notVisible : (page == maxPage)}" @click="nextPage()"><div>&gt;</div></a>
+              <a :class="{notVisible : (page == maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
+              </div>
+          </div>
+
+
 
     <!-- 푸터 -->
     <footer class="common__footer">
@@ -256,8 +272,25 @@ export default {
       ismaintain: false,
       // 본문
       selectedItemType: "",
+
+
+      //페이지
+      memberList: [],
+      blockOption: false,
+      page: 1,
+      isFirstPage: false,
+      isLastPage: false,
+      maxPage: 0
+
+
+
     };
   },
+    mounted(){
+    this.getMemberList();
+  },
+
+
   methods: {
     // 헤더
     showCategories() {
@@ -274,12 +307,119 @@ export default {
         return this.selectedItemType !== "letter" ? "visible" : "collapse";
       }
     },
+
+
+
+    //페이지
+    async getMemberList(){
+      let page = this.$route.params.page;
+      let block = this.$route.params.page;
+      page = (!page) ? 1 : page;
+      block = (!block) ? 'F' : block;
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
+      this.makePageSetting();      
+    },
+    async getBlockMemberList(){
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
+      this.blockOption = !this.blockOption;
+      this.makePageSetting();
+    },
+    async getUnblockMemberList(){
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
+      this.blockOption = !this.blockOption;
+      this.makePageSetting();
+    }, 
+    makePageSetting(){
+      this.maxPage = Math.floor(this.memberList.length / 10) + 1;
+      this.isFirstPage = (this.page == 1) ? true : false;
+      this.isLastPage = (this.page == this.maxPage) ? true : false;
+      console.log(this.maxPage);
+    },
+    // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
+    async prevBlock(){
+      let targetPage = this.page;
+      if (this.page <= 5){
+        targetPage = 1;
+      }
+      else{
+        targetPage = this.page - 5;
+      }
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.page = targetPage;
+    },
+    // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
+    async nextBlock(){
+      let targetPage = this.page;
+      if (this.page > this.maxPage-5){
+        targetPage = this.maxPage;
+      }
+      else{
+        targetPage = this.page + 5;
+      }
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.page = targetPage;
+    },
+    async nextPage(){
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
+      this.page +=1;
+    },
+    async prevPage(){
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
+      this.page -=1;
+    },
+    async goToPage(targetPage){
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.page = targetPage;
+    }
   },
 };
 </script>
 
 
 <style scoped>
+
+
+.mypage-bottom{
+            display: grid;
+            place-items: center;
+            margin-top: 100px;
+            /* border: 1px solid yellow; */
+        }
+       .nav-page{
+            display: grid;
+            place-items: center;
+            grid-template-columns: repeat(9, 25px);
+            margin-bottom: 30px;
+            color: #888888;
+            /* border: 1px solid pink; */
+        }
+      .notVisible{
+        visibility: hidden;
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .fix-width {
   width: 1980px;
   min-width: 1980px;
