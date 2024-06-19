@@ -202,6 +202,23 @@
           </div>
         </div>
       </div>
+      
+      
+      <!-- 페이지 -->
+      <div class="mypage-bottom">
+        <div class="nav-page">
+          <div>&lt;&lt;</div>
+          <div>&lt;</div>
+          <div>1</div>
+          <div>2</div>
+          <div style="color: pink">3</div>
+          <div>4</div>
+          <div>5</div>
+          <div>&gt;</div>
+          <div>&gt;&gt;</div>
+        </div>
+        <button class="mypage-back">마이페이지로</button>
+      </div>
     </div>
 
     <!-- 푸터 -->
@@ -251,12 +268,12 @@ export default {
     },
     // 본문
     getClass(type) {
-    if (type === "letter") {
-      return this.selectedItemType === "letter" ? "visible" : "collapse";
-    } else {
-      return this.selectedItemType !== "letter" ? "visible" : "collapse";
-    }
-  }
+      if (type === "letter") {
+        return this.selectedItemType === "letter" ? "visible" : "collapse";
+      } else {
+        return this.selectedItemType !== "letter" ? "visible" : "collapse";
+      }
+    },
   },
 };
 </script>
@@ -279,15 +296,11 @@ export default {
 
 /* visible */
 .productdetaillist-content {
-
 }
 
 .temp {
-    margin: 30px;
+  margin: 30px;
 }
-
-
-
 
 /* 검색 */
 .search-container-wrapper {
@@ -320,6 +333,41 @@ export default {
   font-size: 14px;
   color: #555555;
 }
+
+
+
+/* 페이지 */
+.mypage-bottom {
+  display: grid;
+  place-items: center;
+}
+.nav-page {
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(9, 25px);
+  margin-bottom: 30px;
+  color: #888888;
+}
+
+.mypage-back {
+  background-color: #888888;
+  color: white;
+  font-weight: bold;
+  border: none;
+  width: 120px;
+  height: 40px;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 /* 상품들 */
 
