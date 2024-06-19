@@ -70,7 +70,8 @@
             <div class="d-flex justify-content-center">
               <div class="admin_member_review-section">
                 <div class="admin_member_review-header justify-content-end">
-                  <button class="btn admin_member_btn_active">차단 회원만 보기</button>
+                  <button class="btn admin_member_btn_active" v-if="!blockOption" @click="getBlockMemberList()">차단 회원만 보기</button>
+                  <button class="btn admin_member_btn_inactive" v-if="blockOption" @click="getUnblockMemberList()">모든 회원 보기</button>
                   <select class="form-select admin_member_select">
                     <option selected>전체</option>
                     <option>닉네임</option>
@@ -95,30 +96,18 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>일이삼사오육칠팔구십일이</td>
+                      <tr v-for="(member, index) in memberList" :key="index">
+                        <td>{{ member.user_name }}</td>
                         <td>
-                            12345678901234567890123456789012345678901234567890
+                            {{member.user_email}}
                         </td>
-                        <td>2024-06-11 15:54</td>
-                        <td>카카오</td>
-                        <td>1,000,000,000</td>
-                        <td>1000/1000/1000</td>
+                        <td>{{member.user_create_date}}</td>
+                        <td>{{member.user_type}}</td>
+                        <td>{{member.user_total_price}}</td>
+                        <td>{{member.user_buy_count}} / {{member.user_review_count}} / {{ member.user_qna_count }} </td>
                         <td>
-                            <button class="btn admin_member_block_btn_active">block</button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>일이삼사오육칠팔구십일이</td>
-                        <td>
-                            12345678901234567890123456789012345678901234567890
-                        </td>
-                        <td>2024-06-11 15:54</td>
-                        <td>카카오</td>
-                        <td>1,000,000,000</td>
-                        <td>1000/1000/1000</td>
-                        <td>
-                            <button class="btn admin_member_unblock_btn_active">unblock</button>
+                            <button class="btn admin_member_block_btn_active" v-if="member.user_block === 'T'">block</button>
+                            <button class="btn admin_member_unblock_btn_active" v-if="member.user_block === 'F'">block</button>
                         </td>
                       </tr>
                     </tbody>
@@ -126,8 +115,20 @@
                 </div>
               </div>
             </div>
+            <div class="mypage-bottom">
+              <div class="nav-page">
+              <a href=""><div>&lt;&lt;</div></a>
+              <div>&lt;</div>
+              <div>{{page-1}}</div>
+              <div style="color: pink;">{{page}}</div>
+              <div>{{page+1}}</div>
+              <a href=""><div>&gt;</div></a>
+              <a @click="nextBlock()"><div>&gt;&gt;</div></a>
+              </div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -137,9 +138,46 @@
 export default {
   data() {
     return {
-
+      memberList: [],
+      blockOption: false,
+      page: 1
     }
   },
+  mounted(){
+    this.getMemberList();
+  },
+  methods: {
+    // 멤버 정보 받아오기
+    async getMemberList(){
+      let page = this.$route.params.page;
+      let block = this.$route.params.page;
+      page = (!page) ? 1 : page;
+      block = (!block) ? 'F' : block;
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
+
+      this.page = page;
+    },
+    async getBlockMemberList(){
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
+      this.blockOption = !this.blockOption;
+    },
+    async getUnblockMemberList(){
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
+      this.blockOption = !this.blockOption;
+    },
+    async nextBlock(){
+      console.log("asdf");
+    },
+    async prevBlock(){
+      console.log("asdf");
+    },
+    async nextPage(){
+      console.log("asdf");
+    },
+    async prevPage(){
+      console.log("asdf");
+    }
+  }
 }
 </script>
 
@@ -311,7 +349,7 @@ export default {
 }
 .admin_member_btn_inactive{
   background-color: #333333;
-  color: #111111;
+  color: #FFFFFF;
   margin-right: 10px;
 }
 
@@ -377,4 +415,19 @@ export default {
     color: #111111;
     border: 1px solid #333333;
 }
+div.mypage-bottom{
+            display: grid;
+            place-items: center;
+            margin-top: 100px;
+            width: 1280px; /* 고정된 너비 */  
+            /* border: 1px solid yellow; */
+        }
+        div.nav-page{
+            display: grid;
+            place-items: center;
+            grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+            margin-bottom: 30px;
+            color: #888888;
+            /* border: 1px solid pink; */
+        }
 </style>
