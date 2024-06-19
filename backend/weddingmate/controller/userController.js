@@ -39,17 +39,18 @@ exports.userList = async (req, res)=>{
         
         for(user of result){
             query = "SELECT COUNT(*) AS count FROM review WHERE user_id in (SELECT user_id FROM user WHERE user_email= ?)";
-            let review_count = await db(query, [user.user_email]);
-            review_count = (!review_count[0].count) ? 0 : review_count[0].count;
-            user.review_count = review_count;
+            let user_review_count = await db(query, [user.user_email]);
+            user_review_count = (!user_review_count[0].count) ? 0 : user_review_count[0].count;
+            user.user_review_count = user_review_count;
         }
 
         for(user of result){
             query = "SELECT COUNT(*) AS count FROM qna WHERE user_id in (SELECT user_id FROM user WHERE user_email= ?)";
-            let qna_count = await db(query, [user.user_email]);
-            qna_count = (!qna_count[0].count) ? 0 : qna_count[0].count;
-            user.qna_count = qna_count;
+            let user_qna_count = await db(query, [user.user_email]);
+            user_qna_count = (!user_qna_count[0].count) ? 0 : user_qna_count[0].count;
+            user.user_qna_count = user_qna_count;
         }
+        res.status(200);
         res.json(result);
     }
     catch(err){
