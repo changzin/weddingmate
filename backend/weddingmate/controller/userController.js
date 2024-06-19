@@ -5,6 +5,8 @@ exports.userList = async (req, res)=>{
     try{
         let page = req.query.page;
         let block = req.query.block;
+        let mode = req.query.mode;
+        let keyword = req.query.keyword;
         
         // request에 오는 param들은 전부 String 타입이기 때문에, db문에 끼워 넣으러면 숫자로 바꿔야 합니다.
         page = (!page) ? 0 : Number(page) - 1;

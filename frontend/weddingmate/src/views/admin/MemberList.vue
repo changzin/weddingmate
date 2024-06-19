@@ -74,7 +74,6 @@
                   <button class="btn admin_member_btn_inactive" v-if="blockOption" @click="getUnblockMemberList()">모든 회원 보기</button>
                   <select class="form-select admin_member_select">
                     <option selected>전체</option>
-                    <option>닉네임</option>
                     <option>이메일</option>
                     <option>이름</option>
                   </select>
@@ -116,14 +115,16 @@
               </div>
             </div>
             <div class="mypage-bottom">
-              <div class="nav-page">
-              <a href="" v-if="page != 1"><div>&lt;&lt;</div></a>
-              <a href="" v-if="page != 1"><div>&lt;</div></a>
-              <a><div>{{page-1}}</div></a>
-              <a><div style="color: pink; margin:0 auto;">{{page}}</div></a>
-              <a><div>{{page+1}}</div></a>
-              <a href=""><div>&gt;</div></a>
-              <a @click="nextBlock()"><div>&gt;&gt;</div></a>
+              <div class="nav-page justify-content-center">
+              <a :class="{notVisible : (page == 1)}" @click="prevBlock()"><div>&lt;&lt;</div></a>
+              <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
+              <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
+              <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
+              <a><div style="color: pink;">{{page}}</div></a>
+              <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
+              <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
+              <a :class="{notVisible : (page == maxPage)}" @click="nextPage()"><div>&gt;</div></a>
+              <a :class="{notVisible : (page == maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
               </div>
           </div>
         </div>
@@ -140,7 +141,10 @@ export default {
     return {
       memberList: [],
       blockOption: false,
-      page: 1
+      page: 1,
+      isFirstPage: false,
+      isLastPage: false,
+      maxPage: 0
     }
   },
   mounted(){
@@ -154,28 +158,64 @@ export default {
       page = (!page) ? 1 : page;
       block = (!block) ? 'F' : block;
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
-
-      this.page = page;
+      this.makePageSetting();      
     },
     async getBlockMemberList(){
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
       this.blockOption = !this.blockOption;
+      this.makePageSetting();
     },
     async getUnblockMemberList(){
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
       this.blockOption = !this.blockOption;
+      this.makePageSetting();
+    }, 
+    makePageSetting(){
+      this.maxPage = Math.floor(this.memberList.length / 10) + 1;
+      this.isFirstPage = (this.page == 1) ? true : false;
+      this.isLastPage = (this.page == this.maxPage) ? true : false;
+      console.log(this.maxPage);
     },
-    async nextBlock(){
-      console.log("asdf");
-    },
+    // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
     async prevBlock(){
-      console.log("asdf");
+      let targetPage = this.page;
+      if (this.page <= 5){
+        targetPage = 1;
+      }
+      else{
+        targetPage = this.page - 5;
+      }
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.page = targetPage;
+    },
+    // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
+    async nextBlock(){
+      let targetPage = this.page;
+      if (this.page > this.maxPage-5){
+        targetPage = this.maxPage;
+      }
+      else{
+        targetPage = this.page + 5;
+      }
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.page = targetPage;
     },
     async nextPage(){
-      console.log("asdf");
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
+      this.page +=1;
     },
     async prevPage(){
-      console.log("asdf");
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
+      this.page -=1;
+    },
+    async goToPage(targetPage){
+      const block = (!this.blockOption) ? 'F' : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.page = targetPage;
     }
   }
 }
@@ -419,15 +459,17 @@ div.mypage-bottom{
             display: grid;
             place-items: center;
             margin-top: 100px;
-            width: 1280px; /* 고정된 너비 */  
             /* border: 1px solid yellow; */
         }
         div.nav-page{
             display: grid;
             place-items: center;
-            grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+            grid-template-columns: repeat(9, 25px);
             margin-bottom: 30px;
             color: #888888;
             /* border: 1px solid pink; */
         }
+      .notVisible{
+        visibility: hidden;
+      }
 </style>
