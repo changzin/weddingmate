@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ProductDetail from '../views/ProductDetail.vue'
-import QnAWrite from '../views/QnAWrite.vue'
-import QnAModify from '../views/QnAModify.vue'
-import QnADetail from '../views/QnADetail.vue'
+import QnAWrite from '../views/QnA/QnAWrite.vue'
+import QnAModify from '../views/QnA/QnAModify.vue'
+import QnADetail from '../views/QnA/QnADetail.vue'
+import QnAList from '../views/QnA/QnAList.vue'
 
 import UserLogin from '../views/nouser/UserLogin.vue'
 const routes = [
@@ -42,10 +43,15 @@ const routes = [
     component: QnADetail
   },
   {
+    path: '/qnAlist',
+    name: 'qnAlist',
+    component: QnAList
+  },
+  {
     path: '/userlogin',
     name: 'userlogin',
     component: UserLogin
-  }
+  },
 ]
 
 const router = createRouter({

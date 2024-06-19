@@ -7,6 +7,7 @@
       <router-link to="/qnawrite">QnAWrite</router-link> |
       <router-link to="/qnamodify">QnAModify</router-link> |
       <router-link to="/qnadetail">QnADetail</router-link> |
+      <router-link to="/qnAlist">QnAList</router-link> |
     </nav>
     <router-view/>
   </div>
