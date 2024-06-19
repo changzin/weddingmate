@@ -3,7 +3,7 @@ const morgan = require("morgan");
 const path = require("path");
 const dotenv = require("dotenv");
 const cors = require("cors");
-
+const indexRouter = require('./router');
 
 dotenv.config();
 
@@ -23,6 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
+
+app.use('/', indexRouter);
 
 app.listen(app.get('port'), ()=>{
     console.log(app.get('port'), 'port listening...')

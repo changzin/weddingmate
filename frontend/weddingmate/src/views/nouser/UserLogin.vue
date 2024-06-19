@@ -47,9 +47,9 @@
         <div class="row justify-content-center">
             <div class="login_box">
                 <div class="d-flex justify-content-center">
-                    <img src="kakao_logo.jpg" alt="" class="login_icon_first">
-                    <img src="naver_logo.jpg" alt="" class="login_icon">
-                    <img src="google_logo.png" alt="" class="login_icon">
+                    <img src="http://localhost:8080/icon/kakao_logo.jpg" alt="" class="login_icon_first">
+                    <img src="http://localhost:8080/icon/google_logo.png" alt="" class="login_icon">
+                    <img src="http://localhost:8080/icon/naver_logo.png" alt="" class="login_icon_last">
                 </div>
             </div>
         </div>
@@ -63,7 +63,9 @@
         },
         methods: {
             async login(e){
-                e.preventDefault();
+                e.preventDefault();                
+
+                this.$api("asdf")
             }
         }
     };
@@ -81,6 +83,11 @@
     }
     .login_icon{
         border-radius: 50px;
+        width: 60px;
+        height: 60px;
+        margin-left: 30px;
+    }
+    .login_icon_last{
         width: 60px;
         height: 60px;
         margin-left: 30px;
