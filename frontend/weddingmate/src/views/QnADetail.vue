@@ -110,7 +110,16 @@
 
   <!-- 본문 -->
   <div class="qnawrite_container">
-    <h2 class="qnawrite_header">Q&amp;A 작성</h2>
+    
+    <div class="qnawrite_header">
+      <h2 class="qnawrite_header_text">Q&amp;A 상세보기</h2>
+      <div class="qnawrite_header_icon">
+        <i class="fas fa-edit"></i>
+        <i class="fas fa-trash"></i>
+      </div>
+    </div>
+
+
     <form @submit.prevent="handleSubmit">
       <div class="qnawrite_row">
         <label class="qnawrite_label">문의 유형</label>
@@ -407,10 +416,20 @@ export default {
 .qnawrite_header {
   text-align: center;
   font-size: 30px;
-  font-weight: bold;
   margin-bottom: 30px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 16px;
+  display: flex;
+}
+
+.qnawrite_header_text {
+  font-weight: bold;
+  
+}
+
+
+.qnawrite_header_icon {
+
 }
 
 .qnawrite_row {

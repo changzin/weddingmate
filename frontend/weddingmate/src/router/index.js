@@ -5,6 +5,7 @@ import QnAWrite from '../views/QnAWrite.vue'
 import QnAModify from '../views/QnAModify.vue'
 import QnADetail from '../views/QnADetail.vue'
 
+import UserLogin from '../views/nouser/UserLogin.vue'
 const routes = [
   {
     path: '/',
@@ -39,6 +40,11 @@ const routes = [
     path: '/qnadetail',
     name: 'qnadetail',
     component: QnADetail
+  },
+  {
+    path: '/userlogin',
+    name: 'userlogin',
+    component: UserLogin
   }
 ]
 

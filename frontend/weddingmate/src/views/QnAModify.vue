@@ -110,7 +110,7 @@
 
   <!-- 본문 -->
   <div class="qnawrite_container">
-    <h2 class="qnawrite_header">Q&amp;A 작성</h2>
+    <h2 class="qnawrite_header">Q&amp;A 수정</h2>
     <form @submit.prevent="handleSubmit">
       <div class="qnawrite_row">
         <label class="qnawrite_label">문의 유형</label>
