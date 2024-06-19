@@ -3,7 +3,7 @@
     <!-- 헤더 아래 script랑 <style scoped>까지 다 복붙해서 사용-->
     <div class="common-header">
       <!-- 로그인 + 회원가입 + 로고 -->
-      <header class="bg-light qnalist_padding_0">
+      <header class="bg-light reviewlist_padding_0">
         <!-- 로그인 회원가입 -->
         <div
           class="container d-flex justify-content-end align-items-center"
@@ -48,7 +48,7 @@
             <!-- 이미지랑 소카테고리 -->
             <div class="common-header_image-smallcategory">
               <!-- 이미지 -->
-              <section class="qnalist_main-image-section">
+              <section class="reviewlist_main-image-section">
                 <img
                   src="https://via.placeholder.com/1980x500"
                   class="img-fluid w-100"
@@ -110,103 +110,57 @@
     </div>
 
     <!-- 본문 -->
-    <div class="qnalist_container">
-      <h2 class="qnalist_header">Q&amp;A 리스트</h2>
+    <div class="reviewlist_container">
+      <h2 class="reviewlist_header">리뷰 리스트</h2>
       <!-- 검색 -->
 
-      <div class="qnalist_search-container">
-        <div class="qnalist_search-input-group">
-          <label class="qnalist_search-label">검색</label>
-          <div class="qnalist_search-input-wrapper">
-            <input
-              type="text"
-              class="qnalist_search-input"
-              v-model="searchTitle"
-              placeholder="제목을 입력하세요"
+      <!-- 리뷰 섹션 -->
+      <div class="reviewlist_review-section">
+        <div class="reviewlist_review-cards">
+          <button class="reviewlist_review-card" v-for="n in 9" :key="n">
+            <div class="reviewlist_card-header">
+              <div class="reviewlist_review-section_title-div">
+                일이삼사오육칠팔구십일이
+              </div>
+              <div class="reviewlist_card-icons">
+                <i class="fas fa-bullhorn"></i>
+                <i class="fas fa-edit"></i>
+                <i class="fas fa-trash"></i>
+              </div>
+            </div>
+            <div class="reviewlist_review-section_title-div">
+              <div class="reviewlist_card-rating">★★★★★</div>
+              <div class="reviewlist_review-section_date-div">
+                2024-06-11 15:54
+              </div>
+            </div>
+            <img
+              src="https://via.placeholder.com/300x200"
+              class="reviewlist_card-img-top"
+              alt="Review Image"
             />
-            <button class="qnalist_search-clear-button" @click="clearSearch">
-              ×
-            </button>
-          </div>
-          <button class="qnalist_search-button">검색</button>
-        </div>
-        <div class="qnalist_search-results">
-          <span>검색결과</span>
-          <span>{{ searchCount }}건</span>
-        </div>
-      </div>
-
-      <!-- <div class="qnalist_search">
-        <div>검색</div>
-
-        <div class="qnalist_row">
-          <label class="qnalist_label">제목</label>
-          <div class="qnalist_chip">
-            <input
-              type="text"
-              class="qnalist_input-title-content"
-              placeholder="문의 제목을 입력하세요"
-            />
-            <button type="button" class="qnalist_chip-close">×</button>
-          </div>
-        </div>
-
-         <button class="qnalist_search_button">
-            확인
-          </button>
-      </div> -->
-
-      <!-- QnA -->
-      <div class="qnalist_qna-section">
-        <div class="qnalist_qna-header">
-          <h2 class="qnalist_qna-title">전체 QnA &gt;</h2>
-        </div>
-        <!-- QnA 데이터 -->
-        <table class="qnalist_qna-table">
-          <thead>
-            <tr>
-              <th>문의유형</th>
-              <th>문의/답변</th>
-              <th>작성자</th>
-              <th>작성일</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="n in 22" :key="n">
-              <td>반품/취소</td>
-              <td class="qnalist_qna-section_status-title-div">
-                <div class="qnalist_qna-status">답변 완료</div>
-                <div>
-                  일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십
-                </div>
-              </td>
-              <td>일이삼사오육칠팔구십일이</td>
-              <td>2024-06-11 15:54</td>
-            </tr>
-            <tr v-for="n in 1" :key="n">
-              <td>배송문의</td>
-              <td class="qnalist_qna-section_status-title-div">
-                <div class="qnalist_qna-status incomplete">미완료</div>
-                <div>미완료 UI 보려고 하나 더 만듦</div>
-              </td>
-              <td>일이삼사오육칠팔구십일이</td>
-              <td>2024-06-11 15:54</td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- 버튼 -->
-        <div class="qnalist_qna-section_button">
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 작성
-          </button>
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 수정
-          </button>
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 삭제
+            <div class="reviewlist_card-body">
+              <p class="reviewlist_card-text">
+                인생
+                리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
+                10줄까지 가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
+              </p>
+            </div>
           </button>
         </div>
       </div>
+      <!-- 버튼 -->
+        <div class="reviewlist_qna-section_button">
+          <button class="reviewlist_write-qna-btn">
+            <i class="fas fa-pen"></i> 리뷰 작성
+          </button>
+          <button class="reviewlist_write-qna-btn">
+            <i class="fas fa-pen"></i> 리뷰 수정
+          </button>
+          <button class="reviewlist_write-qna-btn">
+            <i class="fas fa-pen"></i> 리뷰 삭제
+          </button>
+        </div>
     </div>
 
     <!-- 푸터 -->
@@ -353,8 +307,8 @@ export default {
 }
 
 /* 본문 */
-
-.qnalist_container {
+/* 리뷰 */
+.reviewlist_container {
   width: 1280px;
   margin: 0 auto;
   margin-top: 80px;
@@ -364,7 +318,7 @@ export default {
   font-family: Arial, sans-serif;
 }
 
-.qnalist_header {
+.reviewlist_header {
   text-align: center;
   font-size: 30px;
   font-weight: bold;
@@ -373,92 +327,31 @@ export default {
   padding-bottom: 16px;
 }
 
-/* 검색 */
-
-.qnalist_search-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 40px;
+.reviewlist_review_content {
+  margin-top: 100px;
 }
 
-.qnalist_search-input-group {
-  display: flex;
-  align-items: center;
-}
-
-.qnalist_search-label {
-  margin-right: 10px;
-}
-
-.qnalist_search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 5px;
-  padding: 10px 20px;
-  margin-left: 50px;
-}
-
-.qnalist_search-input {
-  border: none;
-  outline: none;
-  background-color: transparent;
-  width: 700px;
-}
-
-.qnalist_search-clear-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2em;
-  color: #888;
-}
-
-.qnalist_search-button {
-  margin-left: 30px;
-  padding: 10px 30px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
-  cursor: pointer;
-}
-
-.qnalist_search-results {
-  display: flex;
-  align-items: center;
-}
-
-.qnalist_search-results span:first-child {
-  margin-right: 5px;
-}
-
-/* QnA */
-.qnalist_qna-section {
+.reviewlist_review-section {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  margin-top: 50px;
-  font-size: 14px;
-  text-align: center;
+  margin-top: 100px;
 }
 
-.qnalist_qna-header {
+.reviewlist_review-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0px;
+  margin-bottom: 20px;
 }
 
-.qnalist_qna-title {
+.reviewlist_review-title {
   font-size: 24px;
   font-weight: bold;
   margin: 0;
 }
 
-.qnalist_write-qna-btn {
+.reviewlist_write-review-btn {
   display: flex;
   align-items: center;
   background-color: #fff;
@@ -469,52 +362,98 @@ export default {
   cursor: pointer;
 }
 
-.qnalist_write-qna-btn i {
+.reviewlist_write-review-btn i {
   margin-right: 8px;
 }
 
-.qnalist_qna-table {
-  width: 100%;
-  border-collapse: collapse;
+.reviewlist_review-cards {
+  display: flex;
+  flex-wrap: wrap;
+  /* gap: 20px; */
+  justify-content: space-between;
 }
 
-.qnalist_qna-table th,
-.qnalist_qna-table td {
+.reviewlist_review_card:last-child {
+  /* margin-right: 0; */
+}
+
+.reviewlist_review-card {
+  background-color: #fff;
   border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 31%;
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.reviewlist_card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* margin-bottom: 10px; */
+}
+
+.reviewlist_card-header h5 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.reviewlist_card-header span {
+  font-size: 12px;
+  color: #888;
+}
+
+.reviewlist_card-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.reviewlist_card-icons i {
+  cursor: pointer;
+}
+
+.reviewlist_card-img-top {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.reviewlist_card-body {
   padding: 10px;
 }
 
-.qnalist_qna-table th {
-  background-color: #f7f7f7;
+.reviewlist_card-rating {
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
-.qnalist_qna-status {
-  display: inline-block;
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  width: 90px;
+.reviewlist_card-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
 }
 
-.qnalist_qna-status.incomplete {
-  background-color: white;
-  color: #007bff;
-  border: 1px solid #007bff;
-  width: 90px;
-  padding: 5px 10px;
+.reviewlist_review-section_title-div {
+  font-size: 14px;
 }
 
-.qnalist_qna-section_status-title-div {
+.reviewlist_review-section_title-div {
   display: flex;
-  gap: 20px;
-  align-items: center;
+  justify-content: space-between;
+}
+
+.reviewlist_review-section_date-div {
+  font-size: 12px;
 }
 
 
 
 
-.qnalist_qna-section_button {
+/* 버튼 */
+
+.reviewlist_qna-section_button {
   padding: 0px 350px;
   display: flex;
   align-items: center;
@@ -523,8 +462,20 @@ export default {
 }
 
 
+.reviewlist_write-qna-btn {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-
+.reviewlist_write-qna-btn i {
+  margin-right: 8px;
+}
 
 
 

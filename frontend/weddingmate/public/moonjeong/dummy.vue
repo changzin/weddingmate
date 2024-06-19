@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <!-- 헤더 아래 script랑 <style scoped>까지 다 복붙해서 사용-->
+  <div class="fix-width">
+    <!-- 헤더 -->
     <div class="common-header">
       <!-- 로그인 + 회원가입 + 로고 -->
-      <header class="bg-light qnalist_padding_0">
+      <header class="bg-light productdetail_padding_0">
         <!-- 로그인 회원가입 -->
         <div
           class="container d-flex justify-content-end align-items-center"
@@ -48,7 +48,7 @@
             <!-- 이미지랑 소카테고리 -->
             <div class="common-header_image-smallcategory">
               <!-- 이미지 -->
-              <section class="qnalist_main-image-section">
+              <section class="productdetail_main-image-section">
                 <img
                   src="https://via.placeholder.com/1980x500"
                   class="img-fluid w-100"
@@ -109,105 +109,8 @@
       </nav>
     </div>
 
-    <!-- 본문 -->
-    <div class="qnalist_container">
-      <h2 class="qnalist_header">Q&amp;A 리스트</h2>
-      <!-- 검색 -->
-
-      <div class="qnalist_search-container">
-        <div class="qnalist_search-input-group">
-          <label class="qnalist_search-label">검색</label>
-          <div class="qnalist_search-input-wrapper">
-            <input
-              type="text"
-              class="qnalist_search-input"
-              v-model="searchTitle"
-              placeholder="제목을 입력하세요"
-            />
-            <button class="qnalist_search-clear-button" @click="clearSearch">
-              ×
-            </button>
-          </div>
-          <button class="qnalist_search-button">검색</button>
-        </div>
-        <div class="qnalist_search-results">
-          <span>검색결과</span>
-          <span>{{ searchCount }}건</span>
-        </div>
-      </div>
-
-      <!-- <div class="qnalist_search">
-        <div>검색</div>
-
-        <div class="qnalist_row">
-          <label class="qnalist_label">제목</label>
-          <div class="qnalist_chip">
-            <input
-              type="text"
-              class="qnalist_input-title-content"
-              placeholder="문의 제목을 입력하세요"
-            />
-            <button type="button" class="qnalist_chip-close">×</button>
-          </div>
-        </div>
-
-         <button class="qnalist_search_button">
-            확인
-          </button>
-      </div> -->
-
-      <!-- QnA -->
-      <div class="qnalist_qna-section">
-        <div class="qnalist_qna-header">
-          <h2 class="qnalist_qna-title">전체 QnA &gt;</h2>
-        </div>
-        <!-- QnA 데이터 -->
-        <table class="qnalist_qna-table">
-          <thead>
-            <tr>
-              <th>문의유형</th>
-              <th>문의/답변</th>
-              <th>작성자</th>
-              <th>작성일</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="n in 22" :key="n">
-              <td>반품/취소</td>
-              <td class="qnalist_qna-section_status-title-div">
-                <div class="qnalist_qna-status">답변 완료</div>
-                <div>
-                  일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십
-                </div>
-              </td>
-              <td>일이삼사오육칠팔구십일이</td>
-              <td>2024-06-11 15:54</td>
-            </tr>
-            <tr v-for="n in 1" :key="n">
-              <td>배송문의</td>
-              <td class="qnalist_qna-section_status-title-div">
-                <div class="qnalist_qna-status incomplete">미완료</div>
-                <div>미완료 UI 보려고 하나 더 만듦</div>
-              </td>
-              <td>일이삼사오육칠팔구십일이</td>
-              <td>2024-06-11 15:54</td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- 버튼 -->
-        <div class="qnalist_qna-section_button">
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 작성
-          </button>
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 수정
-          </button>
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 삭제
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- 본문  -->
+    
 
     <!-- 푸터 -->
     <footer class="common__footer">
@@ -220,7 +123,7 @@
         </nav>
         <div class="common__footer-details">
           <p style="margin-bottom: 0px">
-            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
+            (주)웨딩메이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
             02-123-1234 팩스: 02-111-2222
           </p>
 
@@ -234,17 +137,15 @@
   </div>
 </template>
 
-
-
 <script>
 export default {
+  name: "SearchComponent",
   data() {
     return {
       // 헤더
       isVisible: false,
       ismaintain: false,
-      searchTitle: "",
-      searchCount: 0,
+      // 본문
     };
   },
   methods: {
@@ -255,21 +156,22 @@ export default {
     hideCategories() {
       this.isVisible = false;
     },
-
     // 본문
-    // 검색
-    clearSearch() {
-      this.searchTitle = "";
-    },
   },
 };
 </script>
 
 
-
 <style scoped>
-/* 헤더 */
+.fix-width {
+  width: 1980px;
+  min-width: 1980px;
+  max-width: 1980px;
+  margin: 0 auto;
+}
 
+/* 헤더 */
+/* 로그인 + 회원가입 + 로고 */
 #common__header-login-padding {
   margin-right: 30px;
 }
@@ -284,6 +186,9 @@ export default {
 
 .common-header_overlay {
   position: relative;
+}
+
+.common-header_overlay-content {
 }
 
 /* 카테고리 + 이미지 */
@@ -351,184 +256,6 @@ export default {
   padding: 10px 0;
   width: 140px; /* 각 항목의 너비를 140px로 고정 */
 }
-
-/* 본문 */
-
-.qnalist_container {
-  width: 1280px;
-  margin: 0 auto;
-  margin-top: 80px;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  font-family: Arial, sans-serif;
-}
-
-.qnalist_header {
-  text-align: center;
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 16px;
-}
-
-/* 검색 */
-
-.qnalist_search-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 40px;
-}
-
-.qnalist_search-input-group {
-  display: flex;
-  align-items: center;
-}
-
-.qnalist_search-label {
-  margin-right: 10px;
-}
-
-.qnalist_search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 5px;
-  padding: 10px 20px;
-  margin-left: 50px;
-}
-
-.qnalist_search-input {
-  border: none;
-  outline: none;
-  background-color: transparent;
-  width: 700px;
-}
-
-.qnalist_search-clear-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2em;
-  color: #888;
-}
-
-.qnalist_search-button {
-  margin-left: 30px;
-  padding: 10px 30px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
-  cursor: pointer;
-}
-
-.qnalist_search-results {
-  display: flex;
-  align-items: center;
-}
-
-.qnalist_search-results span:first-child {
-  margin-right: 5px;
-}
-
-/* QnA */
-.qnalist_qna-section {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  margin-top: 50px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.qnalist_qna-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 0px;
-}
-
-.qnalist_qna-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.qnalist_write-qna-btn {
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.qnalist_write-qna-btn i {
-  margin-right: 8px;
-}
-
-.qnalist_qna-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.qnalist_qna-table th,
-.qnalist_qna-table td {
-  border: 1px solid #e0e0e0;
-  padding: 10px;
-}
-
-.qnalist_qna-table th {
-  background-color: #f7f7f7;
-}
-
-.qnalist_qna-status {
-  display: inline-block;
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  width: 90px;
-}
-
-.qnalist_qna-status.incomplete {
-  background-color: white;
-  color: #007bff;
-  border: 1px solid #007bff;
-  width: 90px;
-  padding: 5px 10px;
-}
-
-.qnalist_qna-section_status-title-div {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-
-
-
-.qnalist_qna-section_button {
-  padding: 0px 350px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 40px;
-}
-
-
-
-
-
-
-
-
 
 /* 푸터 */
 .common__footer {

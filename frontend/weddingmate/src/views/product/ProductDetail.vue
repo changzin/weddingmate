@@ -1172,46 +1172,39 @@
 
           <!-- 리뷰 섹션 -->
           <div class="productdetail_review-section">
-            <div class="productdetail_review-header">
-              <h2 class="productdetail_review-title">전체 리뷰 &gt;</h2>
-              <button class="productdetail_write-review-btn">
-                <i class="fas fa-pen"></i> 리뷰작성
-              </button>
-            </div>
-            <div class="productdetail_review-cards">
-              <div class="productdetail_review-card" v-for="n in 6" :key="n">
-                <div class="productdetail_card-header">
-                  <div class="productdetail_review-section_title-div">
-                    일이삼사오육칠팔구십일이
-                  </div>
-                  <div class="productdetail_card-icons">
-                    <i class="fas fa-bullhorn"></i>
-                    <i class="fas fa-edit"></i>
-                    <i class="fas fa-trash"></i>
-                  </div>
-                </div>
-                <div class="productdetail_review-section_title-div">
-                  <div class="productdetail_card-rating">★★★★★</div>
-                  <div class="productdetail_review-section_date-div">
-                    2024-06-11 15:54
-                  </div>
-                </div>
-                <img
-                  src="https://via.placeholder.com/300x200"
-                  class="productdetail_card-img-top"
-                  alt="Review Image"
-                />
-                <div class="productdetail_card-body">
-                  <p class="productdetail_card-text">
-                    인생
-                    리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
-                    10줄까지
-                    가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
-                  </p>
-                </div>
+        <div class="productdetail_review-cards">
+          <button class="productdetail_review-card" v-for="n in 9" :key="n">
+            <div class="productdetail_card-header">
+              <div class="productdetail_review-section_title-div">
+                일이삼사오육칠팔구십일이
+              </div>
+              <div class="productdetail_card-icons">
+                <i class="fas fa-bullhorn"></i>
+                <i class="fas fa-edit"></i>
+                <i class="fas fa-trash"></i>
               </div>
             </div>
-          </div>
+            <div class="productdetail_review-section_title-div">
+              <div class="productdetail_card-rating">★★★★★</div>
+              <div class="productdetail_review-section_date-div">
+                2024-06-11 15:54
+              </div>
+            </div>
+            <img
+              src="https://via.placeholder.com/300x200"
+              class="productdetail_card-img-top"
+              alt="Review Image"
+            />
+            <div class="productdetail_card-body">
+              <p class="productdetail_card-text">
+                인생
+                리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
+                10줄까지 가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
+              </p>
+            </div>
+          </button>
+        </div>
+      </div>
 
           <!-- Q&A 섹션 -->
           <div class="productdetail_qna-section">

@@ -7,6 +7,7 @@ axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 export default{
     methods: {
         async $api(url, data = {}, method = "GET"){
+            console.log(process.env);
             return (await axios({
                 method: method,
                 url,
