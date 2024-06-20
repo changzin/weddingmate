@@ -14,6 +14,7 @@ exports.userList = async (req, res)=>{
 
 
         let result = [];
+        let count = 0;
         let query = "";
         // user_create_date로 정렬 후, OFFSET만큼 뛰어넘은 다음 LIMIT 개수만큼 가져오는 쿼리문        
 
@@ -21,30 +22,42 @@ exports.userList = async (req, res)=>{
             if (block=="T"){
                 query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? AND (user_email LIKE ? OR user_name LIKE ?) ORDER BY user_create_date LIMIT 10 OFFSET ? ";
                 result = await db(query, [block, keyword, keyword, page*10]);
+                query = "SELECT count(*) AS count FROM user WHERE user_block=? AND (user_email LIKE ? OR user_name LIKE ?) "
+                count = await db(query, [block, keyword, keyword])[0].count;
             }
             else{
                 query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE (user_email LIKE ? OR user_name LIKE ?) ORDER BY user_create_date LIMIT 10 OFFSET ? ";
                 result = await db(query, [keyword, keyword, page*10]);
+                query = "SELECT count(*) AS count FROM user WHERE (user_email LIKE ? OR user_name LIKE ?)";
+                count = await db(query, [block, keyword, keyword])[0].count;
             }
         }
         else if (mode === 'email'){
             if (block=="T"){
                 query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? AND user_email LIKE ? ORDER BY user_create_date LIMIT 10 OFFSET ? ";
                 result = await db(query, [block, keyword, page*10]);
+                query = "SELECT count(*) AS count FROM user WHERE user_block=? AND user_email LIKE ?";
+                count = await db(query, [block, keyword, keyword])[0].count;
             }
             else{
                 query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_email LIKE ? ORDER BY user_create_date LIMIT 10 OFFSET ? ";
                 result = await db(query, [keyword, page*10]);
+                query = "SELECT count(*) AS count FROM user WHERE user_email LIKE ?";
+                count = await db(query, [block, keyword, keyword])[0].count;
             }
         }
         else if (mode === 'name'){
             if (block=="T"){
                 query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? AND user_name LIKE ? ORDER BY user_create_date LIMIT 10 OFFSET ? ";
                 result = await db(query, [block, keyword, page*10]);
+                query = "SELECT count(*) AS count FROM user WHERE user_block=? AND user_name LIKE ? ";
+                count = await db(query, [block, keyword, keyword])[0].count;
             }
             else{
                 query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_name LIKE ? ORDER BY user_create_date LIMIT 10 OFFSET ? ";
                 result = await db(query, [keyword, page*10]);
+                query = "SELECT count(*) AS count FROM user WHERE user_name LIKE ? ";
+                count = await db(query, [block, keyword, keyword])[0].count;
             }            
         }
         // 검색 옵션이 걸리지 않았을 때의 실행
@@ -52,10 +65,14 @@ exports.userList = async (req, res)=>{
         else if (block=="T"){
             query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? ORDER BY user_create_date LIMIT 10 OFFSET ? ";            
             result = await db(query, [block, page*10]);
+            query = "SELECT count(*) AS count FROM user WHERE user_block=? ";
+            count = await db(query, [block, keyword, keyword])[0].count;
         }
         else{
             query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user ORDER BY user_create_date LIMIT 10 OFFSET ? ";
             result = await db(query, [page*10]);
+            query = "SELECT count(*) AS count FROM user";
+            count = await db(query, [block, keyword, keyword])[0].count;
         }
 
         for(user of result){
@@ -86,7 +103,16 @@ exports.userList = async (req, res)=>{
             user.user_qna_count = user_qna_count;
         }
         res.status(200);
-        res.json(result);
+
+        
+        console.log(Math.floor(count / 10) + 1);
+
+        console.log(count);
+        responseBody = {
+            maxPage: Math.floor(count / 10) + 1,
+            memberList: result
+        }
+        res.json(responseBody);
     }
     catch(err){
         console.error(err);
