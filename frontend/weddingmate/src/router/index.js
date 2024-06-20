@@ -9,6 +9,12 @@ import ReviewList from '../views/review/ReviewList.vue'
 
 import UserLogin from '../views/nouser/UserLogin.vue'
 import MemberList from '../views/admin/MemberList'
+// import AdminAnswer from '../views/admin/AdminAnswer.vue';
+// import AdminItemAdd from '../views/admin/AdminItemAdd.vue'
+// import AdminItemEdit from '../views/admin/AdminItemEdit.vue'
+import AdminQna from '../views/admin/AdminQna.vue'
+import AdminReview from '../views/admin/AdminReview.vue'
+import AdminAnalysis from '../views/admin/AdminAnalysis.vue'
 
 const routes = [
   {
@@ -57,6 +63,36 @@ const routes = [
     name: 'memberlist',
     component: MemberList
   },
+  // {
+  //   path: '/admin/answer',
+  //   name: 'adminanswer',
+  //   component: AdminAnswer
+  // },
+  // {
+  //   path: '/admin/itemadd',
+  //   name: 'adminitemadd',
+  //   component: AdminItemAdd
+  // },
+  // {
+  //   path: '/admin/itemedit',
+  //   name: 'adminitemedit',
+  //   component: AdminItemEdit
+  // },
+  {
+    path: '/admin/qna',
+    name: 'adminqna',
+    component: AdminQna
+  },
+  {
+    path: '/admin/review',
+    name: 'adminreview',
+    component: AdminReview
+  },
+  {
+    path: '/admin/analysis',
+    name: "adminanalysis",
+    component: AdminAnalysis
+  }
 ]
 
 const router = createRouter({

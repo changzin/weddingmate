@@ -1,6 +1,6 @@
 <template>
-<div class="sidbar_content_body">
-  <div>
+    <div class="sidbar_content_body">
+        <div>
     <div class="d-flex" >
       <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">        
         <symbol id="table" viewBox="0 0 16 16">
@@ -21,6 +21,7 @@
         </symbol>
       </svg>
       
+
       <div class="d-flex flex-column sidbar_container">
         <div class="sidebar_header_box d-flex justify-content-center">
             <div class="sidebar_header_box_text">로고 들어갈 자리</div>
@@ -41,9 +42,9 @@
                 판매 현황
             </a>
           </li>
-          <li class="nav-item sidbar_box sidbar_box_inactive">            
-            <a @click="$router.push({path: '/admin/qna'})" class="nav-link sidbar_box_inactive_text">
-                <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#tools"/></svg>
+          <li class="nav-item sidbar_box sidbar_box_active">            
+            <a @click="$router.push({path: '/admin/qna'})" class="nav-link sidbar_box_active_text">
+                <svg class="bi me-2" width="16" height="16"><use xlink:href="#tools"/></svg>
                 Q & A
             </a>
           </li>
@@ -53,9 +54,9 @@
                 리뷰 관리
             </a>
           </li>
-          <li class="nav-item sidbar_box sidbar_box_active">
-            <a @click="$router.path('/admin/memberlist')" class="nav-link sidbar_box_active_text">
-                <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
+          <li class="nav-item sidbar_box sidbar_box_inactive">
+            <a @click="$router.push({path: '/admin/memberlist'})" class="nav-link sidbar_box_inactive_text">
+                <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#people-circle"/></svg>
                 회원 관리
             </a>
           </li>
@@ -64,76 +65,66 @@
       <div class="d-flex flex-column">
         <div class="sidbar_content_container container">
             <div class="sidbar_header d-flex justify-content-center">
-                <div class="sidbar_header_title">회원 관리</div>
+                <div class="sidbar_header_title">Q & A 관리</div>
             </div>
+
             <div class="d-flex justify-content-center">
-              <div class="admin_member_review-section">
-                <div class="admin_member_review-header justify-content-end">
-                  <button class="btn admin_member_btn_active" v-if="!blockOption" @click="getBlockMemberList()">차단 회원만 보기</button>
-                  <button class="btn admin_member_btn_inactive" v-if="blockOption" @click="getUnblockMemberList()">모든 회원 보기</button>
-                  <select class="form-select admin_member_select" v-model="mode">
-                    <option selected value="all">전체</option>
-                    <option value="email">이메일</option>
-                    <option value="name">이름</option>
+              <div class="admin_qna_review-section">
+                <div class="admin_qna_review-header justify-content-end">
+                  <button class="btn admin_qna_btn_active">미완료 리뷰만 보기</button>
+                  <select class="form-select admin_qna_select">
+                    <option selected>전체</option>
+                    <option>반품/취소</option>
+                    <option>배송문의</option>
+                    <option>기타</option>
                   </select>
-                  <input type="text" class="form-control admin_member_input" v-model="keyword">                  
-                  <button class="btn admin_member_btn_active" @click="search()">검색</button>
+                  <input type="text" class="form-control admin_qna_input">            
+                  <button class="btn admin_qna_btn_active">검색</button>      
                 </div>
 
-                <div class="admin_member_qna-section">
-                  <table class="admin_member_qna-table admin_member_table">
+                <div class="admin_qna_qna-section">
+                  <table class="admin_qna_qna-table">
                     <thead>
                       <tr>
-                        <th>이름</th>
-                        <th>이메일</th>
-                        <th>가입일</th>
-                        <th>회원 유형</th>
-                        <th>누적 구매금액</th>
-                        <th>구매량 / 댓글 / 문의량</th>
-                        <th>상태 변경</th>
+                        <th>문의유형</th>
+                        <th>문의/답변</th>
+                        <th>작성자</th>
+                        <th>작성일</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(member, index) in memberList" :key="index">
-                        <td>{{ member.user_name }}</td>
-                        <td>
-                            {{member.user_email}}
+                      <tr>
+                        <td>반품/취소</td>
+                        <td class="admin_qna_qna-section_status-title-div">
+                          <div class="admin_qna_qna-status">답변 완료</div>
+                          <div>
+                            일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십
+                          </div>
                         </td>
-                        <td>{{member.user_create_date}}</td>
-                        <td>{{member.user_type}}</td>
-                        <td>{{member.user_total_price}}</td>
-                        <td>{{member.user_buy_count}} / {{member.user_review_count}} / {{ member.user_qna_count }} </td>
-                        <td>
-                            <button class="btn admin_member_block_btn_active" v-if="member.user_block === 'F'" @click="blockUser(member, member.user_id)">block</button>
-                            <button class="btn admin_member_unblock_btn_active" v-if="member.user_block === 'T'" @click="unblockUser(member, member.user_id)">unblock</button>
+                        <td>일이삼사오육칠팔구십일이</td>
+                        <td>2024-06-11 15:54</td>
+                      </tr>
+                      <tr>
+                        <td>배송문의</td>
+                        <td class="admin_qna_qna-section_status-title-div">
+                          <div class="admin_qna_qna-status incomplete">미완료</div>
+                          <div>미완료 UI 보려고 하나 더 만듦</div>
                         </td>
+                        <td>일이삼사오육칠팔구십일이</td>
+                        <td>2024-06-11 15:54</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            <div class="mypage-bottom">
-              <div class="nav-page justify-content-center">
-              <a :class="{notVisible : (page == 1)}" @click="prevBlock()"><div>&lt;&lt;</div></a>
-              <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
-              <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
-              <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
-              <a><div style="color: pink;">{{page}}</div></a>
-              <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
-              <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
-              <a :class="{notVisible : (page == maxPage)}" @click="nextPage()"><div>&gt;</div></a>
-              <a :class="{notVisible : (page == maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
-              </div>
-          </div>
         </div>
       </div>
-
     </div>
   </div>
-</div>
+    </div>
 </template>
-
+    
 <script>
 export default {
   data() {
@@ -158,10 +149,7 @@ export default {
       let page = this.$route.params.page;
       let block = this.$route.params.page;
       page = (!page) ? 1 : page;
-      const result = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
-      this.memberList = result.memberList;
-      this.maxPage = result.maxPage;
-      console.log(result.maxPage);
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
       this.makePageSetting();      
     },
     // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
@@ -179,22 +167,19 @@ export default {
       this.blockOption = !this.blockOption;
       
       const block = (!this.blockOption) ? null : 'T';
-      const result = await this.$api(`http://localhost:9090/user/list?block=${block}&mode=${this.mode}&keyword=${this.prevKeyword}`);
-      this.memberList = result.memberList;
-      this.maxPage = result.maxPage;
+      this.memberList = await this.$api(`http://localhost:9090/user/list?block=${block}&mode=${this.mode}&keyword=${this.prevKeyword}`);
       this.makePageSetting();
     }, 
     async search(){
       const block = (!this.blockOption) ? null : 'T';
-      const result = await this.$api(`http://localhost:9090/user/list?block=${block}&mode=${this.mode}&keyword=${this.keyword}`);
-      this.memberList = result.memberList;
-      this.maxPage = result.maxPage;
+      this.memberList = await this.$api(`http://localhost:9090/user/list?block=${block}&mode=${this.mode}&keyword=${this.keyword}`);
       this.prevKeyword = this.keyword;
       this.makePageSetting();
     },
 
     // 단순 페이지 번호 이동이 아닌, 차단이나 검색 등으로 리스트 길이가 바뀔 때 전체 페이지 등을 같이 바꿔주는 함수
     makePageSetting(){
+      this.maxPage = Math.floor(this.memberList.length / 10) + 1;
       this.isFirstPage = (this.page == 1) ? true : false;
       this.isLastPage = (this.page == this.maxPage) ? true : false;
     },
@@ -208,7 +193,7 @@ export default {
         targetPage = this.page - 5;
       }
       const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`)['memberList'];
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
     },
     // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
@@ -221,48 +206,28 @@ export default {
         targetPage = this.page + 5;
       }
       const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`)['memberList'];
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
     },
     async nextPage(){
       const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`)['memberList'];
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
       this.page +=1;
     },
     async prevPage(){
       const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`)['memberList'];
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
       this.page -=1;
     },
     async goToPage(targetPage){
       const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`)['memberList'];
+      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
     },
-    // 유저 차단 
-    async blockUser(member, user_id){
-      const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user_id}, "POST");
-      if (result.status == 200){
-        member.user_block = "T";
-      }
-      else{
-        console.log("error");
-      }
-    },
-    // 유저 차단 해제
-    async unblockUser(member, user_id){
-      const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user_id}, "POST");
-      if (result.status == 200){
-        member.user_block = "F";
-      }
-      else{
-        console.log("error");
-      }
-    }
-    
   }
 }
 </script>
+
 
 <style scoped>
 .sidbar_content_body{
@@ -318,35 +283,35 @@ export default {
   font-weight: bold;
 }
 
-.admin_member_review_content {
+.admin_qna_review_content {
   margin-top: 50px;
 }
 
-.admin_member_review-section {
+.admin_qna_review-section {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   margin-top: 30px;
 }
 
-.admin_member_review-header {
+.admin_qna_review-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-.admin_member_write-review-btn i {
+.admin_qna_write-review-btn i {
   margin-right: 8px;
 }
 
-.admin_member_review-cards {
+.admin_qna_review-cards {
   display: flex;
   flex-wrap: wrap;
   /* gap: 20px; */
   justify-content: space-between;
 }
 
-.admin_member_review-card {
+.admin_qna_review-card {
   background-color: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -355,33 +320,33 @@ export default {
   margin-bottom: 30px;
 }
 
-.admin_member_card-header {
+.admin_qna_card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   /* margin-bottom: 10px; */
 }
 
-.admin_member_card-header h5 {
+.admin_qna_card-header h5 {
   margin: 0;
   font-size: 16px;
 }
 
-.admin_member_card-header span {
+.admin_qna_card-header span {
   font-size: 12px;
   color: #888;
 }
 
-.admin_member_card-icons {
+.admin_qna_card-icons {
   display: flex;
   gap: 10px;
 }
 
-.admin_member_card-icons i {
+.admin_qna_card-icons i {
   cursor: pointer;
 }
 
-.admin_member_card-img-top {
+.admin_qna_card-img-top {
   width: 100%;
   height: 200px;
   object-fit: cover;
@@ -389,54 +354,54 @@ export default {
   margin-bottom: 10px;
 }
 
-.admin_member_card-body {
+.admin_qna_card-body {
   padding: 10px;
 }
 
-.admin_member_card-rating {
+.admin_qna_card-rating {
   font-size: 14px;
   margin-bottom: 10px;
 }
 
-.admin_member_card-text {
+.admin_qna_card-text {
   font-size: 14px;
   color: #333333;
   line-height: 1.5;
 }
 
-.admin_member_review-section_title-div {
+.admin_qna_review-section_title-div {
   font-size: 14px;
 }
 
-.admin_member_review-section_title-div {
+.admin_qna_review-section_title-div {
   display: flex;
   justify-content: space-between;
 }
 
-.admin_member_review-section_date-div {
+.admin_qna_review-section_date-div {
   font-size: 12px;
 }
 
-.admin_member_select{
+.admin_qna_select{
   width: 160px;
   text-align: left;
 }
-.admin_member_input{
+.admin_qna_input{
   width:245px;
   margin-right: 5px;
 }
-.admin_member_btn_active{
+.admin_qna_btn_active{
   background-color: #007BFF;
   color: #FFFFFF;
   margin-right: 10px;
 }
-.admin_member_btn_inactive{
+.admin_qna_btn_inactive{
   background-color: #333333;
-  color: #FFFFFF;
+  color: #111111;
   margin-right: 10px;
 }
 
-.admin_member_qna-section {
+.admin_qna_qna-section {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
@@ -445,22 +410,22 @@ export default {
   font-size: 14px;
   text-align: center;
 }
-.admin_member_qna-table {
+.admin_qna_qna-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.admin_member_qna-table th,
-.admin_member_qna-table td {
+.admin_qna_qna-table th,
+.admin_qna_qna-table td {
   border: 1px solid #e0e0e0;
   padding: 10px;
 }
 
-.admin_member_qna-table th {
+.admin_qna_qna-table th {
   background-color: #f7f7f7;
 }
 
-.admin_member_qna-status {
+.admin_qna_qna-status {
   display: inline-block;
   padding: 5px 10px;
   background-color: #007bff;
@@ -469,7 +434,7 @@ export default {
   width: 90px;
 }
 
-.admin_member_qna-status.incomplete {
+.admin_qna_qna-status.incomplete {
   background-color: white;
   color: #007bff;
   border: 1px solid #007bff;
@@ -477,42 +442,9 @@ export default {
   padding: 5px 10px;
 }
 
-.admin_member_qna-section_status-title-div {
+.admin_qna_qna-section_status-title-div {
   display: flex;
   gap: 20px;
   align-items: center;
 }
-.admin_member_table{
-    font-size: 12px;
-}
-.admin_member_block_btn_active{
-    width:65px;
-    font-size: 12px;
-    background-color: #007BFF;
-    color: #FFFFFF
-}
-.admin_member_unblock_btn_active{
-    width:65px;
-    font-size: 12px;
-    background-color: #FFFFFF;
-    color: #111111;
-    border: 1px solid #333333;
-}
-div.mypage-bottom{
-            display: grid;
-            place-items: center;
-            margin-top: 100px;
-            /* border: 1px solid yellow; */
-        }
-        div.nav-page{
-            display: grid;
-            place-items: center;
-            grid-template-columns: repeat(9, 25px);
-            margin-bottom: 30px;
-            color: #888888;
-            /* border: 1px solid pink; */
-        }
-      .notVisible{
-        visibility: hidden;
-      }
 </style>
