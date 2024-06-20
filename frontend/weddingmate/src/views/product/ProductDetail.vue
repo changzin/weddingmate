@@ -3,85 +3,115 @@
     <div class="container-fluid px-0">
       <div class="content">
         <!-- 헤더 -->
-        <header class="bg-light productdetail_padding_0">
-          <div
-            class="container d-flex justify-content-end align-items-center"
-            id="common__login-div-padding"
+        <div class="common-header">
+          <!-- 로그인 + 회원가입 + 로고 -->
+          <header class="bg-light productdetail_padding_0">
+            <!-- 로그인 회원가입 -->
+            <div
+              class="container d-flex justify-content-end align-items-center"
+              id="common__login-div-padding"
+            >
+              <nav class="navbar-light">
+                <div class="" id="navbarNav">
+                  <ul class="navbar-nav flex-row">
+                    <li class="nav-item" id="common__header-login-padding">
+                      <a href="#">로그인</a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="#">회원가입</a>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+            </div>
+            <!-- 로고 -->
+            <div class="text-center">
+              <a class="navbar-brand" href="#">
+                <img src="https://via.placeholder.com/200x50" alt="Logo" />
+              </a>
+            </div>
+          </header>
+          <!-- 카테고리 + 이미지 -->
+          <nav
+            class="common-header_navbar navbar-light bg-light"
+            id="common_main-banner_div"
+            @mouseleave="hideCategories"
           >
-            <nav class="navbar-light">
-              <div class="" id="navbarNav">
-                <ul class="navbar-nav flex-row">
-                  <li class="nav-item" id="common__header-login-padding">
-                    <a href="#">로그인</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#">회원가입</a>
-                  </li>
+            <div class="common-header_overlay">
+              <div class="common-header_overlay-content">
+                <!-- 대카테고리 -->
+                <ul class="common-header_nav" @mouseover="showCategories">
+                  <li class="common-header_main-title">웨딩홀</li>
+                  <li class="common-header_main-title">스드메</li>
+                  <li class="common-header_main-title">혼수</li>
+                  <li class="common-header_main-title">본식</li>
+                  <li class="common-header_main-title">촬영팀</li>
                 </ul>
-              </div>
-            </nav>
-          </div>
-          <div class="text-center">
-            <a class="navbar-brand" href="#">
-              <img src="https://via.placeholder.com/200x50" alt="Logo" />
-            </a>
-          </div>
-        </header>
+                <!-- 이미지랑 소카테고리 -->
+                <div class="common-header_image-smallcategory">
+                  <!-- 이미지 -->
+                  <section class="productdetail_main-image-section">
+                    <img
+                      src="https://via.placeholder.com/1980x500"
+                      class="img-fluid w-100"
+                      alt="Main Image"
+                    />
+                  </section>
 
-        <!-- 배너 섹션 -->
-        <nav class="navbar navbar-light bg-light" id="common_main-banner_div">
-          <div class="common__overlay">
-            <div class="common__overlay-content">
-              <div class="common__text-end">
-                <ul>
-                  <li class="productdetail_header_main_title">웨딩홀</li>
-                  <li class="productdetail_header_sub_title">추천 리스트</li>
-                  <li class="productdetail_header_sub_title">웨딩홀 목록</li>
-                </ul>
-              </div>
-              <div class="common__text-end">
-                <ul>
-                  <li class="productdetail_header_main_title">스드메</li>
-                  <li class="productdetail_header_sub_title">독립 패키지</li>
-                  <li class="productdetail_header_sub_title">스튜디오</li>
-                  <li class="productdetail_header_sub_title">드레스</li>
-                  <li class="productdetail_header_sub_title">메이크업</li>
-                </ul>
-              </div>
-              <div class="common__text-end">
-                <ul>
-                  <li class="productdetail_header_main_title">혼수</li>
-                  <li class="productdetail_header_sub_title">예복</li>
-                  <li class="productdetail_header_sub_title">예물</li>
-                  <li class="productdetail_header_sub_title">가전</li>
-                  <li class="productdetail_header_sub_title">혼수 패키지</li>
-                </ul>
-              </div>
-              <div class="common__text-end">
-                <ul>
-                  <li class="productdetail_header_main_title">본식</li>
-                  <li class="productdetail_header_sub_title">본식스냅</li>
-                  <li class="productdetail_header_sub_title">영상</li>
-                  <li class="productdetail_header_sub_title">부케</li>
-                  <li class="productdetail_header_sub_title">연주</li>
-                  <li class="productdetail_header_sub_title">사회자</li>
-                  <li class="productdetail_header_sub_title">웨딩슈즈</li>
-                  <li class="productdetail_header_sub_title">답례품</li>
-                  <li class="productdetail_header_sub_title">청첩장</li>
-                </ul>
+                  <!-- 소카테고리 -->
+                  <div class="common-header_categories" v-if="header_isVisible">
+                    <div class="common-header_smallcategory-area">
+                      <div class="common-header_category">
+                        <ul>
+                          <li>추천 리스트</li>
+                          <li>웨딩홀 목록</li>
+                        </ul>
+                      </div>
+                      <div class="common-header_category">
+                        <ul>
+                          <li>독립 패키지</li>
+                          <li>스튜디오</li>
+                          <li>드레스</li>
+                          <li>메이크업</li>
+                        </ul>
+                      </div>
+                      <div class="common-header_category">
+                        <ul>
+                          <li>예복</li>
+                          <li>예물</li>
+                          <li>가전</li>
+                          <li>혼수 패키지</li>
+                        </ul>
+                      </div>
+                      <div class="common-header_category">
+                        <ul>
+                          <li>본식스냅</li>
+                          <li>영상</li>
+                          <li>부케</li>
+                          <li>연주</li>
+                          <li>사회자</li>
+                          <li>웨딩슈즈</li>
+                          <li>답례품</li>
+                          <li>청첩장</li>
+                        </ul>
+                      </div>
+                      <div class="common-header_category">
+                        <ul>
+                          <li>스냅</li>
+                          <li>본식</li>
+                          <li>제주도 야외</li>
+                          <li>고급 스튜디오 촬영</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+        </div>
 
-        <!-- 메인 이미지 섹션 -->
-        <section class="productdetail_main-image-section">
-          <img
-            src="https://via.placeholder.com/1980x500"
-            class="img-fluid w-100"
-            alt="Main Image"
-          />
-        </section>
+      
 
         <!-- 콘텐츠 섹션 시작 -->
         <div class="productdetail_main_content">
@@ -1172,39 +1202,40 @@
 
           <!-- 리뷰 섹션 -->
           <div class="productdetail_review-section">
-        <div class="productdetail_review-cards">
-          <button class="productdetail_review-card" v-for="n in 9" :key="n">
-            <div class="productdetail_card-header">
-              <div class="productdetail_review-section_title-div">
-                일이삼사오육칠팔구십일이
-              </div>
-              <div class="productdetail_card-icons">
-                <i class="fas fa-bullhorn"></i>
-                <i class="fas fa-edit"></i>
-                <i class="fas fa-trash"></i>
-              </div>
+            <div class="productdetail_review-cards">
+              <button class="productdetail_review-card" v-for="n in 9" :key="n">
+                <div class="productdetail_card-header">
+                  <div class="productdetail_review-section_title-div">
+                    일이삼사오육칠팔구십일이
+                  </div>
+                  <div class="productdetail_card-icons">
+                    <i class="fas fa-bullhorn"></i>
+                    <i class="fas fa-edit"></i>
+                    <i class="fas fa-trash"></i>
+                  </div>
+                </div>
+                <div class="productdetail_review-section_title-div">
+                  <div class="productdetail_card-rating">★★★★★</div>
+                  <div class="productdetail_review-section_date-div">
+                    2024-06-11 15:54
+                  </div>
+                </div>
+                <img
+                  src="https://via.placeholder.com/300x200"
+                  class="productdetail_card-img-top"
+                  alt="Review Image"
+                />
+                <div class="productdetail_card-body">
+                  <p class="productdetail_card-text">
+                    인생
+                    리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
+                    10줄까지
+                    가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
+                  </p>
+                </div>
+              </button>
             </div>
-            <div class="productdetail_review-section_title-div">
-              <div class="productdetail_card-rating">★★★★★</div>
-              <div class="productdetail_review-section_date-div">
-                2024-06-11 15:54
-              </div>
-            </div>
-            <img
-              src="https://via.placeholder.com/300x200"
-              class="productdetail_card-img-top"
-              alt="Review Image"
-            />
-            <div class="productdetail_card-body">
-              <p class="productdetail_card-text">
-                인생
-                리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
-                10줄까지 가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
-              </p>
-            </div>
-          </button>
-        </div>
-      </div>
+          </div>
 
           <!-- Q&A 섹션 -->
           <div class="productdetail_qna-section">
@@ -1283,6 +1314,11 @@
 export default {
   data() {
     return {
+      // 헤더
+      header_isVisible: false,
+      ismaintain: false,
+
+      // 본문
       selectedSize: "",
       selectedColor: "",
       showColorSelect: false,
@@ -1319,6 +1355,18 @@ export default {
   },
 
   methods: {
+
+    // 헤더
+      showCategories() {
+      this.header_isVisible = true;
+    },
+    hideCategories() {
+      this.header_isVisible = false;
+    },
+
+    // 본문
+
+
     onSizeChange() {
       this.showColorSelect = this.selectedSize !== "";
     },
@@ -1336,27 +1384,31 @@ export default {
       // 드레스
       if (type === "dress") {
         return this.selectedItemType === "dress" ? "visible" : "collapse";
-      } 
+      }
       // 스튜디오
       else if (type === "studio") {
         return this.selectedItemType === "studio" ? "visible" : "collapse";
-      } 
+      }
       // 메이크업
       else if (type === "makeup") {
         return this.selectedItemType === "makeup" ? "visible" : "collapse";
-      } 
+      }
       // 스드메
       else if (type === "sdm_package") {
         return this.selectedItemType === "sdm_package" ? "visible" : "collapse";
-      } 
+      }
       // 예복
       else if (type === "giving_dress") {
-        return this.selectedItemType === "giving_dress" ? "visible" : "collapse";
-      } 
+        return this.selectedItemType === "giving_dress"
+          ? "visible"
+          : "collapse";
+      }
       // 가전
       else if (type === "giving_mechine") {
-        return this.selectedItemType === "giving_mechine" ? "visible" : "collapse";
-      } 
+        return this.selectedItemType === "giving_mechine"
+          ? "visible"
+          : "collapse";
+      }
       // 본식스냅
       else if (type === "snap") {
         return this.selectedItemType === "snap" ? "visible" : "collapse";
@@ -1364,27 +1416,27 @@ export default {
       // 영상
       else if (type === "video") {
         return this.selectedItemType === "video" ? "visible" : "collapse";
-      } 
+      }
       // 부케
       else if (type === "flower") {
         return this.selectedItemType === "flower" ? "visible" : "collapse";
-      } 
+      }
       // 연주
       else if (type === "music") {
         return this.selectedItemType === "music" ? "visible" : "collapse";
-      } 
+      }
       // 사회자
       else if (type === "mc") {
         return this.selectedItemType === "mc" ? "visible" : "collapse";
-      } 
+      }
       // 웨딩슈즈
       else if (type === "shoes") {
         return this.selectedItemType === "shoes" ? "visible" : "collapse";
-      } 
+      }
       // 답례품
       else if (type === "gift") {
         return this.selectedItemType === "gift" ? "visible" : "collapse";
-      } 
+      }
       // 청첩장
       else if (type === "letter") {
         return this.selectedItemType === "letter" ? "visible" : "collapse";
@@ -1439,8 +1491,9 @@ export default {
 }
 
 #productdetail_app {
-  width: 100%;
+  width: 1980px;
   min-width: 1980px;
+  max-width: 1980px;
 }
 
 .productdetail_main-image-section {
@@ -1462,66 +1515,103 @@ export default {
   height: 80px;
   padding: 0px;
 }
-
-.common__overlay {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0%);
-  background-color: green;
-  width: calc(100% - 700px);
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  z-index: 99;
-  font-size: 18px;
+#common__header-login-padding {
+  margin-right: 30px;
+}
+#common__login-div-padding {
+  padding: 0px;
+  width: 1280px;
 }
 
-.common__overlay-content {
+.common-header_navbar {
+  background-color: #f8f8f8;
+}
+
+.common-header_overlay {
+  position: relative;
+}
+
+.common-header_overlay-content {
+}
+
+
+
+/* 카테고리 + 이미지 */
+
+
+/* 큰 카테고리 */
+.common-header_nav {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  list-style: none;
+  padding: 0;
+  height: 80px;
+  width: 1280px;
+  margin: 0 auto;
+}
+
+.common-header_nav > li {
+  cursor: pointer;
+  transition: background-color 0.3s;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+  padding: 20px;
+  width: 140px;
+}
+
+.common-header_nav > li:hover {
+  background-color: #ddd;
+}
+
+.common-header_image-smallcategory {
+  position: relative;
+}
+/* 소카테고리 */
+.common-header_categories {
   width: 100%;
-  transform: translate(0%, 50%);
-  color: white;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  z-index: 10;
+
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-.common__overlay ul {
+.common-header_smallcategory-area {
+  width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.common-header_categories ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.common__text-end ul {
-  text-align: center;
+.common-header_categories li {
+  padding: 10px 0;
+  width: 140px; /* 각 항목의 너비를 140px로 고정 */
 }
 
-#common__header-login-padding {
-  margin-right: 30px;
-}
 
-#common__login-div-padding {
-  padding: 0px;
-  width: calc(100% - 700px);
-}
-
-#productdetail_padding_0 {
-  padding: 0px;
-}
-
-.productdetail_header_main_title {
-  color: #111111;
-  margin: 0px;
-  padding-bottom: 53px;
-}
-
-.productdetail_header_sub_title {
-  padding-bottom: 23px;
-}
 
 /* 콘텐츠 섹션 시작 */
 
 .productdetail_main_content {
   width: calc(100% - 700px);
   margin: 0 auto;
+  margin-top: 600px;
+  position: relative;
 }
 
 /* 상품 상세 */

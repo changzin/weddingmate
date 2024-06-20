@@ -316,16 +316,19 @@ export default {
       let block = this.$route.params.page;
       page = (!page) ? 1 : page;
       block = (!block) ? 'F' : block;
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
+      this.memberList = await this.$api(`/user/list?page=${page}&block=${block}`);
+    //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
       this.makePageSetting();      
     },
     async getBlockMemberList(){
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
+        this.memberList = await this.$api(`/user/list?page=1&block=T`);
+    //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
       this.blockOption = !this.blockOption;
       this.makePageSetting();
     },
     async getUnblockMemberList(){
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
+      this.memberList = await this.$api(`/user/list?page=1&block=F`);
+    //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
       this.blockOption = !this.blockOption;
       this.makePageSetting();
     }, 
@@ -345,7 +348,8 @@ export default {
         targetPage = this.page - 5;
       }
       const block = (!this.blockOption) ? 'F' : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.memberList = await this.$api(`/user/list?page=${targetPage}&block=${block}`);
+    //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
     },
     // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
@@ -358,22 +362,26 @@ export default {
         targetPage = this.page + 5;
       }
       const block = (!this.blockOption) ? 'F' : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.memberList = await this.$api(`/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
     },
     async nextPage(){
       const block = (!this.blockOption) ? 'F' : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
+      this.memberList = await this.$api(`/user/list?page=${this.page+1}&block=${block}`);
+    //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
       this.page +=1;
     },
     async prevPage(){
       const block = (!this.blockOption) ? 'F' : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
+      this.memberList = await this.$api(`/user/list?page=${this.page-1}&block=${block}`);
+        // this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
       this.page -=1;
     },
     async goToPage(targetPage){
       const block = (!this.blockOption) ? 'F' : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+      this.memberList = await this.$api(`/user/list?page=${targetPage}&block=${block}`);
+    //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
+
       this.page = targetPage;
     }
   },
