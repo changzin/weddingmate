@@ -10,6 +10,7 @@
       <router-link to="/qnadetail">QnADetail</router-link> |
       <router-link to="/qnAlist">QnAList</router-link> |
       <router-link to="/reviewlist">ReviewList</router-link> |
+      <router-link to="/orderinfo">Orderinfo</router-link> | 
     </nav>
     <router-view/>
   </div>
