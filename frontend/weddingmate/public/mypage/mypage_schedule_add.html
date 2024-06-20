@@ -6,68 +6,81 @@
     <title>Document</title>
     <style>
         @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
-         body {
+
+        :root{
+            --container-width: 1280px;
+            --container-margin-left: 350px;
+            --container-margin-right: 320px;
+            --color-pink: #F7CAC9;
+            --color-buttongray: #888888;
+        }
+
+        body {
 	        font-family: 'Noto Sans KR', sans-serif;
             font-size: 16px;
             color: #555555;
             transform : rotate(0.03deg);
-        }   
-         div.container0{
-            min-width: 1280px;
         }
-        div.container-title{          
-            margin-left: 350px;
-            margin-right: 320px;
+
+        .container0{
+            min-width: var(--container-width)
+        }
+
+        .container-title{          
+            margin-left: var(--container-margin-left);
+            margin-right: var(--container-margin-right);
             margin-top: 100px;
-            display: grid;
-            width: 1280px; /* 고정된 너비 */    
-            font-size: 24;
-            /* border: 1px solid blue; */
+            width: 1280px;    
+            border: 1px solid green;
         }
-        div.container1{          
-            margin-left: 350px;
-            margin-right: 320px;
+
+        .container-middle{          
+            margin-left: var(--container-margin-left);
+            margin-right: var(--container-margin-right);
             margin-bottom: 20px;
+            width: 1280px;   
             display: grid;
-            align-items: center;
-            width: 1280px; /* 고정된 너비 */    
-            font-size: 24;
-            /* border: 1px solid blue; */
+            align-items: center;  
+            border: 1px solid red;
         }
-        div.container2{
+
+        .container-schedule-title{
             display: grid;
             grid-template-columns: 100px auto;
             align-items: center;
-            width: 600px; /* 고정된 너비 */    
+            width: 600px;    
             margin-top: 30px; 
-            /* border: 1px solid red; */
+            border: 1px solid pink;
         }
-        div.container3{
+
+        .container-schedule-date{
             display: grid;
-            grid-template-columns:  100px auto auto auto auto ;
+            grid-template-columns: 100px auto auto auto auto ;
             align-items: center;
-            width: 600px; /* 고정된 너비 */    
+            width: 600px;    
             margin-top: 30px; 
-            /* border: 1px solid red; */
+            border: 1px solid yellow;
         }
-        div.container4{
+
+        .container-button{
             display: grid;
             justify-content: center; 
             grid-template-columns: auto auto;
             place-items: center;
             grid-gap: 10px;
-            width: 600px; /* 고정된 너비 */  
+            width: 600px; 
             margin-left:25px;  
-            margin-top: 60px; 
-            
-            /* border: 1px solid red; */
+            margin-top: 60px;          
+            border: 1px solid red;
         }
+
         hr.title{
             width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #000000; /* Set a lighter color */
-            border: none; /* Remove border */
+            height: 1px;
+            background-color: #555555;
+            border: none;
         }
+        
         .name_input{
             border-radius: 12px;
             border: none;
@@ -75,6 +88,7 @@
             height: 60px;
             background-color: #F5F5F5;
         }
+
         .date_input{
             border-radius: 12px;
             border: none;
@@ -82,6 +96,7 @@
             height: 60px;
             background-color: #F5F5F5;
         }
+
         .time_input{
             border-radius: 12px;
             border: none;
@@ -90,26 +105,33 @@
             background-color: #F5F5F5;
         
         }
+
         button.schedule-save{
-            background-color: #F7CAC9;
+            background-color: var(--color-pink);
             color:white;
             border: none;
             border-radius: 12px;
             width: 180px;
             height: 60px;
-            
+            font-size: 18px;
+            font-weight: bold;           
         }
+        
         button.schedule-back{
-            background-color: #888888;
+            background-color: var(--color-buttongray);
             color:white;
             border: none;
             border-radius: 12px;
             width: 180px;
             height: 60px;
+            font-size: 18px;
+            font-weight: bold;
         }
+
         input::placeholder {
             padding: 10px; 
-        }   
+        }  
+
         div.title-font{
             display: grid;
             place-items: center;
@@ -117,10 +139,11 @@
             font-size: 24px;
             font-weight: bold;
         }
+
         form {
             display: grid;
             place-items: center;
-            width: 100%; /* 또는 원하는 너비 */
+            width: 100%;
         }
     </style>
      <!-- FontAwesome 라이브러리 추가 -->
@@ -133,26 +156,22 @@
         <div class="title-font">스케쥴 추가</div>
         <hr class="title">
     </div>
-    <div class="container1">
+    <div class="container-middle">
         <form action="" >
-            <div class="container2">
+            <div class="container-schedule-title">
                 <div>일정 제목</div>
                     <input class="name_input" >
                 </div>
-            <div class="container3">
+            <div class="container-schedule-date">
                 <div>일정 일시</div>
                 <input class="date_input" placeholder="날짜 선택">
                 <div>일</div>
                 <input class="time_input" placeholder="-- : --">
                 <div>분</div>
             </div>
-            <div class="container4">
-                <button class="schedule-save">
-                    <b style="font-size: 18px;">일정 저장</b>
-                </button>
-                <button class="schedule-back">
-                    <b style="font-size: 18px;">취소</b>
-                </button>          
+            <div class="container-button">
+                <button class="schedule-save">일정 저장</button>
+                <button class="schedule-back">취소</button>          
             </div>
         </form>
     </div>
