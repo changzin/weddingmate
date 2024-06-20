@@ -30,31 +30,31 @@
         </div>
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item sidbar_box sidbar_box_inactive">
-            <a href="#" class="nav-link sidbar_box_inactive_text">
+            <a @click="$router.push({path: '/admin/itemlist'})" class="nav-link sidbar_box_inactive_text">
                 <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#grid"/></svg>
               상품 리스트
             </a>
           </li>
           <li class="nav-item sidbar_box sidbar_box_inactive">            
-            <a href="#" class="nav-link sidbar_box_inactive_text">
+            <a @click="$router.push({path: '/admin/analysis'})" class="nav-link sidbar_box_inactive_text">
                 <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#table"/></svg>
                 판매 현황
             </a>
           </li>
           <li class="nav-item sidbar_box sidbar_box_inactive">            
-            <a href="#" class="nav-link sidbar_box_inactive_text">
+            <a @click="$router.push({path: '/admin/qna'})" class="nav-link sidbar_box_inactive_text">
                 <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#tools"/></svg>
                 Q & A
             </a>
           </li>
           <li class="nav-item sidbar_box sidbar_box_inactive">
-            <a href="#" class="nav-link sidbar_box_inactive_text">
+            <a @click="$router.push({path: '/admin/review'})" class="nav-link sidbar_box_inactive_text">
                 <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#chat-quote-fill"/></svg>
                 리뷰 관리
             </a>
           </li>
           <li class="nav-item sidbar_box sidbar_box_active">
-            <a href="#" class="nav-link sidbar_box_active_text">
+            <a @click="$router.push({path: '/admin/memberlist'})" class="nav-link sidbar_box_active_text">
                 <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
                 회원 관리
             </a>
@@ -66,19 +66,18 @@
             <div class="sidbar_header d-flex justify-content-center">
                 <div class="sidbar_header_title">회원 관리</div>
             </div>
-
             <div class="d-flex justify-content-center">
               <div class="admin_member_review-section">
                 <div class="admin_member_review-header justify-content-end">
                   <button class="btn admin_member_btn_active" v-if="!blockOption" @click="getBlockMemberList()">차단 회원만 보기</button>
                   <button class="btn admin_member_btn_inactive" v-if="blockOption" @click="getUnblockMemberList()">모든 회원 보기</button>
-                  <select class="form-select admin_member_select">
-                    <option selected>전체</option>
-                    <option>이메일</option>
-                    <option>이름</option>
+                  <select class="form-select admin_member_select" v-model="mode">
+                    <option selected value="all">전체</option>
+                    <option value="email">이메일</option>
+                    <option value="name">이름</option>
                   </select>
-                  <input type="text" class="form-control admin_member_input">                  
-                  <button class="btn admin_member_btn_active">검색</button>
+                  <input type="text" class="form-control admin_member_input" v-model="keyword">                  
+                  <button class="btn admin_member_btn_active" @click="search()">검색</button>
                 </div>
 
                 <div class="admin_member_qna-section">
@@ -105,8 +104,8 @@
                         <td>{{member.user_total_price}}</td>
                         <td>{{member.user_buy_count}} / {{member.user_review_count}} / {{ member.user_qna_count }} </td>
                         <td>
-                            <button class="btn admin_member_block_btn_active" v-if="member.user_block === 'T'">block</button>
-                            <button class="btn admin_member_unblock_btn_active" v-if="member.user_block === 'F'">block</button>
+                            <button class="btn admin_member_block_btn_active" v-if="member.user_block === 'F'" @click="blockUser(member, member.user_id)">block</button>
+                            <button class="btn admin_member_unblock_btn_active" v-if="member.user_block === 'T'" @click="unblockUser(member, member.user_id)">unblock</button>
                         </td>
                       </tr>
                     </tbody>
@@ -144,7 +143,10 @@ export default {
       page: 1,
       isFirstPage: false,
       isLastPage: false,
-      maxPage: 0
+      maxPage: 0,
+      keyword: "",
+      mode: "all",
+      prevKeyword: ""
     }
   },
   mounted(){
@@ -156,27 +158,39 @@ export default {
       let page = this.$route.params.page;
       let block = this.$route.params.page;
       page = (!page) ? 1 : page;
-      block = (!block) ? 'F' : block;
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
       this.makePageSetting();      
     },
-    // 차단 회원 불러오기
+    // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
     async getBlockMemberList(){
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
       this.blockOption = !this.blockOption;
+      this.memberList = this.memberList.filter(user => {
+        if (user.user_block=='T'){
+          return true;
+        }
+      });
       this.makePageSetting();
     },
-    // 전체 회원 불러오기
+    // 전체 회원 불러오기(검색한 상태라면 검색 키워드는 유지하면서 전체 회원을 불러와야 하기 때문에 키워드를 넣었다.)
     async getUnblockMemberList(){
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
       this.blockOption = !this.blockOption;
+      
+      const block = (!this.blockOption) ? null : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?block=${block}&mode=${this.mode}&keyword=${this.prevKeyword}`);
       this.makePageSetting();
     }, 
+    async search(){
+      const block = (!this.blockOption) ? null : 'T';
+      this.memberList = await this.$api(`http://localhost:9090/user/list?block=${block}&mode=${this.mode}&keyword=${this.keyword}`);
+      this.prevKeyword = this.keyword;
+      this.makePageSetting();
+    },
+
+    // 단순 페이지 번호 이동이 아닌, 차단이나 검색 등으로 리스트 길이가 바뀔 때 전체 페이지 등을 같이 바꿔주는 함수
     makePageSetting(){
       this.maxPage = Math.floor(this.memberList.length / 10) + 1;
       this.isFirstPage = (this.page == 1) ? true : false;
       this.isLastPage = (this.page == this.maxPage) ? true : false;
-      console.log(this.maxPage);
     },
     // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
     async prevBlock(){
@@ -187,7 +201,7 @@ export default {
       else{
         targetPage = this.page - 5;
       }
-      const block = (!this.blockOption) ? 'F' : 'T';
+      const block = (!this.blockOption) ? null : 'T';
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
     },
@@ -200,25 +214,46 @@ export default {
       else{
         targetPage = this.page + 5;
       }
-      const block = (!this.blockOption) ? 'F' : 'T';
+      const block = (!this.blockOption) ? null : 'T';
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
     },
     async nextPage(){
-      const block = (!this.blockOption) ? 'F' : 'T';
+      const block = (!this.blockOption) ? null : 'T';
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
       this.page +=1;
     },
     async prevPage(){
-      const block = (!this.blockOption) ? 'F' : 'T';
+      const block = (!this.blockOption) ? null : 'T';
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
       this.page -=1;
     },
     async goToPage(targetPage){
-      const block = (!this.blockOption) ? 'F' : 'T';
+      const block = (!this.blockOption) ? null : 'T';
       this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
+    },
+    // 유저 차단 
+    async blockUser(member, user_id){
+      const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user_id}, "POST");
+      if (result.status == 200){
+        member.user_block = "T";
+      }
+      else{
+        console.log("error");
+      }
+    },
+    // 유저 차단 해제
+    async unblockUser(member, user_id){
+      const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user_id}, "POST");
+      if (result.status == 200){
+        member.user_block = "F";
+      }
+      else{
+        console.log("error");
+      }
     }
+    
   }
 }
 </script>
@@ -445,13 +480,13 @@ export default {
     font-size: 12px;
 }
 .admin_member_block_btn_active{
-    width:60px;
+    width:65px;
     font-size: 12px;
     background-color: #007BFF;
     color: #FFFFFF
 }
 .admin_member_unblock_btn_active{
-    width:60px;
+    width:65px;
     font-size: 12px;
     background-color: #FFFFFF;
     color: #111111;
