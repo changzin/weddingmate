@@ -6,7 +6,7 @@ import QnAModify from '../views/QnA/QnAModify.vue'
 import QnADetail from '../views/QnA/QnADetail.vue'
 import QnAList from '../views/QnA/QnAList.vue'
 import ReviewList from '../views/review/ReviewList.vue'
-
+import Orderinfo from '../views/order_info/Orderinfo.vue'
 import UserLogin from '../views/nouser/UserLogin.vue'
 import MemberList from '../views/admin/MemberList'
 // import AdminAnswer from '../views/admin/AdminAnswer.vue';
@@ -92,6 +92,11 @@ const routes = [
     path: '/admin/analysis',
     name: "adminanalysis",
     component: AdminAnalysis
+  },
+  {
+    path:'/orderinfo',
+    name:"Orderinfo",
+    component: Orderinfo
   }
 ]
 
