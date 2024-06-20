@@ -230,17 +230,8 @@ export default {
       this.page = targetPage;
     },
     // 유저 차단 해제
-    async deleteReview(review_id){
-      const result = await this.$api(`http://localhost:9090/user/unreported`, {user_id: user_id}, "POST");
-      if (result.status == 200){
-        const reported = (!this.reportedOption) ? null : 'T';
-        this.reviewList = await this.$api(`/review/adminlist?page=${this.page}&reported=${reported}&mode=${this.mode}&keyword=${this.prevKeyword}`);
-        this.makePageSetting();
-      }
-      else{
-        console.log("error");
-      }
-    }
+    // async deleteReview(review_id){
+    // }
     
   }
 }
