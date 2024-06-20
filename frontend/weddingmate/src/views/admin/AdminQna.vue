@@ -132,98 +132,113 @@ export default {
       memberList: [],
       blockOption: false,
       page: 1,
-      isFirstPage: false,
-      isLastPage: false,
       maxPage: 0,
       keyword: "",
+      prevKeyword: "",
       mode: "all",
-      prevKeyword: ""
+      prevMode: "all",
+      block: 'F'
     }
   },
-  mounted(){
-    this.getMemberList();
+  mounted(){      
+      this.getMemberList();
   },
   methods: {
     // 멤버 정보 받아오기
     async getMemberList(){
-      let page = this.$route.params.page;
-      let block = this.$route.params.page;
-      page = (!page) ? 1 : page;
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
-      this.makePageSetting();      
+      // URL에 파라미터를 추가한다.
+      await this.$router.push({path: '/admin/memberlist', query:{page: this.page, block: this.block, mode: this.prevMode, keyword: this.prevKeyword} });
+
+      // 멤버 정보를 가져오기 전에 파라미터 갈무리
+      this.page = Number(this.$route.query.page);
+      this.block = this.$route.query.block;
+      this.prevMode = this.$route.query.mode;
+      this.prevKeyword = this.$route.query.keyword
+      this.page = (!this.page) ? 1 : this.page;
+      this.block = (this.block == 'T') ? this.block : 'F';
+      this.mode = (!this.mode) ? 'all' : this.mode;
+      this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
+
+      console.log(this.page, this.block, this.mode, this.prevKeyword);
+      // memberList 정보 다시 가저오고, maxPage를 맞추어준다.
+      const result = await this.$api(`http://localhost:9090/user/list?page=${this.page}&block=${this.block}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
+      this.memberList = result.memberList;
+      this.maxPage = result.maxPage;
     },
     // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
     async getBlockMemberList(){
-      this.blockOption = !this.blockOption;
-      this.memberList = this.memberList.filter(user => {
-        if (user.user_block=='T'){
-          return true;
-        }
-      });
-      this.makePageSetting();
+      this.blockOption = true;
+      this.block = 'T';
+      this.page = 1;
+      this.getMemberList();
     },
     // 전체 회원 불러오기(검색한 상태라면 검색 키워드는 유지하면서 전체 회원을 불러와야 하기 때문에 키워드를 넣었다.)
     async getUnblockMemberList(){
-      this.blockOption = !this.blockOption;
-      
-      const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?block=${block}&mode=${this.mode}&keyword=${this.prevKeyword}`);
-      this.makePageSetting();
+      this.blockOption = false;
+      this.block = 'F';
+      this.page = 1;
+      // this.$router.push(`/admin/memberlist?block=${this.block}&mode=${this.mode}&keyword=${this.prevKeyword}`);
+      this.getMemberList();
     }, 
     async search(){
-      const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?block=${block}&mode=${this.mode}&keyword=${this.keyword}`);
       this.prevKeyword = this.keyword;
-      this.makePageSetting();
-    },
-
-    // 단순 페이지 번호 이동이 아닌, 차단이나 검색 등으로 리스트 길이가 바뀔 때 전체 페이지 등을 같이 바꿔주는 함수
-    makePageSetting(){
-      this.maxPage = Math.floor(this.memberList.length / 10) + 1;
-      this.isFirstPage = (this.page == 1) ? true : false;
-      this.isLastPage = (this.page == this.maxPage) ? true : false;
+      this.prevMode = this.mode;
+      this.page = 1;
+      this.getMemberList();
     },
     // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
     async prevBlock(){
-      let targetPage = this.page;
       if (this.page <= 5){
-        targetPage = 1;
+        this.page = 1;
       }
       else{
-        targetPage = this.page - 5;
+        this.page = this.page - 5;
       }
-      const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
-      this.page = targetPage;
+      this.getMemberList();
     },
     // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
     async nextBlock(){
-      let targetPage = this.page;
       if (this.page > this.maxPage-5){
-        targetPage = this.maxPage;
+        this.page = this.maxPage;
       }
       else{
-        targetPage = this.page + 5;
+        this.page = this.page + 5;
       }
-      const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
-      this.page = targetPage;
+      this.getMemberList();
     },
     async nextPage(){
-      const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
-      this.page +=1;
+      this.page+=1;
+      this.getMemberList();
     },
     async prevPage(){
-      const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
-      this.page -=1;
+      this.page-=1;
+      this.getMemberList();
     },
     async goToPage(targetPage){
-      const block = (!this.blockOption) ? null : 'T';
-      this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
       this.page = targetPage;
+      this.getMemberList();
     },
+    // 유저 차단 
+    async blockUser(member, user_id){
+      const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user_id}, "POST");
+      if (result.status == 200){
+        member.user_block = "T";
+      }
+      else{
+        console.log("error");
+      }
+    },
+    // 유저 차단 해제
+    async unblockUser(member, user_id){
+      const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user_id}, "POST");
+      if (result.status == 200){
+        member.user_block = "F";
+      }
+      else{
+        console.log("error");
+      }
+    }
+    
   }
 }
 </script>
