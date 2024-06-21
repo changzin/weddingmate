@@ -15,6 +15,7 @@ import MemberList from '../views/admin/MemberList'
 import AdminQna from '../views/admin/AdminQna.vue'
 import AdminReview from '../views/admin/AdminReview.vue'
 import AdminAnalysis from '../views/admin/AdminAnalysis.vue'
+import TempVue from '../views/tempVue.vue'
 
 const routes = [
   {
@@ -92,6 +93,11 @@ const routes = [
     path: '/admin/analysis',
     name: "adminanalysis",
     component: AdminAnalysis
+  },
+  {
+    path: '/tempvue',
+    name: "tempvue",
+    component: TempVue
   },
   {
     path:'/orderinfo',

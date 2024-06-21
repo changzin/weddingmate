@@ -111,8 +111,6 @@
           </nav>
         </div>
 
-      
-
         <!-- 콘텐츠 섹션 시작 -->
         <div class="productdetail_main_content">
           테스트용 itemType
@@ -264,11 +262,44 @@
                     ]"
                   >
                     날짜 선택
-                    <img
-                      src="https://via.placeholder.com/640x400"
-                      class="img-fluid productdetail_cal_image-div"
-                      alt="Detailed Description Image"
-                    />
+                    <div class="common-event_calendar">
+                      <div>
+                        <v-date-picker
+                          v-model="dateRange"
+                          is-range
+                          :popover="{ visibility: 'focus' }"
+                          :input-props="{
+                            start: { placeholder: 'Start' },
+                            end: { placeholder: 'End' },
+                          }"
+                        />
+                      </div>
+                      <div class="common-event_calendar_div">
+                        <label
+                          >Start
+                          {{
+                            dateRange.start
+                              ? formatDate(dateRange.start)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                        <label
+                          >End
+                          {{
+                            dateRange.end
+                              ? formatDate(dateRange.end)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                      </div>
+                      <button
+                        class="common-caldate_save-button"
+                        type="button"
+                        @click="saveEvent"
+                      >
+                        저장
+                      </button>
+                    </div>
                     <div class="productdetail_cal-div_date-div">
                       <div>선택된 날짜</div>
                       <div class="productdetail_cal-div_date">
@@ -335,11 +366,44 @@
                   <!-- 캘린더 -->
                   <div :class="['productdetail_cal']">
                     날짜 선택
-                    <img
-                      src="https://via.placeholder.com/640x400"
-                      class="img-fluid productdetail_cal_image-div"
-                      alt="Detailed Description Image"
-                    />
+                    <div class="common-event_calendar">
+                      <div>
+                        <v-date-picker
+                          v-model="dateRange"
+                          is-range
+                          :popover="{ visibility: 'focus' }"
+                          :input-props="{
+                            start: { placeholder: 'Start' },
+                            end: { placeholder: 'End' },
+                          }"
+                        />
+                      </div>
+                      <div class="common-event_calendar_div">
+                        <label
+                          >Start
+                          {{
+                            dateRange.start
+                              ? formatDate(dateRange.start)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                        <label
+                          >End
+                          {{
+                            dateRange.end
+                              ? formatDate(dateRange.end)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                      </div>
+                      <button
+                        class="common-caldate_save-button"
+                        type="button"
+                        @click="saveEvent"
+                      >
+                        저장
+                      </button>
+                    </div>
                     <div class="productdetail_cal-div_date-div">
                       <div>선택된 날짜</div>
                       <div class="productdetail_cal-div_date">
@@ -473,12 +537,44 @@
                     :class="['productdetail_cal']"
                     :style="{ marginTop: '10px' }"
                   >
-                    <img
-                      src="https://via.placeholder.com/640x400"
-                      class="img-fluid productdetail_cal_image-div"
-                      alt="Detailed Description Image"
-                      :style="{ marginTop: '0px' }"
-                    />
+                    <div class="common-event_calendar">
+                      <div>
+                        <v-date-picker
+                          v-model="studioDateRange"
+                          is-range
+                          :popover="{ visibility: 'focus' }"
+                          :input-props="{
+                            start: { placeholder: 'Start' },
+                            end: { placeholder: 'End' },
+                          }"
+                        />
+                      </div>
+                      <div class="common-event_calendar_div">
+                        <label
+                          >Start
+                          {{
+                            studioDateRange.start
+                              ? formatDate(studioDateRange.start)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                        <label
+                          >End
+                          {{
+                            studioDateRange.end
+                              ? formatDate(studioDateRange.end)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                      </div>
+                      <button
+                        class="common-caldate_save-button"
+                        type="button"
+                        @click="saveEvent"
+                      >
+                        저장
+                      </button>
+                    </div>
                     <div class="productdetail_cal-div_date-div">
                       <div>선택된 날짜</div>
                       <div class="productdetail_cal-div_date">
@@ -489,70 +585,128 @@
                 </div>
                 <div class="productdetail_divider"></div>
                 <!-- 드레스 -->
-                <div class="productdetail_main_content_sdmpacakge">
-                  <div class="productdetail_main_content_sdmpacakge-name">
-                    드레스 제조사 이름
-                  </div>
-                  <div class="productdetail_main_content_sdmpacakge-title">
-                    드레스 제목
-                  </div>
-                  <div
-                    class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate"
-                  >
-                    드레스 날짜 선택
-                  </div>
-                  <div
-                    :class="['productdetail_cal']"
-                    :style="{ marginTop: '10px' }"
-                  >
-                    <img
-                      src="https://via.placeholder.com/640x400"
-                      class="img-fluid productdetail_cal_image-div"
-                      alt="Detailed Description Image"
-                      :style="{ marginTop: '0px' }"
-                    />
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="productdetail_divider"></div>
+             
 
-                <!-- 메이크업 -->
-                <div class="productdetail_main_content_sdmpacakge">
-                  <div class="productdetail_main_content_sdmpacakge-name">
-                    메이크업 제조사 이름
-                  </div>
-                  <div class="productdetail_main_content_sdmpacakge-title">
-                    메이크업 제목
-                  </div>
-                  <div
-                    class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate"
-                  >
-                    메이크업 날짜 선택
-                  </div>
-                  <div
-                    :class="['productdetail_cal']"
-                    :style="{ marginTop: '10px' }"
-                  >
-                    <img
-                      src="https://via.placeholder.com/640x400"
-                      class="img-fluid productdetail_cal_image-div"
-                      alt="Detailed Description Image"
-                      :style="{ marginTop: '0px' }"
-                    />
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="productdetail_divider"></div>
+      <!-- 드레스 -->
+      <div class="productdetail_main_content_sdmpacakge">
+        <div class="productdetail_main_content_sdmpacakge-name">
+          드레스 제조사 이름
+        </div>
+        <div class="productdetail_main_content_sdmpacakge-title">
+          드레스 제목
+        </div>
+        <div class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate">
+          드레스 날짜 선택
+        </div>
+        <div :class="['productdetail_cal']" :style="{ marginTop: '10px' }">
+          <div class="common-event_calendar">
+            <div>
+              <v-date-picker
+                v-model="dressDateRange"
+                is-range
+                :popover="{ visibility: 'focus' }"
+                :input-props="{
+                  start: { placeholder: 'Start' },
+                  end: { placeholder: 'End' },
+                }"
+              />
+            </div>
+            <div class="common-event_calendar_div">
+              <label>
+                Start
+                {{
+                  dressDateRange.start
+                    ? formatDate(dressDateRange.start)
+                    : "선택되지 않음"
+                }}
+              </label>
+              <label>
+                End
+                {{
+                  dressDateRange.end
+                    ? formatDate(dressDateRange.end)
+                    : "선택되지 않음"
+                }}
+              </label>
+            </div>
+            <button
+              class="common-caldate_save-button"
+              type="button"
+              @click="saveDressEvent"
+            >
+              저장
+            </button>
+          </div>
+          <div class="productdetail_cal-div_date-div">
+            <div>선택된 날짜</div>
+            <div class="productdetail_cal-div_date">
+              2024년 12년 30일
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="productdetail_divider"></div>
+
+      <!-- 메이크업 -->
+      <div class="productdetail_main_content_sdmpacakge">
+        <div class="productdetail_main_content_sdmpacakge-name">
+          메이크업 제조사 이름
+        </div>
+        <div class="productdetail_main_content_sdmpacakge-title">
+          메이크업 제목
+        </div>
+        <div class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate">
+          메이크업 날짜 선택
+        </div>
+        <div :class="['productdetail_cal']" :style="{ marginTop: '10px' }">
+          <div class="common-event_calendar">
+            <div>
+              <v-date-picker
+                v-model="makeupDateRange"
+                is-range
+                :popover="{ visibility: 'focus' }"
+                :input-props="{
+                  start: { placeholder: 'Start' },
+                  end: { placeholder: 'End' },
+                }"
+              />
+            </div>
+            <div class="common-event_calendar_div">
+              <label>
+                Start
+                {{
+                  makeupDateRange.start
+                    ? formatDate(makeupDateRange.start)
+                    : "선택되지 않음"
+                }}
+              </label>
+              <label>
+                End
+                {{
+                  makeupDateRange.end
+                    ? formatDate(makeupDateRange.end)
+                    : "선택되지 않음"
+                }}
+              </label>
+            </div>
+            <button
+              class="common-caldate_save-button"
+              type="button"
+              @click="saveMakeupEvent"
+            >
+              저장
+            </button>
+          </div>
+          <div class="productdetail_cal-div_date-div">
+            <div>선택된 날짜</div>
+            <div class="productdetail_cal-div_date">
+              2024년 12년 30일
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="productdetail_divider"></div>
+
 
                 <!-- 혜택 안내 -->
                 <div class="productdetail_package-container">
@@ -712,11 +866,44 @@
                     ]"
                   >
                     날짜 선택
-                    <img
-                      src="https://via.placeholder.com/640x400"
-                      class="img-fluid productdetail_cal_image-div"
-                      alt="Detailed Description Image"
-                    />
+                    <div class="common-event_calendar">
+                      <div>
+                        <v-date-picker
+                          v-model="dateRange"
+                          is-range
+                          :popover="{ visibility: 'focus' }"
+                          :input-props="{
+                            start: { placeholder: 'Start' },
+                            end: { placeholder: 'End' },
+                          }"
+                        />
+                      </div>
+                      <div class="common-event_calendar_div">
+                        <label
+                          >Start
+                          {{
+                            dateRange.start
+                              ? formatDate(dateRange.start)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                        <label
+                          >End
+                          {{
+                            dateRange.end
+                              ? formatDate(dateRange.end)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                      </div>
+                      <button
+                        class="common-caldate_save-button"
+                        type="button"
+                        @click="saveEvent"
+                      >
+                        저장
+                      </button>
+                    </div>
                     <div class="productdetail_cal-div_date-div">
                       <div>선택된 날짜</div>
                       <div class="productdetail_cal-div_date">
@@ -865,7 +1052,6 @@
                       </option>
                     </select>
                   </div>
-                  <!-- 캘린더 -->
 
                   <div class="productdetail_total-price-div">
                     <div class="productdetail_total-price-div_state-div">
@@ -1056,27 +1242,6 @@
                     </div>
                   </div>
 
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
-                  <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
-                  >
-                    날짜 선택
-                    <img
-                      src="https://via.placeholder.com/640x400"
-                      class="img-fluid productdetail_cal_image-div"
-                      alt="Detailed Description Image"
-                    />
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
-                      </div>
-                    </div>
-                  </div>
-
                   <div class="productdetail_button-container">
                     <button class="productdetail_icon-button">
                       <i class="far fa-heart"></i>
@@ -1131,8 +1296,6 @@
                       </option>
                     </select>
                   </div>
-                  <!-- 캘린더 -->
-
                   <div class="productdetail_total-price-div">
                     <div class="productdetail_total-price-div_state-div">
                       총 금액 :
@@ -1331,6 +1494,26 @@ export default {
 
       selectedItemType: "",
       selectedItemType_dress_custom: "collapse",
+
+      // 캘린더
+      dateRange: {
+        start: null,
+        end: null,
+      },
+
+      // 스드메 캘린더
+      studioDateRange: {
+        start: null,
+        end: null,
+      },
+      dressDateRange: {
+        start: null,
+        end: null,
+      },
+      makeupDateRange: {
+        start: null,
+        end: null,
+      },
     };
   },
 
@@ -1355,9 +1538,8 @@ export default {
   },
 
   methods: {
-
     // 헤더
-      showCategories() {
+    showCategories() {
       this.header_isVisible = true;
     },
     hideCategories() {
@@ -1365,7 +1547,6 @@ export default {
     },
 
     // 본문
-
 
     onSizeChange() {
       this.showColorSelect = this.selectedSize !== "";
@@ -1480,6 +1661,24 @@ export default {
         this.selectedOptions[i] = "";
       }
     },
+
+    // 캘린더
+    showDateRangePicker(day) {
+      this.dateRange.start = day.date;
+      this.dateRange.end = day.date;
+    },
+    saveEvent() {
+      console.log(
+        `Event from ${this.dateRange.start} to ${this.dateRange.end}`
+      );
+    },
+    formatDate(date) {
+      const d = new Date(date);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-${String(d.getDate()).padStart(2, "0")}`;
+    },
   },
 };
 </script>
@@ -1534,10 +1733,7 @@ export default {
 .common-header_overlay-content {
 }
 
-
-
 /* 카테고리 + 이미지 */
-
 
 /* 큰 카테고리 */
 .common-header_nav {
@@ -1602,8 +1798,6 @@ export default {
   padding: 10px 0;
   width: 140px; /* 각 항목의 너비를 140px로 고정 */
 }
-
-
 
 /* 콘텐츠 섹션 시작 */
 
@@ -2114,5 +2308,37 @@ export default {
 .common__footer-details {
   text-align: center;
   font-size: 14px;
+}
+
+/* 캘린더 */
+.common-event_calendar {
+  display: flex;
+  flex-direction: column;
+
+  margin-top: 10px;
+}
+
+.common-event_calendar v-date-picker {
+  margin-bottom: 10px;
+}
+.common-event_calendar button {
+  margin-top: 10px;
+}
+
+.common-event_calendar_div {
+  display: flex;
+  margin-top: 10px;
+  gap: 100px;
+}
+
+.common-caldate_save-button {
+  width: 80px;
+  font-size: 16px;
+  color: #888888;
+  background-color: #f5f5f5;
+  border: 1px solid #969696;
+  border-radius: 10px;
+  /* padding: 25px 90px; */
+  cursor: pointer;
 }
 </style>
