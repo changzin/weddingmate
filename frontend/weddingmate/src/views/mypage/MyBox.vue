@@ -492,7 +492,14 @@
     font-size: 14px;
   }
 
-  /* 본문 */
+/* 본문 */
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+div, table{
+  font-family: 'Noto Sans KR', sans-serif;
+    /* transform : rotate(0.03deg); */
+}
+
+
 /* font */
     
 div.title-font{
@@ -530,7 +537,7 @@ margin-top: 20px;
 margin-left: 70px;
 box-sizing: border-box;
 color:#888888;
-border: 1px solid blue;
+/* border: 1px solid blue; */
 }
 .container-top-button{
 display: grid;
@@ -544,7 +551,7 @@ justify-items: center;
 font-size: 24px;
 font-weight: bold;
 color:#555555;
-border: 1px solid red;
+/* border: 1px solid red; */
 }
 
 .container-middle{
@@ -552,13 +559,13 @@ margin-left: var(--container-margin-left);
 margin-right: var(--container-margin-right);
 margin-top: 50px;
 width: var(--container-width); 
-border: 1px solid red;
+/* border: 1px solid red; */
 }
 .container-middle-category_title{          
 width: var(--container-width);
 margin-top: 50px;
 font-size: 24;
-border: 1px solid green;
+/* border: 1px solid green; */
 }
 
 .container-table_col1{
@@ -569,19 +576,19 @@ align-items: start;
 width: 748px; /* 고정된 너비 */    
 padding: 10px;
 box-sizing: border-box;
-border: 1px solid yellow;
+/* border: 1px solid yellow; */
 }
 .content-table_col1{
 display: flex;
 flex-direction: column;
 text-align: left;
-border: 1px solid red;            
+/* border: 1px solid red;             */
 }
 .content-table_col1-name{
 display: flex;
 flex-direction: column;
 text-align: left;
-border: 1px solid green;            
+/* border: 1px solid green;             */
 }
 .content-table_col1-option{
 display: flex;
@@ -617,7 +624,7 @@ margin-bottom: 20px;
 width: var(--container-width);
 display: grid;
 grid-template-columns: 105px 100px;
-border: 1px solid red;
+/* border: 1px solid red; */
 }
 .container_boxbutton3{
 display: grid;
@@ -627,7 +634,7 @@ margin-right: var(--container-margin-right);
 margin-top: 20px;
 margin-bottom: 20px;
 width: var(--container-width);
-border: 1px solid red;;
+/* border: 1px solid red;; */
 }
 
 /* hr */ 
