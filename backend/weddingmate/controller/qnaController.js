@@ -17,6 +17,7 @@ exports.adminQnaList = async (req, res)=>{
         if(mode === 'all'){
             if (hasAnswer=="T"){
                 query = "SELECT FROM qna_id, qna_type, qna_has_answer, qna_title, (  ORDER BY .review_date LIMIT 9 OFFSET ? ";
+                query = "SELECT FROM qna_id, qna_type, qna_has_answer, qna_title,   ORDER BY qna_date LIMIT 9 OFFSET ? ";
                 result = await db(query, [hasAnswer, keyword, keyword, page*9]);
                 query = "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id AND review.review_hasAnswer=? AND (review.review_content LIKE ? OR user.user_nickname LIKE ?)"
                 count = await db(query, [hasAnswer, keyword, keyword]);

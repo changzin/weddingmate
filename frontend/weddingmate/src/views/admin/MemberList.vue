@@ -99,7 +99,7 @@
                         <td>
                             {{member.user_email}}
                         </td>
-                        <td>{{member.user_create_date}}</td>
+                        <td>{{this.$dateFormat(member.user_create_date)}}</td>
                         <td>{{member.user_type}}</td>
                         <td>{{member.user_total_price}}</td>
                         <td>{{member.user_buy_count}} / {{member.user_review_count}} / {{ member.user_qna_count }} </td>

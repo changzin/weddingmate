@@ -55,7 +55,7 @@
             </a>
           </li>
           <li class="nav-item sidbar_box sidbar_box_inactive">
-            <a @click="$router.push({path: '/admin/memberlist'})" class="nav-link sidbar_box_inactive_text">
+            <a @click="$router.push({path: '/admin/memberList'})" class="nav-link sidbar_box_inactive_text">
                 <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#people-circle"/></svg>
                 회원 관리
             </a>
@@ -129,7 +129,7 @@
 export default {
   data() {
     return {
-      memberList: [],
+      qnaList: [],
       blockOption: false,
       page: 1,
       maxPage: 0,
@@ -140,14 +140,14 @@ export default {
       block: 'F'
     }
   },
-  mounted(){      
-      this.getMemberList();
+  mounted(){    
+    
   },
   methods: {
     // 멤버 정보 받아오기
-    async getMemberList(){
+    async getQnaList(){
       // URL에 파라미터를 추가한다.
-      await this.$router.push({path: '/admin/memberlist', query:{page: this.page, block: this.block, mode: this.prevMode, keyword: this.prevKeyword} });
+      // await this.$router.push({path: '/admin/qnalist', query:{page: this.page, block: this.block, mode: this.prevMode, keyword: this.prevKeyword} });
 
       // 멤버 정보를 가져오기 전에 파라미터 갈무리
       this.page = Number(this.$route.query.page);
@@ -217,28 +217,7 @@ export default {
     async goToPage(targetPage){
       this.page = targetPage;
       this.getMemberList();
-    },
-    // 유저 차단 
-    async blockUser(member, user_id){
-      const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user_id}, "POST");
-      if (result.status == 200){
-        member.user_block = "T";
-      }
-      else{
-        console.log("error");
-      }
-    },
-    // 유저 차단 해제
-    async unblockUser(member, user_id){
-      const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user_id}, "POST");
-      if (result.status == 200){
-        member.user_block = "F";
-      }
-      else{
-        console.log("error");
-      }
-    }
-    
+    }, 
   }
 }
 </script>

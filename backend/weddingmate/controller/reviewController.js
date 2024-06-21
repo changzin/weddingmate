@@ -79,15 +79,11 @@ exports.adminReviewList = async(req, res)=>{
             count = await db(query, []);
             count = count[0]['count'];
         }
-
-
-        res.status(200);
-
         responseBody = {
             maxPage: Math.ceil(count / 9),
             reviewList: result
         }
-        res.json(responseBody);
+        res.status(200).json(responseBody);
     }
     catch(err){
         console.error(err);
@@ -95,7 +91,7 @@ exports.adminReviewList = async(req, res)=>{
             status: 401,
             message: "잘못된 페이지 요청입니다."
         };
-        res.json(responseBody);
+        res.status(401).json(responseBody);
     }
 }
 
@@ -117,11 +113,11 @@ exports.adminReviewDelete = async (req, res)=>{
                 status: 200,
                 message: "리뷰 삭제 완료."
             };
-            res.json(responseBody);
+            res.status(200).json(responseBody);
         }    
         // 하나 이상 바뀌거나 0개 바뀌었다면 에러를 던짐 -> 아래의 catch문이 400 에러로 응답한다.    
         else{
-            throw Error;
+            throw Error("리뷰를 찾을 수 없습니다.");
         }
         
     }
@@ -129,7 +125,7 @@ exports.adminReviewDelete = async (req, res)=>{
         console.error(err);
         responseBody = {
             status: 400,
-            message: "잘못된 요청입니다."
+            message: err.message
         };        
         res.json(responseBody);
     }
