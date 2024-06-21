@@ -326,140 +326,146 @@ export default {
 }
 
 /* 본문 */
-        /* font */
-        .font-schedule-date{          
-            color: var(--color-pink);
-            font-weight: bold;
-        }
-        
-        .title-font{
-            display: grid;
-            place-items: center;
-            color: #333333;
-            font-size: 24px;
-            font-weight: bold;          
-        }
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+  div{
+    font-family: 'Noto Sans KR', sans-serif;
+      font-size: 16px;
+      color:#555555;
+}
+/* font */
+.font-schedule-date{          
+    color: var(--color-pink);
+    font-weight: bold;
+}
 
-        /* div */
+.title-font{
+    display: grid;
+    place-items: center;
+    color: #333333;
+    font-size: 24px;
+    font-weight: bold;          
+}
 
-        .container0{
-            min-width: var(--container-width);
-        }
+/* div */
 
-        .container-top{          
-            margin-left: var(--container-margin-left);
-            margin-right: var(--container-margin-right);
-            width: var(--container-width);
-            margin-top: 100px;
-            display: grid;
-            font-size: 24;
-            /* border: 1px solid blue; */
-        }
+.container0{
+    min-width: var(--container-width);
+}
 
-        .container-middle{          
-            margin-left: var(--container-margin-left);
-            margin-right: var(--container-margin-right);
-            margin-bottom: 20px;
-            margin-top:10px;
-            width: var(--container-width);
-            display: grid;
-            grid-template-columns: 1fr 1fr ;
-            font-size: 24;
-            /* border: 1px solid blue; */
-        }
-        
-        .container-middle-calander{          
-            display: grid;  
-            box-sizing: border-box;
-            /* border: 1px solid blue; */
-        }
-        .container-middle-schedule{    
-            display: flex;  
-            flex-direction: column;    
-            margin-left: 20px;
-            box-sizing: border-box;
-            /* border: 1px solid red; */
-        }
-        .content-schedule-title{          
-            font-size: 24;
-            margin-bottom: 5px;
-            font-weight: bold;
-            /* border: 1px solid blue; */
-        }
-        .content-schedule-text{          
-            display: grid;  
-            align-items: center;
-            grid-template-columns: 120px 475px 0px ;
-            margin-bottom: 5px;
-            /* border: 1px solid blue; */
-        }
-        .calanderbox{
-            display: grid;
-            width: 100%;  
-            height: 500px;
-            border: 1px solid #888888;
-            background-color: none;   
-        }
-        /* hr */
+.container-top{          
+    margin-left: var(--container-margin-left);
+    margin-right: var(--container-margin-right);
+    width: var(--container-width);
+    margin-top: 100px;
+    display: grid;
+    font-size: 24;
+    /* border: 1px solid blue; */
+}
 
-        hr.title{
-            width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #333333; /* Set a lighter color */
-            border: none; /* Remove border */
-        }
+.container-middle{          
+    margin-left: var(--container-margin-left);
+    margin-right: var(--container-margin-right);
+    margin-bottom: 20px;
+    margin-top:10px;
+    width: var(--container-width);
+    display: grid;
+    grid-template-columns: 1fr 1fr ;
+    font-size: 24;
+    /* border: 1px solid blue; */
+}
 
-        /* button */
-        
-        button.schedule-add{
-            justify-self: end;
-            background-color: var(--color-pink);
-            color:white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 12px;
-            width: 100px;
-            height: 40px;
-            margin-top: 30px;
-            margin-right: 20px;
-        }
+.container-middle-calander{          
+    display: grid;  
+    box-sizing: border-box;
+    /* border: 1px solid blue; */
+}
+.container-middle-schedule{    
+    display: flex;  
+    flex-direction: column;    
+    margin-left: 20px;
+    box-sizing: border-box;
+    /* border: 1px solid red; */
+}
+.content-schedule-title{          
+    font-size: 24;
+    margin-bottom: 5px;
+    font-weight: bold;
+    /* border: 1px solid blue; */
+}
+.content-schedule-text{          
+    display: grid;  
+    align-items: center;
+    grid-template-columns: 120px 475px 0px ;
+    margin-bottom: 5px;
+    /* border: 1px solid blue; */
+}
+.calanderbox{
+    display: grid;
+    width: 100%;  
+    height: 500px;
+    border: 1px solid #888888;
+    background-color: none;   
+}
+/* hr */
 
-        /* img */
-        img.delete-x{
-            weight: 20px;
-            height: 20px;
-            /* border: 1px solid #333333; */
+hr.title{
+    width: 100%;
+    height: 1px; /* Set the height to 1px */
+    background-color: #333333; /* Set a lighter color */
+    border: none; /* Remove border */
+}
 
-        }
+/* button */
 
-        /* bottom */
+button.schedule-add{
+    justify-self: end;
+    background-color: var(--color-pink);
+    color:white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    width: 100px;
+    height: 40px;
+    margin-top: 30px;
+    margin-right: 20px;
+}
 
-        button.mypage-back{
-            background-color: #888888;
-            color:white;
-            font-weight: bold;
-            border: none;
-            width: 120px;
-            height: 40px;
-        }
+/* img */
+img.delete-x{
+    weight: 20px;
+    height: 20px;
+    /* border: 1px solid #333333; */
+
+}
+
+/* bottom */
+
+button.mypage-back{
+    background-color: #888888;
+    color:white;
+    font-weight: bold;
+    border: none;
+    width: 120px;
+    height: 40px;
+}
 
 
-        div.mypage-bottom{
-            display: grid;
-            place-items: center;
-            margin-left: 350px;
-            margin-right: 320px;
-            margin-top: 100px;
-            width: 1280px; /* 고정된 너비 */  
-            /* border: 1px solid yellow; */
-        }
-        div.nav-page{
-            display: grid;
-            place-items: center;
-            grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
-            margin-bottom: 30px;
-            color: #888888;
-            /* border: 1px solid pink; */
-        }
+div.mypage-bottom{
+    display: grid;
+    place-items: center;
+    margin-left: 350px;
+    margin-right: 320px;
+    margin-top: 100px;
+    width: 1280px; /* 고정된 너비 */  
+    /* border: 1px solid yellow; */
+}
+div.nav-page{
+    display: grid;
+    place-items: center;
+    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+    margin-bottom: 30px;
+    color: #888888;
+    /* border: 1px solid pink; */
+}
 </style>
