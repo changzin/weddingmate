@@ -109,32 +109,50 @@
         </nav>
       </div>
   
-      <!-- 본문 -->
-      <div class="container0">
-        <div class="container-title">
-            <div class="title-font">스케줄 추가</div>
+      <!-- 본문  -->
+
+    <div class="container0">
+        <div class="container-top">
+            <div class="title-font">결제 내역</div>
             <hr class="title">
         </div>
         <div class="container-middle">
-            <form action="" >
-                <div class="container-schedule-title">
-                    <div>일정 제목</div>
-                        <input class="name_input" >
-                    </div>
-                <div class="container-schedule-date">
-                    <div>일정 일시</div>
-                    <input class="date_input" placeholder="날짜 선택">
-                    <div>일</div>
-                    <input class="time_input" placeholder="-- : --">
-                    <div>분</div>
+            <div class="container-middle-bar">
+                <div>결제일</div>
+                <div>상품 정보</div>
+                <div>금액</div>
+                <div>청구서</div>
+            </div>
+            <hr class="bar">
+            <div class="container-middle-content">
+                <div>2024-06-01</div>
+                <div>더미견적함1</div>
+                <div>500,000</div>
+                <div><a href="#">청구서</a></div>
+            </div>
+            <hr class="text">
+            <div class="container-middle-content">
+                <div>2024-06-01</div>
+                <div>더미견적함2</div>
+                <div>1,000,000</div>
+                <div><a href="#">청구서</a></div>
+            </div>
+            <hr class="text">
+            </div>
+            <div class="mypage-bottom">
+                <div class="nav-page">
+                    <div>&lt;&lt;</div>
+                    <div>&lt;</div>
+                    <div>1</div>
+                    <div style="color: pink;">2</div>
+                    <div>3</div>
+                    <div>&gt;</div>
+                    <div>&gt;&gt;</div>
                 </div>
-                <div class="container-button">
-                    <button class="schedule-save">일정 저장</button>
-                    <button class="schedule-back">취소</button>          
-                </div>
-            </form>
+                <button class="mypage-back">마이페이지로</button>
+            </div>
         </div>
-    </div>
+       
       <!-- 푸터 -->
       <footer class="common__footer">
         <div class="common__footer-content">
@@ -146,7 +164,7 @@
           </nav>
           <div class="common__footer-details">
             <p style="margin-bottom: 0px">
-              (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
+              (주)웨딩메이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
               02-123-1234 팩스: 02-111-2222
             </p>
   
@@ -169,15 +187,8 @@
         isVisible: false,
         ismaintain: false,
         // 본문
-        selectedItemType: ""
-  
       };
     },
-      mounted(){
-      this.getMemberList();
-    },
-  
-  
     methods: {
       // 헤더
       showCategories() {
@@ -187,245 +198,18 @@
         this.isVisible = false;
       },
       // 본문
-  
-  
-      //페이지
-      async getMemberList(){
-        let page = this.$route.params.page;
-        let block = this.$route.params.page;
-        page = (!page) ? 1 : page;
-        block = (!block) ? 'F' : block;
-        this.memberList = await this.$api(`/user/list?page=${page}&block=${block}`);
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
-        this.makePageSetting();      
-      },
-      async getBlockMemberList(){
-          this.memberList = await this.$api(`/user/list?page=1&block=T`);
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
-        this.blockOption = !this.blockOption;
-        this.makePageSetting();
-      },
-      async getUnblockMemberList(){
-        this.memberList = await this.$api(`/user/list?page=1&block=F`);
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
-        this.blockOption = !this.blockOption;
-        this.makePageSetting();
-      }, 
-      makePageSetting(){
-        this.maxPage = Math.floor(this.memberList.length / 10) + 1;
-        this.isFirstPage = (this.page == 1) ? true : false;
-        this.isLastPage = (this.page == this.maxPage) ? true : false;
-        console.log(this.maxPage);
-      },
-      // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
-      async prevBlock(){
-        let targetPage = this.page;
-        if (this.page <= 5){
-          targetPage = 1;
-        }
-        else{
-          targetPage = this.page - 5;
-        }
-        const block = (!this.blockOption) ? 'F' : 'T';
-        this.memberList = await this.$api(`/user/list?page=${targetPage}&block=${block}`);
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
-        this.page = targetPage;
-      },
-      // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
-      async nextBlock(){
-        let targetPage = this.page;
-        if (this.page > this.maxPage-5){
-          targetPage = this.maxPage;
-        }
-        else{
-          targetPage = this.page + 5;
-        }
-        const block = (!this.blockOption) ? 'F' : 'T';
-        this.memberList = await this.$api(`/user/list?page=${targetPage}&block=${block}`);
-        this.page = targetPage;
-      },
-      async nextPage(){
-        const block = (!this.blockOption) ? 'F' : 'T';
-        this.memberList = await this.$api(`/user/list?page=${this.page+1}&block=${block}`);
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
-        this.page +=1;
-      },
-      async prevPage(){
-        const block = (!this.blockOption) ? 'F' : 'T';
-        this.memberList = await this.$api(`/user/list?page=${this.page-1}&block=${block}`);
-          // this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
-        this.page -=1;
-      },
-      async goToPage(targetPage){
-        const block = (!this.blockOption) ? 'F' : 'T';
-        this.memberList = await this.$api(`/user/list?page=${targetPage}&block=${block}`);
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
-  
-        this.page = targetPage;
-      }
     },
   };
   </script>
   
   
   <style scoped>
-  
-  
   .fix-width {
     width: 1980px;
     min-width: 1980px;
     max-width: 1980px;
     margin: 0 auto;
   }
-  
-  .productdetail_main_content {
-    width: 1280px;
-    min-width: 1280px;
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-  
-  /* visible */
-  .productdetaillist-content {
-  }
-  
-  .temp {
-    margin: 30px;
-  }
-  
-  /* 본문 */
-@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
-div{
-  font-family: 'Noto Sans KR', sans-serif;
-    font-size: 16px;
-    color:#555555;
-    transform : rotate(0.03deg);
-}
-
-/* div */
-.container0{
-    min-width: var(--container-width)
-}
-
-.container-title{          
-    margin-left: var(--container-margin-left);
-    margin-right: var(--container-margin-right);
-    margin-top: 100px;
-    width: 1280px;    
-    /* border: 1px solid green; */
-}
-
-.container-middle{          
-    margin-left: var(--container-margin-left);
-    margin-right: var(--container-margin-right);
-    margin-bottom: 20px;
-    width: 1280px;   
-    display: grid;
-    align-items: center;  
-    /* border: 1px solid red; */
-}
-
-.container-schedule-title{
-    display: grid;
-    grid-template-columns: 100px auto;
-    align-items: center;
-    width: 600px;    
-    margin-top: 30px; 
-    /* border: 1px solid pink; */
-}
-
-.container-schedule-date{
-    display: grid;
-    grid-template-columns: 100px auto auto auto auto ;
-    align-items: center;
-    width: 600px;    
-    margin-top: 30px; 
-    /* border: 1px solid yellow; */
-}
-
-.container-button{
-    display: grid;
-    justify-content: center; 
-    grid-template-columns: auto auto;
-    place-items: center;
-    grid-gap: 10px;
-    width: 600px; 
-    margin-left:25px;  
-    margin-top: 60px;          
-    /* border: 1px solid red; */
-}
-
-hr.title{
-    width: 100%;
-    height: 1px;
-    background-color: #555555;
-    border: none;
-}
-
-.name_input{
-    border-radius: 12px;
-    border: none;
-    width: 460px;
-    height: 60px;
-    background-color: #F5F5F5;
-}
-
-.date_input{
-    border-radius: 12px;
-    border: none;
-    width: 200px;
-    height: 60px;
-    background-color: #F5F5F5;
-}
-
-.time_input{
-    border-radius: 12px;
-    border: none;
-    width: 200px;
-    height: 60px;
-    background-color: #F5F5F5;
-
-}
-
-button.schedule-save{
-    background-color: var(--color-pink);
-    color:white;
-    border: none;
-    border-radius: 12px;
-    width: 180px;
-    height: 60px;
-    font-size: 18px;
-    font-weight: bold;           
-}
-
-button.schedule-back{
-    background-color: var(--color-buttongray);
-    color:white;
-    border: none;
-    border-radius: 12px;
-    width: 180px;
-    height: 60px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-input::placeholder {
-    padding: 10px; 
-}  
-
-div.title-font{
-    display: grid;
-    place-items: center;
-    color: #333333;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-form {
-    display: grid;
-    place-items: center;
-    width: 100%;
-}
   
   /* 헤더 */
   /* 로그인 + 회원가입 + 로고 */
@@ -519,7 +303,7 @@ form {
     background-color: #333333;
     color: #999999;
     padding: 20px 0;
-    margin-top: 50px;
+    margin-top: 100px;
     font-size: 14px;
   }
   
@@ -549,4 +333,119 @@ form {
     text-align: center;
     font-size: 14px;
   }
+
+  /* 본문 */
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+div{
+  font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    color:#555555;
+    transform : rotate(0.03deg);
+}
+/* font */
+.title-font{
+display: grid;
+place-items: center;
+color: #333333;
+font-size: 24px;
+font-weight: bold;
+}
+
+/* div */
+
+.container0{
+min-width: 1280px;
+}
+.container-top{          
+margin-left: var(--container-margin-left);
+margin-right: var(--container-margin-right);
+margin-top: 100px;
+width: var(--container-width);
+display: grid;          
+/* border: 1px solid blue; */
+}
+
+.container-middle{          
+margin-left: var(--container-margin-left);
+margin-right: var(--container-margin-right);
+margin-bottom: 50px;
+width: var(--container-width);
+display: grid;           
+/* border: 1px solid blue; */
+}
+
+.container-middle-bar{
+display: grid;
+grid-template-columns: 250px 600px 250px 250px;
+align-items: start;
+width: var(--container-width);
+/* margin-top: 20px;  */
+padding: 10px;
+box-sizing: border-box;
+color:#888888;
+/* border: 1px solid red; */
+}
+
+.container-middle-content{
+display: grid;
+grid-template-columns: 250px 600px 250px 250px;
+align-items: start;
+width: var(--container-width);
+padding: 10px;
+box-sizing: border-box;
+/* border: 1px solid red; */
+}
+
+/* hr */
+
+hr.title{
+width: 100%;
+height: 1px; 
+background-color: #111111; 
+border: none; 
+margin-bottom: 0px;
+}
+hr.bar{
+width: 100%;
+height: 1px; 
+background-color: #888888; 
+border: none; 
+margin: 0px;
+}
+hr.text{
+width: 100%;
+height: 1px; 
+background-color: #c2c2c2; 
+border: none; 
+margin: 0px;
+}
+
+/* bottom */
+div.mypage-bottom{
+display: grid;
+place-items: center;
+margin-left: 350px;
+margin-right: 320px;
+margin-top: 100px;
+width: 1280px; /* 고정된 너비 */  
+/* border: 1px solid yellow; */
+}
+div.nav-page{
+display: grid;
+place-items: center;
+grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+margin-bottom: 30px;
+color: #888888;
+/* border: 1px solid pink; */
+}
+
+button.mypage-back{
+background-color: #888888;
+color:white;
+font-weight: bold;
+border: none;
+width: 120px;
+height: 40px;
+}
   </style>
+  
