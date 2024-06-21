@@ -1,7 +1,5 @@
 <template>
-    <div>
          <EventCalendar />
-    </div>
 </template>
 
 <script>

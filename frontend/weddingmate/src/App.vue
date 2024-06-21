@@ -13,6 +13,7 @@
       <router-link to="/eventcalendar">EventCalendar</router-link> |
       <router-link to="/tempvue">TempVue</router-link> |
       <router-link to="/orderinfo">Orderinfo</router-link> | 
+      <router-link to="/myschedule">MySchedule</router-link> | 
     </nav>
     <router-view/>
   </div>

@@ -15,6 +15,7 @@ import MemberList from '../views/admin/MemberList'
 import AdminQna from '../views/admin/AdminQna.vue'
 import AdminReview from '../views/admin/AdminReview.vue'
 import AdminAnalysis from '../views/admin/AdminAnalysis.vue'
+import MySchedule from '../views/mypage/MySchedule.vue'
 import TempVue from '../views/tempVue.vue'
 
 const routes = [
@@ -103,6 +104,11 @@ const routes = [
     path:'/orderinfo',
     name:"Orderinfo",
     component: Orderinfo
+  },
+  {
+    path:'/myschedule',
+    name:"myschedule",
+    component: MySchedule
   }
 ]
 
