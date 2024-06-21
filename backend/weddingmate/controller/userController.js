@@ -1,200 +1,108 @@
-const db = require('../util/db');
-
-// 회원 리스트를 10개씩 받아오는 컨트롤러
-exports.userList = async (req, res)=>{
+const db = require("../util/db");
+const { encrypt, equals } = require('../util/wcrypt')
+const { v4  } = require('uuid')
+// 로그인 컨트롤러
+exports.login = async(req,res)=>{
     try{
-        let page = req.query.page;
-        let block = req.query.block;
-        let mode = req.query.mode;
-        let keyword = "%" + req.query.keyword + "%";
+        // req.body 받아옴.
+        const email = req.body.email;
+        const password = req.body.password;
+        const accessToken = req.body.accessToken;
 
-        // request에 오는 param들은 전부 String 타입이기 때문에, db문에 끼워 넣으러면 숫자로 바꿔야 합니다.
-        page = (!page) ? 0 : Number(page) - 1;
-        block = (!block) ? null : block;
-
-
-        let result = [];
         let count = 0;
-        let query = "";
-        // user_create_date로 정렬 후, OFFSET만큼 뛰어넘은 다음 LIMIT 개수만큼 가져오는 쿼리문        
+        let result = 0;
+        let responseBody = {};
+        // 이메일과 비밀번호가 일치하고, 이메일 인증이 완료된 유저를 가져옴
+        query = "SELECT * FROM user WHERE user_email = ? AND user_password = ? AND user_email_verified = 'T'";
+        result = await db(query, [email, password]);
+        count = result.length;
 
-        if(mode === 'all'){
-            if (block=="T"){
-                query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? AND (user_email LIKE ? OR user_name LIKE ?) ORDER BY user_create_date LIMIT 10 OFFSET ? ";
-                result = await db(query, [block, keyword, keyword, page*10]);
-                query = "SELECT count(*) AS count FROM user WHERE user_block=? AND (user_email LIKE ? OR user_name LIKE ?) "
-                count = await db(query, [block, keyword, keyword]);
-                count = count[0]['count'];
+        // count 가 1이면 유저를 하나 찾음 -> 로그인 가능
+        if (count == 1){
+            user = result[0];
+
+            // accessToken을 uuid로 생성
+            const accessToken = v4();
+
+            // user_access_token을 update해주는 쿼리문 실행 필요
+            query = "UPDATE user SET user_access_token = ? WHERE user_id = ?";
+            result = await db(query, [accessToken, user.user_id]);
+        
+            // 로그인 방법 분리
+            if (user.user_type === "local"){
+                responseBody = {
+                    status: 200,
+                    accessToken: accessToken,
+                    message: "로그인 완료했습니다"
+                }
             }
-            else{
-                query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE (user_email LIKE ? OR user_name LIKE ?) ORDER BY user_create_date LIMIT 10 OFFSET ? ";
-                result = await db(query, [keyword, keyword, page*10]);
-                query = "SELECT count(*) AS count FROM user WHERE (user_email LIKE ? OR user_name LIKE ?)";
-                count = await db(query, [keyword, keyword]);
-                count = count[0]['count'];
-            }
-        }
-        else if (mode === 'email'){
-            if (block=="T"){
-                query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? AND user_email LIKE ? ORDER BY user_create_date LIMIT 10 OFFSET ? ";
-                result = await db(query, [block, keyword, page*10]);
-                query = "SELECT count(*) AS count FROM user WHERE user_block=? AND user_email LIKE ?";
-                count = await db(query, [block, keyword]);
-                count = count[0]['count'];
-            }
-            else{
-                query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_email LIKE ? ORDER BY user_create_date LIMIT 10 OFFSET ? ";
-                result = await db(query, [keyword, page*10]);
-                query = "SELECT count(*) AS count FROM user WHERE user_email LIKE ?";                
-                count = await db(query, [keyword]);
-                count = count[0]['count'];
+            else if (user.user_type === "naver"){
 
             }
-        }
-        else if (mode === 'name'){
-            if (block=="T"){
-                query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? AND user_name LIKE ? ORDER BY user_create_date LIMIT 10 OFFSET ? ";
-                result = await db(query, [block, keyword, page*10]);
-                query = "SELECT count(*) AS count FROM user WHERE user_block=? AND user_name LIKE ? ";
-                count = await db(query, [block, keyword]);
-                count = count[0]['count'];
+            else if (user.user_type === "kakao"){
+
+            }
+            else if (user.user_type === "google"){
+
             }
             else{
-                query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_name LIKE ? ORDER BY user_create_date LIMIT 10 OFFSET ? ";
-                result = await db(query, [keyword, page*10]);
-                query = "SELECT count(*) AS count FROM user WHERE user_name LIKE ? ";
-                count = await db(query, [keyword]);
-                count = count[0]['count'];
+                throw new Error("로그인을 할 수 없습니다 : API를 불러올 수 없거나 사용자 정보가 정확하지 않습니다");
             }            
         }
-        // 검색 옵션이 걸리지 않았을 때의 실행
-        // 쿼리문에 넣을 paramter들을 꼭 배열로 넣어야 합니다.
-        else if (block=="T"){
-            query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user WHERE user_block=? ORDER BY user_create_date LIMIT 10 OFFSET ? ";            
-            result = await db(query, [block, page*10]);
-            query = "SELECT count(*) AS count FROM user WHERE user_block=? ";
-            count = await db(query, [block]);
-            count = count[0]['count'];
-        }
         else{
-            query = "SELECT user_id, user_name, user_email, user_create_date, user_type, user_block FROM user ORDER BY user_create_date LIMIT 10 OFFSET ? ";
-            result = await db(query, [page*10]);
-            query = "SELECT count(*) AS count FROM user";
-            count = await db(query, []);
-            count = count[0]['count'];
-        }
+            query = "SELECT *  FROM admin WHERE admin_email = ? AND admin_password = ?"
+            result = await db(query, [email, password]);
+            count = result.length;
 
-        for(user of result){
-            query = "SELECT SUM(order_info_price) AS sum FROM order_info WHERE box_id IN (SELECT box_id FROM box WHERE user_id=?);";
-            let user_total_price = await db(query, [user.user_id]);
-            user_total_price = (!user_total_price[0].sum) ? 0 : user_total_price[0].sum;
-            user.user_total_price = user_total_price;
-        }
-
-        for(user of result){
-            query = "SELECT COUNT(order_info_price) AS count FROM order_info WHERE box_id IN (SELECT box_id FROM box WHERE user_id=?);";
-            let user_buy_count = await db(query, [user.user_id]);
-            user_buy_count = (!user_buy_count[0].count) ? 0 : user_buy_count[0].count;
-            user.user_buy_count = user_buy_count;
-        }
-        
-        for(user of result){
-            query = "SELECT COUNT(*) AS count FROM review WHERE user_id=?";
-            let user_review_count = await db(query, [user.user_id]);
-            user_review_count = (!user_review_count[0].count) ? 0 : user_review_count[0].count;
-            user.user_review_count = user_review_count;
-        }
-
-        for(user of result){
-            query = "SELECT COUNT(*) AS count FROM qna WHERE user_id=?";
-            let user_qna_count = await db(query, [user.user_id]);
-            user_qna_count = (!user_qna_count[0].count) ? 0 : user_qna_count[0].count;
-            user.user_qna_count = user_qna_count;
-        }
-        res.status(200);
-
-        responseBody = {
-            maxPage: Math.ceil(count / 10),
-            memberList: result
+            if (count == 1){
+                // 관리자 로그인
+            }
+            else{
+                throw new Error("로그인을 할 수 없습니다 : 잘못된 정보 입력");
+            }
         }
         res.json(responseBody);
-    }
-    catch(err){
-        console.error(err);
-        responseBody = {
-            status: 401,
-            message: "잘못된 페이지 요청입니다."
-        };
-        res.json(responseBody);
-    }
-}
-
-// 유저를 차단하는 컨트롤러
-exports.userBlock = async(req, res)=>{
-    try{
-        const userId = req.body.user_id;
-        const query = 'UPDATE user SET user_block="T" WHERE user_id=?';
-
-        let result = [];
-        result = await db(query, [userId]);
-
-        // changedRows는 바뀐 행 개수이다.
-        result = result.changedRows
-
-
-        if (result == 1){
-            responseBody = {
-                status: 200,
-                message: "유저 차단 완료."
-            };
-            res.json(responseBody);
-        }    
-        // 하나 이상 바뀌거나 0개 바뀌었다면 에러를 던짐 -> 아래의 catch문이 400 에러로 응답한다.    
-        else{
-            throw Error;
-        }
-        
     }
     catch(err){
         console.error(err);
         responseBody = {
             status: 400,
-            message: "잘못된 요청입니다."
+            message: err.message
         };
-        res.json(responseBody);
+        res.json(responseBody); 
     }
 }
 
-exports.userUnblock = async(req, res)=>{
+
+exports.info = async(req, res)=>{
     try{
-        const userId = req.body.user_id;
-        const query = 'UPDATE user SET user_block="F" WHERE user_id=?';
+        const accessToken = req.body.accessToken;
+        let count = 0;
+        let result = 0;
+        let responseBody = {};
+        // accessToken으로 유저 정보를 가져옴
+        query = "SELECT user_id, user_email, user_password, user_name, user_email, user_addr1, user_addr2 FROM user WHERE user_access_token = ?";
+        result = await db(query, [accessToken]);
+        const user = result[0];
 
-        console.log("userId", userId);
-
-        let result = [];
-        result = await db(query, [userId]);
-        result = result.changedRows
-
-
-        if (result == 1){
+        // 유저가 있다면 유저 정보를 보내고, 없다면 에러 발생
+        if (user){
             responseBody = {
                 status: 200,
-                message: "유저 차단 해제 완료."
-            };
-            res.json(responseBody);
-        }        
-        else{
-            throw Error;
+                user: user
+            }
+            res.json(user);
         }
-        
-    }
-    catch(err){
+        else{
+            throw new Error("쿠키가 만료되었습니다.");
+        }
+        count = result.length;
+    } catch(err){
         console.error(err);
         responseBody = {
             status: 400,
-            message: "잘못된 요청입니다."
+            message: err.message
         };
-        res.json(responseBody);
+        res.json(responseBody);         
     }
 }

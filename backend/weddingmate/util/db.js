@@ -15,12 +15,13 @@ module.exports = async (query, param = [], where = '') => {
             console.log(error);
             // DB에서 에러 시 무조건 500을 반환하도록 설정하였음.
             const result = {
-                errorCode: 500,
+                status: 500,
                 message: "데이터베이스 에러입니다"
             }
-            resolve({
+            
+            resolve(
                 result
-            });
+            );
         } else resolve(rows);
     }));
 }

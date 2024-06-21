@@ -1,5 +1,6 @@
 const express = require('express');
-const {userList, userBlock, userUnblock} = require('../controller/userController');
+const {userList, userBlock, userUnblock} = require('../controller/adminController');
+const {login, info} = require('../controller/userController');
 
 const router = express.Router();
 
@@ -7,5 +8,6 @@ const router = express.Router();
 router.get('/list', userList);
 router.post('/block', userBlock);
 router.post('/unblock', userUnblock);
-
+router.post('/login', login);
+router.post('/info', info);
 module.exports = router;

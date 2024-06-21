@@ -91,8 +91,8 @@
                       </div>
                     </div>
                     <div class="admin_review_review-section_title-div">
-                      <div class="admin_review_card-rating">{{review.review_star}}</div>
-                      <div class="admin_review_review-section_date-div">{{review.review_date}}</div>
+                      <div class="admin_review_card-rating">{{makeStar(review.review_star)}}</div>
+                      <div class="admin_review_review-section_date-div">{{this.$dateFormat(review.review_date)}}</div>
                     </div>
                     <img
                       src="https://via.placeholder.com/300x200"
@@ -231,6 +231,14 @@ export default {
       await this.$api(`http://localhost:9090/review/delete`, {review_id: review_id}, "POST");
       this.page = 1;
       await this.getReviewList();
+    },
+    makeStar(num){
+      let star = "";
+      for(let i = 0; i < num; i++){
+        star += "★";
+      }
+      console.log(star);
+      return star;
     }
   }
 }
