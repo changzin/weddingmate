@@ -113,15 +113,15 @@
 
     <div class="container0">
         <div class="container-top">
-            <div class="title-font">결제 내역</div>
+            <div class="font-title">결제 내역</div>
             <hr class="title">
         </div>
         <div class="container-middle">
             <div class="container-middle-bar">
-                <div>결제일</div>
-                <div>상품 정보</div>
-                <div>금액</div>
-                <div>청구서</div>
+                <div class="font-bar">결제일</div>
+                <div class="font-bar">상품 정보</div>
+                <div class="font-bar">금액</div>
+                <div class="font-bar">청구서</div>
             </div>
             <hr class="bar">
             <div class="container-middle-content">
@@ -340,15 +340,17 @@ div{
   font-family: 'Noto Sans KR', sans-serif;
     font-size: 16px;
     color:#555555;
-    transform : rotate(0.03deg);
 }
 /* font */
-.title-font{
+.font-title{
 display: grid;
 place-items: center;
 color: #333333;
 font-size: 24px;
 font-weight: bold;
+}
+.font-bar{
+  color:#888888;
 }
 
 /* div */
@@ -382,7 +384,6 @@ width: var(--container-width);
 /* margin-top: 20px;  */
 padding: 10px;
 box-sizing: border-box;
-color:#888888;
 /* border: 1px solid red; */
 }
 

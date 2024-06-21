@@ -379,7 +379,6 @@
     font-family: 'Noto Sans KR', sans-serif;
       font-size: 16px;
       color:#555555;
-      transform : rotate(0.03deg);
 }
   
   /* font */
