@@ -6,24 +6,97 @@
     <title>Document</title>
     <style>
         @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+
+        :root{
+            --container-width: 1280px;
+            --container-margin-left: 350px;
+            --container-margin-right: 320px;
+            --color-pink: #F7CAC9;
+            --color-buttongray: #888888;
+        }
+
          body {
 	        font-family: 'Noto Sans KR', sans-serif;
             font-size: 16px;
             color:#555555;
             transform : rotate(0.03deg);
         }   
-         div.container0{
-            min-width: 1280px;
-        }
-        div.container-title{          
-            margin-left: 350px;
-            margin-right: 320px;
-            margin-top: 100px;
+
+        /* font */
+        .title-font{
             display: grid;
-            width: 1280px; /* 고정된 너비 */    
-            font-size: 24;
-            /* border: 1px solid blue; */
+            place-items: center;
+            color: #333333;
+            font-size: 24px;
+            font-weight: bold;
         }
+
+        /* div */
+
+        .container0{
+            min-width: var(--container-width);
+        }
+
+        .container-top{          
+            margin-left: var(--container-margin-left);
+            margin-right: var(--container-margin-right);
+            margin-top: 100px;
+            width: var(--container-width);
+            display: grid;          
+            border: 1px solid blue;
+        }
+
+        .container-middle{          
+            margin-left: var(--container-margin-left);
+            margin-right: var(--container-margin-right);
+            margin-bottom: 50px;
+            width: var(--container-width);
+            display: grid;           
+            border: 1px solid blue;
+        }
+ 
+        .container-middle-bar{
+            display: grid;
+            grid-template-columns: 250px 600px;
+            align-items: start;
+            width: var(--container-width);
+            margin-top: 20px; 
+            padding: 10px;
+            box-sizing: border-box;
+            color:#888888;
+            border: 1px solid red;
+        }
+        .container-middle-content{
+            display: grid;
+            grid-template-columns: 250px 600px;
+            width: var(--container-width);
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid yellow;
+        }
+
+        /* hr */
+
+        hr.title{
+            width: 100%;
+            height: 1px; 
+            background-color: #333333; 
+            border: none; 
+        }
+        hr.bar{
+            width: 100%;
+            height: 1px; 
+            background-color: #d3d3d3; 
+            border: none; 
+        }
+        hr.text{
+            width: 100%;
+            height: 1px; 
+            background-color: #f5f5f5; 
+            border: none; 
+        }
+
+        /* bottom */
         div.mypage-bottom{
             display: grid;
             place-items: center;
@@ -41,61 +114,7 @@
             color: #888888;
             /* border: 1px solid pink; */
         }
-        div.container1{          
-            margin-left: 350px;
-            margin-right: 320px;
-            margin-bottom: 50px;
-            display: grid;
-            width: 1280px; /* 고정된 너비 */    
-            font-size: 24;
-            /* border: 1px solid blue; */
-        }
- 
-        div.container2{
-            display: grid;
-            grid-template-columns: 250px 600px;
-            align-items: start;
-            width: 1280px; /* 고정된 너비 */    
-            margin-top: 20px; 
-            padding: 10px;
-            box-sizing: border-box;
-            color:#888888;
-            /* border: 1px solid red; */
-        }
-        div.container3{
-            display: grid;
-            grid-template-columns: 250px 600px;
-            width: 1280px; /* 고정된 너비 */    
-            padding: 10px;
-            box-sizing: border-box;
-            /* border: 1px solid red; */
-        }
-        hr.title{
-            width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #333333; /* Set a lighter color */
-            border: none; /* Remove border */
-        }
-        hr.bar{
-            width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #d3d3d3; /* Set a lighter color */
-            border: none; /* Remove border */
-        }
-        hr.text{
-            width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #f5f5f5; /* Set a lighter color */
-            border: none; /* Remove border */
-        }
-
-        div.title-font{
-            display: grid;
-            place-items: center;
-            color: #333333;
-            font-size: 24px;
-            font-weight: bold;
-        }
+        
         button.mypage-back{
             background-color: #888888;
             color:white;
@@ -103,30 +122,29 @@
             border: none;
             width: 120px;
             height: 40px;
-        }
-   
+        }   
     </style>
      <!-- FontAwesome 라이브러리 추가 -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>   
 <div class="container0">
-    <div class="container-title">
+    <div class="container-top">
         <div class="title-font">나의 QnA</div>
         <hr class="title">
     </div>
-    <div class="container1">
-        <div class="container2">
+    <div class="container-middle">
+        <div class="container-middle-bar">
             <div>작성일</div>
             <div>제목</div>
         </div>
             <hr class="bar">
-            <div class="container3">
+            <div class="container-middle-content">
                 <div>2024-06-01</div>
                 <div><a href="#">언제까지 가능할까요</a></div>
             </div>
             <hr class="text">
-            <div class="container3">
+            <div class="container-middle-content">
                 <div>2024-06-01</div>
                 <div><a href="#">언제까지 가능 하냐구요</a></div>
             </div>

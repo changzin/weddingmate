@@ -54,7 +54,7 @@
             </a>
           </li>
           <li class="nav-item sidbar_box sidbar_box_inactive">
-            <a @click="$router.push({path: '/admin/memberlist'})" class="nav-link sidbar_box_inactive_text">
+            <a @click="$router.push({path: '/admin/memberList'})" class="nav-link sidbar_box_inactive_text">
                 <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#people-circle"/></svg>
                 회원 관리
             </a>
@@ -70,28 +70,29 @@
             <div class="d-flex justify-content-center">
               <div class="admin_review_review-section">
                 <div class="admin_review_review-header justify-content-end">
-                  <button class="btn admin_review_btn_active">신고된 리뷰만 보기</button>
-                  <select class="form-select admin_review_select">
-                    <option selected>작성자 + 내용</option>
-                    <option>작성자</option>
-                    <option>내용</option>
+                  <button class="btn admin_review_btn_active" v-if="!reportedOption" @click="getReportedReviewList()">신고된 리뷰만 보기</button>
+                  <button class="btn admin_review_btn_inactive" v-if="reportedOption" @click="getUnReportedReviewList()">전체 리뷰 보기</button>
+                  <select class="form-select admin_review_select" v-model="mode">
+                    <option selected value="all">작성자 + 내용</option>
+                    <option value="nickname">작성자</option>
+                    <option value="content">내용</option>
                   </select>
-                  <input type="text" class="form-control admin_review_input">            
-                  <button class="btn admin_review_btn_active">검색</button>      
+                  <input type="text" class="form-control admin_review_input" v-model="keyword">            
+                  <button class="btn admin_review_btn_active" @click="search()">검색</button>      
                 </div>
                 <div class="admin_review_review-cards">
                   <div class="admin_review_review-card" v-for="(review, index) in reviewList" :key="index">
                     <div class="admin_review_card-header">
                       <div class="admin_review_review-section_title-div">
-                        일이삼사오육칠팔구십일이
+                        {{review.user_nickname}}
                       </div>
                       <div class="admin_review_card-icons">
-                        <i class="fas fa-trash"></i>
+                        <a @click="deleteReview(review.review_id)"><i class="fas fa-trash"></i></a>
                       </div>
                     </div>
                     <div class="admin_review_review-section_title-div">
-                      <div class="admin_review_card-rating">★★★★★</div>
-                      <div class="admin_review_review-section_date-div">2024-06-11 15:54</div>
+                      <div class="admin_review_card-rating">{{review.review_star}}</div>
+                      <div class="admin_review_review-section_date-div">{{review.review_date}}</div>
                     </div>
                     <img
                       src="https://via.placeholder.com/300x200"
@@ -100,10 +101,7 @@
                     />
                     <div class="admin_review_card-body">
                       <p class="admin_review_card-text">
-                        인생
-                        리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
-                        10줄까지
-                        가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
+                        {{review.review_content}}
                       </p>
                     </div>
                   </div>
@@ -120,8 +118,8 @@
               <a><div style="color: pink;">{{page}}</div></a>
               <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
               <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
-              <a :class="{notVisible : (page == maxPage)}" @click="nextPage()"><div>&gt;</div></a>
-              <a :class="{notVisible : (page == maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
+              <a :class="{notVisible : (page >= maxPage)}" @click="nextPage()"><div>&gt;</div></a>
+              <a :class="{notVisible : (page >= maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
               </div>
           </div>
         </div>
@@ -136,103 +134,104 @@ export default {
   data() {
     return {
       reviewList: [],
-      reportOption: false,
+      reportedOption: false,
       page: 1,
-      isFirstPage: false,
-      isLastPage: false,
       maxPage: 0,
       keyword: "",
+      prevKeyword: "",
       mode: "all",
-      prevKeyword: ""
+      prevMode: "all",
+      reported: 'F'
     }
   },
-  mounted(){
-    this.getReviewList();
+  mounted(){      
+      this.getReviewList();
+      
   },
   methods: {
     // 멤버 정보 받아오기
     async getReviewList(){
-      let page = this.$route.params.page;
-      let reported = this.$route.params.reported;
-      page = (!page) ? 1 : page;
-      this.reviewList = await this.$api(`/review/adminlist?page=${page}&reported=${reported}`);
-      this.makePageSetting();            
+      // URL에 파라미터를 추가한다.
+      await this.$router.push({path: '/admin/review', query:{page: this.page, reported: this.reported, mode: this.prevMode, keyword: this.prevKeyword} });
+
+      // 멤버 정보를 가져오기 전에 파라미터 갈무리
+      this.page = Number(this.$route.query.page);
+      this.reported = this.$route.query.reported;
+      this.prevMode = this.$route.query.mode;
+      this.prevKeyword = this.$route.query.keyword
+      this.page = (!this.page) ? 1 : this.page;
+      this.reported = (this.reported == 'T') ? this.reported : 'F';
+      this.mode = (!this.mode) ? 'all' : this.mode;
+      this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
+
+      // reviewList 정보 다시 가저오고, maxPage를 맞추어준다.
+      const result = await this.$api(`http://localhost:9090/review/adminlist?page=${this.page}&reported=${this.reported}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
+      this.reviewList = result.reviewList;
+      this.maxPage = result.maxPage;
+      console.log("reviewList", this.reviewList);
+      console.log("maxPage", this.maxPage);
+
+      console.log("this.page", this.page);
+
+      console.log(this.page+1 > this.maxPage);
     },
     // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
-    async getreportedreviewList(){
-      this.reportOption = !this.reportOption;
-      this.reviewList = this.reviewList.filter(review => {
-        if (review.review_reported=='T'){
-          return true;
-        }
-      });
-      this.makePageSetting();
+    async getReportedReviewList(){
+      this.reportedOption = true;
+      this.reported = 'T';
+      this.page = 1;
+      this.getReviewList();
     },
     // 전체 회원 불러오기(검색한 상태라면 검색 키워드는 유지하면서 전체 회원을 불러와야 하기 때문에 키워드를 넣었다.)
-    async getUnreportedreviewList(){
-      this.reportedOption = !this.reportedOption;
-      const reported = (!this.reportedOption) ? null : 'T';
-      this.reviewList = await this.$api(`/review/adminlist?reported=${reported}&mode=${this.mode}&keyword=${this.prevKeyword}`);
-      this.makePageSetting();
+    async getUnReportedReviewList(){
+      this.reportedOption = false;
+      this.reported = 'F';
+      this.page = 1;
+      this.getReviewList();
     }, 
     async search(){
-      const reported = (!this.reportedOption) ? null : 'T';
-      this.reviewList = await this.$api(`/review/adminlist?reported=${reported}&mode=${this.mode}&keyword=${this.keyword}`);
       this.prevKeyword = this.keyword;
-      this.makePageSetting();
-    },
-
-    // 단순 페이지 번호 이동이 아닌, 차단이나 검색 등으로 리스트 길이가 바뀔 때 전체 페이지 등을 같이 바꿔주는 함수
-    makePageSetting(){
-      this.maxPage = Math.floor(this.reviewList.length / 9) + 1;
-      this.isFirstPage = (this.page == 1) ? true : false;
-      this.isLastPage = (this.page == this.maxPage) ? true : false;
+      this.prevMode = this.mode;
+      this.page = 1;
+      this.getReviewList();
     },
     // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
-    async prevreported(){
-      let targetPage = this.page;
+    async prevBlock(){
       if (this.page <= 5){
-        targetPage = 1;
+        this.page = 1;
       }
       else{
-        targetPage = this.page - 5;
+        this.page = this.page - 5;
       }
-      const reported = (!this.reportedOption) ? null : 'T';
-      this.reviewList = await this.$api(`/review/adminlist?page=${targetPage}&reported=${reported}`);
-      this.page = targetPage;
+      this.getReviewList();
     },
     // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
-    async nextreported(){
-      let targetPage = this.page;
+    async nextBlock(){
       if (this.page > this.maxPage-5){
-        targetPage = this.maxPage;
+        this.page = this.maxPage;
       }
       else{
-        targetPage = this.page + 5;
+        this.page = this.page + 5;
       }
-      const reported = (!this.reportedOption) ? null : 'T';
-      this.reviewList = await this.$api(`/review/adminlist?page=${targetPage}&reported=${reported}`);
-      this.page = targetPage;
+      this.getReviewList();
     },
     async nextPage(){
-      const reported = (!this.reportedOption) ? null : 'T';
-      this.reviewList = await this.$api(`/review/adminlist?page=${this.page+1}&reported=${reported}`);
-      this.page +=1;
+      this.page+=1;
+      this.getReviewList();
     },
     async prevPage(){
-      const reported = (!this.reportedOption) ? null : 'T';
-      this.reviewList = await this.$api(`/review/adminlist?page=${this.page-1}&reported=${reported}`);
-      this.page -=1;
+      this.page-=1;
+      this.getReviewList();
     },
     async goToPage(targetPage){
-      const reported = (!this.reportedOption) ? null : 'T';
-      this.reviewList = await this.$api(`/review/adminlist?page=${targetPage}&reported=${reported}`);
       this.page = targetPage;
+      this.getReviewList();
     },
-    // 유저 차단 해제
-    // async deleteReview(review_id){
-    // }
-    
+    async deleteReview(review_id){
+      await this.$api(`http://localhost:9090/review/delete`, {review_id: review_id}, "POST");
+      this.page = 1;
+      await this.getReviewList();
+    }
   }
 }
 </script>
@@ -315,7 +314,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   /* gap: 20px; */
-  justify-content: space-between;
+  justify-content: start;
 }
 
 .admin_review_review-card {
@@ -325,6 +324,7 @@ export default {
   width: 31%;
   padding: 10px;
   margin-bottom: 30px;
+  margin-left: 29px;
 }
 
 .admin_review_card-header {
@@ -404,7 +404,7 @@ export default {
 }
 .admin_review_btn_inactive{
   background-color: #333333;
-  color: #111111;
+  color: #FFFFFF;
   margin-right: 10px;
 }
 div.mypage-bottom{

@@ -12,6 +12,7 @@
       <router-link to="/reviewlist">ReviewList</router-link> |
       <router-link to="/eventcalendar">EventCalendar</router-link> |
       <router-link to="/tempvue">TempVue</router-link> |
+      <router-link to="/orderinfo">Orderinfo</router-link> | 
     </nav>
     <router-view/>
   </div>

@@ -6,24 +6,141 @@
     <title>Document</title>
     <style>
         @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+
+        :root{
+            --container-width: 1280px;
+            --container-margin-left: 350px;
+            --container-margin-right: 320px;
+            --color-pink: #F7CAC9;
+            --color-buttongray: #888888;
+        }
+
          body {
 	        font-family: 'Noto Sans KR', sans-serif;
             font-size: 16px;
             color:#555555;
             transform : rotate(0.03deg);
         }   
-         div.container0{
-            min-width: 1280px;
+
+        /* font */
+        .font-schedule-date{          
+            color: var(--color-pink);
+            font-weight: bold;
         }
-        div.container-title{          
-            margin-left: 350px;
-            margin-right: 320px;
+        
+        .title-font{
+            display: grid;
+            place-items: center;
+            color: #333333;
+            font-size: 24px;
+            font-weight: bold;          
+        }
+
+        /* div */
+
+        .container0{
+            min-width: var(--container-width);
+        }
+
+        .container-top{          
+            margin-left: var(--container-margin-left);
+            margin-right: var(--container-margin-right);
+            width: var(--container-width);
             margin-top: 100px;
             display: grid;
-            width: 1280px; /* 고정된 너비 */    
             font-size: 24;
             /* border: 1px solid blue; */
         }
+
+        .container-middle{          
+            margin-left: var(--container-margin-left);
+            margin-right: var(--container-margin-right);
+            margin-bottom: 20px;
+            margin-top:10px;
+            width: var(--container-width);
+            display: grid;
+            grid-template-columns: 1fr 1fr ;
+            font-size: 24;
+            /* border: 1px solid blue; */
+        }
+        
+        .container-middle-calander{          
+            display: grid;  
+            box-sizing: border-box;
+            /* border: 1px solid blue; */
+        }
+        .container-middle-schedule{    
+            display: flex;  
+            flex-direction: column;    
+            margin-left: 20px;
+            box-sizing: border-box;
+            /* border: 1px solid red; */
+        }
+        .content-schedule-title{          
+            font-size: 24;
+            margin-bottom: 5px;
+            font-weight: bold;
+            /* border: 1px solid blue; */
+        }
+        .content-schedule-text{          
+            display: grid;  
+            align-items: center;
+            grid-template-columns: 120px 475px 0px ;
+            margin-bottom: 5px;
+            /* border: 1px solid blue; */
+        }
+        .calanderbox{
+            display: grid;
+            width: 100%;  
+            height: 500px;
+            border: 1px solid #888888;
+            background-color: none;   
+        }
+        /* hr */
+
+        hr.title{
+            width: 100%;
+            height: 1px; /* Set the height to 1px */
+            background-color: #333333; /* Set a lighter color */
+            border: none; /* Remove border */
+        }
+
+        /* button */
+        
+        button.schedule-add{
+            justify-self: end;
+            background-color: var(--color-pink);
+            color:white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            width: 100px;
+            height: 40px;
+            margin-top: 30px;
+            margin-right: 20px;
+        }
+
+        /* img */
+        img.delete-x{
+            weight: 20px;
+            height: 20px;
+            /* border: 1px solid #333333; */
+
+        }
+
+        /* bottom */
+
+        button.mypage-back{
+            background-color: #888888;
+            color:white;
+            font-weight: bold;
+            border: none;
+            width: 120px;
+            height: 40px;
+        }
+
+
         div.mypage-bottom{
             display: grid;
             place-items: center;
@@ -41,105 +158,6 @@
             color: #888888;
             /* border: 1px solid pink; */
         }
-        div.container1{          
-            margin-left: 350px;
-            margin-right: 320px;
-            margin-bottom: 20px;
-            margin-top:10px;
-            display: grid;
-            width: 1280px; /* 고정된 너비 */    
-            grid-template-columns: 1fr 1fr ;
-            font-size: 24;
-            /* border: 1px solid blue; */
-        }
-        div.container-calander{          
-            display: grid;  
-            font-size: 24; 
-            box-sizing: border-box;
-            /* border: 1px solid blue; */
-        }
-        div.container-schedule{           
-            font-size: 24;
-            margin-left: 20px;
-
-            box-sizing: border-box;
-            /* border: 1px solid blue; */
-        }
-        div.container-schedule-title{          
-            display: grid;  
-            font-size: 24;
-            margin-bottom: 5px;
-            font-weight: bold;
-            /* border: 1px solid blue; */
-        }
-        div.container-schedule-text{          
-            display: grid;  
-            grid-template-columns: 200px 40px auto;
-            font-size: 24;
-            /* border: 1px solid blue; */
-        }
-        div.font-schedule-date{          
-            color: #F7CAC9;
-            font-weight: bold;
-        }
-        .calanderbox{
-            display: grid;
-            width: 100%;  
-            height: 500px;
-            border: 1px solid #888888;
-            background-color: none;   
-
-        }
-        button.schedule-add{
-            justify-self: end;
-            background-color: #F7CAC9;
-            color:white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 12px;
-            width: 100px;
-            height: 40px;
-            margin-top: 30px;
-            margin-right: 20px;
-        }
- 
-
-        hr.title{
-            width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #333333; /* Set a lighter color */
-            border: none; /* Remove border */
-        }
-        hr.bar{
-            width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #d3d3d3; /* Set a lighter color */
-            border: none; /* Remove border */
-        }
-        hr.text{
-            width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #f5f5f5; /* Set a lighter color */
-            border: none; /* Remove border */
-        }
-
-        div.title-font{
-            display: grid;
-            place-items: center;
-            color: #333333;
-            font-size: 24px;
-            font-weight: bold;
-            
-        }
-        button.mypage-back{
-            background-color: #888888;
-            color:white;
-            font-weight: bold;
-            border: none;
-            width: 120px;
-            height: 40px;
-        }
    
     </style>
      <!-- FontAwesome 라이브러리 추가 -->
@@ -147,39 +165,44 @@
 </head>
 <body>   
 <div class="container0">
-    <div class="container-title">
+    <div class="container-top">
         <div class="title-font">스케줄</div>
         <hr class="title">
     </div>
-    <div class="container1">
-        <div class="container-calander">
+    <div class="container-middle">
+        <div class="container-middle-calander">
             <div class="calanderbox">
                 <button class="schedule-add">일정등록</button>
             </div>
         </div>
-        <div class="container-schedule">
-            <div class="container-schedule-title">일정 상세보기</div>
-            <div class="container-schedule-text">
+        <div class="container-middle-schedule">
+            <div class="content-schedule-title">일정 상세보기</div>
+            <div class="content-schedule-text">
                 <div class="font-schedule-date">0204-06-01(토)</div>
                 <div>촬영</div>
-                <div>X</div>
-            </div>
-            <div class="container-schedule-text">
+                <img class="delete-x" src="icon/deleteX.png">           
+            </div>      
+            <div class="content-schedule-text">
                 <div class="font-schedule-date">0204-06-01(토)</div>
-                <div>촬영</div>
-                <div>X</div>
-            </div>
+                <div>촬영촬영촬영촬영촬영촬영촬영촬영촬영촬영</div>
+                <img class="delete-x" src="icon/deleteX.png">           
+            </div>   
+            <div class="content-schedule-text">
+                <div class="font-schedule-date">0204-06-01(토)</div>
+                <div>촬영촬영촬영촬영</div>
+                <img class="delete-x" src="icon/deleteX.png">           
+            </div>        
         </div>
     </div>
     <div class="mypage-bottom">
         <div class="nav-page">
-            <div>&lt;&lt;</div>
-            <div>&lt;</div>
-            <div>3</div>
+            <div><<</div>
+            <div><</div>
+            <div>1</div>
             <div style="color: pink;">2</div>
             <div>3</div>
-            <div>&gt;</div>
-            <div>&gt;&gt;</div>
+            <div>></div>
+            <div>>></div>
         </div>
         <button class="mypage-back">마이페이지로</button>
     </div>

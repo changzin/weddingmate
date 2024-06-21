@@ -5,101 +5,169 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        div.margin{
+        @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+
+        :root{
+            --container-width: 1280px;
+            --container-margin-left: 350px;
+            --container-margin-right: 320px;
+            --color-pink: #F7CAC9;
+            --color-buttongray: #888888;
+        }
+
+        body {
+	        font-family: 'Noto Sans KR', sans-serif;
+            font-size: 16px;
+            color:#555555;
+            transform : rotate(0.03deg);
+        }   
+
+        /* font */
+        .font-nickname{
+            font-size: 24px;
+        }
+        .font-nickname > span{
+            font-weight: bold;
+        }
+
+        /* div */
+        .container0{
+            min-width: var(--container-width);
+        }
+
+        .container-top{          
+            margin-left: var(--container-margin-left);
+            margin-right: var(--container-margin-right);
+            margin-top: 100px;
+            display: grid;
+            width: var(--container-width);
+            font-size: 24;
+            border: 1px solid BLUE;
+        }
+
+        .container-middle{          
             margin-left: 350px;
             margin-right: 320px;
-            margin-top: 100px;
+            margin-bottom: 20px;
+            margin-top:10px;
+            width: var(--container-width);
+            display: grid;
+            grid-template-columns: 500px auto ;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 1px solid red;
+        }
+        .container-middle-profile{         
+            height: 500px;
+            box-sizing: border-box;
+            border: 1px solid salmon;
 
         }
-        .mybutton{
+        .content-profile {
+            height: 500px;
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            box-sizing: border-box;
+            border: 1px solid green;
+
+        }
+        .container-middle-mymenu{    
+            display: grid;
+            align-items: center;
+            padding: 20px;     
+            box-sizing: border-box;
+            background-color: #f5f5f5;
+            border: 1px solid pink;
+
+        }
+        .content-mymenu_list{          
+            display: grid;  
+            place-items: center;
+            align-items: center;
+            grid-row-gap: 100px;
+            grid-template-columns: auto auto auto;
+            border: 1px solid blue;
+        }
+        .content-mymenu{
+            display: flex;
+            flex-direction: column;
+            place-items: center;
+            color: #888888;
+            font-weight: bold;
+            border: 1px solid red;
+        }
+
+        /* hr */
+
+        hr.title{
+            width: 100%;
+            height: 1px;
+            background-color: #888888; 
+            border: none; 
+        }
+
+        /* button */
+ 
+        button.profile{
             border-radius: 20px;
-            background-color: #F7CAC9;
+            background-color: var(--color-pink);
             color: white;
             border: none;
         }
 
-        .topbox {
-            width: 1280; /* 박스의 너비를 200px로 설정 */
-            height: 700px; /* 박스의 높이를 100px로 설정 */
-            border: 1px solid #888888; /* 박스의 테두리를 검정색으로 설정 */
-            padding: 40px; /* 내부 여백을 추가하여 내용이 테두리에 붙지 않도록 설정 */
-            box-sizing: border-box; /* 패딩과 테두리를 박스 크기에 포함 */
-        }
-        .inbox{
-            width: 1240x; /* 박스의 너비를 200px로 설정 */
-            height: 620px; /* 박스의 높이를 100px로 설정 */
-            border: 1px solid #888888; /* 박스의 테두리를 검정색으로 설정 */
-            display: flex; /* Flexbox를 사용하여 자식 요소를 정렬 */
-            flex-direction: row; /* 자식 요소를 수평으로 정렬 */
-        }
-        .leftbox{
-            width: 500px;  
-            height: 620px;
-            display: flex; /* Flexbox를 사용하여 자식 요소를 정렬 */
-            justify-content: center; /* 수평 중앙 정렬 */
-            align-items: center; /* 수직 중앙 정렬 */    
-            flex-direction: column;
-        }
- 
-        .rightbox{
-            width: 740px;  
-            height: 620px;
-            border: 1px soid black;
-            background-color: #f5f5f5;   
-            padding: 60px;
-            display: flex; /* Flexbox를 사용하여 자식 요소를 정렬 */
-            justify-content: space-around; /* 수평 중앙 정렬 */
-            align-items: center; /* 수직 중앙 정렬 */
-            box-sizing: border-box;
-           
-        }
+        /* img */
 
-        .right-in-box{
-            width: 740px;  
-            height: 380px;
-            border: 1px solid red;
-            padding: 40px;
-            display: flex; /* Flexbox를 사용하여 자식 요소를 정렬 */
-            box-sizing: border-box;
-            justify-content: space-between;
-            align-items: center; /* 수평 중앙 정렬 */
-            
+        img.icon{
+            width: 120px;
+            height: 120px;
         }
-
     </style>
      <!-- FontAwesome 라이브러리 추가 -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body>
-    <div class="margin">
-        <hr/>
-
-        <div class="topbox">
-            <div class="inbox">
-                <div class="leftbox">
-                    <div><b>양념치킨</b>님</div> 
-                    <button class="mybutton">정보 수정</button>
+<body>   
+<div class="container0">
+    <div class="container-top">
+        <hr class="title">
+    </div>
+    <div class="container-middle">
+        <div class="container-middle-profile">
+            <div class="content-profile">
+                <div class="font-nickname"><span>반반치킨</span>님</div>
+                <button class="profile">정보수정</button>
+            </div>
+        </div>
+        <div class="container-middle-mymenu">
+            <div class="content-mymenu_list">
+                <div class="content-mymenu">
+                    <img src="icon/icon.png">
+                    <div>찜</div>
                 </div>
-                <div class="rightbox">
-                   <div class="right-in-box">
-                    <div class="item">
-                        <i class="fas fa-heart"></i>
-                        <div>찜</div>
-                    </div>
-                    <div class="item">
-                        <i class="fas fa-star"></i>
-                        <div>견적함</div>
-                    </div>
-                    <div class="item">
-                        <i class="fas fa-square"></i>
-                        <div>결제내역</div>
-                                     
-                        
-                   </div>
+                <div class="content-mymenu">
+                    <img src="icon/icon.png">
+                    <div>견적함</div>
                 </div>
+                <div class="content-mymenu">
+                    <img src="icon/icon.png">
+                    <div>스케쥴</div>
+                </div>
+                <div class="content-mymenu">
+                    <img src="icon/icon.png">
+                    <div>나의리뷰</div>
+                </div>
+                <div class="content-mymenu">
+                    <img src="icon/icon.png">
+                    <div>나의QnA</div>
+                </div>
+                <div class="content-mymenu">
+                    <img src="icon/icon.png">
+                    <div>결제내역</div>
+                </div>   
             </div>
         </div>
     </div>
-    
+</div>
 </body>
 </html>
