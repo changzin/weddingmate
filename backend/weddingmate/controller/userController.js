@@ -7,7 +7,6 @@ exports.login = async(req,res)=>{
         // req.body 받아옴.
         const email = req.body.email;
         const password = req.body.password;
-        const accessToken = req.body.accessToken;
 
         let count = 0;
         let result = 0;
@@ -17,14 +16,14 @@ exports.login = async(req,res)=>{
         result = await db(query, [email, password]);
         count = result.length;
 
+        // accessToken을 uuid로 생성
+        const accessToken = v4();
+
         // count 가 1이면 유저를 하나 찾음 -> 로그인 가능
         if (count == 1){
             user = result[0];
 
-            // accessToken을 uuid로 생성
-            const accessToken = v4();
-
-            // user_access_token을 update해주는 쿼리문 실행 필요
+            // user_access_token을 update해주는 쿼리문 실행
             query = "UPDATE user SET user_access_token = ? WHERE user_id = ?";
             result = await db(query, [accessToken, user.user_id]);
         
@@ -50,12 +49,22 @@ exports.login = async(req,res)=>{
             }            
         }
         else{
-            query = "SELECT *  FROM admin WHERE admin_email = ? AND admin_password = ?"
+            query = "SELECT * FROM admin WHERE admin_email = ? AND admin_password = ?"
             result = await db(query, [email, password]);
             count = result.length;
 
+            // 관리자 로그인
             if (count == 1){
-                // 관리자 로그인
+                admin = result[0];
+
+                // admin_access_token을 update해주는 쿼리문 실행
+                query = "UPDATE admin SET admin_access_token = ? WHERE admin_id = ?";
+                result = await db(query, [accessToken, admin.admin_id]);
+                responseBody = {
+                    status: 200,
+                    accessToken: accessToken,
+                    message: "로그인 완료했습니다"
+                }
             }
             else{
                 throw new Error("로그인을 할 수 없습니다 : 잘못된 정보 입력");

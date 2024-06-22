@@ -71,15 +71,16 @@
             <div class="d-flex justify-content-center">
               <div class="admin_qna_review-section">
                 <div class="admin_qna_review-header justify-content-end">
-                  <button class="btn admin_qna_btn_active">미완료 리뷰만 보기</button>
-                  <select class="form-select admin_qna_select">
-                    <option selected>전체</option>
-                    <option>반품/취소</option>
-                    <option>배송문의</option>
-                    <option>기타</option>
+                  <button class="btn admin_qna_btn_active" @click="getUnhasAnswerMemberList()" v-if="hasAnswerOption">미완료 리뷰만 보기</button>
+                  <button class="btn admin_qna_btn_inactive" @click="gethasAnswerMemberList()" v-if="!hasAnswerOption">전체 리뷰 보기</button>
+                  <select class="form-select admin_qna_select" v-model="mode">
+                    <option selected value="all">전체</option>
+                    <option value="cancel">반품/취소</option>
+                    <option value="delivery">배송문의</option>
+                    <option value="etc">기타</option>
                   </select>
-                  <input type="text" class="form-control admin_qna_input">            
-                  <button class="btn admin_qna_btn_active">검색</button>      
+                  <input type="text" class="form-control admin_qna_input" placeholder="제목 + 작성자 + 내용" v-model="keyword">            
+                  <button class="btn admin_qna_btn_active" @click="search()">검색</button>      
                 </div>
 
                 <div class="admin_qna_qna-section">
@@ -87,31 +88,23 @@
                     <thead>
                       <tr>
                         <th>문의유형</th>
-                        <th>문의/답변</th>
-                        <th>작성자</th>
+                        <th style="width:500px;">문의/답변</th>
+                        <th style="width: 150px;">작성자</th>
                         <th>작성일</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>반품/취소</td>
-                        <td class="admin_qna_qna-section_status-title-div">
-                          <div class="admin_qna_qna-status">답변 완료</div>
-                          <div>
-                            일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십
+                      <tr v-for="(qna, index) in qnaList" :key="index">
+                        <td class="admin_qna_type">{{ this.formatQnaType(qna.qna_type)}}</td>
+                        <td class="d-flex justfiy-content-start" style="width: 800px;">
+                          <div class="admin_qna_qna-status" v-if="qna.qna_has_answer=='T'">답변 완료</div>
+                          <div class="admin_qna_qna-status incomplete" v-if="qna.qna_has_answer=='F'">미완료</div>
+                          <div style="margin-top: 5px; margin-left: 20px;">
+                            <a @click="this.$router.push({path: `/admin/answer/${qna.qna_id}`})">{{qna.qna_title}}</a>
                           </div>
                         </td>
-                        <td>일이삼사오육칠팔구십일이</td>
-                        <td>2024-06-11 15:54</td>
-                      </tr>
-                      <tr>
-                        <td>배송문의</td>
-                        <td class="admin_qna_qna-section_status-title-div">
-                          <div class="admin_qna_qna-status incomplete">미완료</div>
-                          <div>미완료 UI 보려고 하나 더 만듦</div>
-                        </td>
-                        <td>일이삼사오육칠팔구십일이</td>
-                        <td>2024-06-11 15:54</td>
+                        <td style="width: 150px;">{{qna.user_nickname}}</td>
+                        <td>{{this.$dateFormat(qna.qna_date)}}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -119,10 +112,25 @@
               </div>
             </div>
         </div>
+        <div class="d-flex justify-content-center">
+          <div class="mypage-bottom mypage-bottom-fix">
+            <div class="nav-page justify-content-center">
+            <a :class="{notVisible : (page == 1)}" @click="prevhasAnswer()"><div>&lt;&lt;</div></a>
+            <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
+            <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
+            <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
+            <a><div style="color: pink;">{{page}}</div></a>
+            <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
+            <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
+            <a :class="{notVisible : (page >= maxPage)}" @click="nextPage()"><div>&gt;</div></a>
+            <a :class="{notVisible : (page >= maxPage)}" @click="nexthasAnswer()"><div>&gt;&gt;</div></a>
+            </div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
-    </div>
+</div>
 </template>
     
 <script>
@@ -130,94 +138,106 @@ export default {
   data() {
     return {
       qnaList: [],
-      blockOption: false,
+      hasAnswerOption: false,
       page: 1,
       maxPage: 0,
       keyword: "",
       prevKeyword: "",
       mode: "all",
       prevMode: "all",
-      block: 'F'
+      hasAnswer: 'F'
     }
   },
   mounted(){    
-    
+    this.getQnaList();
   },
   methods: {
     // 멤버 정보 받아오기
     async getQnaList(){
       // URL에 파라미터를 추가한다.
-      // await this.$router.push({path: '/admin/qnalist', query:{page: this.page, block: this.block, mode: this.prevMode, keyword: this.prevKeyword} });
+      await this.$router.push({path: '/admin/qna', query:{page: this.page, hasAnswer: this.hasAnswer, mode: this.prevMode, keyword: this.prevKeyword} });
 
       // 멤버 정보를 가져오기 전에 파라미터 갈무리
       this.page = Number(this.$route.query.page);
-      this.block = this.$route.query.block;
+      this.hasAnswer = this.$route.query.hasAnswer;
       this.prevMode = this.$route.query.mode;
       this.prevKeyword = this.$route.query.keyword
       this.page = (!this.page) ? 1 : this.page;
-      this.block = (this.block == 'T') ? this.block : 'F';
+      this.hasAnswer = (this.hasAnswer == 'T') ? this.hasAnswer : 'F';
       this.mode = (!this.mode) ? 'all' : this.mode;
       this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
 
-      console.log(this.page, this.block, this.mode, this.prevKeyword);
+      console.log(this.page, this.hasAnswer, this.mode, this.prevKeyword);
       // memberList 정보 다시 가저오고, maxPage를 맞추어준다.
-      const result = await this.$api(`http://localhost:9090/user/list?page=${this.page}&block=${this.block}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
-      this.memberList = result.memberList;
+      const result = await this.$api(`http://localhost:9090/qna/adminlist?page=${this.page}&hasAnswer=${this.hasAnswer}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
+      this.qnaList = result.qnaList;
       this.maxPage = result.maxPage;
+      console.log("qnaList", this.qnaList);
     },
     // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
-    async getBlockMemberList(){
-      this.blockOption = true;
-      this.block = 'T';
+    async gethasAnswerMemberList(){
+      this.hasAnswerOption = true;
+      this.hasAnswer = 'T';
       this.page = 1;
-      this.getMemberList();
+      this.getQnaList();
     },
     // 전체 회원 불러오기(검색한 상태라면 검색 키워드는 유지하면서 전체 회원을 불러와야 하기 때문에 키워드를 넣었다.)
-    async getUnblockMemberList(){
-      this.blockOption = false;
-      this.block = 'F';
+    async getUnhasAnswerMemberList(){
+      this.hasAnswerOption = false;
+      this.hasAnswer = 'F';
       this.page = 1;
-      // this.$router.push(`/admin/memberlist?block=${this.block}&mode=${this.mode}&keyword=${this.prevKeyword}`);
-      this.getMemberList();
+      // this.$router.push(`/admin/memberlist?hasAnswer=${this.hasAnswer}&mode=${this.mode}&keyword=${this.prevKeyword}`);
+      this.getQnaList();
     }, 
     async search(){
       this.prevKeyword = this.keyword;
       this.prevMode = this.mode;
       this.page = 1;
-      this.getMemberList();
+      this.getQnaList();
     },
     // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
-    async prevBlock(){
+    async prevhasAnswer(){
       if (this.page <= 5){
         this.page = 1;
       }
       else{
         this.page = this.page - 5;
       }
-      this.getMemberList();
+      this.getQnaList();
     },
     // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
-    async nextBlock(){
+    async nexthasAnswer(){
       if (this.page > this.maxPage-5){
         this.page = this.maxPage;
       }
       else{
         this.page = this.page + 5;
       }
-      this.getMemberList();
+      this.getQnaList();
     },
     async nextPage(){
       this.page+=1;
-      this.getMemberList();
+      this.getQnaList();
     },
     async prevPage(){
       this.page-=1;
-      this.getMemberList();
+      this.getQnaList();
     },
     async goToPage(targetPage){
       this.page = targetPage;
-      this.getMemberList();
+      this.getQnaList();
     }, 
+    formatQnaType(data){
+      if (data=='delivery'){
+        return '배송문의';
+      }
+      else if (data == 'cancel'){
+        return '반품/취소'
+      }
+      else {
+        return '기타'
+      }
+    }
   }
 }
 </script>
@@ -391,13 +411,13 @@ export default {
 }
 .admin_qna_btn_inactive{
   background-color: #333333;
-  color: #111111;
+  color: #FFFFFF;
   margin-right: 10px;
 }
 
 .admin_qna_qna-section {
   width: 100%;
-  max-width: 1280px;
+  width: 1280px;
   margin: 0 auto;
   margin-top: 70px;
   /* background-color: green; */
@@ -420,7 +440,7 @@ export default {
 }
 
 .admin_qna_qna-status {
-  display: inline-block;
+  display: inline-hasAnswer;
   padding: 5px 10px;
   background-color: #007bff;
   color: white;
@@ -440,5 +460,33 @@ export default {
   display: flex;
   gap: 20px;
   align-items: center;
+  width: 886.6px;
 }
+
+.admin_qna_type{
+  width: 150px;
+}
+
+div.mypage-bottom{
+  display: grid;
+  place-items: center;
+  margin-top: 100px;
+  /* border: 1px solid yellow; */
+}
+div.nav-page{
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(9, 25px);
+  margin-bottom: 30px;
+  color: #888888;
+  /* border: 1px solid pink; */
+}
+.notVisible{
+visibility: hidden;
+}
+.mypage-bottom-fix{  
+position: absolute;
+bottom: -100px;
+}
+
 </style>

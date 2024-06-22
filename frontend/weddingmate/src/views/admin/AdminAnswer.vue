@@ -74,9 +74,9 @@
                         <label class="admin_answer_label">제목</label>
                         <!-- <div class="admin_answer_qna-status">답변 완료</div> -->
                         <div class="admin_answer_qna-status incomplete">미완료</div>
-                        <div class="admin_answer_qna_title">일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십</div>
-                        <div class="admin_answer_qna_writer">일이삼사오육칠팔구십************</div>
-                        <div class="admin_answer_qna_date">2024-06-12 20:32</div>
+                        <div class="admin_answer_qna_title">{{qna.qna_title}}</div>
+                        <div class="admin_answer_qna_writer">{{qna.user_nickname}}</div>
+                        <div class="admin_answer_qna_date">{{this.$dateFormat(qna.qna_date)}}</div>
                     </div>
                     
                     <div class="admin_answer_row">
@@ -86,6 +86,7 @@
                         rows="10"
                         placeholder="문의 내용을 입력하세요..."
                         disabled
+                        v-model="qna.qna_content"
                     ></textarea>
                     </div>
                     <div class="admin_answer_row_large">
@@ -93,12 +94,16 @@
                     <a><div class="admin_answer_image"><img src="" alt="" height="300" width="300"></div></a>
                     </div>
                     <div class="admin_answer_row_large">
-                        
-                    <label class="admin_answer_label">답변 내용</label>
+
+                    <div>
+                      <label class="admin_answer_label">답변 내용 </label>
+                      <div v-if="answerId" style="margin-top: 10px; margin-right: 20px;">{{this.$dateFormat(answerDate)}}</div>
+                    </div>
                     <textarea
                         class="admin_answer_textarea"
                         rows="10"
                         placeholder="답변 내용을 입력하세요..."
+                        v-model="answerContent"
                     ></textarea>
                     </div>
                     <div class="admin_answer_row_large d-flex justify-content-center">
@@ -114,6 +119,46 @@
   </div>
     </div>
 </template>
+
+<script>
+export default{
+  data(){
+    return {
+      answerContent: "",
+      answerDate: "",
+      answerAdminId: null,
+      answerId: "",
+      qna: {},
+
+    }
+  },
+  mounted(){
+    this.getQna();
+    
+  },
+  methods: {
+    async getQna(){
+      const qnaId = this.$route.params.qnaid;
+      const result = await this.$api("/qna/detail", {qna_id: qnaId}, "POST");
+      if (result.status == 200 && result.qna_id){
+        this.qna = result;
+        if (result.answer_id){
+          this.answerId = result.answer_id;
+          this.answerContent = result.answer_content;
+          this.answerDate = result.answer_date;
+          this.answerAdminId = result.admin_id;
+        }
+      }
+      else{
+        // 에러 발생
+        console.log("error!");
+      }
+      
+    }
+  }
+}
+</script>
+
 <style scoped>
 .sidbar_content_body{
   min-height: 100vh;
