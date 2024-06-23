@@ -22,7 +22,7 @@ export default{
             const accessToken2 = this.$store.state.user;
 
             let accessToken = (accessToken2) ? accessToken2 : null;
-            accessToken = (accessToken1) ? accessToken1 : null;
+            accessToken = (accessToken1) ? accessToken1 : accessToken;
 
             const result =  await this.$api("http://localhost:9090/user/info", {accessToken: accessToken}, "POST"); 
             console.log(result);
@@ -32,6 +32,15 @@ export default{
             else{
                 return null;
             }
+        },
+
+        $getAccessToken(){
+            const accessToken1 = this.$cookies.get("weddingCookie");
+            const accessToken2 = this.$store.state.user;
+
+            let accessToken = (accessToken2) ? accessToken2 : null;
+            accessToken = (accessToken1) ? accessToken1 : accessToken;
+            return accessToken;
         },
 
         // 쿠키와 localStorage의 accessToken(유저정보)를 지워주는 함수

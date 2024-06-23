@@ -72,6 +72,7 @@ exports.adminQnaList = async (req, res)=>{
 
 exports.qnaDetail = async (req, res)=>{
     try{
+        
         const qna_id = req.body.qna_id;
 
         // answer이 없는 것은 null로 응답을 보내기 위해 left outer join을 활용하였다.
@@ -95,8 +96,4 @@ exports.qnaDetail = async (req, res)=>{
         };        
         res.json(responseBody);        
     }
-}
-
-exports.adminQnaDelete = async (req, res)=>{
-
 }

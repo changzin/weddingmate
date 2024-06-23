@@ -32,6 +32,7 @@ exports.login = async(req,res)=>{
                 responseBody = {
                     status: 200,
                     accessToken: accessToken,
+                    type: "local",
                     message: "로그인 완료했습니다"
                 }
             }
@@ -63,6 +64,7 @@ exports.login = async(req,res)=>{
                 responseBody = {
                     status: 200,
                     accessToken: accessToken,
+                    type: "admin",
                     message: "로그인 완료했습니다"
                 }
             }

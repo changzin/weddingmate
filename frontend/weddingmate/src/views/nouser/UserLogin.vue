@@ -77,7 +77,6 @@
                 // 파이어베이스로 먼저 인증을 시작한다.
                 try{
                     const auth = await getAuth(firebaseApp);
-
                     // 파이어베이스 로그인 함수 (실패하면 에러 발생)
                     await signInWithEmailAndPassword(auth, this.email, this.password);
 
@@ -91,7 +90,12 @@
                         if (this.autoLogin){
                             await this.$store.commit("user", {accessToken: result.accessToken})
                         }
-                        // 완료 처리를 여기서 할 것.
+                        if (result.type=="local"){
+                            console.log("local login");
+                        }
+                        else if (result.type=="admin"){
+                            this.$router.push({path: '/admin/itemlist'});
+                        }
                     }
                     else{
                         this.errorMessage= true;    
@@ -99,6 +103,7 @@
                 }
                 catch(err){
                     // 파이어베이스에서 인증 실패 (signInWithEmailAndPassword)할 경우를 위한 catch문이다.
+                    console.error(err);
                     this.errorMessage= true;
                 }
             }
