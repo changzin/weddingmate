@@ -124,28 +124,40 @@
         <div class="container-middle-mymenu">
             <div class="content-mymenu_list">
                 <div class="content-mymenu">
-                    <img class="icon" src="http://localhost:8080/icon/icon.png">
-                    <div class="font-menu">찜</div>
+                    <a href="/mypage/bookmark">
+                      <img class="icon" src="http://localhost:8080/icon/icon.png">
+                      <div class="font-menu">찜</div>
+                    </a>
                 </div>
                 <div class="content-mymenu">
-                    <img class="icon" src="http://localhost:8080/icon/icon.png">
-                    <div class="font-menu">견적함</div>
+                    <a href="/mypage/boxlist">
+                      <img class="icon" src="http://localhost:8080/icon/icon.png">
+                      <div class="font-menu">견적함</div>
+                    </a>
                 </div>
                 <div class="content-mymenu">
+                  <a href="/mypage/schedule">
                     <img class="icon" src="http://localhost:8080/icon/icon.png">
                     <div class="font-menu">스케쥴</div>
+                  </a>
                 </div>
                 <div class="content-mymenu">
+                  <a href="/mypage/review">
                     <img class="icon" src="http://localhost:8080/icon/icon.png">
                     <div class="font-menu">나의리뷰</div>
+                  </a>
                 </div>
                 <div class="content-mymenu">
+                  <a href="/mypage/qna">
                     <img class="icon" src="http://localhost:8080/icon/icon.png">
                     <div class="font-menu">나의QnA</div>
+                  </a>
                 </div>
                 <div class="content-mymenu">
+                  <a href="/mypage/payment">
                     <img class="icon" src="http://localhost:8080/icon/icon.png">
                     <div class="font-menu">결제내역</div>
+                  </a>
                 </div>   
             </div>
         </div>
@@ -425,6 +437,13 @@ export default {
     place-items: center;
     font-weight: bold;
     /* border: 1px solid red; */
+}
+.content-mymenu a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
 }
 
 /* hr */

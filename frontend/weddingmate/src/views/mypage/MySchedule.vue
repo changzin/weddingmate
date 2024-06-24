@@ -112,7 +112,7 @@
     <!-- 본문 -->
     <div class="container0">
     <div class="container-top">
-        <div class="title-font">스케줄</div>
+        <div class="title-font">스케줄</div> 
         <hr class="title">
     </div>
     <div class="container-middle">
@@ -141,7 +141,11 @@
         </div>
     </div>
     <div class="mypage-bottom">
-        <button class="mypage-back">마이페이지로</button>
+      <button class="mypage-back">
+        <a href="/mypage">
+          마이페이지로
+        </a>
+    </button>
     </div>
 </div>
     <!-- 푸터 -->
@@ -467,5 +471,9 @@ div.nav-page{
     margin-bottom: 30px;
     color: #888888;
     /* border: 1px solid pink; */
+}
+.mypage-back a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
 }
 </style>

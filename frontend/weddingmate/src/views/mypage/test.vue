@@ -111,46 +111,17 @@
 
     <!-- 본문 -->
     <div class="container0">
-        <div class="container-top">
-          <!-- <hr class="title"> -->
-      </div>
-    <div class="container-middle">
-        <div class="container-middle-profile">
-            <div class="content-profile">
-                <div class="font-nickname"><span>반반치킨</span>님</div>
-                <button class="profile">정보수정</button>
-            </div>
-        </div>
-        <div class="container-middle-mymenu">
-            <div class="content-mymenu_list">
-                <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>찜</div>
-                </div>
-                <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>견적함</div>
-                </div>
-                <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>스케쥴</div>
-                </div>
-                <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>나의리뷰</div>
-                </div>
-                <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>나의QnA</div>
-                </div>
-                <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>결제내역</div>
-                </div>   
-            </div>
-        </div>
-    </div>
+      <div id="app">
+  <div>
+    <input type="checkbox" v-model="selectAll" @change="toggleAll"> 전체 선택
+  </div>
+  <div v-for="item in items" :key="item.id">
+    <input type="checkbox" v-model="item.selected"> {{ item.name }}
+  </div>
 </div>
+
+ 
+    </div>
     <!-- 푸터 -->
     <footer class="common__footer">
       <div class="common__footer-content">
@@ -185,15 +156,21 @@ export default {
       isVisible: false,
       ismaintain: false,
       // 본문
-      selectedItemType: ""
-
+      selectAll: false,
+        items: [
+      { id: 1, name: 'Item 1', selected: false },
+      { id: 2, name: 'Item 2', selected: false },
+      { id: 3, name: 'Item 3', selected: false }
+    ]
     };
   },
-    mounted(){
-
+  watch: {
+    selectAll(val) {
+      this.items.forEach(item => {
+        item.selected = val;
+      });
+    }
   },
-
-
   methods: {
     // 헤더
     showCategories() {
@@ -203,12 +180,16 @@ export default {
       this.isVisible = false;
     },
     // 본문
-
-    //페이지
-    
+    toggleAll() {
+      this.selectAll = !this.selectAll;
+      this.items.forEach(item => {
+        item.selected = this.selectAll;
+      });
+    }
   },
 };
 </script>
+
 
 <style scoped>
 .fix-width {
@@ -342,15 +323,22 @@ export default {
 }
 
 /* 본문 */
-       /* font */
-       .font-nickname{
-            font-size: 24px;
-        }
-        .font-nickname > span{
+        /* font */
+        .font-schedule-date{          
+            color: var(--color-pink);
             font-weight: bold;
+        }
+        
+        .title-font{
+            display: grid;
+            place-items: center;
+            color: #333333;
+            font-size: 24px;
+            font-weight: bold;          
         }
 
         /* div */
+
         .container0{
             min-width: var(--container-width);
         }
@@ -358,89 +346,117 @@ export default {
         .container-top{          
             margin-left: var(--container-margin-left);
             margin-right: var(--container-margin-right);
+            width: var(--container-width);
             margin-top: 100px;
             display: grid;
-            width: var(--container-width);
             font-size: 24;
-            border: 1px solid BLUE;
+            /* border: 1px solid blue; */
         }
 
         .container-middle{          
-            margin-left: 350px;
-            margin-right: 320px;
+            margin-left: var(--container-margin-left);
+            margin-right: var(--container-margin-right);
             margin-bottom: 20px;
             margin-top:10px;
             width: var(--container-width);
             display: grid;
-            grid-template-columns: 500px auto ;
-            padding: 20px;
-            box-sizing: border-box;
-            border: 1px solid red;
+            grid-template-columns: 1fr 1fr ;
+            font-size: 24;
+            /* border: 1px solid blue; */
         }
-        .container-middle-profile{         
-            height: 500px;
-            box-sizing: border-box;
-            border: 1px solid salmon;
-
-        }
-        .content-profile {
-            height: 500px;
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            box-sizing: border-box;
-            border: 1px solid green;
-
-        }
-        .container-middle-mymenu{    
-            display: grid;
-            align-items: center;
-            padding: 20px;     
-            box-sizing: border-box;
-            background-color: #f5f5f5;
-            border: 1px solid pink;
-
-        }
-        .content-mymenu_list{          
+        
+        .container-middle-calander{          
             display: grid;  
-            place-items: center;
-            align-items: center;
-            grid-row-gap: 100px;
-            grid-template-columns: auto auto auto;
-            border: 1px solid blue;
+            box-sizing: border-box;
+            /* border: 1px solid blue; */
         }
-        .content-mymenu{
-            display: flex;
-            flex-direction: column;
-            place-items: center;
-            color: #888888;
+        .container-middle-schedule{    
+            display: flex;  
+            flex-direction: column;    
+            margin-left: 20px;
+            box-sizing: border-box;
+            /* border: 1px solid red; */
+        }
+        .content-schedule-title{          
+            font-size: 24;
+            margin-bottom: 5px;
             font-weight: bold;
-            border: 1px solid red;
+            /* border: 1px solid blue; */
         }
-
+        .content-schedule-text{          
+            display: grid;  
+            align-items: center;
+            grid-template-columns: 120px 475px 0px ;
+            margin-bottom: 5px;
+            /* border: 1px solid blue; */
+        }
+        .calanderbox{
+            display: grid;
+            width: 100%;  
+            height: 500px;
+            border: 1px solid #888888;
+            background-color: none;   
+        }
         /* hr */
 
         hr.title{
             width: 100%;
-            height: 1px;
-            background-color: #888888; 
-            border: none; 
+            height: 1px; /* Set the height to 1px */
+            background-color: #333333; /* Set a lighter color */
+            border: none; /* Remove border */
         }
 
         /* button */
- 
-        button.profile{
-            border-radius: 20px;
+        
+        button.schedule-add{
+            justify-self: end;
             background-color: var(--color-pink);
-            color: white;
+            color:white;
+            font-size: 16px;
+            font-weight: bold;
             border: none;
+            border-radius: 12px;
+            width: 100px;
+            height: 40px;
+            margin-top: 30px;
+            margin-right: 20px;
         }
 
         /* img */
+        img.delete-x{
+            weight: 20px;
+            height: 20px;
+            /* border: 1px solid #333333; */
 
-        img.icon{
+        }
+
+        /* bottom */
+
+        button.mypage-back{
+            background-color: #888888;
+            color:white;
+            font-weight: bold;
+            border: none;
             width: 120px;
-            height: 120px;
+            height: 40px;
+        }
+
+
+        div.mypage-bottom{
+            display: grid;
+            place-items: center;
+            margin-left: 350px;
+            margin-right: 320px;
+            margin-top: 100px;
+            width: 1280px; /* 고정된 너비 */  
+            /* border: 1px solid yellow; */
+        }
+        div.nav-page{
+            display: grid;
+            place-items: center;
+            grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+            margin-bottom: 30px;
+            color: #888888;
+            /* border: 1px solid pink; */
         }
 </style>
