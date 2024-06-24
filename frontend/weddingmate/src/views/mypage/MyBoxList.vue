@@ -206,7 +206,11 @@
             <div>&gt;</div>
             <div>&gt;&gt;</div>
         </div>
-        <button class="mypage-back">마이페이지로</button>
+        <button class="mypage-back">
+          <a href="/mypage">
+            마이페이지로
+          </a>
+    </button>
     </div>
 </div>
     
@@ -473,7 +477,7 @@ export default {
     /* border: 1px solid blue; */
 }
 
-div.container-box{
+.container-box{
     width: 403px;
     height: 200px;
     background-color: #f5f5f5;
@@ -547,5 +551,9 @@ button.mypage-back{
     border: none;
     width: 120px;
     height: 40px;
+}
+.mypage-back a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
 }
 </style>

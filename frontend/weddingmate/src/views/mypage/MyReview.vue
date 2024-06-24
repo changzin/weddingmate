@@ -188,7 +188,11 @@
         <div>&gt;</div>
         <div>&gt;&gt;</div>
     </div>
-    <button class="mypage-back">마이페이지로</button>
+    <button class="mypage-back">
+        <a href="/mypage">
+          마이페이지로
+        </a>
+    </button>
 </div>
       
   
@@ -403,7 +407,7 @@
 }
 .more{
     font-size:14px;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     /* border: 1px solid red; */
 }
 .star{
@@ -486,6 +490,7 @@ hr.text{
     height: 1px; 
     background-color: #c2c2c2; 
     border: none; 
+    margin: 0px;
 }
 hr.content{
     width: 100%;
@@ -529,6 +534,10 @@ button.mypage-back{
     border: none;
     width: 120px;
     height: 40px;
+}
+.mypage-back a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
 }
   </style>
   

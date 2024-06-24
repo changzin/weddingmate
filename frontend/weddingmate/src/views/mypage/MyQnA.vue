@@ -143,7 +143,11 @@
             <div>&gt;</div>
             <div>&gt;&gt;</div>
             </div>
-            <button class="mypage-back">마이페이지로</button>
+            <button class="mypage-back">
+              <a href="/mypage">
+                마이페이지로
+              </a>
+            </button> 
         </div>
      </div>
 
@@ -438,6 +442,10 @@ font-weight: bold;
 border: none;
 width: 120px;
 height: 40px;
+}
+.mypage-back a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
 }
   </style>
   

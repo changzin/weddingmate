@@ -195,7 +195,7 @@
               <td><button class="boxdelete">삭제</button></td>
             </tr>
           </table>
-          <div class="container-title">
+          <div class="container-middle-category_title">
             <div class="title-font">예물</div>
             <div>
               <hr class="title" />
@@ -608,7 +608,7 @@ margin-right: var(--container-margin-right);
 width: var(--container-width);
 height: 200px;
 display: grid;
-grid-template-columns: 500px 80px 200px 100px 250px;
+grid-template-columns: 500px 100px 200px 100px 250px;
 justify-items: end;  
 align-items: center;
 padding: 30px;
@@ -694,9 +694,9 @@ background-color: var(--color-pink);
 color:white;
 border: none;
 border-radius: 12px;
-width: 150px;
+width: 120px;
 height: 50px;
-font-size:24px;
+font-size:20px;
 font-weight: bold;
 }
 
@@ -708,8 +708,9 @@ border: 1px solid #333333;
 }
 
 img.icon{
-height: 50px;
-width: 50px;
+height: 30px;
+width: 30px;
+border: 1px solid #333333;
 }
 
 /* table */
@@ -748,10 +749,10 @@ div.paycontent{
 text-align: right;
 }
 div.sellitle{
-font-size: 24px;
+font-size: 20px;
 }
 div.sellcost{
-font-size: 24px;
+font-size: 20px;
 }
 .sellcost > span {
 font-weight: bold;

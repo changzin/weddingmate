@@ -726,4 +726,8 @@ div.nav-page{
     color: #888888;
     /* border: 1px solid pink; */
 }
+.mypage-back a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
+}
 </style>
