@@ -151,6 +151,8 @@
 </template>
 
 <script>
+import { firebaseApp } from "../../util/firebase";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 export default{
     data(){
         return {
@@ -216,35 +218,51 @@ export default{
                             extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                         }
                     }
-                    console.log("asdf");
                     this.userAddr1 = addr + ' ' + extraAddr;
                     this.zipinput = true;
                 }
             }).open();
         },
         async signUp(){
-            if (this.verifyUser()){
-                const requestBody = {
-                    user_email: this.userEmail,
-                    user_password: this.userPassword,
-                    user_name: this.userName,
-                    user_nickname: this.userNickname,
-                    user_type: this.userType,
-                    user_addr1: this.userAddr1,
-                    user_addr2: this.userAddr2,
-                }
-                const result = await this.$api("http://localhost:9090/user/signup", requestBody, "POST");
-                if (result.status == 200){
-                    this.$router.push({path: '/mainpage'});
-                }
-                else{
-                    // 에러 처리
-                    console.log("error!");
+            try{
+                if (this.verifyUser()){
+                    const requestBody = {
+                        user_email: this.userEmail,
+                        user_password: this.userPassword,
+                        user_name: this.userName,
+                        user_nickname: this.userNickname,
+                        user_type: this.userType,
+                        user_addr1: this.userAddr1,
+                        user_addr2: this.userAddr2,
+                    }
+                    const result = await this.$api("http://localhost:9090/user/signup", requestBody, "POST");
+                    if (result.status == 200 && this.userType == 'local'){
+                        const auth = getAuth(firebaseApp);
+                        createUserWithEmailAndPassword(auth, this.userEmail, this.userPassword)
+                            .then((userCredential) => {
+                                const user = userCredential.user;
+                                console.log(user);
+                                this.$router.push({path: '/emailcheck'});
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                            });
+                        
+                    }
+                    else{
+                        // 에러 처리
+                        console.log("error!");
+                    }
                 }
             }
+            catch(err){
+                console.error(err);
+                console.log("error!");
+            }
+            
         },
         async emailDuplicateCheck(){
-            const result = await this.$api("http://localhost:9090/user/emailverify", {user_email: this.user_email}, "POST");
+            const result = await this.$api("http://localhost:9090/user/emailverify", {user_email: this.userEmail}, "POST");
             if (result.status == 200){
                 this.userEmailDuplicateCheck = true;
                 alert("중복 처리 완료했습니다!")

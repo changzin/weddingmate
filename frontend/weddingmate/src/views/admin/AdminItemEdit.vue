@@ -25,8 +25,9 @@
         <div class="sidebar_header_box d-flex justify-content-center">
             <div class="sidebar_header_box_text">로고 들어갈 자리</div>
         </div>
-        <div class="sidebar_header_box d-flex justify-content-center">
-            <div class="sidebar_header_box_text">로그인한 관리자 이름</div>
+        <div class="sidebar_header_box d-flex justify-content-between" style="padding: 0px 20px;">
+            <div class="sidebar_header_box_text" style="margin-top:4px;">로그인한 관리자 이름</div>
+            <button class="sidebar_header_box_text" style="height:30px; border:none; color: black" @click="this.$logoutUser(); this.$router.push({path:'/'});">로그아웃</button>
         </div>
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item sidbar_box sidbar_box_active">
