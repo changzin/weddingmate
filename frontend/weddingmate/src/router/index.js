@@ -39,7 +39,8 @@ const routes = [
   {
     path: '/productdetail',
     name: 'productdetail',
-    component: ProductDetail
+    component: ProductDetail,
+    props: route => ({ itemType: route.query.itemType, item_id: route.query.item_id })
   },
   {
     path: '/productdetaillist',
