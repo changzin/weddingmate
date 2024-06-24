@@ -457,15 +457,7 @@ div{
   display: grid;
   box-sizing: border-box;
   /* border: 1px solid blue; */
-  position: relative;
-}
-
-.calanderbox {
-  display: grid;
-  width: 100%;
-  height: 500px;
-  /* border: 1px solid #888888; */
-  background-color: none;
+  
   position: relative;
 }
 
@@ -518,7 +510,7 @@ hr.title {
 
 /* img */
 img.delete-x {
-  weight: 20px;
+  width: 20px;
   height: 20px;
   /* border: 1px solid #333333; */
 }
@@ -578,7 +570,7 @@ img.delete-x {
     display: grid;
     width: 100%;  
     height: 500px;
-    border: 1px solid #888888;
+    /* border: 1px solid #888888; */
     background-color: none;   
 }
 /* hr */
@@ -615,14 +607,6 @@ img.delete-x{
 
 /* bottom */
 
-button.mypage-back {
-  background-color: #888888;
-  color: white;
-  font-weight: bold;
-  border: none;
-  width: 120px;
-  height: 40px;
-}
 
 div.mypage-bottom {
   display: grid;
