@@ -99,7 +99,7 @@
                         <td>
                             {{member.user_email}}
                         </td>
-                        <td>{{member.user_create_date}}</td>
+                        <td>{{this.$dateFormat(member.user_create_date)}}</td>
                         <td>{{member.user_type}}</td>
                         <td>{{member.user_total_price}}</td>
                         <td>{{member.user_buy_count}} / {{member.user_review_count}} / {{ member.user_qna_count }} </td>
@@ -113,18 +113,20 @@
                 </div>
               </div>
             </div>
-            <div class="mypage-bottom">
-              <div class="nav-page justify-content-center">
-              <a :class="{notVisible : (page == 1)}" @click="prevBlock()"><div>&lt;&lt;</div></a>
-              <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
-              <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
-              <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
-              <a><div style="color: pink;">{{page}}</div></a>
-              <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
-              <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
-              <a :class="{notVisible : (page >= maxPage)}" @click="nextPage()"><div>&gt;</div></a>
-              <a :class="{notVisible : (page >= maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
-              </div>
+            <div class="d-flex justify-content-center">
+              <div class="mypage-bottom mypage-bottom-fix">
+                <div class="nav-page justify-content-center">
+                <a :class="{notVisible : (page == 1)}" @click="prevBlock()"><div>&lt;&lt;</div></a>
+                <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
+                <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
+                <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
+                <a><div style="color: pink;">{{page}}</div></a>
+                <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
+                <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
+                <a :class="{notVisible : (page >= maxPage)}" @click="nextPage()"><div>&gt;</div></a>
+                <a :class="{notVisible : (page >= maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
+                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -497,9 +499,12 @@ div.mypage-bottom{
             grid-template-columns: repeat(9, 25px);
             margin-bottom: 30px;
             color: #888888;
-            /* border: 1px solid pink; */
         }
       .notVisible{
         visibility: hidden;
       }
+.mypage-bottom-fix{  
+    position: absolute;
+    bottom: 300px;
+}
 </style>

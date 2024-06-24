@@ -42,7 +42,6 @@
           <li class="common-header_main-title">스드메</li>
           <li class="common-header_main-title">혼수</li>
           <li class="common-header_main-title">본식</li>
-          <li class="common-header_main-title">촬영팀</li>
         </ul>
         <!-- 이미지랑 소카테고리 -->
         <div class="common-header_image-smallcategory">
@@ -66,40 +65,33 @@
               </div>
               <div class="common-header_category">
                 <ul>
-                  <li >독립 패키지</li>
-                  <li @click="goToProductDetailList('Dress')">스튜디오</li>
-                  <li>드레스</li>
-                  <li>메이크업</li>
+                  <li @click="goToProductDetailList('sdm_package')">독립 패키지</li>
+                  <li @click="goToProductDetailList('studio')">스튜디오</li>
+                  <li  @click="goToProductDetailList('Dress')">드레스</li>
+                  <li @click="goToProductDetailList('makeup')">메이크업</li>
                 </ul>
               </div>
               <div class="common-header_category">
                 <ul>
-                  <li>예복</li>
-                  <li>예물</li>
-                  <li>가전</li>
-                  <li>혼수 패키지</li>
+                  <li @click="goToProductDetailList('giving_dress')">예복</li>
+                  <li @click="goToProductDetailList('giving_item')">예물</li>
+                  <li @click="goToProductDetailList('giving_mechine')">가전</li>
+                  <li @click="goToProductDetailList('giving_package')">혼수 패키지</li>
                 </ul>
               </div>
               <div class="common-header_category">
                 <ul>
-                  <li>본식스냅</li>
-                  <li>영상</li>
-                  <li>부케</li>
-                  <li>연주</li>
-                  <li>사회자</li>
-                  <li>웨딩슈즈</li>
-                  <li>답례품</li>
-                  <li>청첩장</li>
+                  <li @click="goToProductDetailList('snap')">본식스냅</li>
+                  <li @click="goToProductDetailList('video')">영상</li>
+                  <li @click="goToProductDetailList('flower')">부케</li>
+                  <li @click="goToProductDetailList('music')">연주</li>
+                  <li @click="goToProductDetailList('mc')">사회자</li>
+                  <li @click="goToProductDetailList('shoes')">웨딩슈즈</li>
+                  <li @click="goToProductDetailList('gift')">답례품</li>
+                  <li @click="goToProductDetailList('letter')">청첩장</li>
                 </ul>
               </div>
-              <div class="common-header_category">
-                <ul>
-                  <li>스냅</li>
-                  <li>본식</li>
-                  <li>제주도 야외</li>
-                  <li>고급 스튜디오 촬영</li>
-                </ul>
-              </div>
+             
             </div>
           </div>
         </div>
@@ -125,8 +117,8 @@ export default {
     hideCategories() {
       this.isVisible = false;
     },
-      goToItemPage(itemType) {
-      this.$router.push({ name: 'productdetaillist', params: { itemType } });
+      goToProductDetailList(itemType) {
+      this.$router.push({ name: 'productdetaillist', query: { itemType } });
     }
   },
 };
@@ -134,6 +126,7 @@ export default {
 
 
 <style scoped>
+
 /* 로그인 + 회원가입 + 로고 */
 #common__header-login-padding {
   margin-right: 30px;
@@ -173,13 +166,17 @@ export default {
 }
 
 .common-header_nav > li {
-  cursor: pointer;
+  cursor: pointer !important;
   transition: background-color 0.3s;
   padding-top: 10px;
   padding-bottom: 10px;
   box-sizing: border-box;
   padding: 20px;
   width: 140px;
+}
+
+.common-header_category ul li {
+  cursor: pointer !important;
 }
 
 .common-header_nav > li:hover {

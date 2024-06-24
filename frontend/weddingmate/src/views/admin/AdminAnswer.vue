@@ -72,11 +72,11 @@
                 <div class="admin_answer_container">
                     <div class="admin_answer_row_large">
                         <label class="admin_answer_label">제목</label>
-                        <!-- <div class="admin_answer_qna-status">답변 완료</div> -->
-                        <div class="admin_answer_qna-status incomplete">미완료</div>
-                        <div class="admin_answer_qna_title">일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십</div>
-                        <div class="admin_answer_qna_writer">일이삼사오육칠팔구십************</div>
-                        <div class="admin_answer_qna_date">2024-06-12 20:32</div>
+                        <div class="admin_answer_qna-status" v-if="answerId">답변 완료</div>
+                        <div class="admin_answer_qna-status incomplete" v-if="!answerId">미완료</div>
+                        <div class="admin_answer_qna_title">{{qna.qna_title}}</div>
+                        <div class="admin_answer_qna_writer">{{qna.user_nickname}}</div>
+                        <div class="admin_answer_qna_date">{{this.$dateFormat(qna.qna_date)}}</div>
                     </div>
                     
                     <div class="admin_answer_row">
@@ -86,6 +86,7 @@
                         rows="10"
                         placeholder="문의 내용을 입력하세요..."
                         disabled
+                        v-model="qna.qna_content"
                     ></textarea>
                     </div>
                     <div class="admin_answer_row_large">
@@ -93,17 +94,27 @@
                     <a><div class="admin_answer_image"><img src="" alt="" height="300" width="300"></div></a>
                     </div>
                     <div class="admin_answer_row_large">
-                        
-                    <label class="admin_answer_label">답변 내용</label>
+
+                    <div>
+                      <label class="admin_answer_label">답변 내용 </label>
+                      <div v-if="answerId" style="margin-top: 10px; margin-right: 20px;">{{this.$dateFormat(answerDate)}}</div>
+                    </div>
                     <textarea
                         class="admin_answer_textarea"
                         rows="10"
                         placeholder="답변 내용을 입력하세요..."
+                        v-model="answerContent"
+                        :disabled="!canUpdate"
                     ></textarea>
                     </div>
-                    <div class="admin_answer_row_large d-flex justify-content-center">
-                        <button type="button" class="admin_answer_cancel_button" >취소</button>
-                        <button type="button" class="admin_answer_ok_button" style="margin-left:10px;">등록</button>
+                    <div class="admin_answer_row_large d-flex justify-content-center" v-if="!answerId">
+                        <button type="button" class="admin_answer_cancel_button" @click="$router.push({path: '/admin/qna'})" >취소</button>
+                        <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" @click="addAnswer();">등록</button>
+                    </div>
+                    <div class="admin_answer_row_large d-flex justify-content-center" v-if="answerId">
+                      <button type="button" class="admin_answer_cancel_button" @click="$router.push({path: '/admin/qna'})" >취소</button>
+                      <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" v-if="!canUpdate" @click="canUpdate = true;">수정</button>
+                      <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" @click="updateAnswer();" v-if="canUpdate">수정 완료</button>
                     </div>
                 </div>
               </div>
@@ -114,6 +125,81 @@
   </div>
     </div>
 </template>
+
+<script>
+export default{
+  data(){
+    return {
+      answerContent: "",
+      answerDate: "",
+      answerAdminId: null,
+      answerId: "",
+      qna: {},
+      accessToken: "",
+      canUpdate: true
+    }
+  },
+  mounted(){
+    this.getQna();
+    
+  },
+  methods: {
+    async getQna(){
+      const qnaId = this.$route.params.qnaid;
+      this.accessToken = this.$getAccessToken();
+
+      const result = await this.$api("/qna/admindetail", {access_token: this.accessToken, qna_id: qnaId}, "POST");
+      if (result.status == 200 && result.qna_id){
+        this.qna = result;
+        if (result.answer_id){
+
+          // 답변이 있다면, 수정 버튼을 눌러야 수정할 수 있도록 만든다.
+          this.canUpdate = false;
+
+          this.answerId = result.answer_id;
+          this.answerContent = result.answer_content;
+          this.answerDate = result.answer_date;
+          this.answerAdminId = result.admin_id;
+        }
+      }
+      else{
+        // 에러 발생
+        console.log("error!");
+      }
+      
+    },
+    async addAnswer(){
+      const result = await this.$api("/answer/add", {access_token: this.accessToken, qna_id: this.qna.qna_id, answer_content: this.answerContent}, "POST");
+      if (result.status == 200){
+          this.answerId = result.answer_id;
+          this.answerContent = result.answer_content;
+          this.answerDate = result.answer_date;
+          this.answerAdminId = result.admin_id;        
+      }
+      else{
+        // 에러 발생
+        console.log("error!");
+      }
+    },
+    async updateAnswer(){
+      const result = await this.$api("/answer/update", {access_token: this.accessToken, answer_id: this.answerId, answer_content: this.answerContent}, "POST");
+      if (result.status == 200){
+          this.answerId = result.answer_id;
+          this.answerContent = result.answer_content;
+          this.answerDate = result.answer_date;
+          this.answerAdminId = result.admin_id;        
+
+          this.canUpdate = false;
+      }
+      else{
+        // 에러 발생
+        console.log("error!");
+      }
+    }
+  }
+}
+</script>
+
 <style scoped>
 .sidbar_content_body{
   min-height: 100vh;

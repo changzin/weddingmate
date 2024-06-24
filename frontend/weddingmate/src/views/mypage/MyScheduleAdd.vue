@@ -294,6 +294,14 @@
   }
   
   /* 본문 */
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+div{
+  font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    color:#555555;
+}
+
+/* div */
 .container0{
     min-width: var(--container-width)
 }

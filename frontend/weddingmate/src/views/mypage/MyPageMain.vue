@@ -124,28 +124,28 @@
         <div class="container-middle-mymenu">
             <div class="content-mymenu_list">
                 <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>찜</div>
+                    <img class="icon" src="http://localhost:8080/icon/icon.png">
+                    <div class="font-menu">찜</div>
                 </div>
                 <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>견적함</div>
+                    <img class="icon" src="http://localhost:8080/icon/icon.png">
+                    <div class="font-menu">견적함</div>
                 </div>
                 <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>스케쥴</div>
+                    <img class="icon" src="http://localhost:8080/icon/icon.png">
+                    <div class="font-menu">스케쥴</div>
                 </div>
                 <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>나의리뷰</div>
+                    <img class="icon" src="http://localhost:8080/icon/icon.png">
+                    <div class="font-menu">나의리뷰</div>
                 </div>
                 <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>나의QnA</div>
+                    <img class="icon" src="http://localhost:8080/icon/icon.png">
+                    <div class="font-menu">나의QnA</div>
                 </div>
                 <div class="content-mymenu">
-                    <img class="icon" src="icon/icon.png">
-                    <div>결제내역</div>
+                    <img class="icon" src="http://localhost:8080/icon/icon.png">
+                    <div class="font-menu">결제내역</div>
                 </div>   
             </div>
         </div>
@@ -342,105 +342,113 @@ export default {
 }
 
 /* 본문 */
-       /* font */
-       .font-nickname{
-            font-size: 24px;
-        }
-        .font-nickname > span{
-            font-weight: bold;
-        }
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+  div{
+    font-family: 'Noto Sans KR', sans-serif;
+      font-size: 16px;
+      color:#555555;
+}
+/* font */
+.font-nickname{
+    font-size: 24px;
+}
+.font-nickname > span{
+    font-weight: bold;
+}
+.font-menu{
+  color:#888888
+}
 
-        /* div */
-        .container0{
-            min-width: var(--container-width);
-        }
+/* div */
+.container0{
+    min-width: var(--container-width);
+}
 
-        .container-top{          
-            margin-left: var(--container-margin-left);
-            margin-right: var(--container-margin-right);
-            margin-top: 100px;
-            display: grid;
-            width: var(--container-width);
-            font-size: 24;
-            border: 1px solid BLUE;
-        }
+.container-top{          
+    margin-left: var(--container-margin-left);
+    margin-right: var(--container-margin-right);
+    margin-top: 100px;
+    display: grid;
+    width: var(--container-width);
+    font-size: 24;
+    /* border: 1px solid BLUE; */
+}
 
-        .container-middle{          
-            margin-left: 350px;
-            margin-right: 320px;
-            margin-bottom: 20px;
-            margin-top:10px;
-            width: var(--container-width);
-            display: grid;
-            grid-template-columns: 500px auto ;
-            padding: 20px;
-            box-sizing: border-box;
-            border: 1px solid red;
-        }
-        .container-middle-profile{         
-            height: 500px;
-            box-sizing: border-box;
-            border: 1px solid salmon;
+.container-middle{          
+    margin-left: 350px;
+    margin-right: 320px;
+    margin-bottom: 20px;
+    margin-top:10px;
+    width: var(--container-width);
+    display: grid;
+    grid-template-columns: 500px auto ;
+    padding: 20px;
+    box-sizing: border-box;
+    /* border: 1px solid red; */
+}
+.container-middle-profile{         
+    height: 500px;
+    box-sizing: border-box;
+    /* border: 1px solid salmon; */
 
-        }
-        .content-profile {
-            height: 500px;
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            box-sizing: border-box;
-            border: 1px solid green;
+}
+.content-profile {
+    height: 500px;
+    display: flex; 
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center; 
+    box-sizing: border-box;
+    /* border: 1px solid green; */
 
-        }
-        .container-middle-mymenu{    
-            display: grid;
-            align-items: center;
-            padding: 20px;     
-            box-sizing: border-box;
-            background-color: #f5f5f5;
-            border: 1px solid pink;
+}
+.container-middle-mymenu{    
+    display: grid;
+    align-items: center;
+    padding: 20px;     
+    box-sizing: border-box;
+    background-color: #f5f5f5;
+    /* border: 1px solid pink; */
 
-        }
-        .content-mymenu_list{          
-            display: grid;  
-            place-items: center;
-            align-items: center;
-            grid-row-gap: 100px;
-            grid-template-columns: auto auto auto;
-            border: 1px solid blue;
-        }
-        .content-mymenu{
-            display: flex;
-            flex-direction: column;
-            place-items: center;
-            color: #888888;
-            font-weight: bold;
-            border: 1px solid red;
-        }
+}
+.content-mymenu_list{          
+    display: grid;  
+    place-items: center;
+    align-items: center;
+    grid-row-gap: 100px;
+    grid-template-columns: auto auto auto;
+    /* border: 1px solid blue; */
+}
+.content-mymenu{
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    font-weight: bold;
+    /* border: 1px solid red; */
+}
 
-        /* hr */
+/* hr */
 
-        hr.title{
-            width: 100%;
-            height: 1px;
-            background-color: #888888; 
-            border: none; 
-        }
+hr.title{
+    width: 100%;
+    height: 1px;
+    background-color: #888888; 
+    border: none; 
+}
 
-        /* button */
- 
-        button.profile{
-            border-radius: 20px;
-            background-color: var(--color-pink);
-            color: white;
-            border: none;
-        }
+/* button */
 
-        /* img */
+button.profile{
+    border-radius: 20px;
+    background-color: var(--color-pink);
+    color: white;
+    border: none;
+}
 
-        img.icon{
-            width: 120px;
-            height: 120px;
-        }
+/* img */
+
+img.icon{
+    width: 120px;
+    height: 120px;
+}
 </style>

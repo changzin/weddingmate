@@ -10,28 +10,31 @@
                 여러분의 웨딩을 처음부터 함께하는 웨딩메이트입니다.
             </div>
         </div>
+        <div class="row d-flex justify-content-center">            
+                <div class="login_errorMessage" v-if="errorMessage">아이디나 비밀번호가 잘못됐습니다</div>
+        </div>
         <div class="row">
-            <form v-on:submit="login">
+            
                 <div class="d-flex justify-content-center mb-4">
-                    <input class="login_input" type="text" placeholder="이메일을 입력하세요">
+                    <input class="login_input" type="text" placeholder="이메일을 입력하세요" v-model="email">
                     <button class="login_input_xbutton"></button>
                 </div>
                 <div class="d-flex justify-content-center mb-4">
-                    <input class="login_input" type="text" placeholder="비밀번호를 입력하세요">
+                    <input class="login_input" type="text" placeholder="비밀번호를 입력하세요" v-model="password">
                     <button class="login_input_xbutton"></button>
                 </div>
                 <div class="d-flex justify-content-center">
                     <div class="login_box">
                         <div class="d-flex justify-content-start">
-                            <input id="auto_login" type="checkbox" class="login_checkbox">
-                            <label for="auto_login" class="login_label">자동로그인</label>
+                            
+                            <input id="auto_login" type="checkbox" class="login_checkbox" v-model="autoLogin">
+                            <label for="auto_login" class="login_label">자동로그인</label>                            
                         </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center mb-5">
-                    <input class="login_input_button login_button_text" type="submit" value="login">
+                    <button class="login_input_button login_button_text" @click="login()">login</button>
                 </div>
-            </form>
         </div>
         <div class="row d-flex justify-content-center">
             <div class="login_box">
@@ -57,15 +60,52 @@
 </template>
 
 <script>
+    import { firebaseApp } from "../../util/firebase";
+    import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
     export default {
         data(){
-            
+            return {
+                autoLogin: null,
+                password: "",
+                email: "",
+                errorMessage: false,
+            }            
         },
         methods: {
-            async login(e){
-                e.preventDefault();                
+            async login(){
+                 
+                // 파이어베이스로 먼저 인증을 시작한다.
+                try{
+                    const auth = await getAuth(firebaseApp);
+                    // 파이어베이스 로그인 함수 (실패하면 에러 발생)
+                    await signInWithEmailAndPassword(auth, this.email, this.password);
 
-                this.$api("asdf")
+                    // 서버 쪽에서 계정이 있는지 또 확인하고, 성공하면 DB에 저장된 accessToken을 가져온다.
+                    const result = await this.$api(`/user/login`, {email: this.email, password: this.password}, "POST");                    
+                    
+                    if (result.status == 200){                        
+                        console.log(this.autoLogin);
+                        // 쿠키에 accessToken 저장하고 로그인 유지 시엔 LocalStoreage(vuex)에도 저장
+                        this.$cookies.set("weddingCookie", result.accessToken);
+                        if (this.autoLogin){
+                            await this.$store.commit("user", {accessToken: result.accessToken})
+                        }
+                        if (result.type=="local"){
+                            console.log("local login");
+                        }
+                        else if (result.type=="admin"){
+                            this.$router.push({path: '/admin/itemlist'});
+                        }
+                    }
+                    else{
+                        this.errorMessage= true;    
+                    }
+                }
+                catch(err){
+                    // 파이어베이스에서 인증 실패 (signInWithEmailAndPassword)할 경우를 위한 catch문이다.
+                    console.error(err);
+                    this.errorMessage= true;
+                }
             }
         }
     };
@@ -135,7 +175,6 @@
         width: 22px;
         height: 22px;
         border-radius: 25px;
-        appearance: none;
         border: 1px solid #C2C2C2;
         margin-bottom: 12px;
     }
@@ -153,5 +192,10 @@
         border-radius: 50px;
         margin-top: 30px;
         margin-left: 460px;
+    }
+    .login_errorMessage{
+        color: red;
+        margin-bottom: 10px;
+        text-align: center;
     }
 </style>

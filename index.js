@@ -6,31 +6,21 @@ import QnAModify from '../views/QnA/QnAModify.vue'
 import QnADetail from '../views/QnA/QnADetail.vue'
 import QnAList from '../views/QnA/QnAList.vue'
 import ReviewList from '../views/review/ReviewList.vue'
-import Orderinfo from '../views/order_info/Orderinfo.vue'
+
 import UserLogin from '../views/nouser/UserLogin.vue'
 import MemberList from '../views/admin/MemberList'
-import AdminAnswer from '../views/admin/AdminAnswer.vue';
+// import AdminAnswer from '../views/admin/AdminAnswer.vue';
 // import AdminItemAdd from '../views/admin/AdminItemAdd.vue'
 // import AdminItemEdit from '../views/admin/AdminItemEdit.vue'
-import AdminItemList from '../views/admin/AdminItemList.vue'
 import AdminQna from '../views/admin/AdminQna.vue'
 import AdminReview from '../views/admin/AdminReview.vue'
 import AdminAnalysis from '../views/admin/AdminAnalysis.vue'
-import MySchedule from '../views/mypage/MySchedule.vue'
-import TempVue from '../views/tempVue.vue'
 
 import MyPageMain from '../views/mypage/MyPageMain.vue'
+import MySchedule from '../views/mypage/MySchedule.vue'
 import MyScheduleAdd from '../views/mypage/MyScheduleAdd.vue'
-import MyBookMark from '../views/mypage/MyBookmark.vue'
-import MyBoxList from '../views/mypage/MyBoxList.vue'
-import MyBox from '../views/mypage/MyBox.vue'
-import MyQnA from '../views/mypage/MyQnA'
-import MyReview from '@/views/mypage/MyReview.vue'
-import MyPayment from '@/views/mypage/MyPayment.vue'
 
 import test from '../views/mypage/test.vue'
-
-
 
 const routes = [
   {
@@ -41,8 +31,7 @@ const routes = [
   {
     path: '/productdetaillist',
     name: 'productdetaillist',
-    component: ProductDetailList,
-    props: route => ({ itemType: route.query.itemType })
+    component: ProductDetailList
   },
   {
     path: '/qnawrite',
@@ -80,16 +69,11 @@ const routes = [
     name: 'memberlist',
     component: MemberList
   },
-  {
-    path: '/admin/itemlist',
-    name: 'adminitemlist',
-    component: AdminItemList
-  },
-  {
-    path: '/admin/answer/:qnaid',
-    name: 'adminanswer',
-    component: AdminAnswer
-  },
+  // {
+  //   path: '/admin/answer',
+  //   name: 'adminanswer',
+  //   component: AdminAnswer
+  // },
   // {
   //   path: '/admin/itemadd',
   //   name: 'adminitemadd',
@@ -116,16 +100,6 @@ const routes = [
     component: AdminAnalysis
   },
   {
-    path: '/tempvue',
-    name: "tempvue",
-    component: TempVue
-  },
-  {
-    path:'/orderinfo',
-    name:"Orderinfo",
-    component: Orderinfo
-  },
-  {
     path: '/mypage',
     name: "mypagemain",
     component: MyPageMain
@@ -137,45 +111,14 @@ const routes = [
   },
   {
     path: '/scheduleadd',
-    name: "myscheduleadd",
+    name: "mypageschedule",
     component: MyScheduleAdd
-  },
-  {
-    path: '/mypage/bookmark',
-    name: "mybookmark",
-    component: MyBookMark
-  },
-  {
-    path: '/mypage/boxlist',
-    name: "myboxlist",
-    component: MyBoxList
-  },
-  {
-    path: '/mypage/boxlist/boxname',
-    name: "mybox",
-    component: MyBox
-  },
-  {
-    path: '/mypage/QnA',
-    name: "myqna",
-    component: MyQnA
-  },
-  {
-    path: '/mypage/review',
-    name: "myreview",
-    component: MyReview
-  },
-  {
-    path: '/mypage/payment',
-    name: "mypayment",
-    component: MyPayment
   },
   {
     path: '/test',
     name: "test",
     component: test
-  },
-
+  }
   
 ]
 

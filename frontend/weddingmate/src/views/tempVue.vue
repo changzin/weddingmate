@@ -1,5 +1,8 @@
 <template>
-         <EventCalendar />
+<div>
+        <MateHeader />
+        <EventCalendar />
+</div>
 </template>
 
 <script>

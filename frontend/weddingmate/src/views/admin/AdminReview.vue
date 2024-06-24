@@ -91,8 +91,8 @@
                       </div>
                     </div>
                     <div class="admin_review_review-section_title-div">
-                      <div class="admin_review_card-rating">{{review.review_star}}</div>
-                      <div class="admin_review_review-section_date-div">{{review.review_date}}</div>
+                      <div class="admin_review_card-rating">{{makeStar(review.review_star)}}</div>
+                      <div class="admin_review_review-section_date-div">{{this.$dateFormat(review.review_date)}}</div>
                     </div>
                     <img
                       src="https://via.placeholder.com/300x200"
@@ -109,18 +109,20 @@
                 
               </div>
             </div>
-            <div class="mypage-bottom">
-              <div class="nav-page justify-content-center">
-              <a :class="{notVisible : (page == 1)}" @click="prevBlock()"><div>&lt;&lt;</div></a>
-              <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
-              <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
-              <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
-              <a><div style="color: pink;">{{page}}</div></a>
-              <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
-              <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
-              <a :class="{notVisible : (page >= maxPage)}" @click="nextPage()"><div>&gt;</div></a>
-              <a :class="{notVisible : (page >= maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
-              </div>
+            <div class="d-flex justify-content-center">
+              <div class="mypage-bottom mypage-bottom-fix">
+                <div class="nav-page justify-content-center">
+                <a :class="{notVisible : (page == 1)}" @click="prevBlock()"><div>&lt;&lt;</div></a>
+                <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
+                <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
+                <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
+                <a><div style="color: pink;">{{page}}</div></a>
+                <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
+                <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
+                <a :class="{notVisible : (page >= maxPage)}" @click="nextPage()"><div>&gt;</div></a>
+                <a :class="{notVisible : (page >= maxPage)}" @click="nextBlock()"><div>&gt;&gt;</div></a>
+                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -168,12 +170,6 @@ export default {
       const result = await this.$api(`http://localhost:9090/review/adminlist?page=${this.page}&reported=${this.reported}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
       this.reviewList = result.reviewList;
       this.maxPage = result.maxPage;
-      console.log("reviewList", this.reviewList);
-      console.log("maxPage", this.maxPage);
-
-      console.log("this.page", this.page);
-
-      console.log(this.page+1 > this.maxPage);
     },
     // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
     async getReportedReviewList(){
@@ -231,6 +227,13 @@ export default {
       await this.$api(`http://localhost:9090/review/delete`, {review_id: review_id}, "POST");
       this.page = 1;
       await this.getReviewList();
+    },
+    makeStar(num){
+      let star = "";
+      for(let i = 0; i < num; i++){
+        star += "★";
+      }
+      return star;
     }
   }
 }
@@ -424,4 +427,8 @@ div.mypage-bottom{
       .notVisible{
         visibility: hidden;
       }
+      .mypage-bottom-fix{  
+        position: absolute;
+        bottom: -100px;
+    }
 </style>
