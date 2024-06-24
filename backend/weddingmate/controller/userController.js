@@ -84,7 +84,6 @@ exports.login = async(req,res)=>{
     }
 }
 
-
 exports.info = async(req, res)=>{
     try{
         const accessToken = req.body.accessToken;
@@ -115,5 +114,95 @@ exports.info = async(req, res)=>{
             message: err.message
         };
         res.json(responseBody);         
+    }
+}
+
+exports.signUp = async (req, res)=>{
+    try{
+        const user_email = req.body.user_email;
+        const user_password = req.body.user_password;
+        const user_name = req.body.user_name;
+        const user_nickname = req.body.user_nickname;
+        const user_type = req.body.user_type;
+        const user_addr1 = req.body.user_addr1;
+        const user_addr2 = req.body.user_addr2;
+
+        let count = 0;
+        let result = 0;
+        let responseBody = {};
+
+        query = "SELECT count(*) AS count FROM user WHERE user_email=?";                
+        result = await db(query, [user_email]);
+        count = result[0]['count'];
+        if (count != 0){
+            throw new Error("중복된 이메일입니다.")
+        }
+        query = "SELECT count(*) AS count FROM admin WHERE admin_email=?";                
+        result = await db(query, [user_email]);
+        count = result[0]['count'];
+        if (count != 0){
+            throw new Error("중복된 이메일입니다.")
+        }
+
+        query = "INSERT INTO user(user_email, user_password, user_name, user_nickname, user_type, user_addr1, user_addr2) values(?, ?, ?, ?, ?, ?, ?)";
+        result = await db(query, [user_email, user_password, user_name, user_nickname, user_type, user_addr1, user_addr2]);
+        result = result.affectedRows;
+
+        if (result == 1){
+            // 성공
+            responseBody = {
+                status: 200,
+                message: "회원가입 완료"
+            };
+            res.status(200).json(responseBody);
+        }
+        else{
+            throw new Error("회원가입을 완료하지 못했습니다.")
+        }
+
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: err.message
+        };
+        res.json(responseBody);   
+    }
+}
+
+exports.emailVerify = async(req, res)=>{
+    try{
+            const user_email = req.body.user_email;
+
+            let count = 0;
+            let result = 0;
+            let responseBody = {};
+            query = "SELECT count(*) AS count FROM user WHERE user_email=?";                
+            result = await db(query, [user_email]);
+            count = result[0]['count'];
+            if (count != 0){
+                throw new Error("중복된 이메일입니다.")
+            }
+            query = "SELECT count(*) AS count FROM admin WHERE admin_email=?";                
+            result = await db(query, [user_email]);
+            count = result[0]['count'];
+            if (count != 0){
+                throw new Error("중복된 이메일입니다.")
+            }
+            
+            responseBody = {
+                status: 200,
+                message: "중복되지 않은 이메일입니다."
+            };
+            res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: err.message
+        };
+        res.json(responseBody);   
     }
 }

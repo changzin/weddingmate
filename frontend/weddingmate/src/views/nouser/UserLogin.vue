@@ -1,6 +1,7 @@
 <template>
+        <MateHeader />
     <div class="container login_container">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center" style="margin-top:200px;">
             <div class="login_text">
                 안녕하세요
             </div>
@@ -40,14 +41,14 @@
             <div class="login_box">
                 <div class="d-flex justify-content-center">
                     <a class="col login_col_text" href="#">비밀번호 찾기</a> 
-                    <a class="col login_col_text" href="#">회원가입</a>
+                    <a class="col login_col_text" @click="this.$router.push({path: '/terms'})">회원가입</a>
                 </div>
             </div>
         </div>
         <div class="row justify-content-center mb-3">
             간편 로그인
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center" style="margin-bottom: 300px;">
             <div class="login_box">
                 <div class="d-flex justify-content-center">
                     <img src="http://localhost:8080/icon/kakao_logo.jpg" alt="" class="login_icon_first">

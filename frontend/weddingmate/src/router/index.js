@@ -7,7 +7,10 @@ import QnADetail from '../views/QnA/QnADetail.vue'
 import QnAList from '../views/QnA/QnAList.vue'
 import ReviewList from '../views/review/ReviewList.vue'
 import Orderinfo from '../views/order_info/Orderinfo.vue'
+
 import UserLogin from '../views/nouser/UserLogin.vue'
+import SignUp from '../views/nouser/SignUp.vue'
+import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import MemberList from '../views/admin/MemberList'
 import AdminAnswer from '../views/admin/AdminAnswer.vue';
 // import AdminItemAdd from '../views/admin/AdminItemAdd.vue'
@@ -69,6 +72,16 @@ const routes = [
     path: '/userlogin',
     name: 'userlogin',
     component: UserLogin
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: SignUp
+  },
+  {
+    path: '/terms',
+    name: 'terms',
+    component: SignUpTerms
   },
   {
     path: '/reviewlist',
