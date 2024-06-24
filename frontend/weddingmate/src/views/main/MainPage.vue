@@ -110,56 +110,60 @@
       </div>
   
       <!-- 본문  -->
-      <!-- 메인이미지 클릭시 item_detail로 전송 -->
+      
       <div class="container main_container">
         <div class="main_best_studio_text">
             베스트 스튜디오
         </div>
-        <div class="row justify-content-center">
-            <div class="main_card_box" @click="beststdio">
-                card_image
+        <div class="row justify-content-center" >
+          <!-- v-for="(beststudios, index) in filterbestStudios(1).silce(0,5)" :key="index" -->
+          <!-- 메인이미지 클릭시 item_detail로 전송 -->
+          <!-- 이미지는 추후에 등록 --> 
+            <!-- 1번 -->
+            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">   
+              <div class="main_card_title">
+                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
+              </div>
+            </div>
+            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box">
-                card_image
+            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box">
-                card_image
+            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box">
-                card_image
+            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box2">
-                card_image
+            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box2">
-                card_image
+            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
+                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box2">
-                card_image
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box2">
-                card_image
+            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
@@ -169,50 +173,50 @@
             베스트 스튜디오
         </div>
         <div class="row justify-content-center">
-            <div class="main_card_box">
-                card_image
+            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box">
-                card_image
+            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
+                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box">
-                card_image
+            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
+                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box">
-                card_image
+            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
+              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box2">
-                card_image
+            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
+                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box2">
-                card_image
+            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
+                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box2">
-                card_image
+            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
+                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
             </div>
-            <div class="main_card_box2">
-                card_image
+            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
+                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
                 <div class="main_card_title">
                     아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
                 </div>
@@ -256,11 +260,9 @@
         // 본문
       };
     },
-    mounted:{
-      goToBestStudio(){
-        
-      }
-    },
+    // mounted(){
+    //   this.goToStudioPage();
+    // },
 
     methods: {
       // 헤더
@@ -270,9 +272,20 @@
       hideCategories() {
         this.isVisible = false;
       },
+      
       // 본문
-    },
-  };
+      //베스트 스튜디오 가져오기 
+        // async goToBestStudio(){
+        //   try{
+            
+        //   }catch{
+        //     console.error(error);
+        //   }
+        // },
+
+      //클릭 시 아이템 디테일의 스튜디오 카테고리를 보여주기 
+    }
+  }
   </script>
   
   
@@ -415,7 +428,7 @@
         height: 610px;
         text-align: center;
         margin-top: 0px;
-        border: solid ;
+        border: none ;
 
         }
 
@@ -439,7 +452,7 @@
             padding: 0px;
             width: 329px;
             height: 328px;
-            border: solid;
+            border-radius: 12px;
         }
 
         .main_card_box2{
@@ -450,11 +463,11 @@
             padding: 0px;
             width: 329px;
             height: 328px;
-            border: solid;
+            border: none;
         }
    
         .main_card_title{
-            margin-top :328px;
+            margin-top :10px;
             /* width: 329px; */
             font: bold;
             font-size: 16px;
