@@ -6,13 +6,7 @@
     <!-- 본문 -->
     <div class="productdetail_main_content">
       <!-- 청첩장 -->
-      <div
-        :class="[
-          'productdetaillist-content',
-          getClass('letter'),
-          'productdetaillist-content_margin',
-        ]"
-      >
+      <div :class="['productdetaillist-content', getClass('letter'), 'productdetaillist-content_margin']">
         <img src="https://via.placeholder.com/1280x500" />
       </div>
 
@@ -29,22 +23,19 @@
         <!-- 상품들 -->
         <div class="reviewlist_review-section">
           <div class="reviewlist_review-cards">
-            <button class="reviewlist_review-card" v-for="n in 12" :key="n">
+            <button class="reviewlist_review-card" v-for="(product, index) in productList" :key="index" @click="goToProductDetail(product.item_id)">
               <img
                 src="https://via.placeholder.com/300x300"
                 class="reviewlist_card-img-top"
                 alt="Review Image"
               />
               <div class="reviewlist_card-body">
-                <div
-                  class="reviewlist_review-section_title-div letter-title-flex"
-                >
+                <div class="reviewlist_review-section_title-div letter-title-flex">
                   <div class="letter-title-flex_title">
-                    아아 이것은 제목이란 것이다..아아 이것은 제목이란 것이다아아
-                    이것은 제목이란 것이다
+                    {{ product.item_name }}
                   </div>
                   <div class="letter-title-flex-dummy"></div>
-                  <div class="letter-title-flex_per">20%</div>
+                  <div class="letter-title-flex_per">{{ product.item_discount_rate }}%</div>
                 </div>
               </div>
             </button>
@@ -57,7 +48,7 @@
         <!-- 상품들 -->
         <div class="reviewlist_review-section">
           <div class="reviewlist_review-cards">
-            <button class="reviewlist_review-card" v-for="n in 12" :key="n">
+            <button class="reviewlist_review-card" v-for="(product, index) in productList" :key="index" @click="goToProductDetail(product.item_id)">
               <img
                 src="https://via.placeholder.com/300x300"
                 class="reviewlist_card-img-top"
@@ -65,10 +56,8 @@
               />
               <div class="reviewlist_card-body">
                 <div class="reviewlist_review-section_title-div">
-                  아아 이것은 제목이란 것이다..아아 이것은 제목이란 것이다아아
-                  이것은 제목이란 것이다
+                  {{ product.item_name }}
                 </div>
-               
               </div>
             </button>
           </div>
@@ -78,37 +67,15 @@
 
     <div class="mypage-bottom">
       <div class="nav-page justify-content-center">
-        <a :class="{ notVisible: page == 1 }" @click="prevBlock()"
-          ><div>&lt;&lt;</div></a
-        >
-        <a :class="{ notVisible: page == 1 }" @click="prevPage()"
-          ><div>&lt;</div></a
-        >
-        <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"
-          ><div>{{ page - 2 }}</div></a
-        >
-        <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"
-          ><div>{{ page - 1 }}</div></a
-        >
-        <a
-          ><div style="color: pink">{{ page }}</div></a
-        >
-        <a
-          :class="{ notVisible: page + 1 > maxPage }"
-          @click="goToPage(page + 1)"
-          ><div>{{ page + 1 }}</div></a
-        >
-        <a
-          :class="{ notVisible: page + 2 > maxPage }"
-          @click="goToPage(page + 2)"
-          ><div>{{ page + 2 }}</div></a
-        >
-        <a :class="{ notVisible: page == maxPage }" @click="nextPage()"
-          ><div>&gt;</div></a
-        >
-        <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"
-          ><div>&gt;&gt;</div></a
-        >
+        <a :class="{ notVisible: page == 1 }" @click="prevBlock()"><div>&lt;&lt;</div></a>
+        <a :class="{ notVisible: page == 1 }" @click="prevPage()"><div>&lt;</div></a>
+        <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"><div>{{ page - 2 }}</div></a>
+        <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"><div>{{ page - 1 }}</div></a>
+        <a><div style="color: pink">{{ page }}</div></a>
+        <a :class="{ notVisible: page + 1 > maxPage }" @click="goToPage(page + 1)"><div>{{ page + 1 }}</div></a>
+        <a :class="{ notVisible: page + 2 > maxPage }" @click="goToPage(page + 2)"><div>{{ page + 2 }}</div></a>
+        <a :class="{ notVisible: page == maxPage }" @click="nextPage()"><div>&gt;</div></a>
+        <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"><div>&gt;&gt;</div></a>
       </div>
     </div>
 
@@ -118,18 +85,14 @@
         <nav class="common__footer-nav">
           <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
           <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-          <a href="#">제휴문의</a> |
-          <a href="#">광고문의</a>
+          <a href="#">제휴문의</a> | <a href="#">광고문의</a>
         </nav>
         <div class="common__footer-details">
           <p style="margin-bottom: 0px">
-            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-            02-123-1234 팩스: 02-111-2222
+            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화: 02-123-1234 팩스: 02-111-2222
           </p>
-
           <p>
-            해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-            민원담당자에게 있습니다. 민원담당자: 강문정
+            해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은 민원담당자에게 있습니다. 민원담당자: 강문정
           </p>
         </div>
       </div>
@@ -148,22 +111,54 @@ export default {
 
   data() {
     return {
-      //페이지
-      memberList: [],
-      blockOption: false,
+      // 페이지
       page: 1,
+      productList: [],
       isFirstPage: false,
       isLastPage: false,
       maxPage: 0,
+
     };
   },
-  created() {},
 
-  mounted() {
-    this.getMemberList();
+  async created() {
+    await this.fetchProductListData();
   },
+
+  watch: {
+    itemType: {
+      immediate: true,
+      handler() {
+        this.page = 1;
+        this.fetchProductListData();
+      },
+    },
+  },
+
   methods: {
-    // 본문
+    async fetchProductListData() {
+      try {
+
+        // const response = await this.$api(`/product/list?page=${this.page}&itemType=${this.itemType}`);
+        const response = await this.$api(`/product/list/${this.itemType}?page=${this.page}`);
+        const productData = response.data;
+        const maxPage = response.maxPage;
+
+        if (productData) {
+          this.productList = productData;
+          this.maxPage = maxPage;
+
+         
+          console.log("Max page:", this.maxPage);
+        } else {
+          console.error("ProductDetailList.vue fetchProductListData : No product data");
+        }
+        this.updatePageStatus();
+      } catch (error) {
+        console.error("ProductDetailList.vue fetchProductListData Error fetching product data:", error);
+      }
+    },
+
     getClass(type) {
       if (type === "letter") {
         return this.itemType === "letter" ? "visible" : "collapse";
@@ -172,89 +167,45 @@ export default {
       }
     },
 
-    //페이지
-    async getMemberList() {
-      let page = this.$route.params.page;
-      let block = this.$route.params.page;
-      page = !page ? 1 : page;
-      block = !block ? "F" : block;
-      this.memberList = await this.$api(
-        `/user/list?page=${page}&block=${block}`
-      );
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${page}&block=${block}`);
-      this.makePageSetting();
+    goToProductDetail(item_id) {
+       this.$router.push({ name: 'productdetail', query: { itemType: this.itemType, item_id } });
     },
-    async getBlockMemberList() {
-      this.memberList = await this.$api(`/user/list?page=1&block=T`);
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=T`);
-      this.blockOption = !this.blockOption;
-      this.makePageSetting();
-    },
-    async getUnblockMemberList() {
-      this.memberList = await this.$api(`/user/list?page=1&block=F`);
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=1&block=F`);
-      this.blockOption = !this.blockOption;
-      this.makePageSetting();
-    },
-    makePageSetting() {
-      this.maxPage = Math.floor(this.memberList.length / 10) + 1;
-      this.isFirstPage = this.page == 1 ? true : false;
-      this.isLastPage = this.page == this.maxPage ? true : false;
-      console.log(this.maxPage);
-    },
-    // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
-    async prevBlock() {
-      let targetPage = this.page;
-      if (this.page <= 5) {
-        targetPage = 1;
-      } else {
-        targetPage = this.page - 5;
-      }
-      const block = !this.blockOption ? "F" : "T";
-      this.memberList = await this.$api(
-        `/user/list?page=${targetPage}&block=${block}`
-      );
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
-      this.page = targetPage;
-    },
-    // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
-    async nextBlock() {
-      let targetPage = this.page;
-      if (this.page > this.maxPage - 5) {
-        targetPage = this.maxPage;
-      } else {
-        targetPage = this.page + 5;
-      }
-      const block = !this.blockOption ? "F" : "T";
-      this.memberList = await this.$api(
-        `/user/list?page=${targetPage}&block=${block}`
-      );
-      this.page = targetPage;
-    },
-    async nextPage() {
-      const block = !this.blockOption ? "F" : "T";
-      this.memberList = await this.$api(
-        `/user/list?page=${this.page + 1}&block=${block}`
-      );
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page+1}&block=${block}`);
-      this.page += 1;
-    },
-    async prevPage() {
-      const block = !this.blockOption ? "F" : "T";
-      this.memberList = await this.$api(
-        `/user/list?page=${this.page - 1}&block=${block}`
-      );
-      // this.memberList = await this.$api(`http://localhost:9090/user/list?page=${this.page-1}&block=${block}`);
-      this.page -= 1;
-    },
-    async goToPage(targetPage) {
-      const block = !this.blockOption ? "F" : "T";
-      this.memberList = await this.$api(
-        `/user/list?page=${targetPage}&block=${block}`
-      );
-      //   this.memberList = await this.$api(`http://localhost:9090/user/list?page=${targetPage}&block=${block}`);
 
-      this.page = targetPage;
+    // 페이지 네이션
+    async nextPage() {
+      if (!this.isLastPage) {
+        this.page++;
+        await this.fetchProductListData();
+      }
+    },
+
+    async prevPage() {
+      if (!this.isFirstPage) {
+        this.page--;
+        await this.fetchProductListData();
+      }
+    },
+
+    async goToPage(targetPage) {
+      if (targetPage >= 1 && targetPage <= this.maxPage) {
+        this.page = targetPage;
+        await this.fetchProductListData();
+      }
+    },
+
+    async prevBlock() {
+      let targetPage = this.page > 5 ? this.page - 5 : 1;
+      await this.goToPage(targetPage);
+    },
+
+    async nextBlock() {
+      let targetPage = this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
+      await this.goToPage(targetPage);
+    },
+
+    updatePageStatus() {
+      this.isFirstPage = this.page === 1;
+      this.isLastPage = this.page === this.maxPage;
     },
   },
 };
@@ -477,7 +428,6 @@ export default {
   font-size: 14px;
   margin-bottom: 10px;
 }
-
 
 .reviewlist_review-section_title-div {
   font-size: 16px;

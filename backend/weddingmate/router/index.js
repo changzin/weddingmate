@@ -4,6 +4,7 @@ const reviewRouter = require('./reviewRouter');
 const qnaRouter = require('./qnaRouter');
 const orderRouter = require('./orderRouter');
 const answerRouter = require('./answerRouter');
+const productRouter = require('./productRouter');
 
 const router = express.Router();
 
@@ -13,5 +14,7 @@ router.use("/review", reviewRouter);
 router.use("/qna", qnaRouter);
 router.use("/order",orderRouter);
 router.use("/answer", answerRouter);
+
+router.use("/product", productRouter);
 
 module.exports = router;

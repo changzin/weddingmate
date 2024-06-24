@@ -67,7 +67,7 @@
                 <ul>
                   <li @click="goToProductDetailList('sdm_package')">독립 패키지</li>
                   <li @click="goToProductDetailList('studio')">스튜디오</li>
-                  <li  @click="goToProductDetailList('Dress')">드레스</li>
+                  <li  @click="goToProductDetailList('dress')">드레스</li>
                   <li @click="goToProductDetailList('makeup')">메이크업</li>
                 </ul>
               </div>

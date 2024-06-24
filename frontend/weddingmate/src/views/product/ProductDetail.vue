@@ -3,134 +3,10 @@
     <div class="container-fluid px-0">
       <div class="content">
         <!-- 헤더 -->
-        <div class="common-header">
-          <!-- 로그인 + 회원가입 + 로고 -->
-          <header class="bg-light productdetail_padding_0">
-            <!-- 로그인 회원가입 -->
-            <div
-              class="container d-flex justify-content-end align-items-center"
-              id="common__login-div-padding"
-            >
-              <nav class="navbar-light">
-                <div class="" id="navbarNav">
-                  <ul class="navbar-nav flex-row">
-                    <li class="nav-item" id="common__header-login-padding">
-                      <a href="#">로그인</a>
-                    </li>
-                    <li class="nav-item">
-                      <a href="#">회원가입</a>
-                    </li>
-                  </ul>
-                </div>
-              </nav>
-            </div>
-            <!-- 로고 -->
-            <div class="text-center">
-              <a class="navbar-brand" href="#">
-                <img src="https://via.placeholder.com/200x50" alt="Logo" />
-              </a>
-            </div>
-          </header>
-          <!-- 카테고리 + 이미지 -->
-          <nav
-            class="common-header_navbar navbar-light bg-light"
-            id="common_main-banner_div"
-            @mouseleave="hideCategories"
-          >
-            <div class="common-header_overlay">
-              <div class="common-header_overlay-content">
-                <!-- 대카테고리 -->
-                <ul class="common-header_nav" @mouseover="showCategories">
-                  <li class="common-header_main-title">웨딩홀</li>
-                  <li class="common-header_main-title">스드메</li>
-                  <li class="common-header_main-title">혼수</li>
-                  <li class="common-header_main-title">본식</li>
-                  <li class="common-header_main-title">촬영팀</li>
-                </ul>
-                <!-- 이미지랑 소카테고리 -->
-                <div class="common-header_image-smallcategory">
-                  <!-- 이미지 -->
-                  <section class="productdetail_main-image-section">
-                    <img
-                      src="https://via.placeholder.com/1980x500"
-                      class="img-fluid w-100"
-                      alt="Main Image"
-                    />
-                  </section>
-
-                  <!-- 소카테고리 -->
-                  <div class="common-header_categories" v-if="header_isVisible">
-                    <div class="common-header_smallcategory-area">
-                      <div class="common-header_category">
-                        <ul>
-                          <li>추천 리스트</li>
-                          <li>웨딩홀 목록</li>
-                        </ul>
-                      </div>
-                      <div class="common-header_category">
-                        <ul>
-                          <li>독립 패키지</li>
-                          <li>스튜디오</li>
-                          <li>드레스</li>
-                          <li>메이크업</li>
-                        </ul>
-                      </div>
-                      <div class="common-header_category">
-                        <ul>
-                          <li>예복</li>
-                          <li>예물</li>
-                          <li>가전</li>
-                          <li>혼수 패키지</li>
-                        </ul>
-                      </div>
-                      <div class="common-header_category">
-                        <ul>
-                          <li>본식스냅</li>
-                          <li>영상</li>
-                          <li>부케</li>
-                          <li>연주</li>
-                          <li>사회자</li>
-                          <li>웨딩슈즈</li>
-                          <li>답례품</li>
-                          <li>청첩장</li>
-                        </ul>
-                      </div>
-                      <div class="common-header_category">
-                        <ul>
-                          <li>스냅</li>
-                          <li>본식</li>
-                          <li>제주도 야외</li>
-                          <li>고급 스튜디오 촬영</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </nav>
-        </div>
+        <MateHeader />
 
         <!-- 콘텐츠 섹션 시작 -->
         <div class="productdetail_main_content">
-          테스트용 itemType
-          <select class="form-select my-2" v-model="selectedItemType">
-            <option value="" disabled selected>아이템 타입 선택</option>
-            <option value="dress">dress</option>
-            <option value="studio">studio</option>
-            <option value="makeup">makeup</option>
-            <option value="sdm_package">sdm_package</option>
-            <option value="giving_dress">giving_dress</option>
-            <option value="giving_mechine">giving_mechine</option>
-            <option value="snap">snap</option>
-            <option value="video">video</option>
-            <option value="flower">flower</option>
-            <option value="music">music</option>
-            <option value="mc">mc</option>
-            <option value="shoes">shoes</option>
-            <option value="gift">gift</option>
-            <option value="letter">letter</option>
-          </select>
           <!-- 상품 상세 -->
           <div class="productdetail_main_content-div">
             <div class="col-md-6">
@@ -142,15 +18,16 @@
             </div>
             <div class="col-md-6">
               <div class="productdetail_main_content_maker_div">
-                아아.. 이것은 제조사란 것이다...
+                {{productDetail.item_factory_name}}
+
               </div>
               <div class="productdetail_main_content_name_div">
-                Product Name
+                {{productDetail.item_name}}
               </div>
               <div>
-                <div class="main_content_starcount_div">★★★★★</div>
+                <div class="main_content_starcount_div">★★★★★ {{ productDetail.item_star_rating}} </div>
                 <div class="productdetail_main_content_reviewcount_div">
-                  전체 리뷰 수 : (1000)
+                  전체 리뷰 수 : ({{ productDetail.item_review_count}})
                 </div>
               </div>
               <!-- 드레스 옵션 -->
@@ -161,24 +38,19 @@
                 ]"
               >
                 <div>
-                  <div class="productdetail_main_content_discount_div">20%</div>
+                  <div class="productdetail_main_content_discount_div">{{productDetail.item_discount_rate}}%</div>
                   <div class="productdetail_main_content_origin_price_div">
-                    10000원
+                    {{productDetail.item_price}}원
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  80,000원
+                  {{ finally_price }}원
                 </div>
                 <div class="productdetail_main_content_delivery_div">
                   <div class="productdetail_main_content_delivery_price_div">
-                    배송비 3,500원
+                    배송비 {{productDetail.item_delivery_price}}원
                   </div>
-                  <div class="productdetail_main_content_delivery_condition">
-                    (20,000원 이상 구매시 무료)
-                  </div>
-                  <div class="productdetail_main_content_delivery_kind">
-                    기타택배
-                  </div>
+                 
                 </div>
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
@@ -777,12 +649,7 @@
                   <div class="productdetail_main_content_delivery_price_div">
                     배송비 3,500원
                   </div>
-                  <div class="productdetail_main_content_delivery_condition">
-                    (20,000원 이상 구매시 무료)
-                  </div>
-                  <div class="productdetail_main_content_delivery_kind">
-                    기타택배
-                  </div>
+              
                 </div>
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
@@ -1161,11 +1028,7 @@
                   <div class="productdetail_main_content_delivery_price_div">
                     배송비 3,500원
                   </div>
-                  <div class="productdetail_main_content_delivery_condition">
-                    (20,000원 이상 구매시 무료)
-                  </div>
-                  <div class="productdetail_main_content_delivery_kind">
-                    기타택배
+                
                   </div>
                 </div>
                 <div class="productdetail_main_content_maximum_quantity_div">
@@ -1469,19 +1332,16 @@
           </div>
         </footer>
       </div>
-    </div>
   </div>
 </template>
 
 <script>
 export default {
+
+ 
+  
   data() {
     return {
-      // 헤더
-      header_isVisible: false,
-      ismaintain: false,
-
-      // 본문
       selectedSize: "",
       selectedColor: "",
       showColorSelect: false,
@@ -1492,7 +1352,6 @@ export default {
       optionGroups: [],
       selectedOptions: [],
 
-      selectedItemType: "",
       selectedItemType_dress_custom: "collapse",
 
       // 캘린더
@@ -1514,9 +1373,26 @@ export default {
         start: null,
         end: null,
       },
+       productDetail: [],
     };
   },
 
+  props: {
+    itemType: {
+      type: String,
+      required: true,
+    },
+    item_id: {
+      type: String,
+      required: true,
+    }
+  },
+
+   async created() {
+    await this.fetchProductDetailData();
+  },
+
+  
   mounted() {
     this.fetchOptions();
   },
@@ -1535,18 +1411,33 @@ export default {
         this.selectedOptions.every((option) => option !== "")
       );
     },
+     finally_price() {
+      if (this.productDetail.item_price && this.productDetail.item_discount_rate) {
+        return this.productDetail.item_price - (this.productDetail.item_price * (this.productDetail.item_discount_rate / 100));
+      }
+      return 0;
+    }
   },
 
   methods: {
-    // 헤더
-    showCategories() {
-      this.header_isVisible = true;
-    },
-    hideCategories() {
-      this.header_isVisible = false;
-    },
 
-    // 본문
+    async fetchProductDetailData() {
+      try {
+        const response = await this.$api(`/product/detail/${this.item_id}`);
+        const productDetail = response.data;
+
+        if (productDetail) {
+          this.productDetail = productDetail;
+          console.log("productDetail.item_name : ", productDetail.item_name);
+          // console.log("productDetail.item_name:", JSON.parse(JSON.stringify(productDetail.map((product) => product.item_name))));
+        } else {
+          console.error("ProductDetail.vue fetchProductDetailData : No product data");
+        }
+      } catch (error) {
+        console.error("ProductDetail.vue fetchProductDetailData Error fetching product data:", error);
+      }
+    },
+    
 
     onSizeChange() {
       this.showColorSelect = this.selectedSize !== "";
@@ -1564,74 +1455,76 @@ export default {
     getClass(type) {
       // 드레스
       if (type === "dress") {
-        return this.selectedItemType === "dress" ? "visible" : "collapse";
+        return this.itemType === "dress" ? "visible" : "collapse";
       }
       // 스튜디오
       else if (type === "studio") {
-        return this.selectedItemType === "studio" ? "visible" : "collapse";
+        return this.itemType === "studio" ? "visible" : "collapse";
       }
       // 메이크업
       else if (type === "makeup") {
-        return this.selectedItemType === "makeup" ? "visible" : "collapse";
+        return this.itemType === "makeup" ? "visible" : "collapse";
       }
       // 스드메
       else if (type === "sdm_package") {
-        return this.selectedItemType === "sdm_package" ? "visible" : "collapse";
+        return this.itemType === "sdm_package" ? "visible" : "collapse";
       }
       // 예복
       else if (type === "giving_dress") {
-        return this.selectedItemType === "giving_dress"
+        return this.itemType === "giving_dress"
           ? "visible"
           : "collapse";
       }
       // 가전
       else if (type === "giving_mechine") {
-        return this.selectedItemType === "giving_mechine"
+        return this.itemType === "giving_mechine"
           ? "visible"
           : "collapse";
       }
       // 본식스냅
       else if (type === "snap") {
-        return this.selectedItemType === "snap" ? "visible" : "collapse";
+        return this.itemType === "snap" ? "visible" : "collapse";
       }
       // 영상
       else if (type === "video") {
-        return this.selectedItemType === "video" ? "visible" : "collapse";
+        return this.itemType === "video" ? "visible" : "collapse";
       }
       // 부케
       else if (type === "flower") {
-        return this.selectedItemType === "flower" ? "visible" : "collapse";
+        return this.itemType === "flower" ? "visible" : "collapse";
       }
       // 연주
       else if (type === "music") {
-        return this.selectedItemType === "music" ? "visible" : "collapse";
+        return this.itemType === "music" ? "visible" : "collapse";
       }
       // 사회자
       else if (type === "mc") {
-        return this.selectedItemType === "mc" ? "visible" : "collapse";
+        return this.itemType === "mc" ? "visible" : "collapse";
       }
       // 웨딩슈즈
       else if (type === "shoes") {
-        return this.selectedItemType === "shoes" ? "visible" : "collapse";
+        return this.itemType === "shoes" ? "visible" : "collapse";
       }
       // 답례품
       else if (type === "gift") {
-        return this.selectedItemType === "gift" ? "visible" : "collapse";
+        return this.itemType === "gift" ? "visible" : "collapse";
       }
       // 청첩장
       else if (type === "letter") {
-        return this.selectedItemType === "letter" ? "visible" : "collapse";
+        return this.itemType === "letter" ? "visible" : "collapse";
       }
 
       return "collapse";
     },
+
+
+
 
     fetchOptions() {
       setTimeout(() => {
         this.optionGroups = [
           { name: "Size", options: ["Small", "Medium", "Large", "맞춤"] },
           { name: "Color", options: ["Red", "Blue", "Green"] },
-          { name: "Material", options: ["Cotton", "Wool", "Silk"] },
         ];
         this.selectedOptions = Array(this.optionGroups.length).fill("");
       }, 1000);
@@ -1709,102 +1602,12 @@ export default {
   height: auto;
 }
 
-#common_main-banner_div {
-  width: 100%;
-  height: 80px;
-  padding: 0px;
-}
-#common__header-login-padding {
-  margin-right: 30px;
-}
-#common__login-div-padding {
-  padding: 0px;
-  width: 1280px;
-}
-
-.common-header_navbar {
-  background-color: #f8f8f8;
-}
-
-.common-header_overlay {
-  position: relative;
-}
-
-.common-header_overlay-content {
-}
-
-/* 카테고리 + 이미지 */
-
-/* 큰 카테고리 */
-.common-header_nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  list-style: none;
-  padding: 0;
-  height: 80px;
-  width: 1280px;
-  margin: 0 auto;
-}
-
-.common-header_nav > li {
-  cursor: pointer;
-  transition: background-color 0.3s;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  box-sizing: border-box;
-  padding: 20px;
-  width: 140px;
-}
-
-.common-header_nav > li:hover {
-  background-color: #ddd;
-}
-
-.common-header_image-smallcategory {
-  position: relative;
-}
-/* 소카테고리 */
-.common-header_categories {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  z-index: 10;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.common-header_smallcategory-area {
-  width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  text-align: center;
-}
-
-.common-header_categories ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.common-header_categories li {
-  padding: 10px 0;
-  width: 140px; /* 각 항목의 너비를 140px로 고정 */
-}
-
 /* 콘텐츠 섹션 시작 */
 
 .productdetail_main_content {
   width: calc(100% - 700px);
   margin: 0 auto;
-  margin-top: 600px;
+  margin-top: 0px;
   position: relative;
 }
 
@@ -1881,13 +1684,6 @@ export default {
   margin-right: 15px;
 }
 
-.productdetail_main_content_delivery_condition {
-  margin-right: 40px;
-  color: #888888;
-}
-
-.productdetail_main_content_delivery_kind {
-}
 
 .productdetail_main_content_maximum_quantity_div {
   display: flex;
