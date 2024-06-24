@@ -21,6 +21,7 @@ import AdminReview from '../views/admin/AdminReview.vue'
 import AdminAnalysis from '../views/admin/AdminAnalysis.vue'
 import MySchedule from '../views/mypage/MySchedule.vue'
 import TempVue from '../views/tempVue.vue'
+import EmailCheck from '../views/nouser/EmailCheck.vue'
 
 import MyPageMain from '../views/mypage/MyPageMain.vue'
 import MyScheduleAdd from '../views/mypage/MyScheduleAdd.vue'
@@ -83,6 +84,11 @@ const routes = [
     path: '/terms',
     name: 'terms',
     component: SignUpTerms
+  },
+  {
+    path: '/emailcheck',
+    name: 'emailcheck',
+    component: EmailCheck
   },
   {
     path: '/reviewlist',
@@ -190,7 +196,7 @@ const routes = [
     component: test
   },
   {
-    path: '/mainpage',
+    path: '/',
     name: 'mainPage',
     component: MainPage,
   }

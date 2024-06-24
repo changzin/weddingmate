@@ -17,21 +17,23 @@ export default{
         },
         
         // 유저의 쿠킷값과 로컬 스토리지 값을 확인해서 User 정보를 끌어오는 함수
-        async $verifiedUser(){
+        $verifiedUser(){
             const accessToken1 = this.$cookies.get("weddingCookie");
             const accessToken2 = this.$store.state.user;
 
             let accessToken = (accessToken2) ? accessToken2 : null;
             accessToken = (accessToken1) ? accessToken1 : accessToken;
-
-            const result =  await this.$api("http://localhost:9090/user/info", {accessToken: accessToken}, "POST"); 
-            console.log(result);
-            if (result.status == 200){
-                return result.user;
-            }
-            else{
-                return null;
-            }
+            
+            this.$api("http://localhost:9090/user/info", {accessToken: accessToken}, "POST")
+                .then((async (response)=>{
+                    console.log(response);
+                    if (response.status == 200){
+                        return response;
+                    }
+                    else{
+                        return null;
+                    }
+                })); 
         },
 
         $getAccessToken(){

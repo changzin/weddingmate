@@ -1,5 +1,5 @@
 <template>
-        <MateHeader />
+    <MateHeader/>
     <div class="container login_container">
         <div class="row justify-content-center" style="margin-top:200px;">
             <div class="login_text">
@@ -70,6 +70,7 @@
                 password: "",
                 email: "",
                 errorMessage: false,
+                user: this.$verifiedUser()
             }            
         },
         methods: {
@@ -85,14 +86,13 @@
                     const result = await this.$api(`/user/login`, {email: this.email, password: this.password}, "POST");                    
                     
                     if (result.status == 200){                        
-                        console.log(this.autoLogin);
                         // 쿠키에 accessToken 저장하고 로그인 유지 시엔 LocalStoreage(vuex)에도 저장
                         this.$cookies.set("weddingCookie", result.accessToken);
                         if (this.autoLogin){
                             await this.$store.commit("user", {accessToken: result.accessToken})
                         }
                         if (result.type=="local"){
-                            console.log("local login");
+                            this.$router.push({path: '/'});
                         }
                         else if (result.type=="admin"){
                             this.$router.push({path: '/admin/itemlist'});

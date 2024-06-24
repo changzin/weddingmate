@@ -14,7 +14,7 @@
       <router-link to="/tempvue">TempVue</router-link> |
       <router-link to="/orderinfo">Orderinfo</router-link> | 
       <router-link to="/mypage/schedule">MySchedule</router-link> | 
-      <router-link to="/mainpage">MainPage</router-link> |
+      <router-link to="/">MainPage</router-link> |
 
     </nav>
     <router-view/>

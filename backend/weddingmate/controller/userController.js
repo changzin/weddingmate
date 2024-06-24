@@ -12,7 +12,7 @@ exports.login = async(req,res)=>{
         let result = 0;
         let responseBody = {};
         // 이메일과 비밀번호가 일치하고, 이메일 인증이 완료된 유저를 가져옴
-        query = "SELECT * FROM user WHERE user_email = ? AND user_password = ? AND user_email_verified = 'T'";
+        query = "SELECT * FROM user WHERE user_email = ? AND user_password = ? AND user_email_verified = 'T' AND user_block='F'";
         result = await db(query, [email, password]);
         count = result.length;
 
@@ -97,11 +97,9 @@ exports.info = async(req, res)=>{
 
         // 유저가 있다면 유저 정보를 보내고, 없다면 에러 발생
         if (user){
-            responseBody = {
-                status: 200,
-                user: user
-            }
-            res.json(user);
+            responseBody = user;
+            responseBody.status = 200;
+            res.json(responseBody);
         }
         else{
             throw new Error("쿠키가 만료되었습니다.");
@@ -174,7 +172,7 @@ exports.signUp = async (req, res)=>{
 exports.emailVerify = async(req, res)=>{
     try{
             const user_email = req.body.user_email;
-
+            console.log(user_email);
             let count = 0;
             let result = 0;
             let responseBody = {};
@@ -204,5 +202,36 @@ exports.emailVerify = async(req, res)=>{
             message: err.message
         };
         res.json(responseBody);   
+    }
+}
+
+exports.emailIsVerified = async(req, res)=>{
+    try{
+        const user_email = req.body.user_email;
+        const query = 'UPDATE user SET user_email_verified="T" WHERE user_email=?';
+
+        let result = [];
+        result = await db(query, [user_email]);
+        result = result.changedRows;
+
+        if (result == 1){
+            responseBody = {
+                status: 200,
+                message: "이메일 인증 반영 완료."
+            };
+            res.status(200).json(responseBody);
+        }        
+        else{
+            throw Error("해당 유저를 찾을 수 없습니다.");
+        }
+        
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: err.message
+        };
+        res.json(responseBody);
     }
 }
