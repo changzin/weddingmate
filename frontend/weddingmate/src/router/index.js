@@ -27,7 +27,7 @@ import MyBox from '../views/mypage/MyBox.vue'
 import MyQnA from '../views/mypage/MyQnA'
 import MyReview from '@/views/mypage/MyReview.vue'
 import MyPayment from '@/views/mypage/MyPayment.vue'
-
+import MainPage from '../views/main/MainPage.vue'
 import test from '../views/mypage/test.vue'
 
 
@@ -175,7 +175,11 @@ const routes = [
     name: "test",
     component: test
   },
-
+  {
+    path: '/mainpage',
+    name: 'mainPage',
+    component: MainPage,
+  }
   
 ]
 
