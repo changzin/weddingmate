@@ -46,12 +46,6 @@
                   <div class="letter-title-flex-dummy"></div>
                   <div class="letter-title-flex_per">20%</div>
                 </div>
-
-                <p class="reviewlist_card-text">
-                  아아 이것은 설명이란
-                  것이다...ㅎㄹㅇㅎㄹㅇㅎㅇㅀㅎㄹㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㅎㅇㅀㄹㅇㅎㅇㅀㅇㅀㅁㄴㄹㄴㄹ
-                  ㄹㄴ이ㅓㅎ라ㅣㅓ흴아희 3줄까지 가능함
-                </p>
               </div>
             </button>
           </div>
@@ -74,11 +68,7 @@
                   아아 이것은 제목이란 것이다..아아 이것은 제목이란 것이다아아
                   이것은 제목이란 것이다
                 </div>
-                <p class="reviewlist_card-text">
-                  아아 이것은 설명이란
-                  것이다...ㅎㄹㅇㅎㄹㅇㅎㅇㅀㅎㄹㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇㅎㅇㅀㄹㅇㅎㅇㅀㅇㅀㅁㄴㄹㄴㄹ
-                  ㄹㄴ이ㅓㅎ라ㅣㅓ흴아희 3줄까지 가능함
-                </p>
+               
               </div>
             </button>
           </div>
@@ -488,13 +478,6 @@ export default {
   margin-bottom: 10px;
 }
 
-.reviewlist_card-text {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.5;
-  text-align: left;
-  margin-bottom: 0px;
-}
 
 .reviewlist_review-section_title-div {
   font-size: 16px;
