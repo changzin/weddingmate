@@ -429,8 +429,5 @@ div.mypage-bottom{
       .notVisible{
         visibility: hidden;
       }
-      .mypage-bottom-fix{  
-        position: absolute;
-        bottom: -100px;
-    }
+
 </style>

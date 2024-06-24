@@ -75,6 +75,7 @@
                   <button class="btn admin_qna_btn_inactive" @click="gethasAnswerMemberList()" v-if="!hasAnswerOption">전체 리뷰 보기</button>
                   <select class="form-select admin_qna_select" v-model="mode">
                     <option selected value="all">전체</option>
+                    <option selected value="item">상품문의</option>
                     <option value="cancel">반품/취소</option>
                     <option value="delivery">배송문의</option>
                     <option value="etc">기타</option>
@@ -111,19 +112,19 @@
                 </div>
               </div>
             </div>
-        </div>
-        <div class="d-flex justify-content-center">
-          <div class="mypage-bottom mypage-bottom-fix">
-            <div class="nav-page justify-content-center">
-            <a :class="{notVisible : (page == 1)}" @click="prevhasAnswer()"><div>&lt;&lt;</div></a>
-            <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
-            <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
-            <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
-            <a><div style="color: pink;">{{page}}</div></a>
-            <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
-            <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
-            <a :class="{notVisible : (page >= maxPage)}" @click="nextPage()"><div>&gt;</div></a>
-            <a :class="{notVisible : (page >= maxPage)}" @click="nexthasAnswer()"><div>&gt;&gt;</div></a>
+            <div class="d-flex justify-content-center">
+              <div class="mypage-bottom mypage-bottom-fix">
+                <div class="nav-page justify-content-center">
+                <a :class="{notVisible : (page == 1)}" @click="prevhasAnswer()"><div>&lt;&lt;</div></a>
+                <a :class="{notVisible : (page == 1)}" @click="prevPage()"><div>&lt;</div></a>
+                <a :class="{notVisible : (page-2 < 1)}" @click="goToPage(page-2)"><div>{{page-2}}</div></a>
+                <a :class="{notVisible : (page-1 < 1)}" @click="goToPage(page-1)"><div>{{page-1}}</div></a>
+                <a><div style="color: pink;">{{page}}</div></a>
+                <a :class="{notVisible : (page+1 > maxPage)}" @click="goToPage(page+1)"><div>{{page+1}}</div></a>
+                <a :class="{notVisible : (page+2 > maxPage)}" @click="goToPage(page+2)"><div>{{page+2}}</div></a>
+                <a :class="{notVisible : (page >= maxPage)}" @click="nextPage()"><div>&gt;</div></a>
+                <a :class="{notVisible : (page >= maxPage)}" @click="nexthasAnswer()"><div>&gt;&gt;</div></a>
+                </div>
             </div>
         </div>
       </div>
@@ -484,9 +485,4 @@ div.nav-page{
 .notVisible{
 visibility: hidden;
 }
-.mypage-bottom-fix{  
-position: absolute;
-bottom: -100px;
-}
-
 </style>

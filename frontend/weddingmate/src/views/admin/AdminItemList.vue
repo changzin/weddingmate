@@ -29,9 +29,9 @@
             <div class="sidebar_header_box_text">로그인한 관리자 이름</div>
         </div>
         <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item sidbar_box sidbar_box_inactive">
-            <a @click="$router.push({path: '/admin/itemlist'})" class="nav-link sidbar_box_inactive_text">
-                <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#grid"/></svg>
+          <li class="nav-item sidbar_box sidbar_box_active">
+            <a @click="$router.push({path: '/admin/itemlist'})" class="nav-link sidbar_box_active_text">
+                <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
               상품 리스트
             </a>
           </li>
@@ -53,9 +53,9 @@
                 리뷰 관리
             </a>
           </li>
-          <li class="nav-item sidbar_box sidbar_box_active">
-            <a @click="$router.push({path: '/admin/memberlist'})" class="nav-link sidbar_box_active_text">
-                <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
+          <li class="nav-item sidbar_box sidbar_box_inactive">
+            <a @click="$router.push({path: '/admin/memberlist'})" class="nav-link sidbar_box_inactive_text">
+                <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#people-circle"/></svg>
                 회원 관리
             </a>
           </li>
@@ -64,54 +64,46 @@
       <div class="d-flex flex-column">
         <div class="sidbar_content_container container">
             <div class="sidbar_header d-flex justify-content-center">
-                <div class="sidbar_header_title">회원 관리</div>
+                <div class="sidbar_header_title">상품 관리</div>
+            </div>
+            <div class="admin_qna_review-section">
+              <div class="admin_qna_review-header justify-content-end">
+                    <button class="btn admin_qna_btn_active">상품 추가</button>
+                    <select class="form-select admin_qna_select" v-model="mode">
+                      <option selected value="all">전체</option>
+                      <option value="cancel">반품/취소</option>
+                      <option value="delivery">배송문의</option>
+                      <option value="etc">기타</option>
+                    </select>
+                    <input type="text" class="form-control admin_qna_input" placeholder="상품 이름" v-model="keyword">            
+                    <button class="btn admin_qna_btn_active" @click="search()">검색</button>      
+              </div>
             </div>
             <div class="d-flex justify-content-center">
-              <div class="admin_member_review-section">
-                <div class="admin_member_review-header justify-content-end">
-                  <button class="btn admin_member_btn_active" v-if="!blockOption" @click="getBlockMemberList()">차단 회원만 보기</button>
-                  <button class="btn admin_member_btn_inactive" v-if="blockOption" @click="getUnblockMemberList()">모든 회원 보기</button>
-                  <select class="form-select admin_member_select" v-model="mode">
-                    <option selected value="all">전체</option>
-                    <option value="email">이메일</option>
-                    <option value="name">이름</option>
-                  </select>
-                  <input type="text" class="form-control admin_member_input" v-model="keyword">                  
-                  <button class="btn admin_member_btn_active" @click="search()">검색</button>
-                </div>
 
-                <div class="admin_member_qna-section">
-                  <table class="admin_member_qna-table admin_member_table">
-                    <thead>
-                      <tr>
-                        <th>이름</th>
-                        <th>이메일</th>
-                        <th>가입일</th>
-                        <th>회원 유형</th>
-                        <th>누적 구매금액</th>
-                        <th>구매량 / 댓글 / 문의량</th>
-                        <th>상태 변경</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(member, index) in memberList" :key="index">
-                        <td>{{ member.user_name }}</td>
-                        <td>
-                            {{member.user_email}}
-                        </td>
-                        <td>{{this.$dateFormat(member.user_create_date)}}</td>
-                        <td>{{member.user_type}}</td>
-                        <td>{{member.user_total_price}}</td>
-                        <td>{{member.user_buy_count}} / {{member.user_review_count}} / {{ member.user_qna_count }} </td>
-                        <td>
-                            <button class="btn admin_member_block_btn_active" v-if="member.user_block === 'F'" @click="blockUser(member, member.user_id)">block</button>
-                            <button class="btn admin_member_unblock_btn_active" v-if="member.user_block === 'T'" @click="unblockUser(member, member.user_id)">unblock</button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+              <div>
+                <!-- 상품들 -->
+                <div class="reviewlist_review-section">
+                  <div class="reviewlist_review-cards">
+                    <button class="reviewlist_review-card" v-for="n in 12" :key="n">
+                      <img
+                        src="https://via.placeholder.com/300x300"
+                        class="reviewlist_card-img-top"
+                        alt="Review Image"
+                      />
+                      <div class="reviewlist_card-body">
+                        <div class="reviewlist_review-section_title-div">
+                          아아 이것은 제목이란 것이다..아아 이것은 제목이란 것이다아아
+                          이것은 제목이란 것이다
+                        </div>
+                      
+                      </div>
+                    </button>
+                  </div>
                 </div>
               </div>
+
+              
             </div>
             <div class="mypage-bottom">
               <div class="nav-page justify-content-center">
@@ -388,4 +380,191 @@ div.mypage-bottom{
       .notVisible{
         visibility: hidden;
       }
+
+      .reviewlist_container {
+  width: 1280px;
+  margin: 0 auto;
+  margin-top: 80px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.reviewlist_header {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 16px;
+}
+
+.reviewlist_review_content {
+  margin-top: 100px;
+}
+
+.reviewlist_review-section {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.reviewlist_review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.reviewlist_review-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.reviewlist_write-review-btn {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.reviewlist_write-review-btn i {
+  margin-right: 8px;
+}
+
+.reviewlist_review-cards {
+  display: flex;
+  flex-wrap: wrap;
+  /* gap: 20px; */
+  justify-content: space-between;
+}
+
+.reviewlist_review_card:last-child {
+  /* margin-right: 0; */
+}
+
+.reviewlist_review-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 23%;
+  padding: 10px;
+  margin-bottom: 60px;
+}
+
+.reviewlist_card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* margin-bottom: 10px; */
+}
+
+.reviewlist_card-header h5 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.reviewlist_card-header span {
+  font-size: 12px;
+  color: #888;
+}
+
+.reviewlist_card-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.reviewlist_card-icons i {
+  cursor: pointer;
+}
+
+.reviewlist_card-img-top {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.reviewlist_card-body {
+  padding: 10px;
+}
+
+.reviewlist_card-rating {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+
+.reviewlist_review-section_title-div {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.letter-title-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.letter-title-flex_title {
+  /* 이부분이 flex의 80% 할당 */
+  flex: 1;
+}
+
+.letter-title-flex-dummy {
+  flex: 0 0 3%;
+}
+
+.letter-title-flex_per {
+  /* 이부분이 flex의 20% 할당 */
+  flex: 0 0 20%;
+  color: #ff481e;
+  font-size: 28px;
+  text-align: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin_qna_review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.admin_qna_btn_active{
+  background-color: #007BFF;
+  color: #FFFFFF;
+  margin-right: 10px;
+}
+.admin_qna_btn_inactive{
+  background-color: #333333;
+  color: #FFFFFF;
+  margin-right: 10px;
+}
+.admin_qna_select{
+  width: 160px;
+  text-align: left;
+}
+.admin_qna_input{
+  width:245px;
+  margin-right: 5px;
+}
+.admin_qna_review-section {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  margin-top: 30px;
+}
 </style>
