@@ -31,6 +31,7 @@ exports.adminQnaList = async (req, res)=>{
             else{
                 query = "SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date FROM qna, user WHERE qna.user_id=user.user_id AND (user.user_nickname LIKE ? OR qna.qna_title LIKE ? OR qna.qna_content LIKE ?) ORDER BY qna.qna_date LIMIT 10 OFFSET ?";
                 result = await db(query, [keyword, keyword, keyword, page*10]);
+                console.log(result);
                 query = "SELECT count(*) AS count FROM qna, user WHERE qna.user_id=user.user_id AND (user.user_nickname LIKE ? OR qna.qna_title LIKE ? OR qna.qna_content LIKE ?)";
                 count = await db(query, [keyword, keyword, keyword]);
                 count = count[0]['count'];
