@@ -54,7 +54,7 @@
                 </div>
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
-                  <div>999개</div>
+                  <div>{{ totalQuantity }}개</div>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form>
@@ -1229,7 +1229,7 @@
           <!-- 리뷰 섹션 -->
           <div class="productdetail_review-section">
             <div class="productdetail_review-cards">
-              <button class="productdetail_review-card" v-for="n in 9" :key="n">
+              <button class="productdetail_review-card" v-for="n in 6" :key="n">
                 <div class="productdetail_card-header">
                   <div class="productdetail_review-section_title-div">
                     일이삼사오육칠팔구십일이
@@ -1373,7 +1373,12 @@ export default {
         start: null,
         end: null,
       },
+
+
+
        productDetail: [],
+       productDetailItemDetail: [],
+         sizesByColor: {}, // 추가된 부분
     };
   },
 
@@ -1390,12 +1395,13 @@ export default {
 
    async created() {
     await this.fetchProductDetailData();
+     this.setOptionsFromProductDetails();
   },
 
   
-  mounted() {
-    this.fetchOptions();
-  },
+  // mounted() {
+  //   this.fetchOptions();
+  // },
 
   computed: {
     // 가격 계산
@@ -1416,6 +1422,9 @@ export default {
         return this.productDetail.item_price - (this.productDetail.item_price * (this.productDetail.item_discount_rate / 100));
       }
       return 0;
+    },
+     totalQuantity() {
+      return this.productDetailItemDetail.reduce((sum, item) => sum + item.item_detail_quantity, 0);
     }
   },
 
@@ -1427,8 +1436,10 @@ export default {
         const productDetail = response.data;
 
         if (productDetail) {
-          this.productDetail = productDetail;
-          console.log("productDetail.item_name : ", productDetail.item_name);
+          this.productDetail = productDetail.item;
+          this.productDetailItemDetail = productDetail.itemDetails;
+          // console.log("productDetail.item_name : ", this.productDetail.item_name);
+          console.log("productDetailItemDetail: ", JSON.parse(JSON.stringify(this.productDetailItemDetail)));
           // console.log("productDetail.item_name:", JSON.parse(JSON.stringify(productDetail.map((product) => product.item_name))));
         } else {
           console.error("ProductDetail.vue fetchProductDetailData : No product data");
@@ -1518,8 +1529,6 @@ export default {
     },
 
 
-
-
     fetchOptions() {
       setTimeout(() => {
         this.optionGroups = [
@@ -1529,6 +1538,54 @@ export default {
         this.selectedOptions = Array(this.optionGroups.length).fill("");
       }, 1000);
     },
+    // isEnabled(index) {
+    //   if (index === 0) return true;
+    //   return this.selectedOptions[index - 1] !== "";
+    // },
+
+    // isVisible(index) {
+    //   if (index === 0) return true;
+    //   if (this.selectedItemType_dress_custom === "visible" && index > 0) {
+    //     return false;
+    //   }
+    //   return this.selectedOptions[index - 1] !== "";
+    // },
+
+    // onOptionChange(index) {
+    //   if (this.selectedOptions[index] === "맞춤") {
+    //     this.selectedItemType_dress_custom = "visible";
+    //   } else {
+    //     this.selectedItemType_dress_custom = "collapse";
+    //   }
+
+    //   // 선택이 변경되면 해당 인덱스 이후의 모든 선택을 초기화
+    //   for (let i = index + 1; i < this.selectedOptions.length; i++) {
+    //     this.selectedOptions[i] = "";
+    //   }
+    // },
+
+
+    setOptionsFromProductDetails() {
+      const colors = [...new Set(this.productDetailItemDetail.map((item) => item.item_detail_color))];
+      const sizesByColor = {};
+      colors.forEach((color) => {
+        sizesByColor[color] = [
+          ...new Set(
+            this.productDetailItemDetail
+              .filter((item) => item.item_detail_color === color)
+              .map((item) => item.item_detail_size)
+          ),
+        ];
+      });
+
+      this.optionGroups = [
+        { name: "Color", options: colors },
+        { name: "Size", options: [] },
+      ];
+      this.selectedOptions = Array(this.optionGroups.length).fill("");
+      this.sizesByColor = sizesByColor;
+    },
+
     isEnabled(index) {
       if (index === 0) return true;
       return this.selectedOptions[index - 1] !== "";
@@ -1543,17 +1600,21 @@ export default {
     },
 
     onOptionChange(index) {
+      if (index === 0) {
+        this.optionGroups[1].options = this.sizesByColor[this.selectedOptions[0]] || [];
+      }
       if (this.selectedOptions[index] === "맞춤") {
         this.selectedItemType_dress_custom = "visible";
       } else {
         this.selectedItemType_dress_custom = "collapse";
       }
 
-      // 선택이 변경되면 해당 인덱스 이후의 모든 선택을 초기화
       for (let i = index + 1; i < this.selectedOptions.length; i++) {
         this.selectedOptions[i] = "";
       }
     },
+
+
 
     // 캘린더
     showDateRangePicker(day) {
