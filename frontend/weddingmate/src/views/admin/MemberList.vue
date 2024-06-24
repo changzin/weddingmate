@@ -230,7 +230,8 @@ export default {
     },
     // 유저 차단 
     async blockUser(member, user_id){
-      const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user_id}, "POST");
+      const accessToken = this.$getAccessToken();
+      const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user_id, access_token: accessToken}, "POST");
       if (result.status == 200){
         member.user_block = "T";
       }
@@ -240,7 +241,8 @@ export default {
     },
     // 유저 차단 해제
     async unblockUser(member, user_id){
-      const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user_id}, "POST");
+      const accessToken = this.$getAccessToken();
+      const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user_id, access_token: accessToken}, "POST");
       if (result.status == 200){
         member.user_block = "F";
       }
@@ -248,7 +250,6 @@ export default {
         console.log("error");
       }
     }
-    
   }
 }
 </script>
@@ -503,8 +504,4 @@ div.mypage-bottom{
       .notVisible{
         visibility: hidden;
       }
-.mypage-bottom-fix{  
-    position: absolute;
-    bottom: 300px;
-}
 </style>
