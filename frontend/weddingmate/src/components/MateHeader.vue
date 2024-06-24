@@ -10,12 +10,20 @@
     >
       <nav class="navbar-light">
         <div class="" id="navbarNav">
-          <ul class="navbar-nav flex-row">
+          <ul class="navbar-nav flex-row" v-if="this.$getAccessToken()">
             <li class="nav-item" id="common__header-login-padding">
-              <a href="#">로그인</a>
+              <a @click="this.$logoutUser(); this.$router.push({path: '/'});">로그아웃</a>
             </li>
             <li class="nav-item">
-              <a href="#">회원가입</a>
+              <a @click="this.$router.push({path: '/mypage'});">마이페이지</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav flex-row" v-if="!this.$getAccessToken()">
+            <li class="nav-item" id="common__header-login-padding">
+              <a @click="this.$router.push({path: '/userlogin'})">로그인</a>
+            </li>
+            <li class="nav-item">
+              <a @click="this.$router.push({path: '/terms'})">회원가입</a>
             </li>
           </ul>
         </div>
@@ -108,8 +116,10 @@ export default {
     return {
       isVisible: false,
       ismaintain: false,
+      isLogined: false
     };
   },
+  props: ['user'],
   methods: {
     showCategories() {
       this.isVisible = true;
