@@ -176,7 +176,7 @@ const routes = [
     component: test
   },
   {
-    path: '/mainpage',
+    path: '/',
     name: 'mainPage',
     component: MainPage,
   }
