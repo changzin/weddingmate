@@ -1,5 +1,5 @@
 const express = require('express');
-const {productList, productDetail, BoxList} = require('../controller/productController');
+const {productList, productDetail, BoxList, AddBox} = require('../controller/productController');
 const { adminLoginCheck, loginCheck } = require('../middleware/login');
 
 
@@ -10,6 +10,8 @@ router.get('/list/:itemDetailType', productList);
 
 router.get('/detail/:itemId', productDetail);
 
-router.get('/boxlist',loginCheck, BoxList);
+router.post('/boxlist',loginCheck, BoxList);
+
+router.post('/addbox',loginCheck, AddBox);
 
 module.exports = router;

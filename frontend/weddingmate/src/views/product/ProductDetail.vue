@@ -59,7 +59,7 @@
                   <div>{{ totalQuantity }}개</div>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form>
+                <form @submit.prevent>
                   <div class="my-1">
                     <select
                       v-for="(optionGroup, index) in optionGroups"
@@ -183,17 +183,50 @@
                     </div>
                   </div>
                   <!-- 견적함 -->
-                  <div class="box-div">
-                    <div class="productdetail_main_selectoption-div">
-                      견적함 리스트
+
+                  <div
+                    class="box-div collapse"
+                    :class="{ show: allOptionsSelected }"
+                  >
+                    <div class="box-div_header">
+                      <div class="box-div_header_list">견적함 리스트</div>
                     </div>
-                    <div v-for="n in 6" :key="n" class="box-div_item">
-                      <div class="box-div_item_element">
-                        견적함 {{n}}
+                    <button
+                      class="box-div_item"
+                      v-for="(BoxItem, index) in BoxResultData"
+                      :key="index"
+                      :class="{ selected: selectedIndex === index }"
+                      @click="selectBox(index)"
+                      type="button"
+                    >
+                      {{ BoxItem.box_name }}
+                    </button>
+
+                    <div class="box-div_add">
+                      <div
+                        v-if="!isEditing"
+                        @click="startEditing"
+                        class="box-div_add-item"
+                      >
+                        견적함 이름을 입력하세요
                       </div>
-                      <div class="productdetail_divider"></div>
+                      <input
+                        v-else
+                        class="box-div_add-item"
+                        v-model="newBoxName"
+                        type="text"
+                        placeholder="견적함 이름을 입력하세요"
+                      />
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        @click="saveBoxName"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
+                  <!-- </div> -->
 
                   <div class="productdetail_button-container">
                     <button class="productdetail_icon-button">
@@ -1419,9 +1452,12 @@ export default {
       productDetailItemDetail: [],
       sizesByColor: {}, // 추가된 부분
 
-
       accessToken: "",
       BoxResultData: [],
+
+      selectedIndex: null,
+      isEditing: false, // 입력 상태를 추적하는 상태
+      newBoxName: "", // 새로운 견적함 이름을 저장하는 상태
     };
   },
 
@@ -1507,31 +1543,29 @@ export default {
           // console.log("this.reviewList : ", this.reviewList);
         }
 
-
         // QnA 데이터 가져오기
         const QnAResult = await this.$api(`/qna/itemdetail/${this.item_id}`);
         if (QnAResult.status == 200) {
           this.qnaList = QnAResult.qnaList;
           // console.log(this.qnaList);
         }
-        
+
         // Box 데이터 가져오기
-   
-        const BoxResult = await this.$api("/product/boxlist", {access_token: 'temp-token'});
+
+        const BoxResult = await this.$api(
+          "/product/boxlist",
+          { access_token: "temp-token" },
+          "POST"
+        );
         this.BoxResultData = BoxResult.data;
-        if(this.BoxResultData) {
+        if (this.BoxResultData) {
           console.log(
             "BoxResultData: ",
             JSON.parse(JSON.stringify(this.BoxResultData))
           );
-        }
-        else {
+        } else {
           console.log("fail");
         }
-
-
-
-
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
@@ -1741,12 +1775,13 @@ export default {
     setFlowerOptions() {
       const flowerLives = [
         ...new Set(
-          this.productDetailItemDetail.map(
-            (item) => item.item_detail_flower_life
-          )
+          this.productDetailItemDetail
+            .map((item) => item.item_detail_flower_life)
+            .filter((life) => life !== null)
         ),
       ];
       const colorsByFlowerLife = {};
+      const sizesByColor = {};
 
       flowerLives.forEach((life) => {
         colorsByFlowerLife[life] = [
@@ -1754,16 +1789,35 @@ export default {
             this.productDetailItemDetail
               .filter((item) => item.item_detail_flower_life === life)
               .map((item) => item.item_detail_color)
+              .filter((color) => color !== null)
           ),
         ];
+      });
+
+      this.productDetailItemDetail.forEach((item) => {
+        if (item.item_detail_color !== null) {
+          if (!sizesByColor[item.item_detail_color]) {
+            sizesByColor[item.item_detail_color] = [];
+          }
+          if (
+            item.item_detail_size !== null &&
+            !sizesByColor[item.item_detail_color].includes(
+              item.item_detail_size
+            )
+          ) {
+            sizesByColor[item.item_detail_color].push(item.item_detail_size);
+          }
+        }
       });
 
       this.optionGroups = [
         { name: "Flower Life", options: flowerLives },
         { name: "Color", options: [] },
+        { name: "Size", options: [] },
       ];
       this.selectedOptions = Array(this.optionGroups.length).fill("");
       this.flowerLifeByColor = colorsByFlowerLife;
+      this.sizesByColor = sizesByColor;
     },
 
     isEnabled(index) {
@@ -1844,8 +1898,13 @@ export default {
 
     handleFlowerOptionChange(index) {
       if (index === 0) {
+        // Flower Life 선택 시 Color 옵션 설정
         this.optionGroups[1].options =
           this.flowerLifeByColor[this.selectedOptions[0]] || [];
+      } else if (index === 1) {
+        // Color 선택 시 Size 옵션 설정
+        this.optionGroups[2].options =
+          this.sizesByColor[this.selectedOptions[1]] || [];
       }
     },
 
@@ -1858,19 +1917,6 @@ export default {
         console.log("f");
       }
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // 캘린더
     showDateRangePicker(day) {
@@ -1907,6 +1953,67 @@ export default {
       } else {
         return "기타";
       }
+    },
+
+    // 견적함
+    async addBox() {
+      console.log("addbox클릭");
+      this.isEditing = true;
+
+      // Box 데이터 가져오기
+      //  try{
+      //     const BoxResult = await this.$api(
+      //       "/product/boxlist",
+      //       { access_token: "temp-token" },
+      //       "POST"
+      //     );
+      //     this.BoxResultData = BoxResult.data;
+      //     if (this.BoxResultData) {
+      //       console.log(
+      //         "BoxResultData: ",
+      //         JSON.parse(JSON.stringify(this.BoxResultData))
+      //       );
+      //     } else {
+      //       console.log("fail");
+      //     }
+      //   } catch (error) {
+      //     console.error(
+      //       "ProductDetail.vue fetchData Error fetching product data:",
+      //       error
+      //     );
+      //   }
+    },
+    cancelEditing() {
+      this.isEditing = false;
+    },
+
+    selectBox(index) {
+      this.selectedIndex = index;
+    },
+
+    async saveBoxName() {
+      if (this.newBoxName.trim() !== "") {
+        this.BoxResultData.push({ box_name: this.newBoxName });
+
+        try {
+          await this.$api(
+            "/product/addbox",
+            { access_token: "temp-token", box_name: this.newBoxName },
+            "POST"
+          );
+        } catch (error) {
+          console.error(
+            "ProductDetail.vue fetchData Error fetching product data:",
+            error
+          );
+        }
+      }
+      this.newBoxName = "";
+      this.isEditing = false;
+    },
+
+    startEditing() {
+      this.isEditing = true;
     },
   },
 };
@@ -2402,17 +2509,70 @@ export default {
   display: flex;
   gap: 20px;
   align-items: center;
+  justify-content: center;
 }
 
+.box-div_header {
+  display: flex;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
+
+.box-div_header_list {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.box-div_add-box {
+  border: none;
+  background-color: #f7cac9;
+  border-radius: 10px;
+  padding: 10px;
+  color: #555555;
+  font-size: 12px;
+}
 
 .box-div_item {
   display: flex;
   flex-direction: column;
-  justify-content: center; 
-  height: 100px;
+  justify-content: center;
+  height: 50px;
+  border: 1px solid #dddddd;
+  color: #888;
+  border-radius: 10px;
+  width: 300px;
+  background-color: white;
+  padding-left: 20px;
+  margin-bottom: 10px;
 }
 
-.box-div_item_element {
+.box-div_item.selected {
+  color: #f7cac9;
+  font-weight: bold;
+  border: 1px solid #f7cac9;
+}
+
+.box-div_add {
+  display: flex;
+
+  margin-bottom: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.box-div_add-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50px;
+  border: 1px solid #dddddd;
+  color: #888;
+  border-radius: 10px;
+  width: 300px;
+  background-color: white;
+  padding-left: 20px;
+  margin-bottom: 10px;
 }
 
 /* 푸터 */
