@@ -91,7 +91,7 @@ exports.info = async(req, res)=>{
         let result = 0;
         let responseBody = {};
         // accessToken으로 유저 정보를 가져옴
-        query = "SELECT user_id, user_email, user_password, user_name, user_email, user_addr1, user_addr2 FROM user WHERE user_access_token = ?";
+        query = "SELECT user_id, user_email, user_password, user_nickname, user_name, user_email, user_addr1, user_addr2 FROM user WHERE user_access_token = ?";
         result = await db(query, [accessToken]);
         const user = result[0];
 
