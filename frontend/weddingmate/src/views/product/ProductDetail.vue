@@ -1234,73 +1234,96 @@
           />
         </div>
 
-          <!-- 리뷰 섹션 -->
-          <div class="productdetail_review-section">
-            <div class="productdetail_review-cards justify-content-start">
-              <button class="productdetail_review-card" v-for="(review, index) in reviewList" :key="index" style="margin-left: 20px;">
-                <div class="productdetail_card-header">
-                  <div class="productdetail_review-section_title-div">
-                    {{review.user_nickname}}
-                  </div>
-                  <div class="productdetail_card-icons">
-                    <i class="fas fa-bullhorn"></i>
-                    <i class="fas fa-edit"></i>
-                    <i class="fas fa-trash"></i>
-                  </div>
-                </div>
-                <div class="productdetail_review-section_title-div">
-                  <div class="productdetail_card-rating">
-                    {{ this.makeStar(review.review_star) }}
-                  </div>
-                  <div class="productdetail_review-section_date-div">
-                    {{this.$dateFormat(review.review_date)}}
-                  </div>
-                </div>
-                <img
-                  src="https://via.placeholder.com/300x200"
-                  class="productdetail_card-img-top"
-                  alt="Review Image"
-                />
-                <div class="productdetail_card-body">
-                  <p class="productdetail_card-text">
-                    {{review.review_content}}
-                  </p>
-                </div>
-              </button>
-            </div>
+        <!-- 리뷰 섹션 -->
+        <div class="productdetail_review-section">
+          <div class="productdetail_qna-header">
+            <h2 class="productdetail_qna-title">전체 리뷰 &gt;</h2>
+            <button class="productdetail_write-qna-btn">
+              <i class="fas fa-pen"></i> 리뷰작성
+            </button>
           </div>
+          
+          <div class="productdetail_review-cards justify-content-start">
+            <button
+              class="productdetail_review-card"
+              v-for="(review, index) in reviewList"
+              :key="index"
+              style="margin-left: 20px"
+            >
+              fdsf
+              <div class="productdetail_card-header">
+                <div class="productdetail_review-section_title-div">
+                  {{ review.user_nickname }}
+                </div>
+                <div class="productdetail_card-icons">
+                  <i class="fas fa-bullhorn"></i>
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash"></i>
+                </div>
+              </div>
+              <div class="productdetail_review-section_title-div">
+                <div class="productdetail_card-rating">
+                  {{ this.makeStar(review.review_star) }}
+                </div>
+                <div class="productdetail_review-section_date-div">
+                  {{ this.$dateFormat(review.review_date) }}
+                </div>
+              </div>
+              <img
+                src="https://via.placeholder.com/300x200"
+                class="productdetail_card-img-top"
+                alt="Review Image"
+              />
+              <div class="productdetail_card-body">
+                <p class="productdetail_card-text">
+                  {{ review.review_content }}
+                </p>
+              </div>
+            </button>
+          </div>
+        </div>
 
-          <!-- Q&A 섹션 -->
-          <div class="productdetail_qna-section">
-            <div class="productdetail_qna-header">
-              <h2 class="productdetail_qna-title">전체 QnA &gt;</h2>
-              <button class="productdetail_write-qna-btn">
-                <i class="fas fa-pen"></i> QnA작성
-              </button>
-            </div>
-            <table class="productdetail_qna-table">
-              <thead>
-                <tr>
-                  <th style="width: 80px;">문의유형</th>
-                  <th style="width:630px;">문의/답변</th>
-                  <th style="width: 170px;">작성자</th>
-                  <th style="width: 130px;">작성일</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(qna, index) in qnaList" :key="index">
-                  <td>{{this.formatQnaType(qna.qna_type)}}</td>
-                  <td class="productdetail_qna-section_status-title-div">
-                    <div class="productdetail_qna-status" v-if="qna.qna_has_answer=='T'">답변 완료</div>
-                    <div class="productdetail_qna-status incomplete" v-if="qna.qna_has_answer=='F'">미완료</div>
-                    <div>
-                      {{qna.qna_title}}
-                    </div>
-                  </td>
-                  <td>{{qna.user_nickname}}</td>
-                  <td>{{this.$dateFormat(qna.qna_date)}}</td>
-                </tr>
-                <!-- <tr v-for="n in 1" :key="n">
+        <!-- Q&A 섹션 -->
+        <div class="productdetail_qna-section">
+          <div class="productdetail_qna-header">
+            <h2 class="productdetail_qna-title">전체 QnA &gt;</h2>
+            <button class="productdetail_write-qna-btn">
+              <i class="fas fa-pen"></i> QnA작성
+            </button>
+          </div>
+          <table class="productdetail_qna-table">
+            <thead>
+              <tr>
+                <th style="width: 80px">문의유형</th>
+                <th style="width: 630px">문의/답변</th>
+                <th style="width: 170px">작성자</th>
+                <th style="width: 130px">작성일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(qna, index) in qnaList" :key="index">
+                <td>{{ this.formatQnaType(qna.qna_type) }}</td>
+                <td class="productdetail_qna-section_status-title-div">
+                  <div
+                    class="productdetail_qna-status"
+                    v-if="qna.qna_has_answer == 'T'"
+                  >
+                    답변 완료
+                  </div>
+                  <div
+                    class="productdetail_qna-status incomplete"
+                    v-if="qna.qna_has_answer == 'F'"
+                  >
+                    미완료
+                  </div>
+                  <div>
+                    {{ qna.qna_title }}
+                  </div>
+                </td>
+                <td>{{ qna.user_nickname }}</td>
+                <td>{{ this.$dateFormat(qna.qna_date) }}</td>
+              </tr>
+              <!-- <tr v-for="n in 1" :key="n">
                   <td>배송문의</td>
                   <td class="productdetail_qna-section_status-title-div">
                     <div class="productdetail_qna-status incomplete">미완료</div>
@@ -1309,11 +1332,11 @@
                   <td>일이삼사오육칠팔구십일이</td>
                   <td>2024-06-11 15:54</td>
                 </tr> -->
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
-        <!-- 콘텐츠 섹션 끝 -->
+      </div>
+      <!-- 콘텐츠 섹션 끝 -->
 
       <!-- 푸터 -->
       <footer class="common__footer">
@@ -1377,9 +1400,9 @@ export default {
         end: null,
       },
 
-       productDetail: [],
-       productDetailItemDetail: [],
-         sizesByColor: {}, // 추가된 부분
+      productDetail: [],
+      productDetailItemDetail: [],
+      sizesByColor: {}, // 추가된 부분
     };
   },
 
@@ -1395,8 +1418,8 @@ export default {
   },
 
   async created() {
-    await this.fetchProductDetailData();
-     this.setOptionsFromProductDetails();
+    await this.fetchData();
+    this.setOptionsFromProductDetails();
   },
 
   // mounted() {
@@ -1439,7 +1462,7 @@ export default {
   },
 
   methods: {
-    async fetchProductDetailData() {
+    async fetchData() {
       try {
         const response = await this.$api(`/product/detail/${this.item_id}`);
         const productDetail = response.data;
@@ -1454,13 +1477,23 @@ export default {
           );
           // console.log("productDetail.item_name:", JSON.parse(JSON.stringify(productDetail.map((product) => product.item_name))));
         } else {
-          console.error(
-            "ProductDetail.vue fetchProductDetailData : No product data"
-          );
+          console.error("ProductDetail.vue fetchData : No product data");
+        }
+
+        const result = await this.$api(`/review/itemdetail/${this.item_id}`);
+        if (result.status == 200) {
+          this.reviewList = result.reviewList;
+          console.log("this.reviewList : ", this.reviewList);
+        }
+
+        const QnAresult = await this.$api(`/qna/itemdetail/${this.item_id}`);
+        if (QnAresult.status == 200) {
+          this.qnaList = QnAresult.qnaList;
+          console.log(this.qnaList);
         }
       } catch (error) {
         console.error(
-          "ProductDetail.vue fetchProductDetailData Error fetching product data:",
+          "ProductDetail.vue fetchData Error fetching product data:",
           error
         );
       }
@@ -1792,41 +1825,25 @@ export default {
         "0"
       )}-${String(d.getDate()).padStart(2, "0")}`;
     },
-    async getReviewList(){
-      const result = await this.$api(`http://localhost:9090/review/itemdetail/${this.item_id}`);
-      if (result.status == 200){
-        this.reviewList = result.reviewList;
-        console.log(this.reviewList);
-      }
-    },
-    async getQnaList(){
-      const result = await this.$api(`http://localhost:9090/qna/itemdetail/${this.item_id}`);
-      if (result.status == 200){
-        this.qnaList = result.qnaList;
-        console.log(this.qnaList);
-      }
-    },
-    makeStar(num){
+
+    makeStar(num) {
       let star = "";
-      for(let i = 0; i < num; i++){
+      for (let i = 0; i < num; i++) {
         star += "★";
       }
       return star;
     },
-    formatQnaType(data){
-      if (data=='delivery'){
-        return '배송문의';
+    formatQnaType(data) {
+      if (data == "delivery") {
+        return "배송문의";
+      } else if (data == "cancel") {
+        return "반품/취소";
+      } else if (data == "item") {
+        return "상품문의";
+      } else {
+        return "기타";
       }
-      else if (data == 'cancel'){
-        return '반품/취소'
-      }
-      else if (data == 'item'){
-        return '상품문의'
-      }
-      else {
-        return '기타'
-      }
-    }
+    },
   },
 };
 </script>
