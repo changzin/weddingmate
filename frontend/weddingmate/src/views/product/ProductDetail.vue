@@ -196,7 +196,9 @@
                       v-for="(BoxItem, index) in BoxResultData"
                       :key="index"
                       :class="{ selected: selectedIndex === index }"
-                      @click="selectBox(index)"
+                      @click="
+                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
+                      "
                       type="button"
                     >
                       {{ BoxItem.box_name }}
@@ -994,6 +996,8 @@
                     </button>
                     <button
                       class="productdetail_main-content_button-container_main-button"
+                       type="button"
+                      @click="insertItemIntoBox"
                     >
                       물건담기
                     </button>
@@ -1458,6 +1462,12 @@ export default {
       selectedIndex: null,
       isEditing: false, // 입력 상태를 추적하는 상태
       newBoxName: "", // 새로운 견적함 이름을 저장하는 상태
+
+      // 견적함 데이터
+      selectedBoxName: "",
+      selectedBoxId: null,
+
+      selectedItemDetailId: null,
     };
   },
 
@@ -1875,6 +1885,7 @@ export default {
       } else if (this.itemType === "flower") {
         this.handleFlowerOptionChange(index);
       }
+      console.log("selectedOptions : ", this.selectedOptions);
 
       // 맞춤 옵션 처리
       if (this.selectedOptions[index] === "맞춤") {
@@ -1907,8 +1918,6 @@ export default {
           this.sizesByColor[this.selectedOptions[1]] || [];
       }
     },
-
-   
 
     // 캘린더
     showDateRangePicker(day) {
@@ -1979,8 +1988,10 @@ export default {
       this.isEditing = false;
     },
 
-    selectBox(index) {
+    selectBox(index, boxName, boxId) {
       this.selectedIndex = index;
+      this.selectedBoxName = boxName;
+      this.selectedBoxId = boxId;
     },
 
     async saveBoxName() {
@@ -1988,11 +1999,20 @@ export default {
         this.BoxResultData.push({ box_name: this.newBoxName });
 
         try {
-          await this.$api(
+          const BoxResult = await this.$api(
             "/product/addbox",
             { access_token: "temp-token", box_name: this.newBoxName },
             "POST"
           );
+          this.BoxResultData = BoxResult.data;
+          if (this.BoxResultData) {
+            console.log(
+              "BoxResultData: ",
+              JSON.parse(JSON.stringify(this.BoxResultData))
+            );
+          } else {
+            console.log("fail");
+          }
         } catch (error) {
           console.error(
             "ProductDetail.vue fetchData Error fetching product data:",
@@ -2004,39 +2024,151 @@ export default {
       this.isEditing = false;
     },
 
-     // 물건 담기
-    async insertItemIntoBox() {
-      //보일 때
-      if (this.allOptionsSelected) {
-        console.log("t");
+    updateSelectedItemDetailId() {
+      // const selectedSize = this.selectedOptions[0];
+      // const selectedColor = this.selectedOptions[1];
 
-        try {
-          await this.$api(
-            "/product/addbox",
-            { access_token: "temp-token", box_name: this.newBoxName },
-            "POST"
-          );
-        } catch (error) {
-          console.error(
-            "ProductDetail.vue fetchData Error fetching product data:",
-            error
-          );
+      // const selectedItem = this.productDetailItemDetail.find(
+      //   (item) =>
+      //     item.item_detail_size === selectedSize &&
+      //     item.item_detail_color === selectedColor
+      // );
+
+      // if (selectedItem) {
+      //   this.selectedItemDetailId = selectedItem.item_detail_id;
+      //   console.log("Selected Item Detail ID: ", this.selectedItemDetailId);
+      // } else {
+      //   this.selectedItemDetailId = null;
+      //   console.log("No matching item found.");
+      // }
+      if (this.itemType === 'dress') {
+        const selectedSize = this.selectedOptions[0];
+        const selectedColor = this.selectedOptions[1];
+        
+        const selectedItem = this.productDetailItemDetail.find(item => 
+          item.item_detail_size === selectedSize && item.item_detail_color === selectedColor
+        );
+
+        if (selectedItem) {
+          this.selectedItemDetailId = selectedItem.item_detail_id;
+          console.log("Selected Item Detail ID: ", this.selectedItemDetailId);
+        } else {
+          this.selectedItemDetailId = null;
+          console.log("No matching item found.");
         }
+      } else if (this.itemType === 'flower') {
+        const selectedFlowerLife = this.selectedOptions[0];
+        const selectedColor = this.selectedOptions[1];
+        const selectedSize = this.selectedOptions[2];
 
+        const selectedItem = this.productDetailItemDetail.find(item =>
+          item.item_detail_flower_life === selectedFlowerLife &&
+          item.item_detail_color === selectedColor &&
+          item.item_detail_size === selectedSize
+        );
 
-      
-
-
-
-
-
-
-      } else {
-        console.log("f");
+        if (selectedItem) {
+          this.selectedItemDetailId = selectedItem.item_detail_id;
+          console.log("Selected Item Detail ID: ", this.selectedItemDetailId);
+        } else {
+          this.selectedItemDetailId = null;
+          console.log("No matching item found.");
+        }
       }
     },
 
+    // 물건 담기
+    async insertItemIntoBox() {
+      this.updateSelectedItemDetailId();
+      //보일 때
+      // if (this.allOptionsSelected) {
+      //   // try {
+      //   //    await this.$api(
+      //   //     "/product/insertitemintobox",
+      //   //     { access_token: "temp-token", box_id: this.selectedBoxId, box_name: this.selectedBoxName, box_item_quantity:this.quantity },
+      //   //     "POST"
+      //   //   );
+      //   // } catch (error) {
+      //   //   console.error(
+      //   //     "ProductDetail.vue fetchData Error fetching product data:",
+      //   //     error
+      //   //   );
+      //   // }
+      //    // 드레스
+      // if (this.itemType === "dress") {
+      //   console.log("엥 dress");
+      //   try {
+      //      await this.$api(
+      //       "/product/insertitemintobox",
+      //       { access_token: "temp-token", box_id: this.selectedBoxId, box_name: this.selectedBoxName, box_item_quantity:this.quantity },
+      //       "POST"
+      //     );
+      //   } catch (error) {
+      //     console.error(
+      //       "ProductDetail.vue fetchData Error fetching product data:",
+      //       error
+      //     );
+      //   }
+      // }
+      // // 스튜디오
+      // else if (this.itemType === "studio") {
+      //   console.log("엥 studio");
+      // }
+      // // 메이크업
+      // else if (this.itemType === "makeup") {
+      //   console.log("엥 studio");
 
+      // }
+      // // 스드메
+      // else if (this.itemType === "sdm_package") {
+      //   console.log("엥 studio");
+
+      // }
+      // // 예복
+      // else if (this.itemType === "giving_dress") {
+      //   console.log("엥 studio");
+      // }
+      // // 가전
+      // else if (this.itemType === "giving_mechine") {
+      //   console.log("엥 studio");
+      // }
+      // // 본식스냅
+      // else if (this.itemType === "snap") {
+      //   console.log("엥 studio");
+      // }
+      // // 영상
+      // else if (this.itemType === "video") {
+      //   console.log("엥 studio");
+      // }
+      // // 부케
+      // else if (this.itemType === "flower") {
+      //   console.log("엥 studio");
+      // }
+      // // 연주
+      // else if (this.itemType === "music") {
+      //   console.log("엥 studio");
+      // }
+      // // 사회자
+      // else if (this.itemType === "mc") {
+      //   console.log("엥 studio");
+      // }
+      // // 웨딩슈즈
+      // else if (this.itemType === "shoes") {
+      //   console.log("엥 studio");
+      // }
+      // // 답례품
+      // else if (this.itemType === "gift") {
+      //   console.log("엥 studio");
+      // }
+      // // 청첩장
+      // else if (this.itemType === "letter") {
+      //   console.log("엥 studio");
+      // }
+
+      // } else {
+      //   console.log("f");
+      // }
+    },
 
     startEditing() {
       this.isEditing = true;

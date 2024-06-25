@@ -158,6 +158,46 @@ exports.AddBox = async (req, res) => {
           `;
     const result = await db(query, [user_id, box_name]);
 
+    const query2 = `
+    SELECT * FROM box where user_id = ?;
+  `;
+    const result2 = await db(query2, [user_id]);
+
+    // 데이터 보낼 준비
+    const responseBody = {
+      status: 200,
+      message: "ProductController.js의 productList 데이터 성공",
+      data: result2,
+    };
+
+    
+    // 데이터 보내기
+    res.json(responseBody);
+  } catch (err) {
+    console.error(err);
+    const responseBody = {
+      status: 400,
+      message: err.message,
+    };
+    res.json(responseBody);
+  }
+};
+
+exports.InsertItemIntoBox = async (req, res) => {
+  try {
+    // 데이터 준비
+    // req.body.user_id는 전 미들웨어인 loginCheck에서 가져온 값
+    const user_id = req.body.user_id;
+    // req.body.box_name는 뷰에서 가져온 값
+    const box_name = req.body.box_name;
+
+    // Box 데이터 생성
+    const query = `
+              INSERT INTO box (user_id, box_name, box_quantity, box_total_price)
+        VALUES (?, ?, 0, 0);
+            `;
+    const result = await db(query, [user_id, box_name]);
+
     // 데이터 보낼 준비
     const responseBody = {
       status: 200,
@@ -175,37 +215,3 @@ exports.AddBox = async (req, res) => {
     res.json(responseBody);
   }
 };
-
-
-exports.InsertItemIntoBox = async (req, res) => {
-    try {
-      // 데이터 준비
-      // req.body.user_id는 전 미들웨어인 loginCheck에서 가져온 값
-      const user_id = req.body.user_id;
-      // req.body.box_name는 뷰에서 가져온 값
-      const box_name = req.body.box_name;
-  
-      // Box 데이터 생성
-      const query = `
-              INSERT INTO box (user_id, box_name, box_quantity, box_total_price)
-        VALUES (?, ?, 0, 0);
-            `;
-      const result = await db(query, [user_id, box_name]);
-  
-      // 데이터 보낼 준비
-      const responseBody = {
-        status: 200,
-        message: "ProductController.js의 productList 데이터 성공",
-        data: result,
-      };
-      // 데이터 보내기
-      res.json(responseBody);
-    } catch (err) {
-      console.error(err);
-      const responseBody = {
-        status: 400,
-        message: err.message,
-      };
-      res.json(responseBody);
-    }
-  };
