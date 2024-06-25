@@ -18,16 +18,17 @@
             </div>
             <div class="col-md-6">
               <div class="productdetail_main_content_maker_div">
-                {{productDetail.item_factory_name}}
-
+                {{ productDetail.item_factory_name }}
               </div>
               <div class="productdetail_main_content_name_div">
-                {{productDetail.item_name}}
+                {{ productDetail.item_name }}
               </div>
               <div>
-                <div class="main_content_starcount_div">★★★★★ {{ productDetail.item_star_rating}} </div>
+                <div class="main_content_starcount_div">
+                  ★★★★★ {{ productDetail.item_star_rating }}
+                </div>
                 <div class="productdetail_main_content_reviewcount_div">
-                  전체 리뷰 수 : ({{ productDetail.item_review_count}})
+                  전체 리뷰 수 : ({{ productDetail.item_review_count }})
                 </div>
               </div>
               <!-- 드레스 옵션 -->
@@ -38,9 +39,11 @@
                 ]"
               >
                 <div>
-                  <div class="productdetail_main_content_discount_div">{{productDetail.item_discount_rate}}%</div>
+                  <div class="productdetail_main_content_discount_div">
+                    {{ productDetail.item_discount_rate }}%
+                  </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{productDetail.item_price}}원
+                    {{ productDetail.item_price }}원
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
@@ -48,9 +51,8 @@
                 </div>
                 <div class="productdetail_main_content_delivery_div">
                   <div class="productdetail_main_content_delivery_price_div">
-                    배송비 {{productDetail.item_delivery_price}}원
+                    배송비 {{ productDetail.item_delivery_price }}원
                   </div>
-                 
                 </div>
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
@@ -457,128 +459,136 @@
                 </div>
                 <div class="productdetail_divider"></div>
                 <!-- 드레스 -->
-             
 
-      <!-- 드레스 -->
-      <div class="productdetail_main_content_sdmpacakge">
-        <div class="productdetail_main_content_sdmpacakge-name">
-          드레스 제조사 이름
-        </div>
-        <div class="productdetail_main_content_sdmpacakge-title">
-          드레스 제목
-        </div>
-        <div class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate">
-          드레스 날짜 선택
-        </div>
-        <div :class="['productdetail_cal']" :style="{ marginTop: '10px' }">
-          <div class="common-event_calendar">
-            <div>
-              <v-date-picker
-                v-model="dressDateRange"
-                is-range
-                :popover="{ visibility: 'focus' }"
-                :input-props="{
-                  start: { placeholder: 'Start' },
-                  end: { placeholder: 'End' },
-                }"
-              />
-            </div>
-            <div class="common-event_calendar_div">
-              <label>
-                Start
-                {{
-                  dressDateRange.start
-                    ? formatDate(dressDateRange.start)
-                    : "선택되지 않음"
-                }}
-              </label>
-              <label>
-                End
-                {{
-                  dressDateRange.end
-                    ? formatDate(dressDateRange.end)
-                    : "선택되지 않음"
-                }}
-              </label>
-            </div>
-            <button
-              class="common-caldate_save-button"
-              type="button"
-              @click="saveDressEvent"
-            >
-              저장
-            </button>
-          </div>
-          <div class="productdetail_cal-div_date-div">
-            <div>선택된 날짜</div>
-            <div class="productdetail_cal-div_date">
-              2024년 12년 30일
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="productdetail_divider"></div>
+                <!-- 드레스 -->
+                <div class="productdetail_main_content_sdmpacakge">
+                  <div class="productdetail_main_content_sdmpacakge-name">
+                    드레스 제조사 이름
+                  </div>
+                  <div class="productdetail_main_content_sdmpacakge-title">
+                    드레스 제목
+                  </div>
+                  <div
+                    class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate"
+                  >
+                    드레스 날짜 선택
+                  </div>
+                  <div
+                    :class="['productdetail_cal']"
+                    :style="{ marginTop: '10px' }"
+                  >
+                    <div class="common-event_calendar">
+                      <div>
+                        <v-date-picker
+                          v-model="dressDateRange"
+                          is-range
+                          :popover="{ visibility: 'focus' }"
+                          :input-props="{
+                            start: { placeholder: 'Start' },
+                            end: { placeholder: 'End' },
+                          }"
+                        />
+                      </div>
+                      <div class="common-event_calendar_div">
+                        <label>
+                          Start
+                          {{
+                            dressDateRange.start
+                              ? formatDate(dressDateRange.start)
+                              : "선택되지 않음"
+                          }}
+                        </label>
+                        <label>
+                          End
+                          {{
+                            dressDateRange.end
+                              ? formatDate(dressDateRange.end)
+                              : "선택되지 않음"
+                          }}
+                        </label>
+                      </div>
+                      <button
+                        class="common-caldate_save-button"
+                        type="button"
+                        @click="saveDressEvent"
+                      >
+                        저장
+                      </button>
+                    </div>
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="productdetail_divider"></div>
 
-      <!-- 메이크업 -->
-      <div class="productdetail_main_content_sdmpacakge">
-        <div class="productdetail_main_content_sdmpacakge-name">
-          메이크업 제조사 이름
-        </div>
-        <div class="productdetail_main_content_sdmpacakge-title">
-          메이크업 제목
-        </div>
-        <div class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate">
-          메이크업 날짜 선택
-        </div>
-        <div :class="['productdetail_cal']" :style="{ marginTop: '10px' }">
-          <div class="common-event_calendar">
-            <div>
-              <v-date-picker
-                v-model="makeupDateRange"
-                is-range
-                :popover="{ visibility: 'focus' }"
-                :input-props="{
-                  start: { placeholder: 'Start' },
-                  end: { placeholder: 'End' },
-                }"
-              />
-            </div>
-            <div class="common-event_calendar_div">
-              <label>
-                Start
-                {{
-                  makeupDateRange.start
-                    ? formatDate(makeupDateRange.start)
-                    : "선택되지 않음"
-                }}
-              </label>
-              <label>
-                End
-                {{
-                  makeupDateRange.end
-                    ? formatDate(makeupDateRange.end)
-                    : "선택되지 않음"
-                }}
-              </label>
-            </div>
-            <button
-              class="common-caldate_save-button"
-              type="button"
-              @click="saveMakeupEvent"
-            >
-              저장
-            </button>
-          </div>
-          <div class="productdetail_cal-div_date-div">
-            <div>선택된 날짜</div>
-            <div class="productdetail_cal-div_date">
-              2024년 12년 30일
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="productdetail_divider"></div>
-
+                <!-- 메이크업 -->
+                <div class="productdetail_main_content_sdmpacakge">
+                  <div class="productdetail_main_content_sdmpacakge-name">
+                    메이크업 제조사 이름
+                  </div>
+                  <div class="productdetail_main_content_sdmpacakge-title">
+                    메이크업 제목
+                  </div>
+                  <div
+                    class="productdetail_calproductdetail_main_content_sdmpacakge-selectdate"
+                  >
+                    메이크업 날짜 선택
+                  </div>
+                  <div
+                    :class="['productdetail_cal']"
+                    :style="{ marginTop: '10px' }"
+                  >
+                    <div class="common-event_calendar">
+                      <div>
+                        <v-date-picker
+                          v-model="makeupDateRange"
+                          is-range
+                          :popover="{ visibility: 'focus' }"
+                          :input-props="{
+                            start: { placeholder: 'Start' },
+                            end: { placeholder: 'End' },
+                          }"
+                        />
+                      </div>
+                      <div class="common-event_calendar_div">
+                        <label>
+                          Start
+                          {{
+                            makeupDateRange.start
+                              ? formatDate(makeupDateRange.start)
+                              : "선택되지 않음"
+                          }}
+                        </label>
+                        <label>
+                          End
+                          {{
+                            makeupDateRange.end
+                              ? formatDate(makeupDateRange.end)
+                              : "선택되지 않음"
+                          }}
+                        </label>
+                      </div>
+                      <button
+                        class="common-caldate_save-button"
+                        type="button"
+                        @click="saveMakeupEvent"
+                      >
+                        저장
+                      </button>
+                    </div>
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        2024년 12년 30일
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="productdetail_divider"></div>
 
                 <!-- 혜택 안내 -->
                 <div class="productdetail_package-container">
@@ -649,7 +659,6 @@
                   <div class="productdetail_main_content_delivery_price_div">
                     배송비 3,500원
                   </div>
-              
                 </div>
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
@@ -1028,8 +1037,6 @@
                   <div class="productdetail_main_content_delivery_price_div">
                     배송비 3,500원
                   </div>
-                
-                  </div>
                 </div>
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
@@ -1216,130 +1223,126 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- 상세 설명 이미지 -->
-          <div class="text-center productdetail_main-detail-image-div">
-            <img
-              src="https://via.placeholder.com/1280x800"
-              class="img-fluid"
-              alt="Detailed Description Image"
-            />
-          </div>
+        <!-- 상세 설명 이미지 -->
+        <div class="text-center productdetail_main-detail-image-div">
+          <img
+            src="https://via.placeholder.com/1280x800"
+            class="img-fluid"
+            alt="Detailed Description Image"
+          />
+        </div>
 
-          <!-- 리뷰 섹션 -->
-          <div class="productdetail_review-section">
-            <div class="productdetail_review-cards">
-              <button class="productdetail_review-card" v-for="n in 6" :key="n">
-                <div class="productdetail_card-header">
-                  <div class="productdetail_review-section_title-div">
-                    일이삼사오육칠팔구십일이
-                  </div>
-                  <div class="productdetail_card-icons">
-                    <i class="fas fa-bullhorn"></i>
-                    <i class="fas fa-edit"></i>
-                    <i class="fas fa-trash"></i>
-                  </div>
-                </div>
+        <!-- 리뷰 섹션 -->
+        <div class="productdetail_review-section">
+          <div class="productdetail_review-cards">
+            <button class="productdetail_review-card" v-for="n in 6" :key="n">
+              <div class="productdetail_card-header">
                 <div class="productdetail_review-section_title-div">
-                  <div class="productdetail_card-rating">★★★★★</div>
-                  <div class="productdetail_review-section_date-div">
-                    2024-06-11 15:54
-                  </div>
+                  일이삼사오육칠팔구십일이
                 </div>
-                <img
-                  src="https://via.placeholder.com/300x200"
-                  class="productdetail_card-img-top"
-                  alt="Review Image"
-                />
-                <div class="productdetail_card-body">
-                  <p class="productdetail_card-text">
-                    인생
-                    리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
-                    10줄까지
-                    가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
-                  </p>
+                <div class="productdetail_card-icons">
+                  <i class="fas fa-bullhorn"></i>
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash"></i>
                 </div>
-              </button>
-            </div>
-          </div>
-
-          <!-- Q&A 섹션 -->
-          <div class="productdetail_qna-section">
-            <div class="productdetail_qna-header">
-              <h2 class="productdetail_qna-title">전체 QnA &gt;</h2>
-              <button class="productdetail_write-qna-btn">
-                <i class="fas fa-pen"></i> QnA작성
-              </button>
-            </div>
-            <table class="productdetail_qna-table">
-              <thead>
-                <tr>
-                  <th>문의유형</th>
-                  <th>문의/답변</th>
-                  <th>작성자</th>
-                  <th>작성일</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="n in 5" :key="n">
-                  <td>반품/취소</td>
-                  <td class="productdetail_qna-section_status-title-div">
-                    <div class="productdetail_qna-status">답변 완료</div>
-                    <div>
-                      일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십
-                    </div>
-                  </td>
-                  <td>일이삼사오육칠팔구십일이</td>
-                  <td>2024-06-11 15:54</td>
-                </tr>
-                <tr v-for="n in 1" :key="n">
-                  <td>배송문의</td>
-                  <td class="productdetail_qna-section_status-title-div">
-                    <div class="productdetail_qna-status incomplete">
-                      미완료
-                    </div>
-                    <div>미완료 UI 보려고 하나 더 만듦</div>
-                  </td>
-                  <td>일이삼사오육칠팔구십일이</td>
-                  <td>2024-06-11 15:54</td>
-                </tr>
-              </tbody>
-            </table>
+              </div>
+              <div class="productdetail_review-section_title-div">
+                <div class="productdetail_card-rating">★★★★★</div>
+                <div class="productdetail_review-section_date-div">
+                  2024-06-11 15:54
+                </div>
+              </div>
+              <img
+                src="https://via.placeholder.com/300x200"
+                class="productdetail_card-img-top"
+                alt="Review Image"
+              />
+              <div class="productdetail_card-body">
+                <p class="productdetail_card-text">
+                  인생
+                  리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
+                  10줄까지
+                  가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
+                </p>
+              </div>
+            </button>
           </div>
         </div>
-        <!-- 콘텐츠 섹션 끝 -->
 
-        <!-- 푸터 -->
-        <footer class="common__footer">
-          <div class="common__footer-content">
-            <nav class="common__footer-nav">
-              <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-              <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-              <a href="#">제휴문의</a> |
-              <a href="#">광고문의</a>
-            </nav>
-            <div class="common__footer-details">
-              <p style="margin-bottom: 0px">
-                (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-                02-123-1234 팩스: 02-111-2222
-              </p>
-
-              <p>
-                해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-                민원담당자에게 있습니다. 민원담당자: 강문정
-              </p>
-            </div>
+        <!-- Q&A 섹션 -->
+        <div class="productdetail_qna-section">
+          <div class="productdetail_qna-header">
+            <h2 class="productdetail_qna-title">전체 QnA &gt;</h2>
+            <button class="productdetail_write-qna-btn">
+              <i class="fas fa-pen"></i> QnA작성
+            </button>
           </div>
-        </footer>
+          <table class="productdetail_qna-table">
+            <thead>
+              <tr>
+                <th>문의유형</th>
+                <th>문의/답변</th>
+                <th>작성자</th>
+                <th>작성일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="n in 5" :key="n">
+                <td>반품/취소</td>
+                <td class="productdetail_qna-section_status-title-div">
+                  <div class="productdetail_qna-status">답변 완료</div>
+                  <div>
+                    일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십
+                  </div>
+                </td>
+                <td>일이삼사오육칠팔구십일이</td>
+                <td>2024-06-11 15:54</td>
+              </tr>
+              <tr v-for="n in 1" :key="n">
+                <td>배송문의</td>
+                <td class="productdetail_qna-section_status-title-div">
+                  <div class="productdetail_qna-status incomplete">미완료</div>
+                  <div>미완료 UI 보려고 하나 더 만듦</div>
+                </td>
+                <td>일이삼사오육칠팔구십일이</td>
+                <td>2024-06-11 15:54</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
+      <!-- 콘텐츠 섹션 끝 -->
+
+      <!-- 푸터 -->
+      <footer class="common__footer">
+        <div class="common__footer-content">
+          <nav class="common__footer-nav">
+            <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
+            <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
+            <a href="#">제휴문의</a> |
+            <a href="#">광고문의</a>
+          </nav>
+          <div class="common__footer-details">
+            <p style="margin-bottom: 0px">
+              (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
+              02-123-1234 팩스: 02-111-2222
+            </p>
+
+            <p>
+              해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
+              민원담당자에게 있습니다. 민원담당자: 강문정
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-
- 
-  
   data() {
     return {
       selectedSize: "",
@@ -1374,11 +1377,9 @@ export default {
         end: null,
       },
 
-
-
-       productDetail: [],
-       productDetailItemDetail: [],
-         sizesByColor: {}, // 추가된 부분
+      productDetail: [],
+      productDetailItemDetail: [],
+      sizesByColor: {}, // 추가된 부분
     };
   },
 
@@ -1390,15 +1391,14 @@ export default {
     item_id: {
       type: String,
       required: true,
-    }
+    },
   },
 
-   async created() {
+  async created() {
     await this.fetchProductDetailData();
-     this.setOptionsFromProductDetails();
+    this.setOptionsFromProductDetails();
   },
 
-  
   // mounted() {
   //   this.fetchOptions();
   // },
@@ -1406,7 +1406,7 @@ export default {
   computed: {
     // 가격 계산
     totalPrice() {
-      return this.unitPrice * this.quantity;
+      return this.finally_price * this.quantity;
     },
     formattedTotalPrice() {
       return this.totalPrice.toLocaleString();
@@ -1417,19 +1417,28 @@ export default {
         this.selectedOptions.every((option) => option !== "")
       );
     },
-     finally_price() {
-      if (this.productDetail.item_price && this.productDetail.item_discount_rate) {
-        return this.productDetail.item_price - (this.productDetail.item_price * (this.productDetail.item_discount_rate / 100));
+    finally_price() {
+      if (
+        this.productDetail.item_price &&
+        this.productDetail.item_discount_rate
+      ) {
+        return (
+          this.productDetail.item_price -
+          this.productDetail.item_price *
+            (this.productDetail.item_discount_rate / 100)
+        );
       }
       return 0;
     },
-     totalQuantity() {
-      return this.productDetailItemDetail.reduce((sum, item) => sum + item.item_detail_quantity, 0);
-    }
+    totalQuantity() {
+      return this.productDetailItemDetail.reduce(
+        (sum, item) => sum + item.item_detail_quantity,
+        0
+      );
+    },
   },
 
   methods: {
-
     async fetchProductDetailData() {
       try {
         const response = await this.$api(`/product/detail/${this.item_id}`);
@@ -1439,16 +1448,23 @@ export default {
           this.productDetail = productDetail.item;
           this.productDetailItemDetail = productDetail.itemDetails;
           // console.log("productDetail.item_name : ", this.productDetail.item_name);
-          console.log("productDetailItemDetail: ", JSON.parse(JSON.stringify(this.productDetailItemDetail)));
+          console.log(
+            "productDetailItemDetail: ",
+            JSON.parse(JSON.stringify(this.productDetailItemDetail))
+          );
           // console.log("productDetail.item_name:", JSON.parse(JSON.stringify(productDetail.map((product) => product.item_name))));
         } else {
-          console.error("ProductDetail.vue fetchProductDetailData : No product data");
+          console.error(
+            "ProductDetail.vue fetchProductDetailData : No product data"
+          );
         }
       } catch (error) {
-        console.error("ProductDetail.vue fetchProductDetailData Error fetching product data:", error);
+        console.error(
+          "ProductDetail.vue fetchProductDetailData Error fetching product data:",
+          error
+        );
       }
     },
-    
 
     onSizeChange() {
       this.showColorSelect = this.selectedSize !== "";
@@ -1482,15 +1498,11 @@ export default {
       }
       // 예복
       else if (type === "giving_dress") {
-        return this.itemType === "giving_dress"
-          ? "visible"
-          : "collapse";
+        return this.itemType === "giving_dress" ? "visible" : "collapse";
       }
       // 가전
       else if (type === "giving_mechine") {
-        return this.itemType === "giving_mechine"
-          ? "visible"
-          : "collapse";
+        return this.itemType === "giving_mechine" ? "visible" : "collapse";
       }
       // 본식스냅
       else if (type === "snap") {
@@ -1528,7 +1540,6 @@ export default {
       return "collapse";
     },
 
-
     fetchOptions() {
       setTimeout(() => {
         this.optionGroups = [
@@ -1564,26 +1575,121 @@ export default {
     //   }
     // },
 
+    // setOptionsFromProductDetails() {
+    //   //  [{item_detail_color: 'Red'}, {item_detail_color: 'Green'}, {item_detail_color: 'Red'}]인 경우, 결과는 ['Red', 'Green']
+    //   const colors = [
+    //     ...new Set(
+    //       this.productDetailItemDetail.map((item) => item.item_detail_color)
+    //     ),
+    //   ];
+    //   // { Red: ['M', 'L'], Green: ['M'] }
+    //   const sizesByColor = {};
+    //   colors.forEach((color) => {
+    //     sizesByColor[color] = [
+    //       ...new Set(
+    //         this.productDetailItemDetail
+    //           .filter((item) => item.item_detail_color === color)
+    //           .map((item) => item.item_detail_size)
+    //       ),
+    //     ];
+    //   });
+    //   // optionGroups의 길이만큼 배열을 생성하여 각 요소를 ""로 초기화
+    //   this.optionGroups = [
+    //     { name: "Color", options: colors },
+    //     { name: "Size", options: [] },
+    //   ];
+    //   this.selectedOptions = Array(this.optionGroups.length).fill("");
+
+    //   // sizesByColor 객체를 this.sizesByColor에 저장하여 나중에 색상 선택에 따라 사이즈를 필터링할 때 사용
+    //   this.sizesByColor = sizesByColor;
+    // },
+
+    // setOptionsFromProductDetails() {
+    //   const sizes = [
+    //     ...new Set(
+    //       this.productDetailItemDetail.map((item) => item.item_detail_size)
+    //     ),
+    //   ];
+    //   const colorsBySize = {};
+
+    //   sizes.forEach((size) => {
+    //     colorsBySize[size] = [
+    //       ...new Set(
+    //         this.productDetailItemDetail
+    //           .filter((item) => item.item_detail_size === size)
+    //           .map((item) => item.item_detail_color)
+    //       ),
+    //     ];
+    //   });
+
+    //   this.optionGroups = [
+    //     { name: "Size", options: sizes },
+    //     { name: "Color", options: [] },
+    //   ];
+    //   this.selectedOptions = Array(this.optionGroups.length).fill("");
+    //   this.colorsBySize = colorsBySize;
+    // },
 
     setOptionsFromProductDetails() {
-      const colors = [...new Set(this.productDetailItemDetail.map((item) => item.item_detail_color))];
-      const sizesByColor = {};
-      colors.forEach((color) => {
-        sizesByColor[color] = [
+      if (this.itemType === "dress") {
+        this.setDressOptions();
+      } else if (this.itemType === "flower") {
+        this.setFlowerOptions();
+      }
+    },
+
+    setDressOptions() {
+      const sizes = [
+        ...new Set(
+          this.productDetailItemDetail.map((item) => item.item_detail_size)
+        ),
+      ];
+      const colorsBySize = {};
+
+      sizes.forEach((size) => {
+        colorsBySize[size] = [
           ...new Set(
             this.productDetailItemDetail
-              .filter((item) => item.item_detail_color === color)
-              .map((item) => item.item_detail_size)
+              .filter((item) => item.item_detail_size === size)
+              .map((item) => item.item_detail_color)
           ),
         ];
       });
 
       this.optionGroups = [
-        { name: "Color", options: colors },
-        { name: "Size", options: [] },
+        { name: "Size", options: sizes },
+        { name: "Color", options: [] },
       ];
       this.selectedOptions = Array(this.optionGroups.length).fill("");
-      this.sizesByColor = sizesByColor;
+      this.colorsBySize = colorsBySize;
+    },
+
+    setFlowerOptions() {
+      const flowerLives = [
+        ...new Set(
+          this.productDetailItemDetail.map(
+            (item) => item.item_detail_flower_life
+          )
+        ),
+      ];
+      const colorsByFlowerLife = {};
+
+      flowerLives.forEach((life) => {
+        colorsByFlowerLife[life] = [
+          ...new Set(
+            this.productDetailItemDetail
+              .filter((item) => item.item_detail_flower_life === life)
+              .map((item) => item.item_detail_color)
+          ),
+        ];
+      });
+
+      this.optionGroups = [
+        { name: "Flower Life", options: flowerLives },
+        { name: "Color", options: [] },
+      ];
+      this.selectedOptions = Array(this.optionGroups.length).fill("");
+      this.flowerLifeByColor = colorsByFlowerLife;
     },
 
     isEnabled(index) {
@@ -1599,22 +1705,75 @@ export default {
       return this.selectedOptions[index - 1] !== "";
     },
 
+    // onOptionChange(index) {
+    //   if (index === 0) {
+    //     this.optionGroups[1].options =
+    //       this.sizesByColor[this.selectedOptions[0]] || [];
+    //   }
+    //   if (this.selectedOptions[index] === "맞춤") {
+    //     this.selectedItemType_dress_custom = "visible";
+    //   } else {
+    //     this.selectedItemType_dress_custom = "collapse";
+    //   }
+
+    //   for (let i = index + 1; i < this.selectedOptions.length; i++) {
+    //     this.selectedOptions[i] = "";
+    //   }
+    // },
+
+    // onOptionChange(index) {
+    //   // 첫 번째 옵션(사이즈) 선택 처리
+    //   if (index === 0) {
+    //     this.optionGroups[1].options =
+    //       this.colorsBySize[this.selectedOptions[0]] || [];
+    //   }
+
+    //   // 맞춤 옵션 처리 (필요한 경우)
+    //   if (this.selectedOptions[index] === "맞춤") {
+    //     this.selectedItemType_dress_custom = "visible";
+    //   } else {
+    //     this.selectedItemType_dress_custom = "collapse";
+    //   }
+
+    //   // 이후 옵션 초기화
+    //   for (let i = index + 1; i < this.selectedOptions.length; i++) {
+    //     this.selectedOptions[i] = "";
+    //   }
+    // },
+
     onOptionChange(index) {
-      if (index === 0) {
-        this.optionGroups[1].options = this.sizesByColor[this.selectedOptions[0]] || [];
+      if (this.itemType === "dress") {
+        this.handleDressOptionChange(index);
+      } else if (this.itemType === "flower") {
+        this.handleFlowerOptionChange(index);
       }
+
+      // 맞춤 옵션 처리
       if (this.selectedOptions[index] === "맞춤") {
         this.selectedItemType_dress_custom = "visible";
       } else {
         this.selectedItemType_dress_custom = "collapse";
       }
 
+      // 이후 옵션 초기화
       for (let i = index + 1; i < this.selectedOptions.length; i++) {
         this.selectedOptions[i] = "";
       }
     },
 
+    handleDressOptionChange(index) {
+      if (index === 0) {
+        this.optionGroups[1].options =
+          this.colorsBySize[this.selectedOptions[0]] || [];
+      }
+    },
 
+    handleFlowerOptionChange(index) {
+      if (index === 0) {
+        this.optionGroups[1].options =
+          this.flowerLifeByColor[this.selectedOptions[0]] || [];
+      }
+    },
 
     // 캘린더
     showDateRangePicker(day) {
@@ -1744,7 +1903,6 @@ export default {
 .productdetail_main_content_delivery_price_div {
   margin-right: 15px;
 }
-
 
 .productdetail_main_content_maximum_quantity_div {
   display: flex;

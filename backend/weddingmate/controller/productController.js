@@ -23,7 +23,7 @@ exports.productList = async (req, res) => {
 
     // 현재 페이지에 따른 item 데이터 가져오기
     const query = `
-        SELECT item.item_id, item.item_name, item.item_discount_rate 
+        SELECT DISTINCT item.item_id, item.item_name, item.item_discount_rate 
         FROM item 
         JOIN item_detail ON item.item_id = item_detail.item_id 
         WHERE item_detail.item_detail_type = ?
