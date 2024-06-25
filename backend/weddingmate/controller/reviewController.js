@@ -88,10 +88,10 @@ exports.adminReviewList = async(req, res)=>{
     catch(err){
         console.error(err);
         responseBody = {
-            status: 401,
+            status: 400,
             message: "잘못된 페이지 요청입니다."
         };
-        res.status(401).json(responseBody);
+        res.json(responseBody);
     }
 }
 
