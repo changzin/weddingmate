@@ -227,7 +227,7 @@ export default {
     async deleteReview(review_id){
       const accessToken = this.$getAccessToken();
       console.log("accessToken", accessToken);
-      await this.$api(`http://localhost:9090/review/delete`, {review_id: review_id, access_token: accessToken}, "POST");
+      await this.$api(`http://localhost:9090/review/admindelete`, {review_id: review_id, access_token: accessToken}, "POST");
       this.page = 1;
       await this.getReviewList();
     },

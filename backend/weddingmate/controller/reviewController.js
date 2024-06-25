@@ -15,8 +15,8 @@ exports.adminReviewList = async(req, res)=>{
         let result = [];
         let count = 0;
         let query = "";
-        // user_create_date로 정렬 후, OFFSET만큼 뛰어넘은 다음 LIMIT 개수만큼 가져오는 쿼리문        
 
+        // review_date로 정렬 후, OFFSET만큼 뛰어넘은 다음 LIMIT 개수만큼 가져오는 쿼리문들. 검색 옵션에 따라 상이한 쿼리문 적용
         if(mode === 'all'){
             if (reported=="T"){
                 query = "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND (review.review_content LIKE ? OR user.user_nickname LIKE ?) ORDER BY review.review_date LIMIT 9 OFFSET ? ";
@@ -95,18 +95,57 @@ exports.adminReviewList = async(req, res)=>{
     }
 }
 
+// 리뷰 삭제 요청
 exports.adminReviewDelete = async (req, res)=>{
     try{
+        // 어차피 미들웨어에서 관리자 인증을 진행하기 때문에 그냥 삭제함.
         const review_id = req.body.review_id;
         const query = 'DELETE FROM review WHERE review_id=?';
 
         let result = [];
         result = await db(query, [review_id]);
-        
-        // changedRows는 바뀐 행 개수이다.
-        result = result.changedRows
+        // affectedRows는 바뀐 행 개수이다.
+        result = result.affectedRows;
 
-        console.log(review_id);
+        if (result == 1){
+            responseBody = {
+                status: 200,
+                message: "리뷰 삭제 완료."
+            };
+            res.status(200).json(responseBody);
+        }    
+        // 하나 이상 바뀌거나 0개 바뀌었다면 에러를 던짐 -> 아래의 catch문이 400 에러로 응답한다.    
+        else{
+            throw Error("리뷰를 찾을 수 없습니다.");
+        }
+        
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: err.message
+        };        
+        res.json(responseBody);
+    }
+};
+
+// 리뷰 삭제 요청
+exports.userReviewDelete = async (req, res)=>{
+    try{
+        const review_id = req.body.review_id;
+        // 미들웨어에서 검증해준 user_id 사용
+        const user_id = req.body.user_id;
+        const query = 'DELETE FROM review WHERE review_id=? AND user_id=?';
+
+        console.log(review_id, user_id);
+
+        let result = [];
+        result = await db(query, [review_id, user_id]);
+        
+        // affectedRows는 바뀐 행 개수이다.
+        result = result.affectedRows;
+
         console.log(result);
         if (result == 1){
             responseBody = {
@@ -130,3 +169,30 @@ exports.adminReviewDelete = async (req, res)=>{
         res.json(responseBody);
     }
 };
+
+exports.itemDetail = async (req, res)=>{
+    try{
+        // PathVariable을 가져온다.
+        const item_id = req.params.item_id;
+        // item_id로 최근 리뷰 6개를 가져오는 쿼리문
+        const query = 'SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND item_id=? ORDER BY review.review_date LIMIT 6';
+
+        let result = [];
+        result = await db(query, [item_id]);
+
+        responseBody = {
+            status: 200,
+            reviewList: result
+        };
+        res.status(200).json(responseBody);
+        
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: err.message
+        };        
+        res.json(responseBody);
+    }
+}

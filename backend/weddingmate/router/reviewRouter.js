@@ -1,11 +1,12 @@
 const express = require('express');
-const {adminReviewList, adminReviewDelete} = require('../controller/reviewController');
-const { adminLoginCheck } = require('../middleware/login');
+const {adminReviewList, adminReviewDelete, itemDetail, userReviewDelete} = require('../controller/reviewController');
+const { adminLoginCheck, loginCheck } = require('../middleware/login');
 
 const router = express.Router();
 
 // 컨트롤러의 여러 함수들을 Request URI에 맞게 매핑하는 역할 수행
 router.get('/adminlist', adminReviewList);
-router.post('/delete', adminLoginCheck,adminReviewDelete);
-
+router.post('/admindelete', adminLoginCheck,adminReviewDelete);
+router.post('/delete', loginCheck ,userReviewDelete);
+router.get('/itemdetail/:item_id', itemDetail);
 module.exports = router;

@@ -236,6 +236,9 @@ export default {
       else if (data == 'cancel'){
         return '반품/취소'
       }
+      else if (data == 'item'){
+        return '상품문의'
+      }
       else {
         return '기타'
       }

@@ -9,7 +9,7 @@ exports.loginCheck = async(req,res, next)=>{
         result = await db(query, [accessToken]);
         const userId = result[0].user_id;
 
-        if (result == 0){
+        if (userId){
             req.body.user_id = userId;
             next();
         }
@@ -17,7 +17,7 @@ exports.loginCheck = async(req,res, next)=>{
             throw new Error("accessToken이 유효하지 않거나 존재하지 않습니다.");
         }
     }
-    catch{
+    catch(err){
         console.error(err);
         responseBody = {
             status: 400,

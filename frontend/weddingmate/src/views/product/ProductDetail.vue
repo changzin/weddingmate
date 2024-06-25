@@ -1228,11 +1228,11 @@
 
           <!-- 리뷰 섹션 -->
           <div class="productdetail_review-section">
-            <div class="productdetail_review-cards">
-              <button class="productdetail_review-card" v-for="n in 6" :key="n">
+            <div class="productdetail_review-cards justify-content-start">
+              <button class="productdetail_review-card" v-for="(review, index) in reviewList" :key="index" style="margin-left: 20px;">
                 <div class="productdetail_card-header">
                   <div class="productdetail_review-section_title-div">
-                    일이삼사오육칠팔구십일이
+                    {{review.user_nickname}}
                   </div>
                   <div class="productdetail_card-icons">
                     <i class="fas fa-bullhorn"></i>
@@ -1241,9 +1241,11 @@
                   </div>
                 </div>
                 <div class="productdetail_review-section_title-div">
-                  <div class="productdetail_card-rating">★★★★★</div>
+                  <div class="productdetail_card-rating">
+                    {{ this.makeStar(review.review_star) }}
+                  </div>
                   <div class="productdetail_review-section_date-div">
-                    2024-06-11 15:54
+                    {{this.$dateFormat(review.review_date)}}
                   </div>
                 </div>
                 <img
@@ -1253,10 +1255,7 @@
                 />
                 <div class="productdetail_card-body">
                   <p class="productdetail_card-text">
-                    인생
-                    리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
-                    10줄까지
-                    가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
+                    {{review.review_content}}
                   </p>
                 </div>
               </button>
@@ -1274,35 +1273,34 @@
             <table class="productdetail_qna-table">
               <thead>
                 <tr>
-                  <th>문의유형</th>
-                  <th>문의/답변</th>
-                  <th>작성자</th>
-                  <th>작성일</th>
+                  <th style="width: 80px;">문의유형</th>
+                  <th style="width:630px;">문의/답변</th>
+                  <th style="width: 170px;">작성자</th>
+                  <th style="width: 130px;">작성일</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="n in 5" :key="n">
-                  <td>반품/취소</td>
+                <tr v-for="(qna, index) in qnaList" :key="index">
+                  <td>{{this.formatQnaType(qna.qna_type)}}</td>
                   <td class="productdetail_qna-section_status-title-div">
-                    <div class="productdetail_qna-status">답변 완료</div>
+                    <div class="productdetail_qna-status" v-if="qna.qna_has_answer=='T'">답변 완료</div>
+                    <div class="productdetail_qna-status incomplete" v-if="qna.qna_has_answer=='F'">미완료</div>
                     <div>
-                      일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십
+                      {{qna.qna_title}}
                     </div>
                   </td>
-                  <td>일이삼사오육칠팔구십일이</td>
-                  <td>2024-06-11 15:54</td>
+                  <td>{{qna.user_nickname}}</td>
+                  <td>{{this.$dateFormat(qna.qna_date)}}</td>
                 </tr>
-                <tr v-for="n in 1" :key="n">
+                <!-- <tr v-for="n in 1" :key="n">
                   <td>배송문의</td>
                   <td class="productdetail_qna-section_status-title-div">
-                    <div class="productdetail_qna-status incomplete">
-                      미완료
-                    </div>
+                    <div class="productdetail_qna-status incomplete">미완료</div>
                     <div>미완료 UI 보려고 하나 더 만듦</div>
                   </td>
                   <td>일이삼사오육칠팔구십일이</td>
                   <td>2024-06-11 15:54</td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>
@@ -1379,6 +1377,9 @@ export default {
        productDetail: [],
        productDetailItemDetail: [],
          sizesByColor: {}, // 추가된 부분
+
+      reviewList: [],
+      qnaList: [],
     };
   },
 
@@ -1396,6 +1397,8 @@ export default {
    async created() {
     await this.fetchProductDetailData();
      this.setOptionsFromProductDetails();
+     await this.getReviewList();
+     await this.getQnaList();
   },
 
   
@@ -1633,6 +1636,41 @@ export default {
         "0"
       )}-${String(d.getDate()).padStart(2, "0")}`;
     },
+    async getReviewList(){
+      const result = await this.$api(`http://localhost:9090/review/itemdetail/${this.item_id}`);
+      if (result.status == 200){
+        this.reviewList = result.reviewList;
+        console.log(this.reviewList);
+      }
+    },
+    async getQnaList(){
+      const result = await this.$api(`http://localhost:9090/qna/itemdetail/${this.item_id}`);
+      if (result.status == 200){
+        this.qnaList = result.qnaList;
+        console.log(this.qnaList);
+      }
+    },
+    makeStar(num){
+      let star = "";
+      for(let i = 0; i < num; i++){
+        star += "★";
+      }
+      return star;
+    },
+    formatQnaType(data){
+      if (data=='delivery'){
+        return '배송문의';
+      }
+      else if (data == 'cancel'){
+        return '반품/취소'
+      }
+      else if (data == 'item'){
+        return '상품문의'
+      }
+      else {
+        return '기타'
+      }
+    }
   },
 };
 </script>
