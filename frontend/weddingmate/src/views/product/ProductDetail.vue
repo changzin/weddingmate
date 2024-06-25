@@ -238,7 +238,7 @@
                     <button
                       class="productdetail_main-content_button-container_main-button"
                       type="button"
-                      @click="insertToBoxItem"
+                      @click="insertItemIntoBox"
                     >
                       물건담기
                     </button>
@@ -1908,15 +1908,7 @@ export default {
       }
     },
 
-    // 물건 담기
-    insertToBoxItem() {
-      //보일 때
-      if (this.allOptionsSelected) {
-        console.log("t");
-      } else {
-        console.log("f");
-      }
-    },
+   
 
     // 캘린더
     showDateRangePicker(day) {
@@ -2011,6 +2003,40 @@ export default {
       this.newBoxName = "";
       this.isEditing = false;
     },
+
+     // 물건 담기
+    async insertItemIntoBox() {
+      //보일 때
+      if (this.allOptionsSelected) {
+        console.log("t");
+
+        try {
+          await this.$api(
+            "/product/addbox",
+            { access_token: "temp-token", box_name: this.newBoxName },
+            "POST"
+          );
+        } catch (error) {
+          console.error(
+            "ProductDetail.vue fetchData Error fetching product data:",
+            error
+          );
+        }
+
+
+      
+
+
+
+
+
+
+      } else {
+        console.log("f");
+      }
+    },
+
+
 
     startEditing() {
       this.isEditing = true;
