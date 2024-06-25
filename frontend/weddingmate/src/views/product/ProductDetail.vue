@@ -104,6 +104,7 @@
                             class="form-control text-center mx-2"
                             v-model="quantity"
                             readonly
+                            required
                           />
                           <button
                             type="button"
@@ -113,7 +114,7 @@
                             ＋
                           </button>
                         </div>
-                        <div class="font-weight-bold">
+                        <div class="font-weight-bold" required>
                           {{ formattedTotalPrice }}원
                         </div>
                       </div>
@@ -181,6 +182,18 @@
                       </div>
                     </div>
                   </div>
+                  <!-- 견적함 -->
+                  <div class="box-div">
+                    <div class="productdetail_main_selectoption-div">
+                      견적함 리스트
+                    </div>
+                    <div v-for="n in 6" :key="n" class="box-div_item">
+                      <div class="box-div_item_element">
+                        견적함 {{n}}
+                      </div>
+                      <div class="productdetail_divider"></div>
+                    </div>
+                  </div>
 
                   <div class="productdetail_button-container">
                     <button class="productdetail_icon-button">
@@ -191,6 +204,8 @@
                     </button>
                     <button
                       class="productdetail_main-content_button-container_main-button"
+                      type="button"
+                      @click="insertToBoxItem"
                     >
                       물건담기
                     </button>
@@ -1242,7 +1257,7 @@
               <i class="fas fa-pen"></i> 리뷰작성
             </button>
           </div>
-          
+
           <div class="productdetail_review-cards justify-content-start">
             <button
               class="productdetail_review-card"
@@ -1403,6 +1418,10 @@ export default {
       productDetail: [],
       productDetailItemDetail: [],
       sizesByColor: {}, // 추가된 부분
+
+
+      accessToken: "",
+      BoxResultData: [],
     };
   },
 
@@ -1464,6 +1483,7 @@ export default {
   methods: {
     async fetchData() {
       try {
+        // 해당 페이지 item + itemDetail 데이터 가져오기
         const response = await this.$api(`/product/detail/${this.item_id}`);
         const productDetail = response.data;
 
@@ -1480,17 +1500,38 @@ export default {
           console.error("ProductDetail.vue fetchData : No product data");
         }
 
+        // 리뷰 데이터 가져오기
         const result = await this.$api(`/review/itemdetail/${this.item_id}`);
         if (result.status == 200) {
           this.reviewList = result.reviewList;
-          console.log("this.reviewList : ", this.reviewList);
+          // console.log("this.reviewList : ", this.reviewList);
         }
 
-        const QnAresult = await this.$api(`/qna/itemdetail/${this.item_id}`);
-        if (QnAresult.status == 200) {
-          this.qnaList = QnAresult.qnaList;
-          console.log(this.qnaList);
+
+        // QnA 데이터 가져오기
+        const QnAResult = await this.$api(`/qna/itemdetail/${this.item_id}`);
+        if (QnAResult.status == 200) {
+          this.qnaList = QnAResult.qnaList;
+          // console.log(this.qnaList);
         }
+        
+        // Box 데이터 가져오기
+   
+        const BoxResult = await this.$api("/product/boxlist", {access_token: 'temp-token'});
+        this.BoxResultData = BoxResult.data;
+        if(this.BoxResultData) {
+          console.log(
+            "BoxResultData: ",
+            JSON.parse(JSON.stringify(this.BoxResultData))
+          );
+        }
+        else {
+          console.log("fail");
+        }
+
+
+
+
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
@@ -1807,6 +1848,29 @@ export default {
           this.flowerLifeByColor[this.selectedOptions[0]] || [];
       }
     },
+
+    // 물건 담기
+    insertToBoxItem() {
+      //보일 때
+      if (this.allOptionsSelected) {
+        console.log("t");
+      } else {
+        console.log("f");
+      }
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // 캘린더
     showDateRangePicker(day) {
@@ -2338,6 +2402,17 @@ export default {
   display: flex;
   gap: 20px;
   align-items: center;
+}
+
+
+.box-div_item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  height: 100px;
+}
+
+.box-div_item_element {
 }
 
 /* 푸터 */

@@ -88,3 +88,36 @@ exports.productDetail = async (req, res) => {
         res.json(responseBody);
       }
 };
+
+
+exports.BoxList = async (req, res) => {
+    try {
+        // 데이터 준비
+        const user_id = req.body.user_id;
+        console.log("user_id : ", user_id);
+
+    
+        // 현재 페이지에 따른 item 데이터 가져오기
+        const query = `
+            SELECT * FROM box where user_id = ?;
+          `;
+        const result = await db(query, [user_id]);
+        
+    
+        // 데이터 보낼 준비
+        const responseBody = {
+          status: 200,
+          message: "ProductController.js의 productList 데이터 성공",
+          data: result,
+        };
+        // 데이터 보내기
+        res.json(responseBody);
+      } catch (err) {
+        console.error(err);
+        const responseBody = {
+          status: 400,
+          message: err.message,
+        };
+        res.json(responseBody);
+      }
+}
