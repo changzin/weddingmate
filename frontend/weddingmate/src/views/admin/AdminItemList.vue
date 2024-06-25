@@ -69,7 +69,7 @@
             </div>
             <div class="admin_qna_review-section">
               <div class="admin_qna_review-header justify-content-end">
-                    <button class="btn admin_qna_btn_active">상품 추가</button>
+                    <button class="btn admin_qna_btn_active" @click="this.$router.push({path: '/admin/itemadd'})">상품 추가</button>
                     <select class="form-select admin_qna_select" v-model="itemType">
                       <option selected value="all">전체</option>
                       <option value="hall">웨딩홀 목록</option>

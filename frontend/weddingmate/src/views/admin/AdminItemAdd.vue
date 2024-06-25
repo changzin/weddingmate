@@ -30,9 +30,9 @@
             <button class="sidebar_header_box_text" style="height:30px; border:none; color: black" @click="this.$logoutUser(); this.$router.push({path:'/'});">로그아웃</button>
         </div>
         <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item sidbar_box sidbar_box_inactive">
-            <a @click="$router.push({path: '/admin/itemlist'})" class="nav-link sidbar_box_inactive_text">
-                <svg class="bi me-2" width="16" height="16" style="fill:rgb(255,255,255);"><use xlink:href="#grid"/></svg>
+          <li class="nav-item sidbar_box sidbar_box_active">
+            <a @click="$router.push({path: '/admin/itemlist'})" class="nav-link sidbar_box_active_text">
+                <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
               상품 리스트
             </a>
           </li>
@@ -96,47 +96,50 @@
             <!-- 카테고리 선택 -->
             <div class="d-flex justify-content-center admin_item_add_big_gap">
                 <div class="admin_item_add_row d-flex justify-content-start">
-                    <select class="form-select">
-                        <option selected>웨딩홀</option>
-                        <option value="">스드메 독립 패키지</option>
-                        <option value="">스튜디오</option>
-                        <option value="">드레스</option>
-                        <option value="">메이크업</option>
-                        <option value="">예복</option>
-                        <option value="">예물</option>
-                        <option value="">가전</option>
-                        <option value="">혼수 패키지</option>
-                        <option value="">본식스냅</option>
-                        <option value="">영상</option>
-                        <option value="">부케</option>
-                        <option value="">연주</option>
-                        <option value="">사회자</option>
-                        <option value="">웨딩슈즈</option>
-                        <option value="">답례품</option>
-                        <option value="">청첩장</option>
+                  <select class="form-select admin_qna_select" v-model="itemType">
+                      <option selected value="all">전체</option>
+                      <option value="hall">웨딩홀 목록</option>
+                      <option value="sdm_package">독립 패키지</option>
+                      <option value="studio">스튜디오</option>
+                      <option value="dress">드레스</option>
+                      <option value="makeup">메이크업</option>
+                      <option value="giving_dress">예복</option>
+                      <option value="giving_item">예물</option>
+                      <option value="giving_mechine">가전</option>
+                      <option value="giving_package">혼수 패키지</option>
+                      <option value="snap">본식스냅</option>
+                      <option value="video">영상</option>
+                      <option value="flower">부케</option>
+                      <option value="music">연주</option>
+                      <option value="mc">사회자</option>
+                      <option value="shoes">웨딩슈즈</option>
+                      <option value="gift">답례품</option>
+                      <option value="letter">청첩장</option>
                     </select>
                 </div>
             </div>
-            <!-- 옵션 추가 버튼 -->
-            <div>
+            <!-- 옵션 추가 버튼 : 사이즈 -->
+            <div v-if="itemType=='hall' || itemType=='dress' || itemType=='shoes'">
                 <div class="d-flex justify-content-center admin_item_add_select_gap">
                     <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text">사이즈</div>                        
-                        <button class="admin_item_add_button">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;" v-if="itemType=='hall'">규모</div>                        
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;" v-if="itemType!='hall'">사이즈</div>                        
+                        <button class="admin_item_add_button" style="margin-top: 15px;">
                             <i class="fas fa-plus"></i>
                         </button>               
                     </div>                
-                </div>      
+                </div>     
+                <!-- 옵션 추가 내역 -->
+                <div class="d-flex justify-content-center">
+                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
+                        <input class="admin_item_add_option" type="text" style="height: 50px;">
+                        <button class="admin_item_add_minus_icon">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div> 
             </div>
-            <!-- 옵션 추가 내역 -->
-            <div class="d-flex justify-content-center">
-                <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                    <input class="admin_item_add_option" type="text" style="height: 50px;">
-                    <button class="admin_item_add_minus_icon">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                </div>
-            </div>
+
             <!-- 재고 -->
             <div class="d-flex justify-content-center admin_item_add_big_gap">
                 <div class="admin_item_add_row d-flex justify-content-start">
@@ -163,6 +166,19 @@
   </div>
     </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      itemType: "",
+      prevItemType: "all"
+    }
+  },
+  mounted(){      
+      
+  },
+}
+</script>
 <style scoped>
 .sidbar_content_body{
   min-height: 100vh;
@@ -437,7 +453,6 @@
     background-color: #333333;
     color: #FFFFFF;
     font-weight: lighter;
-    margin-top: 18px;
 }
 .admin_item_add_option{
     border-radius: 12px;
