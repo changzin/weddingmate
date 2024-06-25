@@ -5,31 +5,57 @@ exports.productList = async (req, res) => {
     // 데이터 준비
     // const itemType = req.query.itemType;
     const itemType = req.params.itemDetailType;
+    let keyword = req.query.keyword;
     const page = parseInt(req.query.page) || 1;
+
+    // 키워드가 null이거나 비어 있으면 %%을 붙여 쿼리문이 잘 돌아가도록 함.
+    keyword = (!keyword) ? "%%" : "%" + keyword + "%";
+    let result = []
+    let maxPage = 1;
 
     // 페이지네이션
     const pageSize = 12;
     const offset = (page - 1) * pageSize;
+    if (itemType == 'all'){
+      const countQuery = `
+          SELECT COUNT(*) AS totalCount 
+          FROM item 
+          WHERE item_name LIKE ?
+        `;
+      const countResult = await db(countQuery, [keyword]);
+      const totalCount = countResult[0].totalCount;
+      maxPage = Math.ceil(totalCount / pageSize);
 
-    const countQuery = `
-        SELECT COUNT(*) AS totalCount 
-        FROM item 
-        JOIN item_detail ON item.item_id = item_detail.item_id 
-        WHERE item_detail.item_detail_type = ?
-      `;
-    const countResult = await db(countQuery, [itemType]);
-    const totalCount = countResult[0].totalCount;
-    const maxPage = Math.ceil(totalCount / pageSize);
+      // 현재 페이지에 따른 item 데이터 가져오기
+      const query = `
+          SELECT item.item_id, item.item_name, item.item_discount_rate 
+          FROM item 
+          WHERE item.item_name LIKE ? 
+          LIMIT ? OFFSET ?
+        `;
+      result = await db(query, [keyword, pageSize, offset]);
+    }
+    else{
+      const countQuery = `
+          SELECT COUNT(*) AS totalCount 
+          FROM item 
+          JOIN item_detail ON item.item_id = item_detail.item_id 
+          WHERE item_detail.item_detail_type = ? AND item_name LIKE ?
+        `;
+      const countResult = await db(countQuery, [itemType, keyword]);
+      const totalCount = countResult[0].totalCount;
+      maxPage = Math.ceil(totalCount / pageSize);
 
-    // 현재 페이지에 따른 item 데이터 가져오기
-    const query = `
-        SELECT DISTINCT item.item_id, item.item_name, item.item_discount_rate 
-        FROM item 
-        JOIN item_detail ON item.item_id = item_detail.item_id 
-        WHERE item_detail.item_detail_type = ?
-        LIMIT ? OFFSET ?
-      `;
-    const result = await db(query, [itemType, pageSize, offset]);
+      // 현재 페이지에 따른 item 데이터 가져오기
+      const query = `
+          SELECT DISTINCT item.item_id, item.item_name, item.item_discount_rate 
+          FROM item 
+          JOIN item_detail ON item.item_id = item_detail.item_id 
+          WHERE item_detail.item_detail_type = ? AND item.item_name LIKE ? 
+          LIMIT ? OFFSET ?
+        `;
+      result = await db(query, [itemType, keyword, pageSize, offset]);
+    }
 
     // 데이터 보낼 준비
     const responseBody = {

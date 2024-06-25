@@ -81,8 +81,8 @@
                   <input type="text" class="form-control admin_review_input" v-model="keyword">            
                   <button class="btn admin_review_btn_active" @click="search()">검색</button>      
                 </div>
-                <div class="admin_review_review-cards">
-                  <div class="admin_review_review-card" v-for="(review, index) in reviewList" :key="index">
+                <div class="admin_review_review-cards d-flex justify-content-center">
+                  <div class="admin_review_review-card" v-for="(review, index) in reviewList" :key="index" style="width:300px;">
                     <div class="admin_review_card-header">
                       <div class="admin_review_review-section_title-div">
                         {{review.user_nickname}}
