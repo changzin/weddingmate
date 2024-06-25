@@ -70,11 +70,25 @@
             <div class="admin_qna_review-section">
               <div class="admin_qna_review-header justify-content-end">
                     <button class="btn admin_qna_btn_active">상품 추가</button>
-                    <select class="form-select admin_qna_select" v-model="mode">
+                    <select class="form-select admin_qna_select" v-model="itemType">
                       <option selected value="all">전체</option>
-                      <option value="cancel">반품/취소</option>
-                      <option value="delivery">배송문의</option>
-                      <option value="etc">기타</option>
+                      <option value="hall">웨딩홀 목록</option>
+                      <option value="sdm_package">독립 패키지</option>
+                      <option value="studio">스튜디오</option>
+                      <option value="dress">드레스</option>
+                      <option value="makeup">메이크업</option>
+                      <option value="giving_dress">예복</option>
+                      <option value="giving_item">예물</option>
+                      <option value="giving_mechine">가전</option>
+                      <option value="giving_package">혼수 패키지</option>
+                      <option value="snap">본식스냅</option>
+                      <option value="video">영상</option>
+                      <option value="flower">부케</option>
+                      <option value="music">연주</option>
+                      <option value="mc">사회자</option>
+                      <option value="shoes">웨딩슈즈</option>
+                      <option value="gift">답례품</option>
+                      <option value="letter">청첩장</option>
                     </select>
                     <input type="text" class="form-control admin_qna_input" placeholder="상품 이름" v-model="keyword">            
                     <button class="btn admin_qna_btn_active" @click="search()">검색</button>      
@@ -85,8 +99,8 @@
               <div>
                 <!-- 상품들 -->
                 <div class="reviewlist_review-section">
-                  <div class="reviewlist_review-cards">
-                    <button class="reviewlist_review-card" v-for="n in 12" :key="n">
+                  <div class="reviewlist_review-cards justify-content-start">
+                    <button class="reviewlist_review-card" v-for="(item, index) in itemList" :key="index" style="margin-left: 20px;">
                       <img
                         src="https://via.placeholder.com/300x300"
                         class="reviewlist_card-img-top"
@@ -94,8 +108,7 @@
                       />
                       <div class="reviewlist_card-body">
                         <div class="reviewlist_review-section_title-div">
-                          아아 이것은 제목이란 것이다..아아 이것은 제목이란 것이다아아
-                          이것은 제목이란 것이다
+                          {{item.item_name}}
                         </div>
                       
                       </div>
@@ -128,6 +141,87 @@
 </template>
     
 <script>
+export default {
+  data() {
+    return {
+      itemList: [],
+      page: 1,
+      maxPage: 0,
+      keyword: "",
+      prevKeyword: "",
+      itemType: "all",
+      prevItemType: "all"
+    }
+  },
+  mounted(){      
+      this.getItemList();
+      
+  },
+  methods: {
+    // 멤버 정보 받아오기
+    async getItemList(){
+      // URL에 파라미터를 추가한다.
+      await this.$router.push({path: `/admin/itemlist`, query:{page: this.page, keyword: this.prevKeyword, itemType: this.prevItemType }});
+
+      // 멤버 정보를 가져오기 전에 파라미터 갈무리
+      this.page = Number(this.$route.query.page);
+      this.prevItemType = this.$route.query.itemType;
+      this.prevKeyword = this.$route.query.keyword
+
+      console.log(this.page, this.prevItemType, this.prevKeyword);
+
+      this.page = (!this.page) ? 1 : this.page;
+      this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
+      this.prevItemType = (!this.prevItemType) ? "all" : this.prevItemType;
+      this.itemType = this.prevItemType;
+
+      // reviewList 정보 다시 가저오고, maxPage를 맞추어준다.
+      const result = await this.$api(`/product/list/${this.prevItemType}?page=${this.page}&keyword=${this.prevKeyword}`);      
+      console.log(result);
+      this.itemList = result.data;
+      console.log(this.itemList);
+      this.maxPage = result.maxPage;
+    },
+    async search(){
+      this.prevKeyword = this.keyword;
+      this.prevItemType = this.itemType;
+      this.page = 1;
+      this.getItemList();
+    },
+    // 이전 블록 페이지로 이동 (5번째 이전 페이지, 남은 이전 페이지가 5개 이하일 경우 마지막 페이지 이동)
+    async prevBlock(){
+      if (this.page <= 5){
+        this.page = 1;
+      }
+      else{
+        this.page = this.page - 5;
+      }
+      this.getItemList();
+    },
+    // 다음 블록 페이지로 이동 (5번째 이후 페이지, 남은 다음 페이지가 5개 이하일 경우 마지막 페이지 이동)
+    async nextBlock(){
+      if (this.page > this.maxPage-5){
+        this.page = this.maxPage;
+      }
+      else{
+        this.page = this.page + 5;
+      }
+      this.getItemList();
+    },
+    async nextPage(){
+      this.page+=1;
+      this.getItemList();
+    },
+    async prevPage(){
+      this.page-=1;
+      this.getItemList();
+    },
+    async goToPage(targetPage){
+      this.page = targetPage;
+      this.getItemList();
+    },
+  }
+}
 </script>
 
 <style scoped>
@@ -444,7 +538,7 @@ div.mypage-bottom{
   display: flex;
   flex-wrap: wrap;
   /* gap: 20px; */
-  justify-content: space-between;
+  width: 1100px;
 }
 
 .reviewlist_review-card {
