@@ -15,6 +15,7 @@ let corsOption = {
 }
 
 
+
 app.set('port', process.env.PORT || 9090);
 app.use(cors(corsOption));
 app.use(morgan('dev'));
@@ -29,5 +30,3 @@ app.use('/', indexRouter);
 app.listen(app.get('port'), ()=>{
     console.log(app.get('port'), 'port listening...')
 });
-
-

@@ -3,6 +3,12 @@ const db = require('../util/db');
 
 // requestBody의 accessToken을 중간에서 user_id로 넣어주는 미들웨어, accessToken이 필요한 컨트롤러에서 인증 처리 + user_id를 찾는 중복 쿼리를 줄일 수 있다.
 exports.loginCheck = async(req,res, next)=>{
+
+/*
+exports. 다른 페이지에서도 쓸 수 있게 해줌
+
+
+*/
     try{
         const accessToken = req.body.access_token;
         query = "SELECT user_id FROM user WHERE user_access_token = ?";
@@ -17,6 +23,7 @@ exports.loginCheck = async(req,res, next)=>{
             throw new Error("accessToken이 유효하지 않거나 존재하지 않습니다.");
         }
     }
+
     catch{
         console.error(err);
         responseBody = {
