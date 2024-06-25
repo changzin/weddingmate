@@ -3,10 +3,10 @@ const db = require('../util/db');
 let responseBody;
 
 //메인페이지에 리뷰 점수가 가장 높은 순으로 정렬 
-exports.mainStudio = async (req,res)=>{
+exports.bestStudio = async (req,res)=>{
     try{
         let studio = req.body.studio;
-        let reivew_star = req.body.star;
+        let review_star = req.body.star;
         
         
         
