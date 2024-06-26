@@ -70,33 +70,40 @@
             <div class="d-flex justify-content-center admin_item_add_small_gap">
                 <div class="admin_item_add_row d-flex justify-content-start">
                     <div class="admin_item_add_text">상품명</div>
-                    <input class="admin_item_add_input" type="text">
+                    <input class="admin_item_add_input" type="text" v-model="itemName">
                 </div>
             </div>
             <div class="d-flex justify-content-center admin_item_add_small_gap">
                 <div class="admin_item_add_row d-flex justify-content-start">
                     <div class="admin_item_add_text">업체명</div>
-                    <input class="admin_item_add_input" type="text">
+                    <input class="admin_item_add_input" type="text" v-model="itemFactoryName">
                 </div>
             </div>
             <div class="d-flex justify-content-center admin_item_add_small_gap">
                 <div class="admin_item_add_row d-flex justify-content-start">
                     <div class="admin_item_add_text">가격</div>
-                    <input class="admin_item_add_input" type="text" style="width: 300px;">
+                    <input class="admin_item_add_input" type="text" style="width: 300px;" v-model="itemPrice">
                     <div class="admin_item_add_text">원</div>                    
                 </div>
             </div>
             <div class="d-flex justify-content-center admin_item_add_big_gap">
                 <div class="admin_item_add_row d-flex justify-content-start">
                     <div class="admin_item_add_text">할인율</div>
-                    <input class="admin_item_add_input" type="text" style="width: 200px;">
+                    <input class="admin_item_add_input" type="text" style="width: 200px;" v-model="itemDiscountRate">
                     <div class="admin_item_add_text">%</div>                    
+                </div>
+            </div>
+            <div class="d-flex justify-content-center admin_item_add_big_gap">
+                <div class="admin_item_add_row d-flex justify-content-start">
+                    <div class="admin_item_add_text" style="width: 150px;">제품 썸네일 사진</div>
+                    <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" placeholder="입력">
+                    <label for="file_tn">asdf</label>
                 </div>
             </div>
             <!-- 카테고리 선택 -->
             <div class="d-flex justify-content-center admin_item_add_big_gap">
                 <div class="admin_item_add_row d-flex justify-content-start">
-                  <select class="form-select admin_qna_select" v-model="itemType">
+                  <select class="form-select admin_qna_select" v-model="itemType" @change="changeItemType();">
                       <option value="hall">웨딩홀 목록</option>
                       <option value="sdm_package">독립 패키지</option>
                       <option value="studio">스튜디오</option>
@@ -116,220 +123,130 @@
                       <option value="letter">청첩장</option>
                     </select>
                 </div>
+                <button @click="addDetailList()" class="admin_qna_btn_active" v-if="!(itemType=='' || itemType=='giving_mechine' || itemType=='giving_package' || itemType=='video' || itemType == 'mc' || itemType=='letter')">
+                  옵션 추가
+                </button>
+            </div>
+            
+          <div v-for="(item, index) in itemDetailList" :key="index">
+            <div v-if="itemType != ''"  class="d-flex justify-content-center">
+              <div style="font-size:18px; text-align: center; border-bottom: 1px solid black; height: 50px; padding-bottom: 20px; margin-bottom: 20px; width:800px;">
+                옵션 {{ index+1 }}
+                <button class="admin_qna_btn_inactive" style="margin-left: 15px;" @click="deleteItemDetail(index)"> 삭제 </button>
+              </div>
+              
             </div>
             <!-- 옵션 추가 버튼 : size -->
-            <div v-if="itemType=='hall' || itemType=='dress' || itemType=='shoes' || itemType=='giving_dress'">
+            <div v-if="itemType=='hall' || itemType=='dress' || itemType=='shoes' || itemType=='giving_dress'" style="margin-bottom:30px;">
                 <div class="d-flex justify-content-center admin_item_add_select_gap">
                     <div class="d-flex justify-content-start" style="width:600px;">
                         <div class="admin_item_add_text" style="margin-bottom: 30px;" v-if="itemType=='hall'">규모</div>                        
                         <div class="admin_item_add_text" style="margin-bottom: 30px;" v-if="itemType!='hall'">사이즈</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_size">
                     </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : quality -->
-            <div v-if="itemType=='sdm_package' || itemType=='studio' || itemType=='music' || itemType=='makeup' || itemType=='snap'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">퀄리티</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : local -->
-            <div v-if="itemType=='hall' || itemType=='sdm_package' || itemType=='studio'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">지역</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : loc -->
-            <div v-if="itemType=='hall'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">장소</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : ticket -->
-            <div v-if="itemType=='hall'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">식수인원</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : kind -->
-            <div v-if="itemType=='giving_item' || itemType=='flower' || itemType=='gift'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">종류</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : color -->
-            <div v-if="itemType=='dress' || itemType=='flower' || itemType=='shoes' || itemType=='giving_dress'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">색상</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : makeup -->
-            <div v-if="itemType=='sdm_package' || itemType=='makeup'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">메이크업 방식</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : heel_height -->
-            <div v-if="itemType=='shoes'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">힐 높이</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-            <!-- 옵션 추가 버튼 : flower_life -->
-            <div v-if="itemType == 'flower'">
-                <div class="d-flex justify-content-center admin_item_add_select_gap">
-                    <div class="d-flex justify-content-start" style="width:600px;">
-                        <div class="admin_item_add_text" style="margin-bottom: 30px;">꽃 생사</div>                        
-                        <button class="admin_item_add_button" style="margin-top: 15px;">
-                            <i class="fas fa-plus"></i>
-                        </button>               
-                    </div>                
-                </div>     
-                <!-- 옵션 추가 내역 -->
-                <div class="d-flex justify-content-center">
-                    <div class="admin_item_add_row d-flex justify-content-center admin_item_add_select_gap">
-                        <input class="admin_item_add_option" type="text" style="height: 50px;">
-                        <button class="admin_item_add_minus_icon">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-
-            <!-- 재고 -->
-            <div class="d-flex justify-content-center admin_item_add_big_gap" >
-                <div class="admin_item_add_row d-flex justify-content-start">
-                    <div class="admin_item_add_text">재고</div>
-                    <input class="admin_item_add_input" type="text" style="width: 200px;">
                 </div>
             </div>
 
+            <!-- 옵션 추가 버튼 : quality -->
+            <div v-if="itemType=='sdm_package' || itemType=='studio' || itemType=='music' || itemType=='makeup' || itemType=='snap'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;">퀄리티</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_quality">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 옵션 추가 버튼 : local -->
+            <div v-if="itemType=='hall' || itemType=='sdm_package' || itemType=='studio'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;">지역</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_local">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 옵션 추가 버튼 : loc -->
+            <div v-if="itemType=='hall'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;">장소</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_loc">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 옵션 추가 버튼 : ticket -->
+            <div v-if="itemType=='hall'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;">식수인원</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_ticket">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 옵션 추가 버튼 : kind -->
+            <div v-if="itemType=='giving_item' || itemType=='flower' || itemType=='gift'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;">종류</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_kind">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 옵션 추가 버튼 : color -->
+            <div v-if="itemType=='dress' || itemType=='flower' || itemType=='shoes' || itemType=='giving_dress'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;">색상</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_color">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 옵션 추가 버튼 : makeup -->
+            <div v-if="itemType=='sdm_package' || itemType=='makeup'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px; width: 120px;" >메이크업 종류</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_makeup">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 옵션 추가 버튼 : heel_height -->
+            <div v-if="itemType=='shoes'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;">힐 높이</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_heel_height">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 옵션 추가 버튼 : flower_life -->
+            <div v-if="itemType == 'flower'"  style="margin-bottom:30px;">
+                <div class="d-flex justify-content-center admin_item_add_select_gap">
+                    <div class="d-flex justify-content-start" style="width:600px;">
+                        <div class="admin_item_add_text" style="margin-bottom: 30px;">꽃 생사</div>                        
+                        <input class="admin_item_add_input" type="text" v-model="item.item_detail_flower_life">
+                    </div>                
+                </div>     
+            </div>
+            <!-- 재고 -->
+            <div class="d-flex justify-content-center admin_item_add_big_gap" v-if="itemType=='dress' || itemType=='giving_dress' || itemType=='shoes'"  style="margin-bottom:30px;">
+                <div class="admin_item_add_row d-flex justify-content-start">
+                    <div class="admin_item_add_text">재고</div>
+                    <input class="admin_item_add_input" type="text" style="width: 200px;" v-model="item.item_detail_quantity">
+                </div>
+            </div>
+            <!-- 아무것도 없을 때 -->
+            <div class="d-flex justify-content-center admin_item_add_big_gap" v-if="itemType=='giving_mechine' || itemType=='giving_package' || itemType=='video' || itemType == 'mc' || itemType=='letter'"  style="margin-bottom:30px;">
+                <div class="admin_item_add_row d-flex justify-content-center">
+                    <div>적용 가능한 옵션이 없습니다.</div>
+                </div>
+            </div>
+
+            </div>
+
             <div class="d-flex justify-content-center admin_item_add_big_gap" style="margin-top: 100px;">
-                <button type="button" class="admin_item_add_cancel_button" >취소</button>
-                <button type="button" class="admin_item_add_ok_button" style="margin-left:10px;">등록</button>
+                <button type="button" class="admin_item_add_cancel_button" @click="this.$router.push({path: '/admin/itemlist'})" >취소</button>
+                <button type="button" class="admin_item_add_ok_button" style="margin-left:10px;" @click="createItem();">등록</button>
             </div>
         </div>
       </div>
@@ -342,12 +259,83 @@ export default {
   data() {
     return {
       itemType: "",
-      prevItemType: "all"
+      itemName: "",
+      itemFactoryName: "",
+      itemPrice: "",
+      itemDiscountRate: "",
+      itemDetailList: [
+        {
+          item_detail_quantity: 0,
+          item_detail_ticket: '',
+          item_detail_local: '',
+          item_detail_loc: '',
+          item_detail_size: '',
+          item_detail_color: '',
+          item_detail_makeup: '',
+          item_detail_heel_height: '',
+          item_detail_flower_life: '',
+          item_detail_quality: '',
+          item_detail_kind: '',
+        }
+      ]
+      
     }
   },
   mounted(){      
       
   },
+  methods: {
+    changeItemType(){
+      this.itemDetailList = [
+        {
+          item_detail_quantity: 0,
+          item_detail_ticket: '',
+          item_detail_local: '',
+          item_detail_loc: '',
+          item_detail_size: '',
+          item_detail_color: '',
+          item_detail_makeup: '',
+          item_detail_heel_height: '',
+          item_detail_flower_life: '',
+          item_detail_quality: '',
+          item_detail_kind: '',
+        }
+      ];
+    },
+    addDetailList(){
+      this.itemDetailList.push(
+        {
+          item_detail_quantity: 0,
+          item_detail_ticket: '',
+          item_detail_local: '',
+          item_detail_loc: '',
+          item_detail_size: '',
+          item_detail_color: '',
+          item_detail_makeup: '',
+          item_detail_heel_height: '',
+          item_detail_flower_life: '',
+          item_detail_quality: '',
+          item_detail_kind: '',
+        }
+      );
+    },
+    async deleteItemDetail(index){
+      await this.itemDetailList.splice(index, 1);
+    },
+    async createItem(){
+      const requestBody = {
+        access_token: this.$getAccessToken(),
+        item_type: this.itemType,
+        item_name: this.itemName,
+        item_factory_name: this.itemFactoryName,
+        item_price: this.itemPrice,
+        item_discount_rate: this.itemDiscountRate,
+        item_detail_list: this.itemDetailList
+      }
+      await this.$api("/product/add", requestBody, "POST");
+      this.$router.push({path: "/admin/itemlist"});
+    }
+  }
 }
 </script>
 <style scoped>
@@ -678,5 +666,18 @@ export default {
     color: #F5F5F5;
     border: none;
     background-color: #333333;
+}
+.admin_qna_btn_active{
+  background-color: #007BFF;
+  color: #FFFFFF;
+  margin-left: 10px;
+  border-radius: 17px;
+  border: none;
+  width: 100px;
+}
+.admin_qna_btn_inactive{
+  background-color: #333333;
+  color: #FFFFFF;
+  margin-right: 10px;
 }
 </style>

@@ -12,7 +12,8 @@ export default{
                 url,
                 data: data
             }).catch(e=>{
-                console.log(e);
+                console.log(url);
+                console.error(e);
             })).data;
         },
         
@@ -23,8 +24,8 @@ export default{
 
             let accessToken = (accessToken2) ? accessToken2 : null;
             accessToken = (accessToken1) ? accessToken1 : accessToken;
-            
-            this.$api("http://localhost:9090/user/info", {accessToken: accessToken}, "POST")
+            if (accessToken){
+                this.$api("http://localhost:9090/user/info", {accessToken: accessToken}, "POST")
                 .then((async (response)=>{
                     console.log(response);
                     if (response.status == 200){
@@ -34,6 +35,8 @@ export default{
                         return null;
                     }
                 })); 
+            }
+            return null;
         },
 
         $getAccessToken(){
