@@ -93,11 +93,41 @@
                     <div class="admin_item_add_text">%</div>                    
                 </div>
             </div>
+            <!-- 썸네일 사진 등록 -->
             <div class="d-flex justify-content-center admin_item_add_big_gap">
                 <div class="admin_item_add_row d-flex justify-content-start">
                     <div class="admin_item_add_text" style="width: 150px;">제품 썸네일 사진</div>
-                    <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" placeholder="입력">
-                    <label for="file_tn">asdf</label>
+                    <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeTnImage($event.target.file);">
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-center admin_item_add_big_gap" style="height:300px;" v-if="itemTnImage">
+                <div class="admin_item_add_row d-flex justify-content-start" >
+                  <img :src="itemTnImage" height="300" width="300">
+                </div>
+            </div>
+            <!-- 메인 사진 등록 -->
+            <div class="d-flex justify-content-center admin_item_add_big_gap">
+                <div class="admin_item_add_row d-flex justify-content-start">
+                    <div class="admin_item_add_text" style="width: 150px;">제품 메인 이미지</div>
+                    <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeMainImage($event.target.file);">
+                </div>
+            </div>
+            <div class="d-flex justify-content-center admin_item_add_big_gap" style="height:300px;" v-if="itemMainImage">
+                <div class="admin_item_add_row d-flex justify-content-start">
+                  <img :src="itemMainImage" height="300" width="300">
+                </div>
+            </div>
+            <!-- 상세 사진 등록 -->
+            <div class="d-flex justify-content-center admin_item_add_big_gap">
+                <div class="admin_item_add_row d-flex justify-content-start">
+                    <div class="admin_item_add_text" style="width: 150px;">상세 사진</div>
+                    <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeDetailImage($event.target.file);">
+                </div>
+            </div>
+            <div class="d-flex justify-content-center admin_item_add_big_gap" style="height:300px;" v-if="itemDetailImage">
+                <div class="admin_item_add_row d-flex justify-content-start">
+                  <img :src="itemDetailImage" height="300" width="300">
                 </div>
             </div>
             <!-- 카테고리 선택 -->
@@ -132,7 +162,7 @@
             <div v-if="itemType != ''"  class="d-flex justify-content-center">
               <div style="font-size:18px; text-align: center; border-bottom: 1px solid black; height: 50px; padding-bottom: 20px; margin-bottom: 20px; width:800px;">
                 옵션 {{ index+1 }}
-                <button class="admin_qna_btn_inactive" style="margin-left: 15px;" @click="deleteItemDetail(index)"> 삭제 </button>
+                <button class="admin_qna_btn_inactive" style="margin-left: 15px;" @click="deleteItemDetail(index)" v-if="!item.item_detail_lock"> 삭제 </button>
               </div>
               
             </div>
@@ -277,8 +307,13 @@ export default {
           item_detail_quality: '',
           item_detail_kind: '',
         }
-      ]
-      
+      ],
+      itemTnImage: null,
+      itemTnImageExt: null,
+      itemMainImage: null,
+      itemMainImageExt: null,
+      itemDetailImage: null,
+      itemDetailImageExt: null,
     }
   },
   mounted(){      
@@ -286,7 +321,9 @@ export default {
   },
   methods: {
     changeItemType(){
-      this.itemDetailList = [
+      this.itemDetailList = [];
+      if (!(this.itemType=='giving_mechine' || this.itemType=='giving_package' || this.itemType=='video' || this.itemType == 'mc' || this.itemType=='letter')){
+        this.itemDetailList.push(
         {
           item_detail_quantity: 0,
           item_detail_ticket: '',
@@ -299,8 +336,10 @@ export default {
           item_detail_flower_life: '',
           item_detail_quality: '',
           item_detail_kind: '',
+          item_detail_lock: true
         }
-      ];
+      );
+      }
     },
     addDetailList(){
       this.itemDetailList.push(
@@ -323,6 +362,8 @@ export default {
       await this.itemDetailList.splice(index, 1);
     },
     async createItem(){
+      console.log(this.itemTnImage);
+
       const requestBody = {
         access_token: this.$getAccessToken(),
         item_type: this.itemType,
@@ -330,10 +371,86 @@ export default {
         item_factory_name: this.itemFactoryName,
         item_price: this.itemPrice,
         item_discount_rate: this.itemDiscountRate,
-        item_detail_list: this.itemDetailList
+        item_detail_list: this.itemDetailList,
+        item_tn_image: this.itemTnImage,
+        item_tn_image_ext: this.itemTnImageExt,
+        item_detail_image: this.itemDetailImage,
+        item_detail_image_ext: this.itemDetailImageExt,
+        item_main_image: this.itemMainImage,
+        item_main_image_ext: this.itemMainImageExt
       }
-      await this.$api("/product/add", requestBody, "POST");
+      const result = await this.$api("/product/add", requestBody, "POST");
+      console.log(result);
       this.$router.push({path: "/admin/itemlist"});
+    },
+    async changeTnImage(file){
+      this.itemTnImage = file;
+      const files = event.target?.files
+      if (files.length > 0){
+        const file = files[0];
+
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        var _lastDot = filename.lastIndexOf('.');
+        this.itemTnImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader() 
+  
+        reader.onload = (e) => {
+          this.itemTnImage = e.target.result 
+        } 
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemTnImage = await reader.readAsDataURL(file);
+      }
+    },
+    async changeDetailImage(file){
+      this.itemDetailImage = file;
+      const files = event.target?.files
+      if (files.length > 0){
+        const file = files[0];
+
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        var _lastDot = filename.lastIndexOf('.');
+        this.itemDetailImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader() 
+  
+        reader.onload = (e) => {
+          this.itemDetailImage = e.target.result 
+        } 
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemDetailImage = await reader.readAsDataURL(file);
+      }
+    },
+    async changeMainImage(file){
+      this.itemMainImage = file;
+      const files = event.target?.files
+      if (files.length > 0){
+        const file = files[0];
+
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        var _lastDot = filename.lastIndexOf('.');
+        this.itemMainImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader() 
+  
+        reader.onload = (e) => {
+          this.itemMainImage = e.target.result 
+        } 
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemMainImage = await reader.readAsDataURL(file);
+      }   
     }
   }
 }

@@ -211,12 +211,15 @@ exports.userUnblock = async(req, res)=>{
 
 exports.addProduct = async(req, res)=>{
     try{
-        console.log(req.body);
         const itemType = req.body.item_type;
         const itemName = req.body.item_name;
         const itemFactoryName = req.body.item_factory_name;
-        const itemPrice = req.body.item_price;
-        const itemDiscountRate = req.body.item_discount_rate;
+        const itemPrice = Number(req.body.item_price);
+        const itemDiscountRate = Number(req.body.item_discount_rate);
+        const itemTnImagePath = req.body.item_tn_image_path;
+        const itemDetailImagePath = req.body.item_detail_image_path;
+        const itemMainImagePath = req.body.item_main_image_path;
+
         const itemDetailList = req.body.item_detail_list;
 
         let result;
@@ -234,8 +237,56 @@ exports.addProduct = async(req, res)=>{
             throw Error("지원하지 않는 물품 카테고리입니다");
         }
 
-        query = 'INSERT INTO item INTO VALUES()';
-        
+        query = 'INSERT INTO item(item_factory_name, item_name, item_price, item_discount_rate, item_tn_image_path, item_main_image_path, item_detail_image_path) VALUES(?, ?, ?, ?, ?, ?, ?)';
+        result = await db(query, [itemFactoryName, itemName, itemPrice, itemDiscountRate, itemTnImagePath, itemMainImagePath, itemDetailImagePath]);
+        if (result.affectedRows != 1){
+            throw Error("아이템을 추가할 수 없습니다.");
+        }
+        query = 'SELECT item_id FROM item WHERE item_factory_name=? AND item_name=? AND item_price=? AND item_discount_rate=? AND item_tn_image_path=? AND item_main_image_path=? AND item_detail_image_path=?'
+        result = await db(query, [itemFactoryName, itemName, itemPrice, itemDiscountRate, itemTnImagePath, itemMainImagePath, itemDetailImagePath]);
+        const item_id = result[0]['item_id'];
+
+        if (itemDetailList.length == 0){
+            query = 'INSERT INTO item_detail(item_id, item_detail_type) VALUES(?, ?)';
+            result = await db(query, [item_id, itemType]);
+            if (result.affectedRows != 1){
+                throw Error("아이템을 추가할 수 없습니다.");
+            }
+        }
+        else{
+            for(let i = 0; i < itemDetailList.length; i++){
+                let item = itemDetailList[i];
+                let keyList = [];
+                let valueList = [];
+                let paramList = [];
+                for (let key in item){
+                    if (key != 'item_detail_lock'){
+                        // ''로 DB에 들어가면 싫으니깐 null로 바꿔줌
+                        item[key] = (!item[key]) ? null : item[key];
+                        // 넣을 항목과 값들을 따로 리스트로 저장한다.
+                        valueList.push(item[key]);
+                        keyList.push(key);
+                    }
+                }
+                keyList.sort();
+                console.log(keyList);
+                for(let j = 0; j < keyList.length; j++){
+                    paramList.push(item[keyList[j]]);
+                }
+                paramList.push(itemType);
+                paramList.push(item_id);
+                query = 'INSERT INTO ITEM_DETAIL(item_detail_color, item_detail_flower_life, item_detail_heel_height, item_detail_kind, item_detail_loc, item_detail_local, item_detail_makeup, item_detail_quality, item_detail_quantity, item_detail_size, item_detail_ticket, item_detail_type, item_id) values(?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                result = await db(query, paramList);
+                if (result.affectedRows != 1){
+                    throw Error("아이템을 추가할 수 없습니다.");
+                }
+            }
+        }
+        responseBody = {
+            status: 200,
+            message: "상품 추가 완료."
+        }
+        res.json(responseBody);
     }
     catch(err){
         console.log(err);

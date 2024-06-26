@@ -8,7 +8,6 @@ import vueCookies from 'vue-cookies'
 import EventCalendar from './components/EventCalendar.vue';
 import MateHeader from './components/MateHeader.vue';
 
-
 import VCalendar from 'v-calendar'; // v-calendar 플러그인 임포트
 import 'v-calendar/dist/style.css'; // v-calendar 스타일 임포트
 import './views/mypage/mypage.css'
