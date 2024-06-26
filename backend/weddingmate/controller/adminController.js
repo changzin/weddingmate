@@ -209,3 +209,40 @@ exports.userUnblock = async(req, res)=>{
     }
 }
 
+exports.addProduct = async(req, res)=>{
+    try{
+        console.log(req.body);
+        const itemType = req.body.item_type;
+        const itemName = req.body.item_name;
+        const itemFactoryName = req.body.item_factory_name;
+        const itemPrice = req.body.item_price;
+        const itemDiscountRate = req.body.item_discount_rate;
+        const itemDetailList = req.body.item_detail_list;
+
+        let result;
+        let responseBody;
+        let query;
+
+        const itemList = ['hall', 'sdm_package', 'studio', 'dress', 'makeup', 'giving_dress', 'giving_item', 'giving_package', 'snap', 'video', 'flower', 'music', 'mc', 'shoes', 'gift', 'letter'];
+
+        if (!itemList.find((element)=>{
+            if (element == itemType){
+                console.log(element);
+                return true;
+            }
+        })){
+            throw Error("지원하지 않는 물품 카테고리입니다");
+        }
+
+        query = 'INSERT INTO item INTO VALUES()';
+        
+    }
+    catch(err){
+        console.log(err);
+        responseBody = {
+            status: 400,
+            message: "상품을 추가할 수 없습니다."
+        };
+        res.json(responseBody);
+    }
+}

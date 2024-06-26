@@ -117,7 +117,7 @@
     <div class="container-middle">
         <div class="container-middle-profile">
             <div class="content-profile">
-                <div class="font-nickname"><span>반반치킨</span>님</div>
+                <div class="font-nickname"><span>{{ user }}</span>님</div>
                 <button class="profile">정보수정</button>
             </div>
         </div>
@@ -197,12 +197,13 @@ export default {
       isVisible: false,
       ismaintain: false,
       // 본문
-      selectedItemType: ""
+      selectedItemType: "",
+      user: ""
 
     };
   },
     mounted(){
-
+     this.getUserName();
   },
 
 
@@ -216,8 +217,15 @@ export default {
     },
     // 본문
 
-    //페이지
-    
+    async getUserName(){
+      const user = await this.$verifiedUser();
+      console.log("user",user);
+      this.user =  user.user_nickname;
+      // console.log("this", this.user);
+      // console.log("just user", user);
+    }
+
+    //페이지   
   },
 };
 </script>
