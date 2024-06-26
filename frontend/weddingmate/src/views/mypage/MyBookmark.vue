@@ -1,114 +1,8 @@
 <template>
   <div class="fix-width">
     <!-- 헤더 -->
-    <div class="common-header">
-      <!-- 로그인 + 회원가입 + 로고 -->
-      <header class="bg-light productdetail_padding_0">
-        <!-- 로그인 회원가입 -->
-        <div
-          class="container d-flex justify-content-end align-items-center"
-          id="common__login-div-padding"
-        >
-          <nav class="navbar-light">
-            <div class="" id="navbarNav">
-              <ul class="navbar-nav flex-row">
-                <li class="nav-item" id="common__header-login-padding">
-                  <a href="#">로그인</a>
-                </li>
-                <li class="nav-item">
-                  <a href="#">회원가입</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-        <!-- 로고 -->
-        <div class="text-center">
-          <a class="navbar-brand" href="#">
-            <img src="https://via.placeholder.com/200x50" alt="Logo" />
-          </a>
-        </div>
-      </header>
-      <!-- 카테고리 + 이미지 -->
-      <nav
-        class="common-header_navbar navbar-light bg-light"
-        id="common_main-banner_div"
-        @mouseleave="hideCategories"
-      >
-        <div class="common-header_overlay">
-          <div class="common-header_overlay-content">
-            <!-- 대카테고리 -->
-            <ul class="common-header_nav" @mouseover="showCategories">
-              <li class="common-header_main-title">웨딩홀</li>
-              <li class="common-header_main-title">스드메</li>
-              <li class="common-header_main-title">혼수</li>
-              <li class="common-header_main-title">본식</li>
-              <li class="common-header_main-title">촬영팀</li>
-            </ul>
-            <!-- 이미지랑 소카테고리 -->
-            <div class="common-header_image-smallcategory">
-              <!-- 이미지 -->
-              <section class="productdetail_main-image-section">
-                <img
-                  src="https://via.placeholder.com/1980x500"
-                  class="img-fluid w-100"
-                  alt="Main Image"
-                />
-              </section>
-
-              <!-- 소카테고리 -->
-              <div class="common-header_categories" v-if="isVisible">
-                <div class="common-header_smallcategory-area">
-                  <div class="common-header_category">
-                    <ul>
-                      <li>추천 리스트</li>
-                      <li>웨딩홀 목록</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>독립 패키지</li>
-                      <li>스튜디오</li>
-                      <li>드레스</li>
-                      <li>메이크업</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>예복</li>
-                      <li>예물</li>
-                      <li>가전</li>
-                      <li>혼수 패키지</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>본식스냅</li>
-                      <li>영상</li>
-                      <li>부케</li>
-                      <li>연주</li>
-                      <li>사회자</li>
-                      <li>웨딩슈즈</li>
-                      <li>답례품</li>
-                      <li>청첩장</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>스냅</li>
-                      <li>본식</li>
-                      <li>제주도 야외</li>
-                      <li>고급 스튜디오 촬영</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
-
+      <!-- 헤더 -->
+      <MateHeader />
     <!-- 본문  -->
     <div class="container0">
     <div class="container-title">
@@ -120,33 +14,15 @@
             <div class="font-delete">선택 상품 삭제</div>
         </div>        
     <div class="container-middle">
-        <div class="container-content">
-            <input type="checkbox">
-            <img class="bookmark" src="http://localhost:8080/icon/icon.png">
-            <div class="container-name_cost">
-                <div>제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목</div>
-                <div class="font-cost">999,999,999,999,999</div>
-            </div>
-            <img class="delete-x" src="icon/deleteX.png">
+      <div v-for="(bookmark, index) in bookmarkList" :key="index" class="container-content">
+        <input type="checkbox">
+        <img class="bookmark" :src="bookmark.item_tn_image_path">
+        <div class="container-name_cost">
+          <div>{{ bookmark.item_name }}</div>
+          <div class="font-cost">{{ bookmark.item_price }}</div>
         </div>
-        <div class="container-content">
-            <input type="checkbox">
-            <img class="bookmark" src="http://localhost:8080/icon/icon.png">
-            <div class="container-name_cost">
-                <div>제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목</div>
-                <div class="font-cost">999,999,999,999,999</div>
-            </div>
-            <img class="delete-x" src="icon/deleteX.png">
-        </div>
-        <div class="container-content">
-            <input type="checkbox">
-            <img class="bookmark" src="http://localhost:8080/icon/icon.png">
-            <div class="container-name_cost">
-                <div>제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목</div>
-                <div class="font-cost">999,999,999,999,999</div>
-            </div>
-            <img class="delete-x" src="icon/deleteX.png">
-        </div>
+        <img class="delete-x" src="icon/deleteX.png">
+      </div>
     </div>
     <div class="mypage-bottom">
     <div class="nav-page">
@@ -200,9 +76,16 @@ export default {
       // 헤더
       isVisible: false,
       ismaintain: false,
+
       // 본문
+      bookmarkList :[],
+
     };
   },
+  mounted(){  
+     this.getBookmarkList();
+  },
+  
   methods: {
     // 헤더
     showCategories() {
@@ -212,7 +95,22 @@ export default {
       this.isVisible = false;
     },
     // 본문
-  },
+    async getBookmarkList() {
+      const requestBody = {
+        access_token: "8faa484f-5159-4b52-b1ed-244ec0981144"
+      };
+      try {
+        const response = await this.$api("/mypage/bookmarklist", requestBody, "post");
+        console.log("북막", response);
+
+        if (response.status === 200) {
+          this.bookmarkList = response.bookmarkList; // 응답에서 북마크 리스트 할당
+        }
+      } catch (error) {
+        console.error("Error fetching bookmark list:", error);
+      }
+    }
+  }
 };
 </script>
 
@@ -458,7 +356,7 @@ hr.text{
 /* img */
 
 img.bookmark{
-    weight: 120px;
+    width: 120px;
     height: 120px;
     border: 1px solid #333333;
 }
