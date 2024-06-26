@@ -1,5 +1,5 @@
 const express = require('express');
-const {productList, productDetail, BoxList, AddBox, InsertItemIntoBox} = require('../controller/productController');
+const {productList, productDetail, BoxList, AddBox, InsertItemIntoBox, Bookmark} = require('../controller/productController');
 const { adminLoginCheck, loginCheck } = require('../middleware/login');
 const {addProduct} = require('../controller/adminController')
 
@@ -17,5 +17,8 @@ router.post('/addbox',loginCheck, AddBox);
 router.post('/insertitemintobox',loginCheck, InsertItemIntoBox);
 
 router.post('/add', adminLoginCheck, addProduct);
+
+
+router.post('/bookmark',loginCheck, Bookmark);
 
 module.exports = router;

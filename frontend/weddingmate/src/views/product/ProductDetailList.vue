@@ -370,8 +370,8 @@ export default {
 .reviewlist_review-cards {
   display: flex;
   flex-wrap: wrap;
-  /* gap: 20px; */
-  justify-content: space-between;
+  gap: 30px;
+  justify-content:flex-start;
 }
 
 .reviewlist_review_card:last-child {

@@ -66,6 +66,9 @@ export default{
 
         // TimeStamp를 예쁘게 바꿔줌
         $dateFormat(value){
+            if(value == null) {
+                return null;
+            }
             const format = new Date(value);
             var year = format.getFullYear();
             var month = format.getMonth() + 1;

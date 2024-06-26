@@ -150,7 +150,6 @@ exports.AddBox = async (req, res) => {
     const user_id = req.body.user_id;
     // req.body.box_name는 뷰에서 가져온 값
     const box_name = req.body.box_name;
-    
 
     // Box 데이터 생성
     const query = `
@@ -171,7 +170,6 @@ exports.AddBox = async (req, res) => {
       data: result2,
     };
 
-
     // 데이터 보내기
     res.json(responseBody);
   } catch (err) {
@@ -186,7 +184,6 @@ exports.AddBox = async (req, res) => {
 
 exports.InsertItemIntoBox = async (req, res) => {
   try {
-    console.log("start db");
     // 데이터 준비
     // req.body.user_id는 전 미들웨어인 loginCheck에서 가져온 값
     const user_id = req.body.user_id;
@@ -195,24 +192,60 @@ exports.InsertItemIntoBox = async (req, res) => {
     const item_detail_id = req.body.item_detail_id;
     const box_item_quantity = req.body.box_item_quantity;
     const box_item_total_price = req.body.box_item_total_price;
-
-
-    // 쉼표 제거 및 숫자로 변환
-    
-
-    console.log("fsdfdf item_detail_id : ",  item_detail_id);
+    const box_item_schedule_start = req.body.box_item_schedule_start;
+    const box_item_schedule_end = req.body.box_item_schedule_end;
 
     // Box 데이터 생성
     const query = `
-              INSERT INTO box_item (box_id, item_detail_id, box_item_quantity,box_item_total_price)
-        VALUES (?, ?, ?, ?);
+              INSERT INTO box_item (box_id, item_detail_id, box_item_quantity,box_item_total_price, box_item_schedule_start, box_item_schedule_end)
+        VALUES (?, ?, ?, ?, ?, ?);
             `;
-    const result = await db(query, [box_id, item_detail_id, box_item_quantity, box_item_total_price]);
+    const result = await db(query, [
+      box_id,
+      item_detail_id,
+      box_item_quantity,
+      box_item_total_price,
+      box_item_schedule_start,
+      box_item_schedule_end,
+    ]);
 
     // 데이터 보낼 준비
     const responseBody = {
       status: 200,
       message: "ProductController.js의 productList 데이터 성공",
+      data: result,
+    };
+    // 데이터 보내기
+    res.json(responseBody);
+  } catch (err) {
+    console.error(err);
+    const responseBody = {
+      status: 400,
+      message: err.message,
+    };
+    res.json(responseBody);
+  }
+};
+
+exports.Bookmark = async (req, res) => {
+  try {
+    // 데이터 준비
+    // req.body.user_id는 전 미들웨어인 loginCheck에서 가져온 값
+    const user_id = req.body.user_id;
+    // req.body.box_name는 뷰에서 가져온 값
+    const item_id = req.body.item_id;
+
+    // Box 데이터 생성
+    const query = `
+              INSERT INTO bookmark (item_id, user_id)
+        VALUES (?, ?);
+            `;
+    const result = await db(query, [item_id, user_id]);
+
+    // 데이터 보낼 준비
+    const responseBody = {
+      status: 200,
+      message: "ProductController.js의 bookmark 데이터 성공",
       data: result,
     };
     // 데이터 보내기

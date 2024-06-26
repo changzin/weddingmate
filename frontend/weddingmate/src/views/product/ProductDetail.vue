@@ -123,6 +123,63 @@
                       </div>
                     </div>
                   </div>
+                  <!-- 캘린더 -->
+                  <div
+                    class="productdetail_cal collapse"
+                    :class="{ show: allOptionsSelected }"
+                  >
+                    날짜 선택
+                    <div class="common-event_calendar">
+                      <div>
+                        <v-date-picker
+                          v-model="dateRange"
+                          is-range
+                          :popover="{ visibility: 'focus' }"
+                          :input-props="{
+                            start: { placeholder: 'Start' },
+                            end: { placeholder: 'End' },
+                          }"
+                        />
+                      </div>
+                      <div class="common-event_calendar_div">
+                        <label
+                          >Start
+                          {{
+                            dateRange.start
+                              ? formatDate(dateRange.start)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                        <label
+                          >End
+                          {{
+                            dateRange.end
+                              ? formatDate(dateRange.end)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                      </div>
+                      <button
+                        class="common-caldate_save-button"
+                        type="button"
+                        @click="saveEvent"
+                      >
+                        저장
+                      </button>
+                    </div>
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        {{
+                          dateRange.start && dateRange.end
+                            ? formatDate(dateRange.start) +
+                              " ~ " +
+                              formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}
+                      </div>
+                    </div>
+                  </div>
                   <!-- 견적함 -->
                   <div
                     class="box-div collapse"
@@ -168,12 +225,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- 물건담기 -->
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- 물건담기 -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -339,7 +403,13 @@
                     <div class="productdetail_cal-div_date-div">
                       <div>선택된 날짜</div>
                       <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
+                        {{
+                          dateRange.start && dateRange.end
+                            ? formatDate(dateRange.start) +
+                              " ~ " +
+                              formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}
                       </div>
                     </div>
                   </div>
@@ -347,7 +417,7 @@
 
                   <div
                     class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
+                    :class="{ show: showCustomOptions || allOptionsSelected }"
                   >
                     <div class="box-div_header">
                       <div class="box-div_header_list">견적함 리스트</div>
@@ -392,10 +462,18 @@
                   <!-- </div> -->
 
                   <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                        type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -502,6 +580,62 @@
                       </div>
                     </div>
                   </div>
+                  <div
+                    class="productdetail_cal collapse"
+                    :class="{ show: allOptionsSelected }"
+                  >
+                    날짜 선택
+                    <div class="common-event_calendar">
+                      <div>
+                        <v-date-picker
+                          v-model="dateRange"
+                          is-range
+                          :popover="{ visibility: 'focus' }"
+                          :input-props="{
+                            start: { placeholder: 'Start' },
+                            end: { placeholder: 'End' },
+                          }"
+                        />
+                      </div>
+                      <div class="common-event_calendar_div">
+                        <label
+                          >Start
+                          {{
+                            dateRange.start
+                              ? formatDate(dateRange.start)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                        <label
+                          >End
+                          {{
+                            dateRange.end
+                              ? formatDate(dateRange.end)
+                              : "선택되지 않음"
+                          }}</label
+                        >
+                      </div>
+                      <button
+                        class="common-caldate_save-button"
+                        type="button"
+                        @click="saveEvent"
+                      >
+                        저장
+                      </button>
+                    </div>
+                    <div class="productdetail_cal-div_date-div">
+                      <div>선택된 날짜</div>
+                      <div class="productdetail_cal-div_date">
+                        {{
+                          dateRange.start && dateRange.end
+                            ? formatDate(dateRange.start) +
+                              " ~ " +
+                              formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}
+                      </div>
+                    </div>
+                  </div>
 
                   <!-- 맞춤 선택 후 캘린더 띄워주기-->
                   <div
@@ -602,13 +736,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->
-
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- </div> -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -715,13 +855,10 @@
                       </div>
                     </div>
                   </div>
-
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                  <!-- 캘린더 -->
                   <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
+                    class="productdetail_cal collapse"
+                    :class="{ show: allOptionsSelected }"
                   >
                     날짜 선택
                     <div class="common-event_calendar">
@@ -765,10 +902,17 @@
                     <div class="productdetail_cal-div_date-div">
                       <div>선택된 날짜</div>
                       <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
+                        {{
+                          dateRange.start && dateRange.end
+                            ? formatDate(dateRange.start) +
+                              " ~ " +
+                              formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}
                       </div>
                     </div>
                   </div>
+
                   <!-- 견적함 -->
 
                   <div
@@ -815,13 +959,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->
-
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- </div> -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -971,12 +1121,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- 물건담기 -->
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- 물건담기 -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -1142,7 +1299,13 @@
                     <div class="productdetail_cal-div_date-div">
                       <div>선택된 날짜</div>
                       <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
+                        {{
+                          dateRange.start && dateRange.end
+                            ? formatDate(dateRange.start) +
+                              " ~ " +
+                              formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}
                       </div>
                     </div>
                   </div>
@@ -1150,7 +1313,7 @@
 
                   <div
                     class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
+                    :class="{ show: showCustomOptions || allOptionsSelected }"
                   >
                     <div class="box-div_header">
                       <div class="box-div_header_list">견적함 리스트</div>
@@ -1192,13 +1355,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->
-
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- </div> -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -1414,13 +1583,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->
-
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- </div> -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -1458,7 +1633,6 @@
                   >
                     {{ BoxItem.box_name }}
                   </button>
-
                   <div class="box-div_add">
                     <div
                       v-if="!isEditing"
@@ -1484,10 +1658,18 @@
                   </div>
                 </div>
                 <div class="productdetail_button-container">
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
                     <i class="far fa-heart"></i>
                   </button>
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
                     <i class="fas fa-share-alt"></i>
                   </button>
                   <button
@@ -1549,10 +1731,18 @@
                   </div>
                 </div>
                 <div class="productdetail_button-container">
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="saveToBookmark"
+                  >
                     <i class="far fa-heart"></i>
                   </button>
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
                     <i class="fas fa-share-alt"></i>
                   </button>
                   <button
@@ -1757,13 +1947,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->
-
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- </div> -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -1827,10 +2023,18 @@
                   </div>
                 </div>
                 <div class="productdetail_button-container">
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="saveToBookmark"
+                  >
                     <i class="far fa-heart"></i>
                   </button>
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
                     <i class="fas fa-share-alt"></i>
                   </button>
                   <button
@@ -1978,12 +2182,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- 물건담기 -->
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- 물건담기 -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -2190,13 +2401,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->
-
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- </div> -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -2211,7 +2428,7 @@
               </div>
 
               <!-- 사회자 -->
-               <div
+              <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('mc'),
@@ -2260,10 +2477,18 @@
                   </div>
                 </div>
                 <div class="productdetail_button-container">
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="saveToBookmark"
+                  >
                     <i class="far fa-heart"></i>
                   </button>
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
                     <i class="fas fa-share-alt"></i>
                   </button>
                   <button
@@ -2276,7 +2501,7 @@
               </div>
 
               <!-- 웨딩슈즈 -->
-               <div
+              <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('shoes'),
@@ -2411,12 +2636,19 @@
                       </button>
                     </div>
                   </div>
-                  <!-- 물건담기 -->
-                  <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                  <!-- 물건담기 -->                  <div class="productdetail_button-container">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="savetoBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="copyCurrentLink"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -2635,10 +2867,18 @@
                   <!-- </div> -->
 
                   <div class="productdetail_button-container">
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="saveToBookmark"
+                    >
                       <i class="far fa-heart"></i>
                     </button>
-                    <button class="productdetail_icon-button">
+                    <button
+                      class="productdetail_icon-button"
+                      type="button"
+                      @click="saveToBookmark"
+                    >
                       <i class="fas fa-share-alt"></i>
                     </button>
                     <button
@@ -2702,10 +2942,18 @@
                   </div>
                 </div>
                 <div class="productdetail_button-container">
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="saveToBookmark"
+                  >
                     <i class="far fa-heart"></i>
                   </button>
-                  <button class="productdetail_icon-button">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
                     <i class="fas fa-share-alt"></i>
                   </button>
                   <button
@@ -2815,7 +3063,9 @@
                     {{ qna.qna_title }}
                   </div>
                 </td>
-                <td class="productdetail_qna-section_status-nickname-div">{{ qna.user_nickname }}</td>
+                <td class="productdetail_qna-section_status-nickname-div">
+                  {{ qna.user_nickname }}
+                </td>
                 <td>{{ this.$dateFormat(qna.qna_date) }}</td>
               </tr>
               <!-- <tr v-for="n in 1" :key="n">
@@ -2880,6 +3130,8 @@ export default {
         start: null,
         end: null,
       },
+
+      showCustomOptions: false, // 맞춤 옵션 표시 여부
 
       // 스드메 캘린더
       studioDateRange: {
@@ -3695,7 +3947,7 @@ export default {
       } else if (this.itemType === "shoes") {
         // Option1
         // ex: ["생화조화", "생화", "조화"]
-        // item_detail_size // item_detail_color // item_detail_heel_height 
+        // item_detail_size // item_detail_color // item_detail_heel_height
         console.log("fsdgfdfgdf");
 
         const Option1 = [
@@ -3755,9 +4007,9 @@ export default {
             // item_detail_size "생화"이고 item_detail_color "Red"이며 item_detail_heel_height "L"인 경우, Option3["생화"]["Red"].push("L")
             if (
               item.item_detail_heel_height !== null &&
-              !Option3[item.item_detail_size][
-                item.item_detail_color
-              ].includes(item.item_detail_heel_height)
+              !Option3[item.item_detail_size][item.item_detail_color].includes(
+                item.item_detail_heel_height
+              )
             ) {
               Option3[item.item_detail_size][item.item_detail_color].push(
                 item.item_detail_heel_height
@@ -3798,7 +4050,7 @@ export default {
         //   "조화": { "Red": ["S"], "Blue": ["L"], "Yellow": ["S"], "lime": ["S"] }
         // }
         this.Option3 = Option3;
-      } 
+      }
     },
 
     // 사용자가 옵션을 고를 때 선택됨
@@ -3825,8 +4077,10 @@ export default {
       // 맞춤 옵션 처리
       if (this.selectedOptions[index] === "맞춤") {
         this.selectedItemType_dress_custom = "visible";
+        this.showCustomOptions = true;
       } else {
         this.selectedItemType_dress_custom = "collapse";
+        this.showCustomOptions = false;
       }
 
       // 이후 옵션 초기화
@@ -4026,12 +4280,19 @@ export default {
       if (this.itemType === "dress") {
         const selectedSize = this.selectedOptions[0];
         const selectedColor = this.selectedOptions[1];
+        let selectedItem;
 
-        const selectedItem = this.productDetailItemDetail.find(
-          (item) =>
-            item.item_detail_size === selectedSize &&
-            item.item_detail_color === selectedColor
-        );
+        if (this.showCustomOptions) {
+          selectedItem = this.productDetailItemDetail.find(
+            (item) => item.item_detail_size === selectedSize
+          );
+        } else {
+          selectedItem = this.productDetailItemDetail.find(
+            (item) =>
+              item.item_detail_size === selectedSize &&
+              item.item_detail_color === selectedColor
+          );
+        }
 
         if (selectedItem) {
           this.selectedItemDetailId = selectedItem.item_detail_id;
@@ -4139,12 +4400,25 @@ export default {
       } else if (this.itemType === "giving_dress") {
         // giving_dress
         // item_detail_size // item_detail_color // item_detail_quantity
+        let selectedItem;
 
-        const selectedItem = this.productDetailItemDetail.find(
-          (item) =>
-            item.item_detail_size === this.selectedOptions[0] &&
-            item.item_detail_color === this.selectedOptions[1]
-        );
+        if (this.showCustomOptions) {
+          selectedItem = this.productDetailItemDetail.find(
+            (item) => item.item_detail_size === this.selectedOptions[0]
+          );
+        } else {
+          selectedItem = this.productDetailItemDetail.find(
+            (item) =>
+              item.item_detail_size === this.selectedOptions[0] &&
+              item.item_detail_color === this.selectedOptions[1]
+          );
+        }
+
+        // const selectedItem = this.productDetailItemDetail.find(
+        //   (item) =>
+        //     item.item_detail_size === this.selectedOptions[0] &&
+        //     item.item_detail_color === this.selectedOptions[1]
+        // );
 
         if (selectedItem) {
           this.selectedItemDetailId = selectedItem.item_detail_id;
@@ -4200,7 +4474,7 @@ export default {
       } else if (this.itemType === "letter") {
         this.selectedItemDetailId =
           this.productDetailItemDetail[0].item_detail_id;
-      }  else if (this.itemType === "music") {
+      } else if (this.itemType === "music") {
         // giving_dress
         // item_detail_size // item_detail_color // item_detail_quantity
 
@@ -4230,9 +4504,9 @@ export default {
           this.selectedItemDetailId = null;
           console.log("No matching item found.");
         }
-      }  else if (this.itemType === "shoes") {
+      } else if (this.itemType === "shoes") {
         //item_detail_size // item_detail_color // item_detail_heel_height
- 
+
         const selectedItem = this.productDetailItemDetail.find(
           (item) =>
             item.item_detail_size === this.selectedOptions[0] &&
@@ -4252,9 +4526,11 @@ export default {
 
     // 물건 담기 버튼 눌렀을 때
     async insertItemIntoBox() {
-      if (!this.selectedBoxId) {
+      if (!this.$dateFormat(this.dateRange.start)) {
+        alert("캘린더 날짜를 선택해주세요");
+      } else if (!this.selectedBoxId) {
         alert("견적함 박스를 선택해주세요");
-      } else if (this.allOptionsSelected) {
+      } else if (this.allOptionsSelected || this.showCustomOptions) {
         try {
           this.updateSelectedItemDetailId();
           await this.$api(
@@ -4265,6 +4541,8 @@ export default {
               item_detail_id: this.selectedItemDetailId,
               box_item_quantity: this.quantity,
               box_item_total_price: this.finally_price,
+              box_item_schedule_start: this.$dateFormat(this.dateRange.start),
+              box_item_schedule_end: this.$dateFormat(this.dateRange.end),
             },
             "POST"
           );
@@ -4275,6 +4553,38 @@ export default {
             error
           );
         }
+      }
+    },
+
+    copyCurrentLink() {
+      const currentUrl = window.location.href;
+      navigator.clipboard
+        .writeText(currentUrl)
+        .then(() => {
+          alert("링크가 복사되었습니다!");
+        })
+        .catch((err) => {
+          console.error("링크 복사에 실패했습니다: ", err);
+        });
+    },
+
+    async savetoBookmark() {
+      console.log("savetoBookmark");
+      try {
+        await this.$api(
+          "/product/bookmark",
+          {
+            access_token: "temp-token",
+            item_id: this.item_id,
+          },
+          "POST"
+        );
+        alert("상품 넣기 성공");
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
       }
     },
   },
@@ -4780,9 +5090,8 @@ export default {
   /* justify-content: center; */
 }
 
-.productdetail_qna-section_status-nickname-div{
-  text-align:left;
-  
+.productdetail_qna-section_status-nickname-div {
+  text-align: left;
 }
 
 .box-div_header {
