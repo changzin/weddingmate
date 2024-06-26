@@ -57,13 +57,15 @@ export default{
         },
 
         // 64base encoding
-        $base64(file) {
-            return new Promise(resolve => {
-              var a = new FileReader();
-              a.onload = e => resolve(e.target.result);
-              a.readAsDataURL(file);
-        });},
-
+        $base64(file){
+            console.log("file", file);
+            return new Promise(resolve =>{
+                var a = new FileReader();
+                a.onload = e => resolve(e.target.result);
+                // 여기서 base64encoding 처리한다.
+                a.readAsDataURL(file);
+            });
+        },
         // TimeStamp를 예쁘게 바꿔줌
         $dateFormat(value){
             const format = new Date(value);

@@ -6,6 +6,8 @@ const orderRouter = require('./orderRouter');
 const answerRouter = require('./answerRouter');
 const productRouter = require('./productRouter');
 const scheduleRouter = require('./scheduleRouter');
+const reportRouter = require('./reportRouter');
+const imageRouter = require('./imageRouter');
 const mainRouter = require('./mainRouter');
 const mypageRouter = require('./mypageRouter');
 const router = express.Router();
@@ -20,5 +22,7 @@ router.use("/answer", answerRouter);
 
 router.use("/product", productRouter);
 router.use("/schedule", scheduleRouter);
+router.use("/report", reportRouter);
+router.use("/image", imageRouter);
 
 module.exports = router;
