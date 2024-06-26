@@ -102,7 +102,7 @@
                   <div class="reviewlist_review-cards justify-content-start">
                     <button class="reviewlist_review-card" v-for="(item, index) in itemList" :key="index" style="margin-left: 20px;">
                       <img
-                        src="https://via.placeholder.com/300x300"
+                        :src="`http://localhost:9090/${item.item_tn_image_path}`"
                         class="reviewlist_card-img-top"
                         alt="Review Image"
                       />
@@ -155,7 +155,7 @@ export default {
   },
   mounted(){      
       this.getItemList();
-      
+      console.log(this.itemList);
   },
   methods: {
     // 멤버 정보 받아오기
