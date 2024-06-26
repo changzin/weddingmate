@@ -109,19 +109,46 @@
       </nav>
     </div>
 
-    <!-- 본문 -->
+    <!-- 본문  -->
     <div class="container0">
-      <div id="app">
-  <div>
-    <input type="checkbox" v-model="selectAll" @change="toggleAll"> 전체 선택
-  </div>
-  <div v-for="item in items" :key="item.id">
-    <input type="checkbox" v-model="item.selected"> {{ item.name }}
-  </div>
-</div>
-
- 
+    <div class="container-title">
+        <div class="font-title">나의 찜</div>
+        <hr class="title">
     </div>
+    <div class="container-allselect">
+            <input type="checkbox">
+            <div class="font-delete">선택 상품 삭제</div>
+        </div>        
+    <div class="container-middle">
+      <div v-for="(bookmark, index) in bookmarkList" :key="index" class="container-content">
+        <input type="checkbox">
+        <img class="bookmark" :src="bookmark.item_tn_image_path">
+        <div class="container-name_cost">
+          <div>{{ bookmark.item_name }}</div>
+          <div class="font-cost">{{ bookmark.item_price }}</div>
+        </div>
+        <img class="delete-x" src="icon/deleteX.png">
+      </div>
+    </div>
+    <div class="mypage-bottom">
+    <div class="nav-page">
+      <div>&lt;&lt;</div>
+        <div>&lt;</div>
+        <div>1</div>
+        <div style="color: pink;">2</div>
+        <div>3</div>
+        <div>&gt;</div>
+        <div>&gt;&gt;</div>
+    </div>
+    <button class="mypage-back">
+      <a href="/mypage">
+        마이페이지로
+      </a>
+    </button>
+</div>
+</div>
+    
+
     <!-- 푸터 -->
     <footer class="common__footer">
       <div class="common__footer-content">
@@ -133,7 +160,7 @@
         </nav>
         <div class="common__footer-details">
           <p style="margin-bottom: 0px">
-            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
+            (주)웨딩메이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
             02-123-1234 팩스: 02-111-2222
           </p>
 
@@ -155,22 +182,16 @@ export default {
       // 헤더
       isVisible: false,
       ismaintain: false,
+
       // 본문
-      selectAll: false,
-        items: [
-      { id: 1, name: 'Item 1', selected: false },
-      { id: 2, name: 'Item 2', selected: false },
-      { id: 3, name: 'Item 3', selected: false }
-    ]
+      bookmarkList :[],
+
     };
   },
-  watch: {
-    selectAll(val) {
-      this.items.forEach(item => {
-        item.selected = val;
-      });
-    }
+  mounted(){  
+     this.getBookmarkList();
   },
+  
   methods: {
     // 헤더
     showCategories() {
@@ -180,13 +201,22 @@ export default {
       this.isVisible = false;
     },
     // 본문
-    toggleAll() {
-      this.selectAll = !this.selectAll;
-      this.items.forEach(item => {
-        item.selected = this.selectAll;
-      });
+    async getBookmarkList() {
+      const requestBody = {
+        access_token: "620f1288-02f2-4a86-88f5-3a40c6726c63"
+      };
+      try {
+        const response = await this.$api("/mypage/bookmarklist", requestBody, "post");
+        console.log("북막", response);
+
+        if (response.status === 200) {
+          this.bookmarkList = response.bookmarkList; // 응답에서 북마크 리스트 할당
+        }
+      } catch (error) {
+        console.error("Error fetching bookmark list:", error);
+      }
     }
-  },
+  }
 };
 </script>
 
@@ -323,140 +353,156 @@ export default {
 }
 
 /* 본문 */
-        /* font */
-        .font-schedule-date{          
-            color: var(--color-pink);
-            font-weight: bold;
-        }
-        
-        .title-font{
-            display: grid;
-            place-items: center;
-            color: #333333;
-            font-size: 24px;
-            font-weight: bold;          
-        }
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+  div{
+    font-family: 'Noto Sans KR', sans-serif;
+      font-size: 16px;
+      color:#555555;
+}
 
-        /* div */
+/* font */
 
-        .container0{
-            min-width: var(--container-width);
-        }
+.font-title{
+    display: grid;
+    place-items: center;
+    color: #333333;
+    font-size: 24px;
+    font-weight: bold;
+}
 
-        .container-top{          
-            margin-left: var(--container-margin-left);
-            margin-right: var(--container-margin-right);
-            width: var(--container-width);
-            margin-top: 100px;
-            display: grid;
-            font-size: 24;
-            /* border: 1px solid blue; */
-        }
+.font-delete{
+  color: #888888;
+}
 
-        .container-middle{          
-            margin-left: var(--container-margin-left);
-            margin-right: var(--container-margin-right);
-            margin-bottom: 20px;
-            margin-top:10px;
-            width: var(--container-width);
-            display: grid;
-            grid-template-columns: 1fr 1fr ;
-            font-size: 24;
-            /* border: 1px solid blue; */
-        }
-        
-        .container-middle-calander{          
-            display: grid;  
-            box-sizing: border-box;
-            /* border: 1px solid blue; */
-        }
-        .container-middle-schedule{    
-            display: flex;  
-            flex-direction: column;    
-            margin-left: 20px;
-            box-sizing: border-box;
-            /* border: 1px solid red; */
-        }
-        .content-schedule-title{          
-            font-size: 24;
-            margin-bottom: 5px;
-            font-weight: bold;
-            /* border: 1px solid blue; */
-        }
-        .content-schedule-text{          
-            display: grid;  
-            align-items: center;
-            grid-template-columns: 120px 475px 0px ;
-            margin-bottom: 5px;
-            /* border: 1px solid blue; */
-        }
-        .calanderbox{
-            display: grid;
-            width: 100%;  
-            height: 500px;
-            border: 1px solid #888888;
-            background-color: none;   
-        }
-        /* hr */
+.font-cost{
+    font-weight: bold;
+}
 
-        hr.title{
-            width: 100%;
-            height: 1px; /* Set the height to 1px */
-            background-color: #333333; /* Set a lighter color */
-            border: none; /* Remove border */
-        }
+/* div */
+.container0{
+    min-width: var(--container-width)
+}
+.container-title{          
+    margin-left: 350px;
+    margin-right: 320px;
+    margin-top: 100px;
 
-        /* button */
-        
-        button.schedule-add{
-            justify-self: end;
-            background-color: var(--color-pink);
-            color:white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 12px;
-            width: 100px;
-            height: 40px;
-            margin-top: 30px;
-            margin-right: 20px;
-        }
+    display: grid;
+    width: 1280px; /* 고정된 너비 */    
+    font-size: 24;
+    /* border: 1px solid blue; */
+}
 
-        /* img */
-        img.delete-x{
-            weight: 20px;
-            height: 20px;
-            /* border: 1px solid #333333; */
+.container-middle{          
+    margin-left: 350px;
+    margin-right: 320px;
+    margin-top: 5px;
+    margin-bottom: 50px;
+    display: grid;
+    width: 1280px; /* 고정된 너비 */    
+    font-size: 24;
+    /* border: 1px solid purple; */
+}
 
-        }
+.container-allselect{
+    display: grid;
+    grid-template-columns: 30px 100px;
+    justify-items: start;
+    margin-left: 350px;
+    margin-right: 320px;
+    width: 1280px; /* 고정된 너비 */     
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    color:#888888;
+    /* border: 1px solid red; */
+}
+.container-content{
+    display: grid;
+    grid-template-columns: 30px 140px 1030px 250px;
+    justify-items: start;
+    align-items: start;
+    width: 1280px; /* 고정된 너비 */    
+    padding: 10px;
+    margin-bottom: 30px;
+    box-sizing: border-box;
+    /* border: 1px solid yellow; */
+}
+.container-name_cost{
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid orange;            */
+}                
 
-        /* bottom */
+/* hr */
 
-        button.mypage-back{
-            background-color: #888888;
-            color:white;
-            font-weight: bold;
-            border: none;
-            width: 120px;
-            height: 40px;
-        }
+hr.title{
+    width: 100%;
+    height: 1px; 
+    background-color: #111111; 
+    border: none; 
+    margin-bottom: 0;
+}
+hr.bar{
+    width: 100%;
+    height: 1px; 
+    background-color: #888888; 
+    border: none; 
+    margin:0;
+    
+}
+hr.text{
+    width: 100%;
+    height: 1px; 
+    background-color: #f5f5f5; 
+    border: none; 
+}
 
 
-        div.mypage-bottom{
-            display: grid;
-            place-items: center;
-            margin-left: 350px;
-            margin-right: 320px;
-            margin-top: 100px;
-            width: 1280px; /* 고정된 너비 */  
-            /* border: 1px solid yellow; */
-        }
-        div.nav-page{
-            display: grid;
-            place-items: center;
-            grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
-            margin-bottom: 30px;
-            color: #888888;
-            /* border: 1px solid pink; */
-        }
+/* img */
+
+img.bookmark{
+    width: 120px;
+    height: 120px;
+    border: 1px solid #333333;
+}
+img.delete-x{
+    weight: 20px;
+    height: 20px;
+    /* border: 1px solid #333333; */
+
+}
+
+/* bottom */
+
+.mypage-bottom{
+    display: grid;
+    place-items: center;
+    margin-left: 350px;
+    margin-right: 320px;
+    margin-top: 100px;
+    width: 1280px; /* 고정된 너비 */  
+    /* border: 1px solid yellow; */
+}
+.nav-page{
+    display: grid;
+    place-items: center;
+    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+    margin-bottom: 30px;
+    color: #888888;
+    /* border: 1px solid pink; */
+}
+
+button.mypage-back{
+    background-color: #888888;
+    color:white;
+    font-weight: bold;
+    border: none;
+    width: 120px;
+    height: 40px;
+}
+.mypage-back a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
+}
 </style>

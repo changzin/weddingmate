@@ -6,7 +6,9 @@ const orderRouter = require('./orderRouter');
 const answerRouter = require('./answerRouter');
 const productRouter = require('./productRouter');
 const scheduleRouter = require('./scheduleRouter');
+const mypageRouter = require('./mypageRouter');
 const router = express.Router();
+
 
 // 여러 라우터 파일을 모아서 묶어주는 역할을 수행
 router.use("/user", userRouter);
@@ -17,5 +19,8 @@ router.use("/answer", answerRouter);
 
 router.use("/product", productRouter);
 router.use("/schedule", scheduleRouter);
+
+router.use("/mypage", mypageRouter);
+
 
 module.exports = router;
