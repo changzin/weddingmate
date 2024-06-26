@@ -67,8 +67,7 @@
             <div class="common-header_smallcategory-area">
               <div class="common-header_category">
                 <ul>
-                  <li>추천 리스트</li>
-                  <li>웨딩홀 목록</li>
+                  <li  @click="goToProductDetailList('hall')">웨딩홀</li>
                 </ul>
               </div>
               <div class="common-header_category">

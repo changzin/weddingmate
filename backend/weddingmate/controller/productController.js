@@ -150,6 +150,7 @@ exports.AddBox = async (req, res) => {
     const user_id = req.body.user_id;
     // req.body.box_name는 뷰에서 가져온 값
     const box_name = req.body.box_name;
+    
 
     // Box 데이터 생성
     const query = `
@@ -170,7 +171,7 @@ exports.AddBox = async (req, res) => {
       data: result2,
     };
 
-    
+
     // 데이터 보내기
     res.json(responseBody);
   } catch (err) {
@@ -185,18 +186,28 @@ exports.AddBox = async (req, res) => {
 
 exports.InsertItemIntoBox = async (req, res) => {
   try {
+    console.log("start db");
     // 데이터 준비
     // req.body.user_id는 전 미들웨어인 loginCheck에서 가져온 값
     const user_id = req.body.user_id;
     // req.body.box_name는 뷰에서 가져온 값
-    const box_name = req.body.box_name;
+    const box_id = req.body.box_id;
+    const item_detail_id = req.body.item_detail_id;
+    const box_item_quantity = req.body.box_item_quantity;
+    const box_item_total_price = req.body.box_item_total_price;
+
+
+    // 쉼표 제거 및 숫자로 변환
+    
+
+    console.log("fsdfdf item_detail_id : ",  item_detail_id);
 
     // Box 데이터 생성
     const query = `
-              INSERT INTO box (user_id, box_name, box_quantity, box_total_price)
-        VALUES (?, ?, 0, 0);
+              INSERT INTO box_item (box_id, item_detail_id, box_item_quantity,box_item_total_price)
+        VALUES (?, ?, ?, ?);
             `;
-    const result = await db(query, [user_id, box_name]);
+    const result = await db(query, [box_id, item_detail_id, box_item_quantity, box_item_total_price]);
 
     // 데이터 보낼 준비
     const responseBody = {
