@@ -10,13 +10,13 @@
         <hr class="title">
     </div>
     <div class="container-allselect">
-            <input type="checkbox">
-            <div class="font-delete">선택 상품 삭제</div>
+      <input type="checkbox" v-model="selectAllChecked" @change="toggleAllSelection">
+            <div class="font-delete" @click="bookmarkDelete()">선택 상품 삭제</div>
         </div>        
     <div class="container-middle">
       <div v-for="(bookmark, index) in bookmarkList" :key="index" class="container-content">
-        <input type="checkbox">
-        <img class="bookmark" :src="bookmark.item_tn_image_path">
+        <input type="checkbox" v-model="bookmark.checked">
+        <img class="bookmark_img" :src="bookmark.item_tn_image_path">
         <div class="container-name_cost">
           <div>{{ bookmark.item_name }}</div>
           <div class="font-cost">{{ bookmark.item_price }}</div>
@@ -25,21 +25,21 @@
       </div>
     </div>
     <div class="mypage-bottom">
-    <div class="nav-page">
-      <div>&lt;&lt;</div>
-        <div>&lt;</div>
-        <div>1</div>
-        <div style="color: pink;">2</div>
-        <div>3</div>
-        <div>&gt;</div>
-        <div>&gt;&gt;</div>
+        <div class="nav-page">
+          <div>&lt;&lt;</div>
+            <div>&lt;</div>
+            <div>1</div>
+            <div style="color: pink;">2</div>
+            <div>3</div>
+            <div>&gt;</div>
+            <div>&gt;&gt;</div>
+        </div>
+        <button class="mypage-back">
+          <a href="/mypage">
+            마이페이지로
+          </a>
+        </button>
     </div>
-    <button class="mypage-back">
-      <a href="/mypage">
-        마이페이지로
-      </a>
-    </button>
-</div>
 </div>
     
 
@@ -73,47 +73,49 @@ export default {
   name: "SearchComponent",
   data() {
     return {
-      // 헤더
-      isVisible: false,
-      ismaintain: false,
-
       // 본문
       bookmarkList :[],
+      selectAllChecked: false,
+      selectedItems: [] // 각 아이템의 선택 여부를 저장할 배열
 
     };
   },
   mounted(){  
      this.getBookmarkList();
+
   },
   
   methods: {
-    // 헤더
-    showCategories() {
-      this.isVisible = true;
-    },
-    hideCategories() {
-      this.isVisible = false;
-    },
-    // 본문
     async getBookmarkList() {
       const requestBody = {
-        access_token: "8faa484f-5159-4b52-b1ed-244ec0981144"
+        access_token: "7d8ce36a-98d7-47ea-b671-c8f9e5a13a97"
       };
       try {
         const response = await this.$api("/mypage/bookmarklist", requestBody, "post");
         console.log("북막", response);
 
         if (response.status === 200) {
-          this.bookmarkList = response.bookmarkList; // 응답에서 북마크 리스트 할당
+          this.bookmarkList = response.bookmarkList.map(item => {
+            return {
+              ...item,
+              checked: false // 각 아이템의 초기 체크 상태를 false로 설정
+            };
+          });
         }
       } catch (error) {
         console.error("Error fetching bookmark list:", error);
       }
-    }
+    },
+    toggleAllSelection(event) {
+      const isChecked = event.target.checked;
+      this.bookmarkList.forEach(item => {
+        item.checked = isChecked;
+      });
+    },
+    bookmarkDelete
   }
 };
 </script>
-
 
 <style scoped>
 .fix-width {
@@ -355,7 +357,7 @@ hr.text{
 
 /* img */
 
-img.bookmark{
+img.bookmark_img{
     width: 120px;
     height: 120px;
     border: 1px solid #333333;
