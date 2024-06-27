@@ -1,5 +1,5 @@
 const express = require('express');
-const {adminReviewList, adminReviewDelete, itemDetail, userReviewDelete} = require('../controller/reviewController');
+const {adminReviewList, adminReviewDelete, itemDetail, userReviewDelete, reviewReport} = require('../controller/reviewController');
 const { adminLoginCheck, loginCheck } = require('../middleware/login');
 
 const router = express.Router();
@@ -9,4 +9,5 @@ router.get('/adminlist', adminReviewList);
 router.post('/admindelete', adminLoginCheck,adminReviewDelete);
 router.post('/delete', loginCheck ,userReviewDelete);
 router.get('/itemdetail/:item_id', itemDetail);
+router.post('/reviewreport',loginCheck, reviewReport);
 module.exports = router;

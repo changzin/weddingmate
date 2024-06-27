@@ -196,3 +196,10 @@ exports.itemDetail = async (req, res)=>{
         res.json(responseBody);
     }
 }
+
+
+
+exports.reviewReport = async (req, res)=>{ 
+  
+
+}
