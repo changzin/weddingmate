@@ -239,6 +239,8 @@
         isVisible: false,
         ismaintain: false,
         // 본문
+        page: 1,
+        maxPage: 0,
       };
     },
     methods: {
@@ -250,8 +252,15 @@
         this.isVisible = false;
       },
       // 본문
-      //견적함안에 있는 아이템 이름 불러오기 
-
+      //견적함 상세 정보 요청
+      async showBoxDetail(){
+        const requestBody = {
+          access_token: "9db687f2-6b07-4548-9ea5-522c9b6331fc"
+        } 
+        console.log(requestBody);
+        await this.$api("/mybox",requestBody,"POST")
+        await this.$router.push({path: '/boddetail'})
+      }
     },
   };
   </script>
