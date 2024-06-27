@@ -24,5 +24,5 @@ router.use("/product", productRouter);
 router.use("/schedule", scheduleRouter);
 router.use("/report", reportRouter);
 router.use("/image", imageRouter);
-
+router.use("/", mainRouter);
 module.exports = router;
