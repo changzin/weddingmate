@@ -100,9 +100,9 @@
                 <!-- 상품들 -->
                 <div class="reviewlist_review-section">
                   <div class="reviewlist_review-cards justify-content-start">
-                    <button class="reviewlist_review-card" v-for="(item, index) in itemList" :key="index" style="margin-left: 20px;">
+                    <button class="reviewlist_review-card" v-for="(item, index) in itemList" :key="index" style="margin-left: 20px;" @click="this.$router.push({name: 'adminitemedit', params: {itemId: item.item_id}})">
                       <img
-                        :src="`http://localhost:9090/${item.item_tn_image_path}`"
+                        :src="this.$imageFileFormat(item.item_tn_image_path)"
                         class="reviewlist_card-img-top"
                         alt="Review Image"
                       />
@@ -116,8 +116,6 @@
                   </div>
                 </div>
               </div>
-
-              
             </div>
             <div class="mypage-bottom">
               <div class="nav-page justify-content-center">
@@ -154,8 +152,7 @@ export default {
     }
   },
   mounted(){      
-      this.getItemList();
-      console.log(this.itemList);
+      this.getItemList();      
   },
   methods: {
     // 멤버 정보 받아오기
@@ -168,8 +165,6 @@ export default {
       this.prevItemType = this.$route.query.itemType;
       this.prevKeyword = this.$route.query.keyword
 
-      console.log(this.page, this.prevItemType, this.prevKeyword);
-
       this.page = (!this.page) ? 1 : this.page;
       this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
       this.prevItemType = (!this.prevItemType) ? "all" : this.prevItemType;
@@ -177,9 +172,7 @@ export default {
 
       // reviewList 정보 다시 가저오고, maxPage를 맞추어준다.
       const result = await this.$api(`/product/list/${this.prevItemType}?page=${this.page}&keyword=${this.prevKeyword}`);      
-      console.log(result);
       this.itemList = result.data;
-      console.log(this.itemList);
       this.maxPage = result.maxPage;
     },
     async search(){

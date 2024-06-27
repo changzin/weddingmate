@@ -92,7 +92,9 @@ export default{
             
             return year + "-" + month + "-" + date + " " + hour + ":" + min + ":" + sec;
         },
-
+        $imageFileFormat(image_path){
+            return process.env.VUE_APP_SERVER_URL + '/' + image_path;
+        },
         // 숫자를 한국 단위로 점을 찍어준다.
         $numberFormat(value, format = '#,###') {
             if (value == 0 || value == null) return 0;

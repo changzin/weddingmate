@@ -14,7 +14,7 @@ import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import MemberList from '../views/admin/MemberList'
 import AdminAnswer from '../views/admin/AdminAnswer.vue'
 import AdminItemAdd from '../views/admin/AdminItemAdd.vue'
-// import AdminItemEdit from '../views/admin/AdminItemEdit.vue'
+import AdminItemEdit from '../views/admin/AdminItemEdit.vue'
 import AdminItemList from '../views/admin/AdminItemList.vue'
 import AdminQna from '../views/admin/AdminQna.vue'
 import AdminReview from '../views/admin/AdminReview.vue'
@@ -115,11 +115,11 @@ const routes = [
     name: 'adminitemadd',
     component: AdminItemAdd
   },
-  // {
-  //   path: '/admin/itemedit',
-  //   name: 'adminitemedit',
-  //   component: AdminItemEdit
-  // },
+  {
+    path: '/admin/itemedit/:itemId',
+    name: 'adminitemedit',
+    component: AdminItemEdit
+  },
   {
     path: '/admin/qna',
     name: 'adminqna',
