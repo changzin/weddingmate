@@ -210,7 +210,7 @@
           <a href="/mypage">
             마이페이지로
           </a>
-    </button>
+        </button>
     </div>
 </div>
     
