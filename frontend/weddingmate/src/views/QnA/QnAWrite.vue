@@ -1,237 +1,139 @@
 <template>
-<div>
-  <!-- 헤더 아래 script랑 <style scoped>까지 다 복붙해서 사용-->
-  <div class="common-header">
-    <!-- 로그인 + 회원가입 + 로고 -->
-    <header class="bg-light productdetail_padding_0">
-      <!-- 로그인 회원가입 -->
-      <div
-        class="container d-flex justify-content-end align-items-center"
-        id="common__login-div-padding"
-      >
-        <nav class="navbar-light">
-          <div class="" id="navbarNav">
-            <ul class="navbar-nav flex-row">
-              <li class="nav-item" id="common__header-login-padding">
-                <a href="#">로그인</a>
-              </li>
-              <li class="nav-item">
-                <a href="#">회원가입</a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-      </div>
-      <!-- 로고 -->
-      <div class="text-center">
-        <a class="navbar-brand" href="#">
-          <img src="https://via.placeholder.com/200x50" alt="Logo" />
-        </a>
-      </div>
-    </header>
-    <!-- 카테고리 + 이미지 -->
-    <nav
-      class="common-header_navbar navbar-light bg-light"
-      id="common_main-banner_div"
-      @mouseleave="hideCategories"
-    >
-      <div class="common-header_overlay">
-        <div class="common-header_overlay-content">
-          <!-- 대카테고리 -->
-          <ul class="common-header_nav" @mouseover="showCategories">
-            <li class="common-header_main-title">웨딩홀</li>
-            <li class="common-header_main-title">스드메</li>
-            <li class="common-header_main-title">혼수</li>
-            <li class="common-header_main-title">본식</li>
-            <li class="common-header_main-title">촬영팀</li>
-          </ul>
-          <!-- 이미지랑 소카테고리 -->
-          <div class="common-header_image-smallcategory">
-            <!-- 이미지 -->
-            <section class="productdetail_main-image-section">
-              <img
-                src="https://via.placeholder.com/1980x500"
-                class="img-fluid w-100"
-                alt="Main Image"
-              />
-            </section>
+  <div>
+    <!-- 헤더 아래 script랑 <style scoped>까지 다 복붙해서 사용-->
+    <MateHeader />
 
-            <!-- 소카테고리 -->
-            <div class="common-header_categories" v-if="isVisible">
-              <div class="common-header_smallcategory-area">
-                <div class="common-header_category">
-                  <ul>
-                    <li>추천 리스트</li>
-                    <li>웨딩홀 목록</li>
-                  </ul>
-                </div>
-                <div class="common-header_category">
-                  <ul>
-                    <li>독립 패키지</li>
-                    <li>스튜디오</li>
-                    <li>드레스</li>
-                    <li>메이크업</li>
-                  </ul>
-                </div>
-                <div class="common-header_category">
-                  <ul>
-                    <li>예복</li>
-                    <li>예물</li>
-                    <li>가전</li>
-                    <li>혼수 패키지</li>
-                  </ul>
-                </div>
-                <div class="common-header_category">
-                  <ul>
-                    <li>본식스냅</li>
-                    <li>영상</li>
-                    <li>부케</li>
-                    <li>연주</li>
-                    <li>사회자</li>
-                    <li>웨딩슈즈</li>
-                    <li>답례품</li>
-                    <li>청첩장</li>
-                  </ul>
-                </div>
-                <div class="common-header_category">
-                  <ul>
-                    <li>스냅</li>
-                    <li>본식</li>
-                    <li>제주도 야외</li>
-                    <li>고급 스튜디오 촬영</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+    <!-- 본문 -->
+    <div class="qnawrite_container">
+      <h2 class="qnawrite_header">Q&amp;A 작성</h2>
+      <form @submit.prevent="handleSubmit">
+        <div class="qnawrite_row">
+          <label class="qnawrite_label">문의 유형</label>
+          <select
+            class="form-select qnawrite_chip"
+            v-model="form.inquiryType"
+            :style="{ color: '#555555' }"
+            required
+          >
+            <option value="" disabled>선택하세요</option>
+            <option value="상품">상품</option>
+            <option value="배송">배송</option>
+            <option value="반품/취소">반품/취소</option>
+            <option value="기타">기타</option>
+          </select>
+          <label class="qnawrite_label qnawrite_label_margin">공개 유형</label>
+          <select
+            class="form-select qnawrite_chip"
+            v-model="form.visibilityType"
+            :style="{ color: '#555555' }"
+            required
+          >
+            <option value="" disabled>선택하세요</option>
+            <option value="공개">공개</option>
+            <option value="비공개">비공개</option>
+          </select>
+        </div>
+        <div class="qnawrite_row">
+          <label class="qnawrite_label">제목</label>
+          <div class="qnawrite_chip">
+            <input
+              type="text"
+              class="qnawrite_input-title-content"
+              v-model="form.title"
+              placeholder="문의 제목을 입력하세요"
+              required
+            />
+            <button
+              type="button"
+              class="qnawrite_chip-close"
+              @click="clearTitle"
+            >
+              ×
+            </button>
           </div>
         </div>
-      </div>
-    </nav>
-  </div>
+        <div class="qnawrite_row">
+          <label class="qnawrite_label">문의 내용</label>
+          <div class="qnawrite_chip qnawrite_chip-content">
+            <textarea
+              class="qnawrite_input-title-content"
+              v-model="form.content"
+              placeholder="문의 내용을 입력하세요"
+              required
+            ></textarea>
+            <button
+              type="button"
+              class="qnawrite_chip-close"
+              @click="clearContent"
+            >
+              ×
+            </button>
+          </div>
+        </div>
 
-  <!-- 본문 -->
-  <div class="qnawrite_container">
-    <h2 class="qnawrite_header">Q&amp;A 작성</h2>
-    <form @submit.prevent="handleSubmit">
-      <div class="qnawrite_row">
-        <label class="qnawrite_label">문의 유형</label>
-        <select
-          class="form-select qnawrite_chip"
-          v-model="form.inquiryType"
-           :style="{color: '#555555'}"
-          required
-        >
-          <option value="" disabled>선택하세요</option>
-          <option value="상품">상품</option>
-          <option value="배송">배송</option>
-          <option value="반품/취소">반품/취소</option>
-          <option value="기타">기타</option>
-        </select>
-        <label class="qnawrite_label qnawrite_label_margin">공개 유형</label>
-        <select
-          class="form-select qnawrite_chip"
-          v-model="form.visibilityType"
-          :style="{color: '#555555'}"
-          required
-        >
-          <option value="" disabled>선택하세요</option>
-          <option value="공개">공개</option>
-          <option value="비공개">비공개</option>
-        </select>
-      </div>
-      <div class="qnawrite_row">
-        <label class="qnawrite_label">제목</label>
-        <div class="qnawrite_chip">
+        <div class="qnawrite_row">
+          <label class="qnawrite_label">이미지 등록</label>
           <input
             type="text"
-            class="qnawrite_input-title-content"
-            v-model="form.title"
-            placeholder="문의 제목을 입력하세요"
-            required
+            class="qnawrite_input"
+            v-model="form.image"
+            placeholder="이미지 등록"
+            readonly
           />
-          <button type="button" class="qnawrite_chip-close" @click="clearTitle">
-            ×
-          </button>
-        </div>
-      </div>
-      <div class="qnawrite_row">
-        <label class="qnawrite_label">문의 내용</label>
-        <div class="qnawrite_chip qnawrite_chip-content">
-          <textarea
-            class="qnawrite_input-title-content"
-            v-model="form.content"
-            placeholder="문의 내용을 입력하세요"
-            required
-          ></textarea>
+          <input
+            type="file"
+            ref="fileInput"
+            @change="handleFileChange"
+            accept="image/*"
+            style="display: none"
+          />
           <button
             type="button"
-            class="qnawrite_chip-close"
-            @click="clearContent"
+            class="qnawrite_button"
+            style="color: #555555"
+            @click="triggerFileInput"
           >
-            ×
+            파일찾기
           </button>
         </div>
-      </div>
 
-
-      <div class="qnawrite_row">
-        <label class="qnawrite_label">이미지 등록</label>
-        <input
-          type="text"
-          class="qnawrite_input"
-          v-model="form.image"
-          placeholder="이미지 등록"
-          readonly
-        />
-        <input
-          type="file"
-          ref="fileInput"
-          @change="handleFileChange"
-          accept="image/*"
-          style="display: none"
-        />
-        <button type="button" class="qnawrite_button" style="color: #555555;" @click="triggerFileInput">
-          파일찾기
-        </button>
-      </div>
-
-      <div class="qnawrite_actions">
-        <button
-          type="button"
-          class="qnawrite_button qnawrite_cancel"
-          @click="handleCancel"
-        >
-          취소
-        </button>
-        <button type="submit" class="qnawrite_button qnawrite_submit">
-          확인
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <!-- 푸터 -->
-  <footer class="common__footer">
-    <div class="common__footer-content">
-      <nav class="common__footer-nav">
-        <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-        <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-        <a href="#">제휴문의</a> |
-        <a href="#">광고문의</a>
-      </nav>
-      <div class="common__footer-details">
-        <p style="margin-bottom: 0px">
-          (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-          02-123-1234 팩스: 02-111-2222
-        </p>
-
-        <p>
-          해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-          민원담당자에게 있습니다. 민원담당자: 강문정
-        </p>
-      </div>
+        <div class="qnawrite_actions">
+          <button
+            type="button"
+            class="qnawrite_button qnawrite_cancel"
+            @click="handleCancel"
+          >
+            취소
+          </button>
+          <button type="submit" class="qnawrite_button qnawrite_submit">
+            확인
+          </button>
+        </div>
+      </form>
     </div>
-  </footer>
+
+    <!-- 푸터 -->
+    <footer class="common__footer">
+      <div class="common__footer-content">
+        <nav class="common__footer-nav">
+          <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
+          <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
+          <a href="#">제휴문의</a> |
+          <a href="#">광고문의</a>
+        </nav>
+        <div class="common__footer-details">
+          <p style="margin-bottom: 0px">
+            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
+            02-123-1234 팩스: 02-111-2222
+          </p>
+
+          <p>
+            해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
+            민원담당자에게 있습니다. 민원담당자: 강문정
+          </p>
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -255,18 +157,27 @@ export default {
       },
     };
   },
-  methods: {
-    // 헤더
-    showCategories() {
-      this.isVisible = true;
+
+  props: {
+    item_id: {
+      type: String,
+      required: true,
     },
-    hideCategories() {
-      this.isVisible = false;
+  },
+
+  async created() {
+    await this.fetchProductListData();
+  },
+
+  methods: {
+    async fetchProductListData() {
+      if (!this.$verifiedUser()) {
+        alert("로그인하세요");
+      }
     },
 
-    // 본문
     // 확인 버튼 클릭 시 동작
-    handleSubmit() {
+    async handleSubmit() {
       if (
         !this.form.title ||
         !this.form.content ||
@@ -276,12 +187,52 @@ export default {
         alert("모든 필드를 입력하세요.");
         return;
       }
-      this.$router.push("/success-page");
+      try {
+
+        // 데이터 가져오기
+        // qna_id, user_id, item_id, qna_type, qna_content, qna_title, qna_date, qna_image_path, qna_has_answer, qna_visibility
+        // 결과 : this.form.qna_visibility :  공개
+        if(this.form.visibilityType === "공개")
+        {
+          this.form.visibilityType = 'T'
+        }
+        else {
+          this.form.visibilityType = 'F'
+        }
+
+
+        console.log("this.form.qna_visibility : ", this.form.visibilityType);
+        const result = await this.$api(
+          "/qna/insertqna",
+          {
+            access_token: "temp-token",
+            item_id: this.item_id,
+            qna_type: this.form.inquiryType,
+            qna_content: this.form.content,
+            qna_title: this.form.title,
+            qna_visibility: this.form.visibilityType,
+            qna_image_path: this.form.image,
+          },
+          "POST"
+        );
+        if(result.status == 200) {
+          alert("완료됨");
+      this.$router.push({ name: "qnAlist", query: { item_id: this.item_id } });
+        }
+        
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
+      }
+
+      // this.$router.push("/success-page");
     },
 
     // 취소 버튼 클릭 시 동작
     handleCancel() {
-      alert("취소되었습니다.");
+      this.$router.go(-1);
     },
 
     // 제목 X 버튼 클릭 시 동작
@@ -470,7 +421,6 @@ export default {
   border: none;
   outline: none;
   background: transparent;
-  
 }
 
 .qnawrite_chip-close {
@@ -507,10 +457,9 @@ export default {
 }
 
 .qnawrite_button.qnawrite_submit {
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
   color: #555555;
-  border: 1px solid #F7CAC9;
-
+  border: 1px solid #f7cac9;
 }
 
 .qnawrite_actions {
@@ -529,7 +478,7 @@ export default {
   background: transparent;
   width: 100%;
   height: 100%;
-  resize: none; 
+  resize: none;
 }
 
 /* 푸터 */

@@ -225,7 +225,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- 물건담기 -->                  <div class="productdetail_button-container">
+                  <!-- 물건담기 -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -464,7 +465,7 @@
                   <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
-                        type="button"
+                      type="button"
                       @click="savetoBookmark"
                     >
                       <i class="far fa-heart"></i>
@@ -736,7 +737,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->                  <div class="productdetail_button-container">
+                  <!-- </div> -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -959,7 +961,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->                  <div class="productdetail_button-container">
+                  <!-- </div> -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -1121,7 +1124,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- 물건담기 -->                  <div class="productdetail_button-container">
+                  <!-- 물건담기 -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -1355,7 +1359,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->                  <div class="productdetail_button-container">
+                  <!-- </div> -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -1583,7 +1588,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->                  <div class="productdetail_button-container">
+                  <!-- </div> -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -1947,7 +1953,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->                  <div class="productdetail_button-container">
+                  <!-- </div> -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -2182,7 +2189,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- 물건담기 -->                  <div class="productdetail_button-container">
+                  <!-- 물건담기 -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -2401,7 +2409,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- </div> -->                  <div class="productdetail_button-container">
+                  <!-- </div> -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -2636,7 +2645,8 @@
                       </button>
                     </div>
                   </div>
-                  <!-- 물건담기 -->                  <div class="productdetail_button-container">
+                  <!-- 물건담기 -->
+                  <div class="productdetail_button-container">
                     <button
                       class="productdetail_icon-button"
                       type="button"
@@ -2977,29 +2987,59 @@
           />
         </div>
 
+        <!-- 신고 팝업창 -->
+
+        <div v-if="isVisibleReport" class="report-popup">
+        <!-- <div class="report-popup"> -->
+          <div class="report-popup_header">
+            <div></div>
+            <div>신고 팝업창</div>
+            <i
+              class="fas fa-times popupCloseButton"
+              @click="collapseReportPopup"
+            ></i>
+          </div>
+          <div class="report-popup_content">
+            <div class="report-popup_content_header">신고사유 :</div>
+            <textarea class="report-popup_content_input" v-model="reportContent"></textarea>
+            <div class="report-popup_content_footer">
+      <div class="report-popup_content_ok" @click="ToReport">전송</div>
+    </div>
+          </div>
+        </div>
+
         <!-- 리뷰 섹션 -->
         <div class="productdetail_review-section">
           <div class="productdetail_qna-header">
-            <h2 class="productdetail_qna-title">전체 리뷰 &gt;</h2>
+            <h2
+              class="productdetail_qna-title"
+              type="button"
+              @click="goToReviewList"
+            >
+              전체 리뷰 &gt;
+            </h2>
             <button class="productdetail_write-qna-btn">
               <i class="fas fa-pen"></i> 리뷰작성
             </button>
           </div>
 
           <div class="productdetail_review-cards justify-content-start">
-            <button
+            <div
               class="productdetail_review-card"
               v-for="(review, index) in reviewList"
               :key="index"
               style="margin-left: 20px"
+              @click="clickReview"
             >
-              fdsf
               <div class="productdetail_card-header">
                 <div class="productdetail_review-section_title-div">
                   {{ review.user_nickname }}
                 </div>
                 <div class="productdetail_card-icons">
-                  <i class="fas fa-bullhorn"></i>
+                  <i
+                    class="fas fa-bullhorn"
+                    @click="reviewToReport(review.review_id)"
+                  ></i>
                   <i class="fas fa-edit"></i>
                   <i class="fas fa-trash"></i>
                 </div>
@@ -3022,15 +3062,25 @@
                   {{ review.review_content }}
                 </p>
               </div>
-            </button>
+            </div>
           </div>
         </div>
 
         <!-- Q&A 섹션 -->
         <div class="productdetail_qna-section">
           <div class="productdetail_qna-header">
-            <h2 class="productdetail_qna-title">전체 QnA &gt;</h2>
-            <button class="productdetail_write-qna-btn">
+            <h2
+              class="productdetail_qna-title"
+              type="button"
+              @click="gotoQnAList"
+            >
+              전체 QnA &gt;
+            </h2>
+            <button
+              class="productdetail_write-qna-btn"
+              type="button"
+              @click="gotoQnaWrite"
+            >
               <i class="fas fa-pen"></i> QnA작성
             </button>
           </div>
@@ -3044,7 +3094,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(qna, index) in qnaList" :key="index">
+              <tr
+                v-for="(qna, index) in qnaList"
+                :key="index"
+                @click="gotoQnaDetail(qna.qna_id)"
+              >
                 <td>{{ this.formatQnaType(qna.qna_type) }}</td>
                 <td class="productdetail_qna-section_status-title-div">
                   <div
@@ -3164,8 +3218,13 @@ export default {
 
       selectedItemDetailId: null,
 
+      // 옵션
       Option2: {},
       Option3: {},
+
+      // 신고팝업
+      isVisibleReport: false,
+      reportContent: "",
     };
   },
 
@@ -3306,7 +3365,11 @@ export default {
 
     // - + 버튼 눌렀을 때 가격 계산
     increaseQuantity() {
-      this.quantity++;
+      if (this.quantity < this.visibleItemDetailQuantity) {
+        this.quantity++;
+      } else {
+        alert(`최대 수량은 ${this.visibleItemDetailQuantity}개 입니다.`);
+      }
     },
     decreaseQuantity() {
       if (this.quantity > 1) {
@@ -4526,7 +4589,7 @@ export default {
 
     // 물건 담기 버튼 눌렀을 때
     async insertItemIntoBox() {
-      if (!this.$dateFormat(this.dateRange.start)) {
+      if (!this.$dateFormat(this.dateRange.start) && this.showCustomOptions) {
         alert("캘린더 날짜를 선택해주세요");
       } else if (!this.selectedBoxId) {
         alert("견적함 박스를 선택해주세요");
@@ -4586,6 +4649,72 @@ export default {
           error
         );
       }
+    },
+
+    // 리뷰
+    async reviewToReport(review_id) {
+      (this.isVisibleReport = true),
+        console.log("reviewToReport : ", review_id);
+
+      try {
+        await this.$api(
+          "/review/reviewreport",
+          {
+            access_token: "temp-token",
+            review_id: this.review_id,
+          },
+          "POST"
+        );
+
+        // alert("상품 넣기 성공");
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
+      }
+    },
+
+    goToReviewList() {
+      this.$router.push({ name: "reviewlist" });
+    },
+
+    //신고
+    collapseReportPopup() {
+      this.isVisibleReport = false;
+    },
+
+    ToReport() {
+      if(this.reportContent == "")
+      {
+        alert("신고내용을 입력해주세요")
+      }
+
+    },
+
+    //QnA
+
+    gotoQnaWrite() {
+      this.$router.push({ name: "qnawrite", query: { item_id: this.item_id } });
+    },
+
+    async gotoQnaDetail(index) {
+      //  this.$router.push({ name: "qnadetail" });
+      const result = await this.$api(
+        "/qna/isselectedqnavisibility",
+        { access_token: "temp-token", qna_id: index },
+        "POST"
+      );
+      console.log("result.status : ", result.status);
+      if (result.status === 201) {
+        alert("비밀글입니다");
+      } else {
+        this.$router.push({ name: "qnadetail", query: { qna_id: index } });
+      }
+    },
+
+    gotoQnAList() {
+      this.$router.push({ name: "qnAlist", query: { item_id: this.item_id } });
     },
   },
 };
@@ -5066,6 +5195,10 @@ export default {
   background-color: #f7f7f7;
 }
 
+.productdetail_qna-table tbody tr {
+  cursor: pointer !important;
+}
+
 .productdetail_qna-status {
   display: inline-block;
   padding: 5px 10px;
@@ -5094,6 +5227,7 @@ export default {
   text-align: left;
 }
 
+/* 견적함 */
 .box-div_header {
   display: flex;
   margin-top: 30px;
@@ -5155,6 +5289,74 @@ export default {
   background-color: white;
   padding-left: 20px;
   margin-bottom: 10px;
+}
+
+.report-popup {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+
+  padding: 20px;
+  /* visibility: collapse; */
+  flex-direction: column;
+}
+
+.report-popup_header {
+  display: flex;
+  align-items: center; /* Vertically centers the content */
+  height: 50px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.popupCloseButton {
+  cursor: pointer;
+}
+
+.report-popup_content {
+  width: 100%;
+  flex-grow: 1; /* This makes the content take up the remaining space */
+  display: flex;
+  flex-direction: column;
+}
+.report-popup_content_header {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.report-popup_content_input {
+  width: 100%;
+  flex-grow: 1;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.report-popup_content_footer {
+  display: flex;
+  justify-content: center; /* 버튼을 가운데 정렬 */
+  
+  
+}
+
+
+.report-popup_content_ok {
+  margin-top: 10px;
+  border: 1px solid black;
+  border-radius: 12px;
+  display: flex;
+  width: 70px;
+   justify-content: center;
+   padding : 10px;
+  cursor: pointer;
+
 }
 
 /* 푸터 */

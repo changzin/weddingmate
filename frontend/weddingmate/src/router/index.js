@@ -52,23 +52,29 @@ const routes = [
   {
     path: '/qnawrite',
     name: 'qnawrite',
-    component: QnAWrite
+    component: QnAWrite,
+    props: route => ({ item_id: route.query.item_id })
   },
   {
     path: '/qnamodify',
     name: 'qnamodify',
-    component: QnAModify
+    component: QnAModify,
+    props: route => ({ qna_id: route.query.qna_id })
   }
   ,
   {
     path: '/qnadetail',
     name: 'qnadetail',
-    component: QnADetail
+    component: QnADetail,
+    props: route => ({ qna_id: route.query.qna_id }),
+    
   },
+
   {
     path: '/qnAlist',
     name: 'qnAlist',
-    component: QnAList
+    component: QnAList,
+    props: route => ({ item_id: route.query.item_id })
   },
   {
     path: '/userlogin',

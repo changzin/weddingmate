@@ -57,3 +57,35 @@ exports.adminLoginCheck = async(req,res, next)=>{
         res.json(responseBody);      
     }
 }
+
+exports.loginFilter = async(req,res, next)=>{
+
+    /*
+    exports. 다른 페이지에서도 쓸 수 있게 해줌
+    
+    
+    */
+        try{
+            const accessToken = req.body.access_token;
+            query = "SELECT user_id FROM user WHERE user_access_token = ?";
+            result = await db(query, [accessToken]);
+            const userId = result[0].user_id;
+    
+            if (userId){
+                req.body.user_id = userId;
+                next();
+            }
+            else{
+                req.body.user_id = null;
+                next();
+            }
+        }
+        catch(err){
+            console.error(err);
+            responseBody = {
+                status: 400,
+                message: "로그인 상태가 아닙니다."
+            };
+            res.json(responseBody);      
+        }
+    }

@@ -1,113 +1,7 @@
 <template>
   <div>
     <!-- 헤더 아래 script랑 <style scoped>까지 다 복붙해서 사용-->
-    <div class="common-header">
-      <!-- 로그인 + 회원가입 + 로고 -->
-      <header class="bg-light qnalist_padding_0">
-        <!-- 로그인 회원가입 -->
-        <div
-          class="container d-flex justify-content-end align-items-center"
-          id="common__login-div-padding"
-        >
-          <nav class="navbar-light">
-            <div class="" id="navbarNav">
-              <ul class="navbar-nav flex-row">
-                <li class="nav-item" id="common__header-login-padding">
-                  <a href="#">로그인</a>
-                </li>
-                <li class="nav-item">
-                  <a href="#">회원가입</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-        <!-- 로고 -->
-        <div class="text-center">
-          <a class="navbar-brand" href="#">
-            <img src="https://via.placeholder.com/200x50" alt="Logo" />
-          </a>
-        </div>
-      </header>
-      <!-- 카테고리 + 이미지 -->
-      <nav
-        class="common-header_navbar navbar-light bg-light"
-        id="common_main-banner_div"
-        @mouseleave="hideCategories"
-      >
-        <div class="common-header_overlay">
-          <div class="common-header_overlay-content">
-            <!-- 대카테고리 -->
-            <ul class="common-header_nav" @mouseover="showCategories">
-              <li class="common-header_main-title">웨딩홀</li>
-              <li class="common-header_main-title">스드메</li>
-              <li class="common-header_main-title">혼수</li>
-              <li class="common-header_main-title">본식</li>
-              <li class="common-header_main-title">촬영팀</li>
-            </ul>
-            <!-- 이미지랑 소카테고리 -->
-            <div class="common-header_image-smallcategory">
-              <!-- 이미지 -->
-              <section class="qnalist_main-image-section">
-                <img
-                  src="https://via.placeholder.com/1980x500"
-                  class="img-fluid w-100"
-                  alt="Main Image"
-                />
-              </section>
-
-              <!-- 소카테고리 -->
-              <div class="common-header_categories" v-if="isVisible">
-                <div class="common-header_smallcategory-area">
-                  <div class="common-header_category">
-                    <ul>
-                      <li>추천 리스트</li>
-                      <li>웨딩홀 목록</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>독립 패키지</li>
-                      <li>스튜디오</li>
-                      <li>드레스</li>
-                      <li>메이크업</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>예복</li>
-                      <li>예물</li>
-                      <li>가전</li>
-                      <li>혼수 패키지</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>본식스냅</li>
-                      <li>영상</li>
-                      <li>부케</li>
-                      <li>연주</li>
-                      <li>사회자</li>
-                      <li>웨딩슈즈</li>
-                      <li>답례품</li>
-                      <li>청첩장</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>스냅</li>
-                      <li>본식</li>
-                      <li>제주도 야외</li>
-                      <li>고급 스튜디오 촬영</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
+    <MateHeader />
 
     <!-- 본문 -->
     <div class="qnalist_container">
@@ -123,12 +17,15 @@
               class="qnalist_search-input"
               v-model="searchTitle"
               placeholder="제목을 입력하세요"
+              @keyup.enter="clickSearch"
             />
             <button class="qnalist_search-clear-button" @click="clearSearch">
               ×
             </button>
           </div>
-          <button class="qnalist_search-button">검색</button>
+          <button class="qnalist_search-button" @click="clickSearch">
+            검색
+          </button>
         </div>
         <div class="qnalist_search-results">
           <span>검색결과</span>
@@ -136,30 +33,17 @@
         </div>
       </div>
 
-      <!-- <div class="qnalist_search">
-        <div>검색</div>
-
-        <div class="qnalist_row">
-          <label class="qnalist_label">제목</label>
-          <div class="qnalist_chip">
-            <input
-              type="text"
-              class="qnalist_input-title-content"
-              placeholder="문의 제목을 입력하세요"
-            />
-            <button type="button" class="qnalist_chip-close">×</button>
-          </div>
-        </div>
-
-         <button class="qnalist_search_button">
-            확인
-          </button>
-      </div> -->
-
       <!-- QnA -->
       <div class="qnalist_qna-section">
         <div class="qnalist_qna-header">
           <h2 class="qnalist_qna-title">전체 QnA &gt;</h2>
+          <button
+            class="qnalist_write-qna-btn"
+            type="button"
+            @click="gotoQnaWrite"
+          >
+            <i class="fas fa-pen"></i> QnA 작성
+          </button>
         </div>
         <!-- QnA 데이터 -->
         <table class="qnalist_qna-table">
@@ -172,40 +56,74 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="n in 22" :key="n">
-              <td>반품/취소</td>
-              <td class="qnalist_qna-section_status-title-div">
-                <div class="qnalist_qna-status">답변 완료</div>
+            <tr
+              v-for="(qna, index) in qnaList"
+              :key="index"
+              @click="gotoQnaDetail(qna.qna_id)"
+            >
+              <td>{{ this.formatQnaType(qna.qna_type) }}</td>
+              <td class="productdetail_qna-section_status-title-div">
+                <div
+                  class="productdetail_qna-status"
+                  v-if="qna.qna_has_answer == 'T'"
+                >
+                  답변 완료
+                </div>
+                <div
+                  class="productdetail_qna-status incomplete"
+                  v-if="qna.qna_has_answer == 'F'"
+                >
+                  미완료
+                </div>
                 <div>
-                  일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육칠팔구십
+                  {{ qna.qna_title }} {{ qna.qna_title }}
+                  <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
                 </div>
               </td>
-              <td>일이삼사오육칠팔구십일이</td>
-              <td>2024-06-11 15:54</td>
-            </tr>
-            <tr v-for="n in 1" :key="n">
-              <td>배송문의</td>
-              <td class="qnalist_qna-section_status-title-div">
-                <div class="qnalist_qna-status incomplete">미완료</div>
-                <div>미완료 UI 보려고 하나 더 만듦</div>
+              <td class="productdetail_qna-section_status-nickname-div">
+                {{ qna.user_nickname }}
               </td>
-              <td>일이삼사오육칠팔구십일이</td>
-              <td>2024-06-11 15:54</td>
+              <td>{{ this.$dateFormat(qna.qna_date) }}</td>
             </tr>
           </tbody>
         </table>
         <!-- 버튼 -->
-        <div class="qnalist_qna-section_button">
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 작성
-          </button>
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 수정
-          </button>
-          <button class="qnalist_write-qna-btn">
-            <i class="fas fa-pen"></i> QnA 삭제
-          </button>
-        </div>
+        <div class="qnalist_qna-section_button"></div>
+      </div>
+    </div>
+    <div class="mypage-bottom">
+      <div class="nav-page justify-content-center">
+        <a :class="{ notVisible: page == 1 }" @click="prevBlock()"
+          ><div>&lt;&lt;</div></a
+        >
+        <a :class="{ notVisible: page == 1 }" @click="prevPage()"
+          ><div>&lt;</div></a
+        >
+        <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"
+          ><div>{{ page - 2 }}</div></a
+        >
+        <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"
+          ><div>{{ page - 1 }}</div></a
+        >
+        <a
+          ><div style="color: pink">{{ page }}</div></a
+        >
+        <a
+          :class="{ notVisible: page + 1 > maxPage }"
+          @click="goToPage(page + 1)"
+          ><div>{{ page + 1 }}</div></a
+        >
+        <a
+          :class="{ notVisible: page + 2 > maxPage }"
+          @click="goToPage(page + 2)"
+          ><div>{{ page + 2 }}</div></a
+        >
+        <a :class="{ notVisible: page == maxPage }" @click="nextPage()"
+          ><div>&gt;</div></a
+        >
+        <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"
+          ><div>&gt;&gt;</div></a
+        >
       </div>
     </div>
 
@@ -245,21 +163,165 @@ export default {
       ismaintain: false,
       searchTitle: "",
       searchCount: 0,
+
+      // 페이지
+      page: 1,
+      productList: [],
+      isFirstPage: false,
+      isLastPage: false,
+      maxPage: 0,
+
+      qnaList: {},
     };
   },
-  methods: {
-    // 헤더
-    showCategories() {
-      this.isVisible = true;
+
+  computed: {
+    paginationRange() {
+      const range = [];
+      const startPage = Math.max(1, this.page - 2);
+      const endPage = Math.min(this.maxPage, this.page + 2);
+
+      for (let i = startPage; i <= endPage; i++) {
+        range.push(i);
+      }
+      return range;
     },
-    hideCategories() {
-      this.isVisible = false;
+  },
+
+  props: {
+    item_id: {
+      type: String,
+      required: true,
+    },
+  },
+
+  async created() {
+    await this.fetchProductListData();
+  },
+
+  methods: {
+    async fetchProductListData() {
+      try {
+        const QnAResult = await this.$api(
+          `/qna/searchitemdetail/${this.item_id}?page=${this.page}`,
+          { qna_title: this.searchTitle },
+          "POST"
+        );
+
+        if (QnAResult.status == 200) {
+          this.qnaList = QnAResult.qnaList;
+          this.maxPage = QnAResult.maxPage;
+          console.log("maxPage : ", this.maxPage);
+          this.updatePageStatus();
+        }
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
+      }
     },
 
-    // 본문
-    // 검색
     clearSearch() {
       this.searchTitle = "";
+    },
+
+    async clickSearch() {
+      console.log("this.searchTitle : ", this.searchTitle);
+      try {
+        const QnAResult = await this.$api(
+          `/qna/searchitemdetail/${this.item_id}?page=${this.page}`,
+          { qna_title: this.searchTitle },
+          "POST"
+        );
+
+        if (QnAResult.status == 200) {
+          this.qnaList = QnAResult.qnaList;
+          this.maxPage = QnAResult.maxPage;
+          console.log("maxPage : ", this.maxPage);
+          console.log(
+            "searchitemdetail: ",
+            JSON.parse(JSON.stringify(this.qnaList))
+          );
+          this.updatePageStatus();
+        }
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
+      }
+    },
+
+    // 페이지 네이션
+    async nextPage() {
+      if (!this.isLastPage) {
+        this.page++;
+        await this.fetchProductListData();
+      }
+    },
+
+    async prevPage() {
+      if (!this.isFirstPage) {
+        this.page--;
+        await this.fetchProductListData();
+      }
+    },
+
+    async goToPage(targetPage) {
+      if (targetPage >= 1 && targetPage <= this.maxPage) {
+        this.page = targetPage;
+        await this.fetchProductListData();
+      }
+    },
+
+    async prevBlock() {
+      let targetPage = this.page > 5 ? this.page - 5 : 1;
+      await this.goToPage(targetPage);
+    },
+
+    async nextBlock() {
+      let targetPage =
+        this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
+      await this.goToPage(targetPage);
+    },
+
+    updatePageStatus() {
+      this.isFirstPage = this.page === 1;
+      this.isLastPage = this.page === this.maxPage;
+    },
+
+    // QnA
+    gotoQnaWrite() {
+      this.$router.push({ name: "qnawrite", query: { item_id: this.item_id } });
+    },
+
+    async gotoQnaDetail(index) {
+
+
+      const result = await this.$api(
+        "/qna/isselectedqnavisibility",
+        { access_token: "temp-token", qna_id: index },
+        "POST"
+      );
+      console.log("result.status : ",result.status);
+      if (result.status === 201) {
+        alert("비밀글입니다");
+      } else {
+        this.$router.push({ name: "qnadetail", query: { qna_id: index } });
+      }
+    },
+
+    formatQnaType(data) {
+      if (data == "delivery") {
+        return "배송문의";
+      } else if (data == "cancel") {
+        return "반품/취소";
+      } else if (data == "item") {
+        return "상품문의";
+      } else {
+        return "기타";
+      }
     },
   },
 };
@@ -511,9 +573,6 @@ export default {
   align-items: center;
 }
 
-
-
-
 .qnalist_qna-section_button {
   padding: 0px 350px;
   display: flex;
@@ -522,14 +581,97 @@ export default {
   margin-top: 40px;
 }
 
+/* 엥 */
+.productdetail_qna-section {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  margin-top: 70px;
+  /* background-color: green; */
+  font-size: 14px;
+  text-align: center;
+}
 
+.productdetail_qna-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0px;
+}
 
+.productdetail_qna-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
 
+.productdetail_write-qna-btn {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
+.productdetail_write-qna-btn i {
+  margin-right: 8px;
+}
 
+.productdetail_qna-table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
+.productdetail_qna-table th,
+.productdetail_qna-table td {
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+}
 
+.productdetail_qna-table th {
+  background-color: #f7f7f7;
+}
 
+.productdetail_qna-table tbody tr {
+  cursor: pointer !important;
+}
+
+.productdetail_qna-status {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  width: 90px;
+}
+
+.productdetail_qna-status.incomplete {
+  background-color: white;
+  color: #007bff;
+  border: 1px solid #007bff;
+  width: 90px;
+  padding: 5px 10px;
+}
+
+.productdetail_qna-section_status-title-div {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  /* justify-content: center; */
+}
+
+.productdetail_qna-section_status-nickname-div {
+  text-align: left;
+}
+
+/* 페이지 */
+
+.notVisible {
+  visibility: hidden;
+}
 /* 푸터 */
 .common__footer {
   background-color: #333333;
@@ -564,5 +706,26 @@ export default {
 .common__footer-details {
   text-align: center;
   font-size: 14px;
+}
+
+.mypage-bottom {
+  display: grid;
+  place-items: center;
+}
+.nav-page {
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(9, 25px);
+  margin-bottom: 30px;
+  color: #888888;
+}
+
+.mypage-back {
+  background-color: #888888;
+  color: white;
+  font-weight: bold;
+  border: none;
+  width: 120px;
+  height: 40px;
 }
 </style>
