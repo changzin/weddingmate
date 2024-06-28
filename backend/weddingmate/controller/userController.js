@@ -1,6 +1,7 @@
 const db = require("../util/db");
 const { encrypt, equals } = require('../util/wcrypt')
 const { v4  } = require('uuid')
+
 // 로그인 컨트롤러
 exports.login = async(req,res)=>{
     try{
@@ -84,6 +85,7 @@ exports.login = async(req,res)=>{
     }
 }
 
+// 유저 정보를 가져오는 컨트롤러이다.
 exports.info = async(req, res)=>{
     try{
         const accessToken = req.body.accessToken;

@@ -1,113 +1,7 @@
 <template>
   <div>
     <!-- 헤더 아래 script랑 <style scoped>까지 다 복붙해서 사용-->
-    <div class="common-header">
-      <!-- 로그인 + 회원가입 + 로고 -->
-      <header class="bg-light productdetail_padding_0">
-        <!-- 로그인 회원가입 -->
-        <div
-          class="container d-flex justify-content-end align-items-center"
-          id="common__login-div-padding"
-        >
-          <nav class="navbar-light">
-            <div class="" id="navbarNav">
-              <ul class="navbar-nav flex-row">
-                <li class="nav-item" id="common__header-login-padding">
-                  <a href="#">로그인</a>
-                </li>
-                <li class="nav-item">
-                  <a href="#">회원가입</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-        <!-- 로고 -->
-        <div class="text-center">
-          <a class="navbar-brand" href="#">
-            <img src="https://via.placeholder.com/200x50" alt="Logo" />
-          </a>
-        </div>
-      </header>
-      <!-- 카테고리 + 이미지 -->
-      <nav
-        class="common-header_navbar navbar-light bg-light"
-        id="common_main-banner_div"
-        @mouseleave="hideCategories"
-      >
-        <div class="common-header_overlay">
-          <div class="common-header_overlay-content">
-            <!-- 대카테고리 -->
-            <ul class="common-header_nav" @mouseover="showCategories">
-              <li class="common-header_main-title">웨딩홀</li>
-              <li class="common-header_main-title">스드메</li>
-              <li class="common-header_main-title">혼수</li>
-              <li class="common-header_main-title">본식</li>
-              <li class="common-header_main-title">촬영팀</li>
-            </ul>
-            <!-- 이미지랑 소카테고리 -->
-            <div class="common-header_image-smallcategory">
-              <!-- 이미지 -->
-              <section class="productdetail_main-image-section">
-                <img
-                  src="https://via.placeholder.com/1980x500"
-                  class="img-fluid w-100"
-                  alt="Main Image"
-                />
-              </section>
-
-              <!-- 소카테고리 -->
-              <div class="common-header_categories" v-if="isVisible">
-                <div class="common-header_smallcategory-area">
-                  <div class="common-header_category">
-                    <ul>
-                      <li>추천 리스트</li>
-                      <li>웨딩홀 목록</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>독립 패키지</li>
-                      <li>스튜디오</li>
-                      <li>드레스</li>
-                      <li>메이크업</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>예복</li>
-                      <li>예물</li>
-                      <li>가전</li>
-                      <li>혼수 패키지</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>본식스냅</li>
-                      <li>영상</li>
-                      <li>부케</li>
-                      <li>연주</li>
-                      <li>사회자</li>
-                      <li>웨딩슈즈</li>
-                      <li>답례품</li>
-                      <li>청첩장</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>스냅</li>
-                      <li>본식</li>
-                      <li>제주도 야외</li>
-                      <li>고급 스튜디오 촬영</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
+    <MateHeader />
 
     <!-- 본문 -->
     <div class="qnawrite_container">
@@ -145,7 +39,8 @@
             <input
               type="text"
               class="qnawrite_input-title-content"
-              v-model="form.title"
+              :value="form.title"
+              @input="updateTitle($event.target.value)"
               placeholder="문의 제목을 입력하세요"
               required
             />
@@ -249,11 +144,6 @@
 export default {
   data() {
     return {
-      // 헤더
-      isVisible: false,
-      ismaintain: false,
-
-      // 본문
       form: {
         inquiryType: "",
         visibilityType: "",
@@ -261,20 +151,68 @@ export default {
         content: "",
         image: "",
       },
+      QnAResult: {},
+      item_id: 0,
     };
   },
-  methods: {
-    // 헤더
-    showCategories() {
-      this.isVisible = true;
+
+  props: {
+    qna_id: {
+      type: String,
+      required: true,
     },
-    hideCategories() {
-      this.isVisible = false;
+  },
+
+  async created() {
+    await this.fetchProductListData();
+  },
+
+  methods: {
+    async fetchProductListData() {
+      try {
+        // 데이터 가져오기
+        const result = await this.$api(
+          "/qna/getselectedqnadetail",
+          { access_token: "temp-token", qna_id: this.qna_id },
+          "POST"
+        );
+        this.QnAResult = result.data[0];
+        if (this.QnAResult) {
+          console.log(
+            "QnAResult: ",
+            JSON.parse(JSON.stringify(this.QnAResult))
+          );
+          // form 객체 업데이트
+          this.form.title = this.QnAResult.qna_title;
+          this.form.content = this.QnAResult.qna_content;
+          this.form.image = this.QnAResult.qna_image_path;
+
+          this.form.inquiryType = this.QnAResult.qna_type;
+          this.form.visibilityType = this.QnAResult.qna_visibility;
+          if (this.QnAResult.qna_visibility === "T") {
+            this.form.visibilityType = "공개";
+          } else {
+            this.form.visibilityType = "비공개";
+          }
+
+          console.log("this.form.visibilityType : ", this.form.visibilityType);
+        } else {
+          console.log("fail");
+        }
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
+      }
     },
 
-    // 본문
+    updateTitle(value) {
+      this.form.title = value;
+    },
+
     // 확인 버튼 클릭 시 동작
-    handleSubmit() {
+    async handleSubmit() {
       if (
         !this.form.title ||
         !this.form.content ||
@@ -284,12 +222,49 @@ export default {
         alert("모든 필드를 입력하세요.");
         return;
       }
-      this.$router.push("/success-page");
+
+      try {
+        // 데이터 가져오기
+        // qna_id, user_id, item_id, qna_type, qna_content, qna_title, qna_date, qna_image_path, qna_has_answer, qna_visibility
+        // 결과 : this.form.qna_visibility :  공개
+        if (this.form.visibilityType === "공개") {
+          this.form.visibilityType = "T";
+        } else {
+          this.form.visibilityType = "F";
+        }
+
+        console.log("this.form.qna_visibility : ", this.form.visibilityType);
+        const result = await this.$api(
+          "/qna/updateselectedqnadetail",
+          {
+            qna_id: this.qna_id,
+            qna_type: this.form.inquiryType,
+            qna_content: this.form.content,
+            qna_title: this.form.title,
+            qna_visibility: this.form.visibilityType,
+            qna_image_path: this.form.image,
+          },
+          "POST"
+        );
+
+          if (result.status === 200) {
+          alert("입력이 성공적으로 완료되었습니다")
+          this.item_id = result.item_id; 
+          this.$router.push({ name: "qnAlist", query: { item_id: this.item_id }});
+        } 
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
+      }
     },
 
     // 취소 버튼 클릭 시 동작
     handleCancel() {
-      alert("취소되었습니다.");
+      
+      this.$router.go(-1);
+
     },
 
     // 제목 X 버튼 클릭 시 동작
@@ -537,9 +512,6 @@ export default {
   height: 100%;
   resize: none;
 }
-
-
-
 
 /* 푸터 */
 .common__footer {

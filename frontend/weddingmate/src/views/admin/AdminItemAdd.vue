@@ -265,15 +265,13 @@
                     <input class="admin_item_add_input" type="text" style="width: 200px;" v-model="item.item_detail_quantity">
                 </div>
             </div>
+            </div>
             <!-- 아무것도 없을 때 -->
             <div class="d-flex justify-content-center admin_item_add_big_gap" v-if="itemType=='giving_mechine' || itemType=='giving_package' || itemType=='video' || itemType == 'mc' || itemType=='letter'"  style="margin-bottom:30px;">
                 <div class="admin_item_add_row d-flex justify-content-center">
                     <div>적용 가능한 옵션이 없습니다.</div>
                 </div>
             </div>
-
-            </div>
-
             <div class="d-flex justify-content-center admin_item_add_big_gap" style="margin-top: 100px;">
                 <button type="button" class="admin_item_add_cancel_button" @click="this.$router.push({path: '/admin/itemlist'})" >취소</button>
                 <button type="button" class="admin_item_add_ok_button" style="margin-left:10px;" @click="createItem();">등록</button>
@@ -362,7 +360,6 @@ export default {
       await this.itemDetailList.splice(index, 1);
     },
     async createItem(){
-      console.log(this.itemTnImage);
 
       const requestBody = {
         access_token: this.$getAccessToken(),
@@ -380,7 +377,12 @@ export default {
         item_main_image_ext: this.itemMainImageExt
       }
       const result = await this.$api("/product/add", requestBody, "POST");
-      console.log(result);
+      if (result.status == 200){
+        alert("상품을 정상적으로 등록하였습니다.");
+      }
+      else{
+        alert("에러로 상품을 등록하지 못했습니다.");
+      }
       this.$router.push({path: "/admin/itemlist"});
     },
     async changeTnImage(file){

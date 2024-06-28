@@ -14,7 +14,7 @@ import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import MemberList from '../views/admin/MemberList'
 import AdminAnswer from '../views/admin/AdminAnswer.vue'
 import AdminItemAdd from '../views/admin/AdminItemAdd.vue'
-// import AdminItemEdit from '../views/admin/AdminItemEdit.vue'
+import AdminItemEdit from '../views/admin/AdminItemEdit.vue'
 import AdminItemList from '../views/admin/AdminItemList.vue'
 import AdminQna from '../views/admin/AdminQna.vue'
 import AdminReview from '../views/admin/AdminReview.vue'
@@ -52,23 +52,29 @@ const routes = [
   {
     path: '/qnawrite',
     name: 'qnawrite',
-    component: QnAWrite
+    component: QnAWrite,
+    props: route => ({ item_id: route.query.item_id })
   },
   {
     path: '/qnamodify',
     name: 'qnamodify',
-    component: QnAModify
+    component: QnAModify,
+    props: route => ({ qna_id: route.query.qna_id })
   }
   ,
   {
     path: '/qnadetail',
     name: 'qnadetail',
-    component: QnADetail
+    component: QnADetail,
+    props: route => ({ qna_id: route.query.qna_id }),
+    
   },
+
   {
     path: '/qnAlist',
     name: 'qnAlist',
-    component: QnAList
+    component: QnAList,
+    props: route => ({ item_id: route.query.item_id })
   },
   {
     path: '/userlogin',
@@ -115,11 +121,11 @@ const routes = [
     name: 'adminitemadd',
     component: AdminItemAdd
   },
-  // {
-  //   path: '/admin/itemedit',
-  //   name: 'adminitemedit',
-  //   component: AdminItemEdit
-  // },
+  {
+    path: '/admin/itemedit/:itemId',
+    name: 'adminitemedit',
+    component: AdminItemEdit
+  },
   {
     path: '/admin/qna',
     name: 'adminqna',

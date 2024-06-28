@@ -120,8 +120,6 @@ exports.userList = async (req, res)=>{
         }
         res.status(200);
 
-        console.log(count);
-        console.log(result);
         // maxPage를 같이 반환한다.
         responseBody = {
             maxPage: Math.ceil(count / 10),
@@ -180,7 +178,6 @@ exports.userUnblock = async(req, res)=>{
         const userId = req.body.user_id;
         const query = 'UPDATE user SET user_block="F" WHERE user_id=?';
 
-        console.log("userId", userId);
 
         let result = [];
         result = await db(query, [userId]);
@@ -230,7 +227,6 @@ exports.addProduct = async(req, res)=>{
 
         if (!itemList.find((element)=>{
             if (element == itemType){
-                console.log(element);
                 return true;
             }
         })){
@@ -269,7 +265,6 @@ exports.addProduct = async(req, res)=>{
                     }
                 }
                 keyList.sort();
-                console.log(keyList);
                 for(let j = 0; j < keyList.length; j++){
                     paramList.push(item[keyList[j]]);
                 }
@@ -289,11 +284,192 @@ exports.addProduct = async(req, res)=>{
         res.json(responseBody);
     }
     catch(err){
-        console.log(err);
+        console.error(err);
         responseBody = {
             status: 400,
             message: "상품을 추가할 수 없습니다."
         };
         res.json(responseBody);
+    }
+}
+
+exports.updateProduct = async (req, res)=>{
+    try{
+        const itemName = req.body.item_name;
+        const itemFactoryName = req.body.item_factory_name;
+        const itemPrice = Number(req.body.item_price);
+        const itemDiscountRate = Number(req.body.item_discount_rate);
+        const itemTnImagePath = req.body.item_tn_image_path;
+        const itemDetailImagePath = req.body.item_detail_image_path;
+        const itemMainImagePath = req.body.item_main_image_path;
+        const itemDetailList = req.body.item_detail_list;
+        const itemType = itemDetailList[0].item_detail_type;
+
+        const {item_tn_image_change, item_main_image_change, item_detail_image_change} = req.body;
+        const item_id = req.body.item_id;
+
+        const itemDetailDeletedList = req.body.item_detail_deleted_list;
+
+        let result;
+        let responseBody;
+        let query;
+
+        const itemList = ['hall', 'sdm_package', 'studio', 'dress', 'makeup', 'giving_dress', 'giving_item', 'giving_package', 'snap', 'video', 'flower', 'music', 'mc', 'shoes', 'gift', 'letter'];
+
+        if (!itemList.find((element)=>{
+            if (element == itemType){
+                return true;
+            }
+        })){
+            throw Error("지원하지 않는 물품 카테고리입니다");
+        }
+
+        // item 테이블 수정문
+        query = 'UPDATE ITEM SET item_factory_name=?, item_name=?, item_price=?, item_discount_rate=? WHERE item_id=?';
+        result = await db(query, [itemFactoryName, itemName, itemPrice, itemDiscountRate, item_id]);
+        if (result.affectedRows != 1){
+            throw Error("아이템을 수정할 수 없습니다.");
+        }
+        if (item_tn_image_change){
+            query = 'UPDATE ITEM SET item_tn_image_path=? WHERE item_id=?';
+            result = await db(query, [itemTnImagePath, item_id]);
+            if (result.affectedRows != 1){
+                throw Error("아이템을 수정할 수 없습니다.");
+            }
+        }
+        if (item_main_image_change){
+            query = 'UPDATE ITEM SET item_main_image_path=? WHERE item_id=?';
+            result = await db(query, [itemMainImagePath, item_id]);
+            if (result.affectedRows != 1){
+                throw Error("아이템을 수정할 수 없습니다.");
+            }
+        }
+        if (item_detail_image_change){
+            query = 'UPDATE ITEM SET item_detail_image_path=? WHERE item_id=?';
+            result = await db(query, [itemDetailImagePath, item_id]);
+            if (result.affectedRows != 1){
+                throw Error("아이템을 수정할 수 없습니다.");
+            }
+        }
+        // item_detail 처리부
+        // 상세옵션이 없는 것들은 바로 리턴
+        if (itemType=='giving_mechine' || itemType=='giving_package' || itemType=='video' || itemType == 'mc' || itemType=='letter'){
+            res.json({
+                status: 200,
+                message: "상품 수정 완료."     
+            });
+            return;
+        }
+        // 삭제된 옵션 제거
+        if (itemDetailDeletedList.length != 0){
+            for(let i = 0; i < itemDetailDeletedList.length; i++){
+                query = 'DELETE FROM item_detail WHERE item_detail_id=?';
+                result = await db(query, [itemDetailDeletedList[i]]);
+                if (result.affectedRows != 1){
+                    throw Error("아이템 옵션을 삭제할 수 없습니다.");
+                }
+            }
+        }
+        // 나머지 옵션 추가하거나 수정
+        for(let i = 0; i < itemDetailList.length; i++){
+            let item = itemDetailList[i];
+
+            let keyList = [];
+            let valueList = [];
+            let paramList = [];
+
+            // item_detail_id가 있으면 수정이고, 없으면 추가이다.
+
+            // 존재했던 옵션을 수정하는 부분
+            if (item.item_detail_id){
+                
+                for (let key in item){
+                    if (key != 'item_detail_lock' && key != 'item_detail_id' && key != 'item_id' && key != 'item_detail_type'){
+
+                        // ''로 DB에 들어가면 싫으니깐 null로 바꿔줌
+                        item[key] = (!item[key]) ? null : item[key];
+
+                        // 넣을 항목과 값들을 따로 리스트로 저장한다.
+                        valueList.push(item[key]);
+                        keyList.push(key);
+                    }
+                }
+                keyList.sort();
+                for(let j = 0; j < keyList.length; j++){
+                    paramList.push(item[keyList[j]]);
+                }
+                paramList.push(itemType);
+                paramList.push(item.item_detail_id);
+
+                query = 'UPDATE ITEM_DETAIL SET item_detail_color=?, item_detail_flower_life=?, item_detail_heel_height=?, item_detail_kind=?, item_detail_loc=?, item_detail_local=?, item_detail_makeup=?, item_detail_quality=?, item_detail_quantity=?, item_detail_size=?, item_detail_ticket=?, item_detail_type=? WHERE item_detail_id=?';
+                result = await db(query, paramList);
+                if (result.affectedRows != 1){
+                    throw Error("아이템을 수정할 수 없습니다.");
+                }
+            }
+            // 새 옵션을 넣는 부분임
+            else{
+                for (let key in item){
+                    if (key != 'item_detail_lock' && key != 'item_detail_type'){
+                        // ''로 DB에 들어가면 싫으니깐 null로 바꿔줌
+                        item[key] = (!item[key]) ? null : item[key];
+                        // 넣을 항목과 값들을 따로 리스트로 저장한다.
+                        valueList.push(item[key]);
+                        keyList.push(key);
+                    }
+                }
+                keyList.sort();
+                for(let j = 0; j < keyList.length; j++){
+                    paramList.push(item[keyList[j]]);
+                }
+                paramList.push(itemType);
+                paramList.push(item_id);
+                query = 'INSERT INTO ITEM_DETAIL(item_detail_color, item_detail_flower_life, item_detail_heel_height, item_detail_kind, item_detail_loc, item_detail_local, item_detail_makeup, item_detail_quality, item_detail_quantity, item_detail_size, item_detail_ticket, item_detail_type, item_id) values(?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                result = await db(query, paramList);
+                if (result.affectedRows != 1){
+                    throw Error("아이템을 추가할 수 없습니다.");
+                }
+            }
+        }
+        responseBody = {
+            status: 200,
+            message: "상품 수정 완료."
+        }
+        res.json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: "상품을 수정할 수 없습니다."
+        };
+        res.json(responseBody);        
+    }
+}
+
+exports.deleteProduct = async(req, res)=>{
+    let result;
+    let responseBody;
+    let query = "";
+
+    try{
+        query = "DELETE FROM item WHERE item_id=?";
+        result = await db(query, [req.body.item_id]);
+        if (result.affectedRows != 1){
+            throw Error("아이템을 추가할 수 없습니다.");
+        }
+        responseBody = {
+            status: 200,
+            message: "상품 삭제 완료하였습니다."
+        }
+        res.json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: "상품을 삭제할 수 없습니다."
+        };
+        res.json(responseBody);        
     }
 }

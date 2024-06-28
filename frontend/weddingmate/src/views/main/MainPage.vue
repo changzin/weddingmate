@@ -15,7 +15,7 @@
           <!-- 이미지는 추후에 등록 --> 
             <!-- 1번 -->
             <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
-              <img v-bind:src=" star.item_tn_image_path" alt="beststudioimage1" class="img-fluid">   
+              <img height="325" width="325" v-bind:src="`http://localhost:9090/${star.item_tn_image_path}`" alt="beststudioimage1">   
               <div class="main_card_title">
                     {{ star.item_name }}
               </div>
@@ -160,7 +160,7 @@
     },
     computed:{
       limitBestItem(){
-        return this.best_item.slice(0,8);
+        return this.best_item.slice(0,9);
       }
     },
     mounted(){
@@ -183,7 +183,7 @@
             const requestBody = {}
             console.log(requestBody);
             await this.$api("/bestItem",requestBody,"GET")
-            this.$router.push({push: "/"});
+            this.$router.push({path: "/"});
 
             //전송한 아이템 가져오기 
             const result = await this.$api(`http://localhost:9090/bestItem`)
