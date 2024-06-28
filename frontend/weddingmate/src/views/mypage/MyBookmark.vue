@@ -11,7 +11,7 @@
     </div>
     <div class="container-allselect">
       <input type="checkbox" v-model="selectAllChecked" @change="toggleAllSelection">
-            <div class="font-delete" @click="bookmarkDelete()">선택 상품 삭제</div>
+            <div class="font-delete" @click="bookmarkDelet()">선택 상품 삭제</div>
         </div>        
     <div class="container-middle">
       <div v-for="(bookmark, index) in bookmarkList" :key="index" class="container-content">
@@ -112,7 +112,7 @@ export default {
         item.checked = isChecked;
       });
     },
-    bookmarkDelete
+    // bookmarkDelete
   }
 };
 </script>

@@ -189,8 +189,12 @@ export default {
                 JSON.parse(JSON.stringify(this.AnswerResult))
               );
             }
-            this.AnswerContent = result.data.answer_content;
+            if(result.data.answer_content)
+            {
+
+              this.AnswerContent = result.data.answer_content;
             console.log("this.AnswerContent : ", this.AnswerContent);
+              }
           }
         } else {
           console.log("fail");
