@@ -1,8 +1,8 @@
 const express = require('express');
 const {productList, productDetail, BoxList, AddBox, InsertItemIntoBox, Bookmark} = require('../controller/productController');
 const { adminLoginCheck, loginCheck } = require('../middleware/login');
-const {addProduct, updateProduct} = require('../controller/adminController')
-const {upload, uploadUpdate} = require('../middleware/imageHandler');
+const {addProduct, updateProduct, deleteProduct} = require('../controller/adminController')
+const {upload, uploadUpdate, uploadDelete} = require('../middleware/imageHandler');
 
 const router = express.Router();
 
@@ -20,6 +20,8 @@ router.post('/insertitemintobox',loginCheck, InsertItemIntoBox);
 router.post('/add', adminLoginCheck, upload, addProduct);
 
 router.post('/update', adminLoginCheck, uploadUpdate, updateProduct);
+
+router.post('/delete', adminLoginCheck, uploadDelete, deleteProduct);
 
 router.post('/bookmark',loginCheck, Bookmark);
 

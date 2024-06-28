@@ -351,10 +351,7 @@ exports.updateProduct = async (req, res)=>{
                 throw Error("아이템을 수정할 수 없습니다.");
             }
         }
-
-
         // item_detail 처리부
-
         // 상세옵션이 없는 것들은 바로 리턴
         if (itemType=='giving_mechine' || itemType=='giving_package' || itemType=='video' || itemType == 'mc' || itemType=='letter'){
             res.json({
@@ -373,9 +370,6 @@ exports.updateProduct = async (req, res)=>{
                 }
             }
         }
-
-        
-
         // 나머지 옵션 추가하거나 수정
         for(let i = 0; i < itemDetailList.length; i++){
             let item = itemDetailList[i];
@@ -409,7 +403,6 @@ exports.updateProduct = async (req, res)=>{
 
                 query = 'UPDATE ITEM_DETAIL SET item_detail_color=?, item_detail_flower_life=?, item_detail_heel_height=?, item_detail_kind=?, item_detail_loc=?, item_detail_local=?, item_detail_makeup=?, item_detail_quality=?, item_detail_quantity=?, item_detail_size=?, item_detail_ticket=?, item_detail_type=? WHERE item_detail_id=?';
                 result = await db(query, paramList);
-                console.log(result);
                 if (result.affectedRows != 1){
                     throw Error("아이템을 수정할 수 없습니다.");
                 }
@@ -449,6 +442,33 @@ exports.updateProduct = async (req, res)=>{
         responseBody = {
             status: 400,
             message: "상품을 수정할 수 없습니다."
+        };
+        res.json(responseBody);        
+    }
+}
+
+exports.deleteProduct = async(req, res)=>{
+    let result;
+    let responseBody;
+    let query = "";
+
+    try{
+        query = "DELETE FROM item WHERE item_id=?";
+        result = await db(query, [req.body.item_id]);
+        if (result.affectedRows != 1){
+            throw Error("아이템을 추가할 수 없습니다.");
+        }
+        responseBody = {
+            status: 200,
+            message: "상품 삭제 완료하였습니다."
+        }
+        res.json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: "상품을 삭제할 수 없습니다."
         };
         res.json(responseBody);        
     }

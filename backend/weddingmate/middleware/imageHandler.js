@@ -214,6 +214,39 @@ exports.uploadUpdate = async(req, res, next)=>{
     }
 };
 
+exports.uploadDelete = async(req, res, next)=>{
+    console.log(req.body);
+    try{
+        let {prev_review_image_path, prev_qna_image_path, prev_item_main_image_path, prev_item_tn_image_path, prev_item_detail_image_path} = req.body;
+
+        if (req.body.upload_type=='review'){
+            if (prev_review_image_path){
+                deleteFile(prev_review_image_path, res);
+            }
+        }
+        else if (req.body.upload_type=='qna'){
+            if (prev_qna_image_path){
+                deleteFile(prev_qna_image_path, res);
+            }
+        }
+        else if (req.body.upload_type=='item'){
+            deleteFile(prev_item_tn_image_path, res);
+            deleteFile(prev_item_main_image_path, res);
+            deleteFile(prev_item_detail_image_path, res);
+        }
+        next();
+    }
+    catch(err){
+        console.error(err);
+        let responseBody = {
+            status: 400,
+            message: "이미지 파일을 삭제할 수 없습니다."
+        };
+        res.json(responseBody);  
+    }
+}
+
+
 function writeFile(files, res){
     // 파일을 여러개를 올리는 경우가 있어 배열로 하나씩 올리도록 만들었다.
     for(let i = 0; i < files.length; i++){
@@ -250,6 +283,6 @@ function getToday(){
 function deleteFile(imagePath, res){
     const fullPath = path.join(__dirname, `../uploads/${imagePath}`);
     fs.unlink(fullPath, (err)=>{
-        console.log(err);
+        console.error(err);
     });
 }
