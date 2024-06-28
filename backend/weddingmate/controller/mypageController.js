@@ -33,7 +33,22 @@ exports.bookmarkList = async(req, res) =>{
     }
 }
 
-exports.bookmarkDelete = async (req, res) => {
+exports.bookmarkDelete2 = async(req, res) =>{
+  try{
+
+    const user_id = req.body.user_id;
+
+    let result = [];
+    let query = "DELETE FROM bookmark"
+    let responseBody = [];
+
+  
+  } catch(err){
+    console.error(err);
+  }
+}
+
+exports.bookmarkDeleteC = async (req, res) => {
   try {
       const bookmarkIds = req.body.checkedbookmarkIds; // 클라이언트에서 전송된 체크된 북마크 ID들의 배열
 

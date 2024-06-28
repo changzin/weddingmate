@@ -118,27 +118,13 @@ export default {
         console.error("Error fetching bookmark list:", error);
       }
     },
-    async DelBookmarkList(){
-      const requestBody = {
-        bookmarkIdList : this.bookmarkList.bookmark_id
-      }
-      try{
-        const response = await this.$api("/mypage/book")
-
-
-      }catch(error){
-        console.log(error);
-      }
-
-    }, 
-
     async DelCBookmarkList() {
       // 체크된 북마크 ID를 서버에 전송
       const requestBody = {
         checkedbookmarkIds: this.result
       };
       try {
-        const response = await this.$api("/mypage/bookmarklist/del", requestBody, "post");
+        const response = await this.$api("/mypage/bookmarklist/delchekced", requestBody, "post");
         alert(response.message);
         
         if (response.status === 200) {
