@@ -4,11 +4,15 @@ const {loginCheck} = require('../middleware/login');
 const router = express.Router();
 
 //견적함 내 카테고리
-router.get('/mybox',loginCheck,myBoxCategory);
+
+router.post('/',loginCheck, myBoxCategory);
+
+
+router.get('/category',myBoxCategory);
 //견적함 내  상품이름
-router.get('/mybox/name',loginCheck,myBoxItemName);
+router.get('/name',loginCheck,myBoxItemName);
 //견적함 내 상품옵션
-router.get('/mybox/option',loginCheck,myBoxItemOption);
+router.get('/option',loginCheck,myBoxItemOption);
 
 
 

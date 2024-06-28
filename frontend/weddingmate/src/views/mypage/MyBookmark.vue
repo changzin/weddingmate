@@ -112,7 +112,7 @@ export default {
         item.checked = isChecked;
       });
     },
-    bookmarkDelete
+    // bookmarkDelete
   }
 };
 </script>

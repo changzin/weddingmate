@@ -255,11 +255,16 @@
       //견적함 상세 정보 요청
       async showBoxDetail(){
         const requestBody = {
-          access_token: "9db687f2-6b07-4548-9ea5-522c9b6331fc"
-        } 
+          access_token: "a01b3a6a-8ef7-426b-ac8b-3f97b091013a"
+        }
+        
+    
         console.log(requestBody);
-        await this.$api("/mybox",requestBody,"POST")
-        await this.$router.push({path: '/boddetail'})
+        //백 인덱스로 보내줌 
+       const result = await this.$api("/mybox",requestBody,"POST")
+       console.log(result);
+        //프론트 인덱스로 보내줌
+        await this.$router.push({path: '/mypage/boxlist/boxname'})
       }
     },
   };
