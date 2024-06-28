@@ -122,9 +122,10 @@ export default {
       const requestBody = {
         bookmarkIdList : this.bookmarkList.bookmark_id
       }
+      console.log(requestBody);
       try{
         const response = await this.$api("/mypage/book")
-
+        console.log(response);
 
       }catch(error){
         console.log(error);
