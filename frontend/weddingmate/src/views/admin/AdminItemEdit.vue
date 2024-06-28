@@ -33,10 +33,10 @@ this.itemTnImage<template>
       </div>
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item sidbar_box sidbar_box_active">
-          <a @click="$router.push({path: '/admin/itemlist'})" class="nav-link sidbar_box_active_text">
+          <button @click="$router.push({path: '/admin/itemlist'})" class="nav-link sidbar_box_active_text">
               <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
             상품 리스트
-          </a>
+          </button>
         </li>
         <li class="nav-item sidbar_box sidbar_box_inactive">            
           <a @click="$router.push({path: '/admin/analysis'})" class="nav-link sidbar_box_inactive_text">
@@ -67,7 +67,10 @@ this.itemTnImage<template>
     <div class="d-flex flex-column">
       <div class="sidbar_content_container container">
           <div class="sidbar_header d-flex justify-content-center">
-              <div class="sidbar_header_title">상품 수정</div>
+              <div class="sidbar_header_title">상품 상세</div>
+              <div style="margin-top: 80px; margin-left: 20px; font-size:23px;">
+                <button @click="deleteItem(this.$route.params.itemId)"><i class="fas fa-trash"></i></button>
+              </div>
           </div>
           <div class="d-flex justify-content-center admin_item_add_small_gap">
               <div class="admin_item_add_row d-flex justify-content-start">
@@ -321,17 +324,14 @@ data() {
 },
 mounted(){      
   this.getItemDetail();
-  console.log(this.itemDetailList.length);
 },
 methods: {
   // 초기에 아이템 세부사항을 받아오는 함수
   async getItemDetail(){
     try{
       const result = await this.$api(`/product/detail/${this.$route.params.itemId}`);
-      console.log(result);
       if (result.status == 200){
         this.itemDetailList = result.data.itemDetails;
-        console.log(this.itemDetailList);
         this.itemType = this.itemDetailList[0].item_detail_type;
         this.itemDiscountRate = result.data.item.item_discount_rate;
         this.itemFactoryName = result.data.item.item_factory_name;
@@ -377,10 +377,6 @@ methods: {
   async deleteItemDetail(index){
     this.itemDetailDeletedList.push(this.itemDetailList[index]['item_detail_id']);
     this.itemDetailList.splice(index, 1);
-    console.log(index);
-    console.log(this.itemDetailList);
-    console.log(this.itemDetailList[index]);
-
   },
   async updateItem(){
     const requestBody = {
@@ -409,10 +405,14 @@ methods: {
       prev_item_detail_image_path: this.prevItemDetailImagePath,
       prev_item_tn_image_path: this.prevItemTnImagePath
     }
-    console.log(requestBody);
     const result = await this.$api("/product/update", requestBody, "POST");
-    console.log(result);
-    // this.$router.push({path: "/admin/itemlist"});
+    if (result.status == 200){
+      alert("상품 수정 완료했습니다.")
+    }
+    else{
+      alert("상품 수정 실패했습니다..")
+    }
+    this.$router.push({path: "/admin/itemlist"});
   },
   async changeTnImage(file){
     this.itemTnImageChange = true;
@@ -485,6 +485,29 @@ methods: {
       // & base64 인코딩된 스트링 데이터가 result 속성에 담김
       this.itemMainImage = await reader.readAsDataURL(file);
     }   
+  },
+  async deleteItem(itemId){
+    try{
+      const requestBody = {
+        item_id: itemId,
+        access_token: this.$getAccessToken(),
+        prev_item_tn_image_path: this.prevItemTnImagePath,
+        prev_item_main_image_path: this.prevItemMainImagePath,
+        prev_item_detail_image_path: this.prevItemDetailImagePath,
+        upload_type: "item"
+      }
+      const result = await this.$api("/product/delete", requestBody, "POST");
+      if (result.status == '200'){
+        alert("상품 삭제 성공하였습니다.");
+        this.$router.push({path: '/admin/itemlist'});
+      }
+      else{
+        alert("상품 삭제 실패하였습니다.");
+      }
+    }
+    catch(err){
+      console.log(err);
+    }
   }
 }
 }
