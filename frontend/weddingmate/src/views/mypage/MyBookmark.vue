@@ -11,12 +11,12 @@
     </div>
     <div class="container-allselect">
       <input type="checkbox" v-model="selectAllChecked" @change="toggleAllSelection">
-            <div class="font-delete" @click="bookmarkDelete()">선택 상품 삭제</div>
+          <div class="font-delete" style ="cursor: pointer;" @click="DelCBookmarkList()" >선택 상품 삭제</div>
         </div>        
     <div class="container-middle">
       <div v-for="(bookmark, index) in bookmarkList" :key="index" class="container-content">
         <input type="checkbox" v-model="bookmark.checked">
-        <img class="bookmark_img" :src="bookmark.item_tn_image_path">
+        <div><img class="bookmark_img" :src="bookmark.item_tn_image_path"></div>
         <div class="container-name_cost">
           <div>{{ bookmark.item_name }}</div>
           <div class="font-cost">{{ bookmark.item_price }}</div>
@@ -76,23 +76,35 @@ export default {
       // 본문
       bookmarkList :[],
       selectAllChecked: false,
-      selectedItems: [] // 각 아이템의 선택 여부를 저장할 배열
+      selectedItems: [], // 각 아이템의 선택 여부를 저장할 배열   
+      result: []
 
     };
   },
   mounted(){  
      this.getBookmarkList();
-
   },
-  
+  watch: {
+    bookmarkList: {
+      handler(newList) {
+        // 체크된 북마크들을 필터링하여 bookmark_id를 추출하고 배열에 저장
+        const checkedbookmark = newList.filter(bookmark => bookmark.checked);
+        const checkedbookmarkIds = checkedbookmark.map(bookmark => bookmark.bookmark_id);
+        this.result = checkedbookmarkIds;
+        console.log( checkedbookmarkIds);
+        console.log(this.result);
+      },
+      deep: true // 객체 내부의 속성까지 감시
+    }
+  },
   methods: {
     async getBookmarkList() {
       const requestBody = {
-        access_token: "7d8ce36a-98d7-47ea-b671-c8f9e5a13a97"
+        access_token: "7d8ce36a-98d7-47ea-b671-c8f9e5a13a97",
       };
       try {
         const response = await this.$api("/mypage/bookmarklist", requestBody, "post");
-        console.log("북막", response);
+        console.log("결과", response);
 
         if (response.status === 200) {
           this.bookmarkList = response.bookmarkList.map(item => {
@@ -106,16 +118,48 @@ export default {
         console.error("Error fetching bookmark list:", error);
       }
     },
+    async DelBookmarkList(){
+      const requestBody = {
+        bookmarkIdList : this.bookmarkList.bookmark_id
+      }
+      try{
+        const response = await this.$api("/mypage/book")
+
+
+      }catch(error){
+        console.log(error);
+      }
+
+    }, 
+
+    async DelCBookmarkList() {
+      // 체크된 북마크 ID를 서버에 전송
+      const requestBody = {
+        checkedbookmarkIds: this.result
+      };
+      try {
+        const response = await this.$api("/mypage/bookmarklist/del", requestBody, "post");
+        alert(response.message);
+        
+        if (response.status === 200) {
+          await this.getBookmarkList();
+          this.$router.go();
+      }
+      
+      } catch (error) {
+        console.error("Error deleting bookmark list:", error);
+      }
+    },
     toggleAllSelection(event) {
       const isChecked = event.target.checked;
       this.bookmarkList.forEach(item => {
         item.checked = isChecked;
       });
-    },
-    bookmarkDelete
+    }
   }
 };
 </script>
+
 
 <style scoped>
 .fix-width {
