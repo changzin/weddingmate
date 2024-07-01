@@ -1,113 +1,7 @@
 <template>
   <div class="fix-width">
     <!-- 헤더 -->
-    <div class="common-header">
-      <!-- 로그인 + 회원가입 + 로고 -->
-      <header class="bg-light productdetail_padding_0">
-        <!-- 로그인 회원가입 -->
-        <div
-          class="container d-flex justify-content-end align-items-center"
-          id="common__login-div-padding"
-        >
-          <nav class="navbar-light">
-            <div class="" id="navbarNav">
-              <ul class="navbar-nav flex-row">
-                <li class="nav-item" id="common__header-login-padding">
-                  <a href="#">로그인</a>
-                </li>
-                <li class="nav-item">
-                  <a href="#">회원가입</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-        <!-- 로고 -->
-        <div class="text-center">
-          <a class="navbar-brand" href="#">
-            <img src="https://via.placeholder.com/200x50" alt="Logo" />
-          </a>
-        </div>
-      </header>
-      <!-- 카테고리 + 이미지 -->
-      <nav
-        class="common-header_navbar navbar-light bg-light"
-        id="common_main-banner_div"
-        @mouseleave="hideCategories"
-      >
-        <div class="common-header_overlay">
-          <div class="common-header_overlay-content">
-            <!-- 대카테고리 -->
-            <ul class="common-header_nav" @mouseover="showCategories">
-              <li class="common-header_main-title">웨딩홀</li>
-              <li class="common-header_main-title">스드메</li>
-              <li class="common-header_main-title">혼수</li>
-              <li class="common-header_main-title">본식</li>
-              <li class="common-header_main-title">촬영팀</li>
-            </ul>
-            <!-- 이미지랑 소카테고리 -->
-            <div class="common-header_image-smallcategory">
-              <!-- 이미지 -->
-              <section class="productdetail_main-image-section">
-                <img
-                  src="https://via.placeholder.com/1980x500"
-                  class="img-fluid w-100"
-                  alt="Main Image"
-                />
-              </section>
-
-              <!-- 소카테고리 -->
-              <div class="common-header_categories" v-if="isVisible">
-                <div class="common-header_smallcategory-area">
-                  <div class="common-header_category">
-                    <ul>
-                      <li>추천 리스트</li>
-                      <li>웨딩홀 목록</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>독립 패키지</li>
-                      <li>스튜디오</li>
-                      <li>드레스</li>
-                      <li>메이크업</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>예복</li>
-                      <li>예물</li>
-                      <li>가전</li>
-                      <li>혼수 패키지</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>본식스냅</li>
-                      <li>영상</li>
-                      <li>부케</li>
-                      <li>연주</li>
-                      <li>사회자</li>
-                      <li>웨딩슈즈</li>
-                      <li>답례품</li>
-                      <li>청첩장</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>스냅</li>
-                      <li>본식</li>
-                      <li>제주도 야외</li>
-                      <li>고급 스튜디오 촬영</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
+    <MateHeader />
 
     <!-- 본문 -->
     <div class="container0">
@@ -133,9 +27,9 @@
               </div>
               <div class="common-event_calendar_div">
                 <div class="container-schedule-title">
-                    <div>일정 제목</div>
-                        <input class="name_input" >
-                    </div>
+                  <div>일정 제목</div>
+                  <input class="name_input" v-model="schedule_title" />
+                </div>
                 <label>
                   Start
                   {{
@@ -151,10 +45,17 @@
                   }}
                 </label>
                 <div class="button-container">
-                  <button
+                  <!-- <button
                     class="common-caldate_save-button"
                     type="button"
                     @click="saveEvent"
+                  >
+                    일정등록
+                  </button> -->
+                  <button
+                    class="common-caldate_save-button"
+                    type="button"
+                    @click="saveEvent2"
                   >
                     일정등록
                   </button>
@@ -165,20 +66,18 @@
         </div>
         <div class="container-middle-schedule">
           <div class="content-schedule-title">일정 상세보기</div>
-          <div class="content-schedule-text">
-            <div class="font-schedule-date">0204-06-01(토)</div>
-            <div>촬영</div>
-            <img class="delete-x" src="icon/deleteX.png" />
-          </div>
-          <div class="content-schedule-text">
-            <div class="font-schedule-date">0204-06-01(토)</div>
-            <div>촬영촬영촬영촬영촬영촬영촬영촬영촬영촬영</div>
-            <img class="delete-x" src="icon/deleteX.png" />
-          </div>
-          <div class="content-schedule-text">
-            <div class="font-schedule-date">0204-06-01(토)</div>
-            <div>촬영촬영촬영촬영</div>
-            <img class="delete-x" src="icon/deleteX.png" />
+          <div
+            class="content-schedule-text"
+            v-for="(schedule, index) in ScheduleResult"
+            :key="index"
+          >
+            <div class="font-schedule-date">
+               {{schedule.schedule_start }} 
+            </div>
+            <div>{{ schedule.schedule_title }}</div>
+            <button class="qnalist_search-clear-button" @click="deleteSchedule(schedule.schedule_id)">
+              ×
+            </button>
           </div>
         </div>
       </div>
@@ -187,27 +86,7 @@
       </div>
     </div>
     <!-- 푸터 -->
-    <footer class="common__footer">
-      <div class="common__footer-content">
-        <nav class="common__footer-nav">
-          <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-          <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-          <a href="#">제휴문의</a> |
-          <a href="#">광고문의</a>
-        </nav>
-        <div class="common__footer-details">
-          <p style="margin-bottom: 0px">
-            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-            02-123-1234 팩스: 02-111-2222
-          </p>
-
-          <p>
-            해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-            민원담당자에게 있습니다. 민원담당자: 강문정
-          </p>
-        </div>
-      </div>
-    </footer>
+    <MateFooter />
   </div>
 </template>
 
@@ -218,34 +97,142 @@ export default {
   name: "SearchComponent",
   data() {
     return {
-      // 헤더
-      isVisible: false,
-      ismaintain: false,
-      // 본문
+      ScheduleResult: {},
 
       // 캘린더
       dateRange: {
         start: null,
         end: null,
       },
+      schedule_title: "",
+      calendar_id: 0,
     };
   },
+
+  async created() {
+    await this.fetchScheduleListData();
+  },
+
   methods: {
-    // 헤더
-    showCategories() {
-      this.isVisible = true;
+    async fetchScheduleListData() {
+      try {
+        // 데이터 가져오기
+        const result = await this.$api(
+          "/schedule/list",
+          { access_token: "temp-token" },
+          "POST"
+        );
+        this.ScheduleResult = result.scheduleList;
+        this.calendar_id = this.ScheduleResult[0].calendar_id;
+        console.log("calendar_id, : ", this.calendar_id);
+        if (this.ScheduleResult) {
+          console.log(
+            "ScheduleResult: ",
+            JSON.parse(JSON.stringify(this.ScheduleResult))
+          );
+        } else {
+          console.log("fail");
+        }
+      } catch (error) {
+        console.error(
+          "Shedule.vue fetchData Error fetching fetchSheduleListData data:",
+          error
+        );
+      }
     },
-    hideCategories() {
-      this.isVisible = false;
-    },
-    // 본문
 
     // 캘린더
-    saveEvent() {
+    // async saveEvent(event) {
+    //   event.preventDefault();
+
+    //   console.log(
+    //     `Event from ${this.dateRange.start} to ${this.dateRange.end}`
+    //   );
+
+    //    if (!this.dateRange.start || !this.dateRange.end) {
+    //     alert("모든 필드를 입력하세요.");
+    //     return;
+    //   }
+    //   try {
+    //     const result = await this.$api(
+    //       "/schedule/insertschedule",
+    //       {
+    //         access_token: "temp-token",
+    //         schedule_title: this.schedule_title,
+    //         schedule_start: this.dateRange.start,
+    //         schedule_end: this.dateRange.end,
+    //         calendar_id: this.calendar_id,
+    //       },
+    //       "POST"
+    //     );
+    //     if (result.status == 200) {
+    //       alert("완료됨");
+
+    //     }
+    //   } catch (error) {
+    //     console.error(
+    //       "ProductDetail.vue fetchData Error fetching product data:",
+    //       error
+    //     );
+    //   }
+    // },
+
+    async saveEvent2(event) {
+      event.preventDefault();
+
+      // Event from Tue Jul 16 2024 00:00:00 GMT+0900 (한국 표준시) to Wed Jul 24 2024 00:00:00 GMT+0900 (한국 표준시)
       console.log(
         `Event from ${this.dateRange.start} to ${this.dateRange.end}`
       );
+
+      if (!this.dateRange.start || !this.dateRange.end) {
+        alert("모든 필드를 입력하세요.");
+        return;
+      }
+
+      const formattedStartDate = this.formatDate(this.dateRange.start);
+      const formattedEndDate = this.formatDate(this.dateRange.end);
+
+      try {
+        const result = await this.$api(
+          "/schedule/insertschedule",
+          {
+            access_token: "temp-token",
+            schedule_title: this.schedule_title,
+            schedule_start: formattedStartDate,
+            schedule_end: formattedEndDate,
+            calendar_id: this.calendar_id,
+          },
+          "POST"
+        );
+        if (result.status == 200) {
+          alert("완료됨");
+        }
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
+      }
     },
+
+
+    async deleteSchedule(schedule_id) {
+       const result = await this.$api(
+        "/schedule/deleteschedule",
+        { access_token: "temp-token", schedule_id: schedule_id },
+        "POST"
+      );
+
+      if(result.status == 200) {
+        
+        alert("성공적으로 지웠습니다");
+    await this.fetchScheduleListData();
+
+      }
+
+    },
+
     formatDate(date) {
       const d = new Date(date);
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
@@ -253,13 +240,28 @@ export default {
         "0"
       )}-${String(d.getDate()).padStart(2, "0")}`;
     },
+
+
+    // SetCalDate(schedule_start, schedule_end) {
+    //   if(formatDate(schedule_start) === formatDate(schedule_end)) {
+    //     return formatDate(schedule_start);
+    //   }
+    //   else {
+
+    //     return formatDate(schedule_start) + ~ + formatDate(schedule_start);
+
+    //   }
+    //   return "ㅇㅇㅇㅇㅇ";
+    // }
+
+ 
   },
 };
 </script>
 
 
 <style scoped>
-@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
 
 .fix-width {
   width: 1980px;
@@ -268,127 +270,12 @@ export default {
   margin: 0 auto;
 }
 
-/* 헤더 */
-/* 로그인 + 회원가입 + 로고 */
-#common__header-login-padding {
-  margin-right: 30px;
-}
-#common__login-div-padding {
-  padding: 0px;
-  width: 1280px;
-}
-
-.common-header_navbar {
-  background-color: #f8f8f8;
-}
-
-.common-header_overlay {
-  position: relative;
-}
-
-.common-header_overlay-content {
-}
-
-/* 카테고리 + 이미지 */
-
-/* 큰 카테고리 */
-.common-header_nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  list-style: none;
-  padding: 0;
-  height: 80px;
-  width: 1280px;
-  margin: 0 auto;
-}
-
-.common-header_nav > li {
+.qnalist_search-clear-button {
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.3s;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  box-sizing: border-box;
-  padding: 20px;
-  width: 140px;
-}
-
-.common-header_nav > li:hover {
-  background-color: #ddd;
-}
-
-.common-header_image-smallcategory {
-  position: relative;
-}
-/* 소카테고리 */
-.common-header_categories {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  z-index: 10;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.common-header_smallcategory-area {
-  width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  text-align: center;
-}
-
-.common-header_categories ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.common-header_categories li {
-  padding: 10px 0;
-  width: 140px; /* 각 항목의 너비를 140px로 고정 */
-}
-
-/* 푸터 */
-.common__footer {
-  background-color: #333333;
-  color: #999999;
-  padding: 20px 0;
-  margin-top: 100px;
-  font-size: 14px;
-}
-
-.common__footer-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.common__footer-nav {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.common__footer-nav a {
-  color: #999999;
-  text-decoration: none;
-  margin: 0 10px;
-}
-
-.common__footer-nav a:hover {
-  text-decoration: underline;
-}
-
-.common__footer-details {
-  text-align: center;
-  font-size: 14px;
+  font-size: 1.2em;
+  color: #888;
 }
 
 /* 본문 */
@@ -406,23 +293,23 @@ export default {
   font-weight: bold;
 }
 
-div{
-    font-family: 'Noto Sans KR', sans-serif;
-      font-size: 16px;
-      color:#555555;
+div {
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 16px;
+  color: #555555;
 }
 /* font */
-.font-schedule-date{          
-    color: var(--color-pink);
-    font-weight: bold;
+.font-schedule-date {
+  color: var(--color-pink);
+  font-weight: bold;
 }
 
-.title-font{
-    display: grid;
-    place-items: center;
-    color: #333333;
-    font-size: 24px;
-    font-weight: bold;          
+.title-font {
+  display: grid;
+  place-items: center;
+  color: #333333;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 /* div */
@@ -457,7 +344,7 @@ div{
   display: grid;
   box-sizing: border-box;
   /* border: 1px solid blue; */
-  
+
   position: relative;
 }
 
@@ -515,98 +402,97 @@ img.delete-x {
   /* border: 1px solid #333333; */
 }
 
-.container0{
-    min-width: var(--container-width);
+.container0 {
+  min-width: var(--container-width);
 }
 
-.container-top{          
-    margin-left: var(--container-margin-left);
-    margin-right: var(--container-margin-right);
-    width: var(--container-width);
-    margin-top: 100px;
-    display: grid;
-    font-size: 24;
-    /* border: 1px solid blue; */
+.container-top {
+  margin-left: var(--container-margin-left);
+  margin-right: var(--container-margin-right);
+  width: var(--container-width);
+  margin-top: 100px;
+  display: grid;
+  font-size: 24;
+  /* border: 1px solid blue; */
 }
 
-.container-middle{          
-    margin-left: var(--container-margin-left);
-    margin-right: var(--container-margin-right);
-    margin-bottom: 20px;
-    margin-top:10px;
-    width: var(--container-width);
-    display: grid;
-    grid-template-columns: 1fr 1fr ;
-    font-size: 24;
-    /* border: 1px solid blue; */
+.container-middle {
+  margin-left: var(--container-margin-left);
+  margin-right: var(--container-margin-right);
+  margin-bottom: 20px;
+  margin-top: 10px;
+  width: var(--container-width);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 24;
+  /* border: 1px solid blue; */
 }
 
-.container-middle-calander{          
-    display: grid;  
-    box-sizing: border-box;
-    /* border: 1px solid blue; */
+.container-middle-calander {
+  display: grid;
+  box-sizing: border-box;
+  /* border: 1px solid blue; */
 }
-.container-middle-schedule{    
-    display: flex;  
-    flex-direction: column;    
-    margin-left: 20px;
-    box-sizing: border-box;
-    /* border: 1px solid red; */
+.container-middle-schedule {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  box-sizing: border-box;
+  /* border: 1px solid red; */
 }
-.content-schedule-title{          
-    font-size: 24;
-    margin-bottom: 5px;
-    font-weight: bold;
-    /* border: 1px solid blue; */
+.content-schedule-title {
+  font-size: 24;
+  margin-bottom: 5px;
+  font-weight: bold;
+  /* border: 1px solid blue; */
 }
-.content-schedule-text{          
-    display: grid;  
-    align-items: center;
-    grid-template-columns: 120px 475px 0px ;
-    margin-bottom: 5px;
-    /* border: 1px solid blue; */
+.content-schedule-text {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 120px 475px 0px;
+  margin-bottom: 5px;
+  /* border: 1px solid blue; */
 }
-.calanderbox{
-    display: grid;
-    width: 100%;  
-    height: 500px;
-    /* border: 1px solid #888888; */
-    background-color: none;   
+.calanderbox {
+  display: grid;
+  width: 100%;
+  height: 500px;
+  /* border: 1px solid #888888; */
+  background-color: none;
 }
 /* hr */
 
-hr.title{
-    width: 100%;
-    height: 1px; /* Set the height to 1px */
-    background-color: #333333; /* Set a lighter color */
-    border: none; /* Remove border */
+hr.title {
+  width: 100%;
+  height: 1px; /* Set the height to 1px */
+  background-color: #333333; /* Set a lighter color */
+  border: none; /* Remove border */
 }
 
 /* button */
 
-button.schedule-add{
-    justify-self: end;
-    background-color: var(--color-pink);
-    color:white;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    width: 100px;
-    height: 40px;
-    margin-top: 30px;
-    margin-right: 20px;
+button.schedule-add {
+  justify-self: end;
+  background-color: var(--color-pink);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  width: 100px;
+  height: 40px;
+  margin-top: 30px;
+  margin-right: 20px;
 }
 
 /* img */
-img.delete-x{
-    width: 20px;
-    height: 20px;
-    /* border: 1px solid #333333; */
+img.delete-x {
+  width: 20px;
+  height: 20px;
+  /* border: 1px solid #333333; */
 }
 
 /* bottom */
-
 
 div.mypage-bottom {
   display: grid;
@@ -679,55 +565,53 @@ div.nav-page {
   height: 40px;
 }
 
-
-.container-schedule-title{
-    display: grid;
-    grid-template-columns: 100px auto;
-    align-items: center;
-    width: 600px;    
-    margin-top: 10px; 
-    /* border: 1px solid pink; */
+.container-schedule-title {
+  display: grid;
+  grid-template-columns: 100px auto;
+  align-items: center;
+  width: 600px;
+  margin-top: 10px;
+  /* border: 1px solid pink; */
 }
 
-.name_input{
-    border-radius: 12px;
-    border: none;
-    width: 460px;
-    height: 40px;
-    background-color: #F5F5F5;
-    outline: none; /* 포커스 시 외곽선을 없앰 */
-    padding: 10px;
+.name_input {
+  border-radius: 12px;
+  border: none;
+  width: 460px;
+  height: 40px;
+  background-color: #f5f5f5;
+  outline: none; /* 포커스 시 외곽선을 없앰 */
+  padding: 10px;
 }
 
-button.mypage-back{
-    background-color: #888888;
-    color:white;
-    font-weight: bold;
-    border: none;
-    width: 120px;
-    height: 40px;
+button.mypage-back {
+  background-color: #888888;
+  color: white;
+  font-weight: bold;
+  border: none;
+  width: 120px;
+  height: 40px;
 }
 
-
-div.mypage-bottom{
-    display: grid;
-    place-items: center;
-    margin-left: 350px;
-    margin-right: 320px;
-    margin-top: 100px;
-    width: 1280px; /* 고정된 너비 */  
-    /* border: 1px solid yellow; */
+div.mypage-bottom {
+  display: grid;
+  place-items: center;
+  margin-left: 350px;
+  margin-right: 320px;
+  margin-top: 100px;
+  width: 1280px; /* 고정된 너비 */
+  /* border: 1px solid yellow; */
 }
-div.nav-page{
-    display: grid;
-    place-items: center;
-    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
-    margin-bottom: 30px;
-    color: #888888;
-    /* border: 1px solid pink; */
+div.nav-page {
+  display: grid;
+  place-items: center;
+  grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+  margin-bottom: 30px;
+  color: #888888;
+  /* border: 1px solid pink; */
 }
 .mypage-back a {
-    text-decoration: none; /* remove underline */
-    color: inherit; /* inherit color from parent */
+  text-decoration: none; /* remove underline */
+  color: inherit; /* inherit color from parent */
 }
 </style>

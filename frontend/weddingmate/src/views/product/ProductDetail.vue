@@ -25,9 +25,37 @@
               </div>
               <div>
                 <div class="main_content_starcount_div">
-                  ★★★★★ {{ productDetail.item_star_rating }}
+                  <!-- 별점 -->
+                  <div class="rating">
+                    <label
+                      v-for="n in 10"
+                      :key="n"
+                      class="rating__label"
+                      :class="{
+                        half: n <= productDetail.item_star_rating * 2,
+                        filled: n <= productDetail.item_star_rating * 2,
+                        half_position: n % 2 !== 0,
+                        filled_position: n % 2 === 0,
+                      }"
+                    >
+                      <input
+                        type="radio"
+                        :id="'star' + n"
+                        class="rating__input"
+                        name="rating"
+                        :value="n"
+                        v-model="rating"
+                      />
+                      <div class="star-icon"></div>
+                    </label>
+                  </div>
+                  {{ productDetail.item_star_rating }}
                 </div>
-                <div class="productdetail_main_content_reviewcount_div">
+                <div
+                  class="productdetail_main_content_reviewcount_div"
+                  type="button"
+                  @click="goToReviewList"
+                >
                   전체 리뷰 수 : ({{ productDetail.item_review_count }})
                 </div>
               </div>
@@ -39,7 +67,7 @@
                   getClass('hall'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -259,7 +287,7 @@
                   getClass('dress'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -270,11 +298,7 @@
                 <div class="productdetail_main_content_discount_price_div">
                   {{ finally_price }}원
                 </div>
-                <div class="productdetail_main_content_delivery_div">
-                  <div class="productdetail_main_content_delivery_price_div">
-                    배송비 {{ productDetail.item_delivery_price }}원
-                  </div>
-                </div>
+
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
                   <div>{{ totalQuantity }}개</div>
@@ -495,7 +519,7 @@
                   getClass('studio'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -771,7 +795,7 @@
                   getClass('makeup'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -995,7 +1019,7 @@
                   getClass('sdm_package'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -1158,7 +1182,7 @@
                   getClass('giving_dress'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -1169,11 +1193,7 @@
                 <div class="productdetail_main_content_discount_price_div">
                   {{ finally_price }}원
                 </div>
-                <div class="productdetail_main_content_delivery_div">
-                  <div class="productdetail_main_content_delivery_price_div">
-                    배송비 {{ productDetail.item_delivery_price }}원
-                  </div>
-                </div>
+
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
                   <div>{{ totalQuantity }}개</div>
@@ -1393,7 +1413,7 @@
                   getClass('giving_item'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -1404,11 +1424,7 @@
                 <div class="productdetail_main_content_discount_price_div">
                   {{ finally_price }}원
                 </div>
-                <div class="productdetail_main_content_delivery_div">
-                  <div class="productdetail_main_content_delivery_price_div">
-                    배송비 {{ productDetail.item_delivery_price }}원
-                  </div>
-                </div>
+
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
                   <div>{{ totalQuantity }}개</div>
@@ -1767,7 +1783,7 @@
                   getClass('snap'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -2060,7 +2076,7 @@
                   getClass('flower'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -2223,7 +2239,7 @@
                   getClass('music'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -2516,7 +2532,7 @@
                   getClass('shoes'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -2679,7 +2695,7 @@
                   getClass('gift'),
                 ]"
               >
-                <div>
+                <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
@@ -2690,11 +2706,7 @@
                 <div class="productdetail_main_content_discount_price_div">
                   {{ finally_price }}원
                 </div>
-                <div class="productdetail_main_content_delivery_div">
-                  <div class="productdetail_main_content_delivery_price_div">
-                    배송비 {{ productDetail.item_delivery_price }}원
-                  </div>
-                </div>
+
                 <div class="productdetail_main_content_maximum_quantity_div">
                   <div>최대구매수량</div>
                   <div>{{ totalQuantity }}개</div>
@@ -3034,6 +3046,13 @@
             </button>
           </div>
 
+          <!-- <button
+            class="reviewlist_review-card"
+            v-for="review in reviewList"
+            :key="review.id"
+            @click="goToReviewDetail(review.review_id)"
+          > -->
+
           <div class="productdetail_review-cards justify-content-start">
             <div
               class="productdetail_review-card"
@@ -3049,10 +3068,19 @@
                 <div class="productdetail_card-icons">
                   <i
                     class="fas fa-bullhorn"
-                    @click="reviewToReport(review.review_id)"
+                    @click.stop="reviewToReport(review.review_id)"
+                    v-if="!review.is_current_user"
                   ></i>
-                  <i class="fas fa-edit"></i>
-                  <i class="fas fa-trash"></i>
+                  <i
+                    class="fas fa-edit"
+                    @click.stop="gotoReviewModify(review.review_id)"
+                    v-if="review.is_current_user"
+                  ></i>
+                  <i
+                    class="fas fa-trash"
+                    @click.stop="deleteReview(review.review_id)"
+                    v-if="review.is_current_user"
+                  ></i>
                 </div>
               </div>
               <div class="productdetail_review-section_title-div">
@@ -3158,15 +3186,6 @@
                 </td>
                 <td>{{ this.$dateFormat(qna.qna_date) }}</td>
               </tr>
-              <!-- <tr v-for="n in 1" :key="n">
-                  <td>배송문의</td>
-                  <td class="productdetail_qna-section_status-title-div">
-                    <div class="productdetail_qna-status incomplete">미완료</div>
-                    <div>미완료 UI 보려고 하나 더 만듦</div>
-                  </td>
-                  <td>일이삼사오육칠팔구십일이</td>
-                  <td>2024-06-11 15:54</td>
-                </tr> -->
             </tbody>
           </table>
         </div>
@@ -3174,27 +3193,7 @@
       <!-- 콘텐츠 섹션 끝 -->
 
       <!-- 푸터 -->
-      <footer class="common__footer">
-        <div class="common__footer-content">
-          <nav class="common__footer-nav">
-            <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-            <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-            <a href="#">제휴문의</a> |
-            <a href="#">광고문의</a>
-          </nav>
-          <div class="common__footer-details">
-            <p style="margin-bottom: 0px">
-              (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-              02-123-1234 팩스: 02-111-2222
-            </p>
-
-            <p>
-              해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-              민원담당자에게 있습니다. 민원담당자: 강문정
-            </p>
-          </div>
-        </div>
-      </footer>
+      <MateFooter />
     </div>
   </div>
 </template>
@@ -3266,6 +3265,8 @@ export default {
       // 별점
       rating: 0,
       currentRating: 0,
+
+      reviewList: {},
     };
   },
 
@@ -3367,7 +3368,12 @@ export default {
         }
 
         // 리뷰 데이터 가져오기
-        const result = await this.$api(`/review/itemdetail/${this.item_id}`);
+        const result = await this.$api(
+          `/review/itemdetail/${this.item_id}`,
+          { access_token: "temp-token" },
+          "POST"
+        );
+
         if (result.status == 200) {
           this.reviewList = result.reviewList;
           // console.log("this.reviewList : ", this.reviewList);
@@ -4315,9 +4321,6 @@ export default {
       )}-${String(d.getDate()).padStart(2, "0")}`;
     },
 
-
-
-
     formatQnaType(data) {
       if (data == "delivery") {
         return "배송문의";
@@ -4703,6 +4706,13 @@ export default {
       });
     },
 
+    gotoReviewModify(review_id) {
+      this.$router.push({
+        name: "reviewmodify",
+        query: { review_id: review_id },
+      });
+    },
+
     goToReviewDetail(review_id) {
       this.$router.push({
         name: "reviewdetail",
@@ -4710,8 +4720,42 @@ export default {
       });
     },
 
-    // clickReview(review_id) {
-    // },
+    async deleteReview(review_id) {
+      try {
+        const reviewResult = await this.$api(
+          `/review/delete`,
+          { access_token: "temp-token", review_id: review_id },
+          "POST"
+        );
+
+        if (reviewResult.status == 200) {
+          await this.fetchReviewData();
+        }
+      } catch (error) {
+        console.error(
+          "ReviewList.vue fetchData Error fetching product data:",
+          error
+        );
+      }
+    },
+
+    async fetchReviewData() {
+      try {
+        const result = await this.$api(
+          `/review/itemdetail/${this.item_id}`,
+          { access_token: "temp-token" },
+          "POST"
+        );
+        if (result.status == 200) {
+          this.reviewList = result.reviewList;
+        }
+      } catch (error) {
+        console.error(
+          "ReviewList.vue fetchData Error fetching product data:",
+          error
+        );
+      }
+    },
 
     // 리뷰 신고
     async reviewToReport(review_id) {
@@ -4841,13 +4885,15 @@ export default {
 }
 
 .productdetail_main_content_maker_div {
-  font-size: 14px;
-  margin-bottom: 10px;
+  font-size: 12px;
+  color: #888;
+  /* margin-bottom: 10px; */
 }
 
 .productdetail_main_content_name_div {
   font-size: 22px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  line-height: 0.8;
 }
 
 .productdetail_main_content_starcount_div {
@@ -4855,12 +4901,18 @@ export default {
   margin-right: 10px;
 }
 
+.main_content_starcount_div {
+  display: flex;
+  margin-right: 10px;
+  gap: 10px;
+}
+
 .productdetail_main_content_reviewcount_div {
   display: inline;
 }
 
 .productdetail_main_content_discount_div {
-  margin-right: 10px;
+  /* margin-right: 10px; */
   color: #ff481e;
   display: inline;
 }
@@ -5429,8 +5481,6 @@ export default {
   cursor: pointer;
 }
 
-
-
 /* 별점 */
 .rating {
   display: flex;
@@ -5444,7 +5494,6 @@ export default {
 .rating__label {
   width: 12px;
   overflow: hidden;
-  cursor: pointer;
 }
 .rating__label .star-icon {
   width: 12px;
@@ -5469,45 +5518,6 @@ export default {
 }
 .rating__label.filled_position .star-icon {
   background-position: right;
-}
-
-
-
-/* 푸터 */
-
-.common__footer {
-  background-color: #333333;
-  color: #999999;
-  padding: 20px 0;
-  margin-top: 100px;
-  font-size: 14px;
-}
-
-.common__footer-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.common__footer-nav {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.common__footer-nav a {
-  color: #999999;
-  text-decoration: none;
-  margin: 0 10px;
-}
-
-.common__footer-nav a:hover {
-  text-decoration: underline;
-}
-
-.common__footer-details {
-  text-align: center;
-  font-size: 14px;
 }
 
 /* 캘린더 */

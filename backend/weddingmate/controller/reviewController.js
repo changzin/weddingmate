@@ -175,14 +175,35 @@ exports.userReviewDelete = async (req, res) => {
 
 exports.itemDetail = async (req, res) => {
   try {
-    // PathVariable을 가져온다.
+        const user_id = req.body.user_id;
+
     const item_id = req.params.item_id;
     // item_id로 최근 리뷰 6개를 가져오는 쿼리문
+    // const query =
+    //   `SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date 
+    //   FROM review, user 
+    //   WHERE review.user_id = user.user_id 
+    //   AND item_id=? 
+    //   ORDER BY review.review_date 
+    //   LIMIT 6`;
+
+    
+
+
     const query =
-      "SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND item_id=? ORDER BY review.review_date LIMIT 6";
+  `SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date,
+     CASE 
+      WHEN review.user_id = ? THEN 1 
+      ELSE 0 
+      END AS is_current_user
+    FROM review
+    JOIN user ON review.user_id = user.user_id 
+    WHERE item_id=? 
+    ORDER BY review.review_date 
+    LIMIT 6`;
 
     let result = [];
-    result = await db(query, [item_id]);
+    result = await db(query, [user_id, item_id]);
 
     responseBody = {
       status: 200,
@@ -214,6 +235,9 @@ exports.reviewReport = async (req, res) => {
             VALUES (?, ?, ?);
                 `;
     const result = await db(query, [user_id, review_id, report_content]);
+
+
+    
 
     // 데이터 보낼 준비
     const responseBody = {
@@ -253,21 +277,13 @@ exports.wholeReview = async (req, res) => {
     maxPage = Math.ceil(totalCount / pageSize);
 
     // item_id로 최근 Q&A 전부 가져오는 쿼리문
-    const query = `SELECT   review.review_id, review.review_content,  review.review_star,  review.review_image_path, review.review_reported,  user.user_id,  user.user_nickname,  review_date, 
-    CASE 
-      WHEN review.user_id = ? THEN 1 
-      ELSE 0 
-    END AS is_current_user
-  FROM 
-    review 
-    JOIN user ON review.user_id = user.user_id 
-  WHERE 
-    review.item_id = ? 
-  ORDER BY 
-    review.review_date 
-  LIMIT ? 
-  OFFSET ?
-`;
+    const query = `SELECT review.review_id, review.review_content, review.review_star, review.review_image_path, review.review_reported,  user.user_id,  user.user_nickname, review_date, 
+                CASE 
+                    WHEN review.user_id = ? THEN 1 
+                    ELSE 0 
+                    END AS is_current_user
+                FROM review JOIN user ON review.user_id = user.user_id 
+                WHERE review.item_id = ? ORDER BY review.review_date LIMIT ? OFFSET ?`;
 
     let result = [];
     result = await db(query, [user_id, item_id, pageSize, offset]);

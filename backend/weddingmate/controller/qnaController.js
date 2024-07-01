@@ -194,8 +194,6 @@ exports.getSelectedQnADetail = async (req, res) => {
       `;
     const result = await db(query, [qna_id]);
 
-    
-
     if (result.length > 0 && result[0].user_id == user_id) {
       isVisibleEditTrash = true;
     }
@@ -267,42 +265,35 @@ exports.insertQnA = async (req, res) => {
   }
 };
 
-
 exports.deleteQnA = async (req, res) => {
-    try {
-      const user_id = req.body.user_id;
-      const qna_id = req.body.qna_id;
+  try {
+    const user_id = req.body.user_id;
+    const qna_id = req.body.qna_id;
 
-      console.log("user_id : ", user_id);
-      
-      const query = `
+    console.log("user_id : ", user_id);
+
+    const query = `
       DELETE FROM qna 
       WHERE user_id = ? AND qna_id = ?
     `;
     const result = await db(query, [user_id, qna_id]);
 
-
-    
-      const responseBody = {
-        status: 200,
-        message: "QnAController.js의 insertQnA 데이터 성공",
-        data: result,
-      };
-      // 데이터 보내기
-      res.json(responseBody);
-    } catch (err) {
-      console.error(err);
-      const responseBody = {
-        status: 400,
-        message: err.message,
-      };
-      res.json(responseBody);
-    }
-  };
-  
-
-
-
+    const responseBody = {
+      status: 200,
+      message: "QnAController.js의 insertQnA 데이터 성공",
+      data: result,
+    };
+    // 데이터 보내기
+    res.json(responseBody);
+  } catch (err) {
+    console.error(err);
+    const responseBody = {
+      status: 400,
+      message: err.message,
+    };
+    res.json(responseBody);
+  }
+};
 
 exports.updateSelectedQnADetail = async (req, res) => {
   try {
@@ -359,99 +350,105 @@ exports.updateSelectedQnADetail = async (req, res) => {
 };
 
 exports.searchItemDetail = async (req, res) => {
-    try {
-      // PathVariable을 가져온다.
-      const item_id = req.params.item_id;
-      // qna_title를 검색해야함
-      const qna_title = req.body.qna_title || '';
-      const page = parseInt(req.query.page) || 1;
-      const pageSize = 12;
-      const offset = (page - 1) * pageSize;
-  
-      console.log("qna_title:", qna_title);
-  
-      // 페이지네이션을 위한 count 쿼리
-      const countQuery = `
+  try {
+    // PathVariable을 가져온다.
+    const item_id = req.params.item_id;
+    // qna_title를 검색해야함
+    const qna_title = req.body.qna_title || "";
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 12;
+    const offset = (page - 1) * pageSize;
+
+    console.log("qna_title:", qna_title);
+
+    // 페이지네이션을 위한 count 쿼리
+    const countQuery = `
         SELECT COUNT(*) AS totalCount 
         FROM qna 
         WHERE item_id = ? AND qna_title LIKE ?
       `;
-      const countResult = await db(countQuery, [item_id, `%${qna_title}%`]);
-      const totalCount = countResult[0].totalCount;
-      const maxPage = Math.ceil(totalCount / pageSize);
-  
-      // item_id로 최근 Q&A 전부 가져오는 쿼리문
-      const query = `
+    const countResult = await db(countQuery, [item_id, `%${qna_title}%`]);
+    const totalCount = countResult[0].totalCount;
+    const maxPage = Math.ceil(totalCount / pageSize);
+
+    // item_id로 최근 Q&A 전부 가져오는 쿼리문
+    const query = `
         SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, qna.qna_visibility ,user.user_nickname, qna.qna_date 
         FROM qna
         JOIN user ON qna.user_id = user.user_id 
         WHERE qna.item_id = ? AND qna.qna_title LIKE ?
         LIMIT ? OFFSET ?
       `;
-  
-      console.log('Executing query:', query);
-      console.log('Query params:', [item_id, `%${qna_title}%`, pageSize, offset]);
-  
-      const result = await db(query, [item_id, `%${qna_title}%`, pageSize, offset]);
-  
-      const responseBody = {
-        status: 200,
-        qnaList: result,
-        maxPage: maxPage,
-      };
-      res.status(200).json(responseBody);
-    } catch (err) {
-      console.error(err);
-      const responseBody = {
-        status: 400,
-        message: err.message,
-      };
-      res.json(responseBody);
-    }
-  };
+
+    console.log("Executing query:", query);
+    console.log("Query params:", [item_id, `%${qna_title}%`, pageSize, offset]);
+
+    const result = await db(query, [
+      item_id,
+      `%${qna_title}%`,
+      pageSize,
+      offset,
+    ]);
+
+    // 검색결과 총 몇개 쿼리문
+    const countSearchQuery = `SELECT COUNT(*) as total FROM qna JOIN user ON qna.user_id = user.user_id  WHERE qna.item_id = ? AND qna.qna_title LIKE ?`;
+    const countSearchresult = await db(countSearchQuery, [item_id, `%${qna_title}%`,]);
 
 
-  exports.isSelectedQnaVisibility = async (req, res) => {
-    try {
-      const user_id = req.body.user_id;
-      const qna_id = req.body.qna_id;
-  
-      console.log("qna_id : ", qna_id);
-      console.log("user_id : ", user_id);
-  
-      const query = `
+    const responseBody = {
+      status: 200,
+      qnaList: result,
+      maxPage: maxPage,
+      searchCount: countSearchresult,
+    };
+    res.status(200).json(responseBody);
+  } catch (err) {
+    console.error(err);
+    const responseBody = {
+      status: 400,
+      message: err.message,
+    };
+    res.json(responseBody);
+  }
+};
+
+exports.isSelectedQnaVisibility = async (req, res) => {
+  try {
+    const user_id = req.body.user_id;
+    const qna_id = req.body.qna_id;
+
+    console.log("qna_id : ", qna_id);
+    console.log("user_id : ", user_id);
+
+    const query = `
             SELECT * FROM qna where qna_id = ?;
         `;
-      const result = await db(query, [qna_id]);
-  
-      // 만약 본인이 아니고 비밀글일 경우
-      if (
-        result.length > 0 &&
-        result[0].user_id != user_id &&
-        result[0].qna_visibility == "F"
-      ) {
-        const responseBody = {
-          status: 201,
-          message: "QnAController.js의 getSelectedQnADetail 데이터 성공",
-        };
-        res.json(responseBody);
-      }
-      else {
-        const responseBody = {
-            status: 202,
-            message: "QnAController.js의 getSelectedQnADetail 데이터 성공",
-          };
-          res.json(responseBody);
+    const result = await db(query, [qna_id]);
 
-      }
-   
-  
-    } catch (err) {
-      console.error(err);
+    // 만약 본인이 아니고 비밀글일 경우
+    if (
+      result.length > 0 &&
+      result[0].user_id != user_id &&
+      result[0].qna_visibility == "F"
+    ) {
       const responseBody = {
-        status: 400,
-        message: err.message,
+        status: 201,
+        message: "QnAController.js의 getSelectedQnADetail 데이터 성공",
+      };
+      res.json(responseBody);
+    } else {
+      const responseBody = {
+        status: 202,
+        message: "QnAController.js의 getSelectedQnADetail 데이터 성공",
       };
       res.json(responseBody);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    const responseBody = {
+      status: 400,
+      message: err.message,
+    };
+    res.json(responseBody);
+  }
+};

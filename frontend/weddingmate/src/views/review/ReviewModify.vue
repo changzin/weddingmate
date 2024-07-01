@@ -420,39 +420,5 @@ export default {
   background-position: right;
 }
 
-/* 푸터 */
-.common__footer {
-  background-color: #333333;
-  color: #999999;
-  padding: 20px 0;
-  margin-top: 100px;
-  font-size: 14px;
-}
 
-.common__footer-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.common__footer-nav {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.common__footer-nav a {
-  color: #999999;
-  text-decoration: none;
-  margin: 0 10px;
-}
-
-.common__footer-nav a:hover {
-  text-decoration: underline;
-}
-
-.common__footer-details {
-  text-align: center;
-  font-size: 14px;
-}
 </style>
