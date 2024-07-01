@@ -1,137 +1,99 @@
 <template>
   <div>
-    <!-- 헤더 아래 script랑 <style scoped>까지 다 복붙해서 사용-->
-    <div class="common-header">
-      <!-- 로그인 + 회원가입 + 로고 -->
-      <header class="bg-light reviewlist_padding_0">
-        <!-- 로그인 회원가입 -->
-        <div
-          class="container d-flex justify-content-end align-items-center"
-          id="common__login-div-padding"
-        >
-          <nav class="navbar-light">
-            <div class="" id="navbarNav">
-              <ul class="navbar-nav flex-row">
-                <li class="nav-item" id="common__header-login-padding">
-                  <a href="#">로그인</a>
-                </li>
-                <li class="nav-item">
-                  <a href="#">회원가입</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-        <!-- 로고 -->
-        <div class="text-center">
-          <a class="navbar-brand" href="#">
-            <img src="https://via.placeholder.com/200x50" alt="Logo" />
-          </a>
-        </div>
-      </header>
-      <!-- 카테고리 + 이미지 -->
-      <nav
-        class="common-header_navbar navbar-light bg-light"
-        id="common_main-banner_div"
-        @mouseleave="hideCategories"
-      >
-        <div class="common-header_overlay">
-          <div class="common-header_overlay-content">
-            <!-- 대카테고리 -->
-            <ul class="common-header_nav" @mouseover="showCategories">
-              <li class="common-header_main-title">웨딩홀</li>
-              <li class="common-header_main-title">스드메</li>
-              <li class="common-header_main-title">혼수</li>
-              <li class="common-header_main-title">본식</li>
-              <li class="common-header_main-title">촬영팀</li>
-            </ul>
-            <!-- 이미지랑 소카테고리 -->
-            <div class="common-header_image-smallcategory">
-              <!-- 이미지 -->
-              <section class="reviewlist_main-image-section">
-                <img
-                  src="https://via.placeholder.com/1980x500"
-                  class="img-fluid w-100"
-                  alt="Main Image"
-                />
-              </section>
-
-              <!-- 소카테고리 -->
-              <div class="common-header_categories" v-if="isVisible">
-                <div class="common-header_smallcategory-area">
-                  <div class="common-header_category">
-                    <ul>
-                      <li>추천 리스트</li>
-                      <li>웨딩홀 목록</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>독립 패키지</li>
-                      <li>스튜디오</li>
-                      <li>드레스</li>
-                      <li>메이크업</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>예복</li>
-                      <li>예물</li>
-                      <li>가전</li>
-                      <li>혼수 패키지</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>본식스냅</li>
-                      <li>영상</li>
-                      <li>부케</li>
-                      <li>연주</li>
-                      <li>사회자</li>
-                      <li>웨딩슈즈</li>
-                      <li>답례품</li>
-                      <li>청첩장</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>스냅</li>
-                      <li>본식</li>
-                      <li>제주도 야외</li>
-                      <li>고급 스튜디오 촬영</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
+    <MateHeader />
 
     <!-- 본문 -->
     <div class="reviewlist_container">
       <h2 class="reviewlist_header">리뷰 리스트</h2>
-      <!-- 검색 -->
+
+      <!-- 신고 팝업창 -->
+      <div v-if="isVisibleReport" class="report-overlay">
+        <div class="report-popup">
+          <!-- <div v-if="isVisibleReport" class="report-popup"> -->
+
+          <div class="report-popup_header">
+            <div></div>
+            <div>신고 팝업창</div>
+            <i
+              class="fas fa-times popupCloseButton"
+              @click="collapseReportPopup"
+            ></i>
+          </div>
+          <div class="report-popup_content">
+            <div class="report-popup_content_header">신고사유 :</div>
+            <textarea
+              class="report-popup_content_input"
+              v-model="reportContent"
+            ></textarea>
+            <div class="report-popup_content_footer">
+              <div class="report-popup_content_ok" @click="ToReport">전송</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- 리뷰 섹션 -->
       <div class="reviewlist_review-section">
         <div class="reviewlist_review-cards">
-          <button class="reviewlist_review-card" v-for="n in 9" :key="n">
+          <!-- v-for="(qna, index) in qnaList" -->
+          <button
+            class="reviewlist_review-card"
+            v-for="review in reviewList"
+            :key="review.id"
+            @click="goToReviewDetail(review.review_id)"
+          >
             <div class="reviewlist_card-header">
               <div class="reviewlist_review-section_title-div">
-                일이삼사오육칠팔구십일이
+                {{ review.user_nickname }}
               </div>
               <div class="reviewlist_card-icons">
-                <i class="fas fa-bullhorn"></i>
-                <i class="fas fa-edit"></i>
-                <i class="fas fa-trash"></i>
+                <i
+                  class="fas fa-bullhorn"
+                  @click.stop="reviewToReport(review.review_id)"
+                  v-if="!review.is_current_user"
+                ></i>
+                <i
+                  class="fas fa-edit"
+                  @click.stop="gotoReviewModify(review.review_id)"
+                  v-if="review.is_current_user"
+                ></i>
+                <i
+                  class="fas fa-trash"
+                  v-if="review.is_current_user"
+                  @click.stop="deleteReview(review.review_id)"
+                ></i>
               </div>
             </div>
             <div class="reviewlist_review-section_title-div">
-              <div class="reviewlist_card-rating">★★★★★</div>
+              <div class="reviewlist_card-rating">
+                <div class="qnawrite_row">
+                    <div class="rating">
+                      <label
+                        v-for="n in 10"
+                        :key="n"
+                        class="rating__label"
+                        :class="{
+                          half: n <= review.review_star * 2,
+                          filled: n <= review.review_star * 2,
+                          half_position: n % 2 !== 0,
+                          filled_position: n % 2 === 0,
+                        }"
+                      >
+                        <input
+                          type="radio"
+                          :id="'star' + n"
+                          class="rating__input"
+                          name="rating"
+                          :value="n"
+                          v-model="rating"
+                        />
+                        <div class="star-icon"></div>
+                      </label>
+                    </div>
+                  </div>
+              </div>
               <div class="reviewlist_review-section_date-div">
-                2024-06-11 15:54
+                {{ this.$dateFormat(review.review_date) }}
               </div>
             </div>
             <img
@@ -140,51 +102,55 @@
               alt="Review Image"
             />
             <div class="reviewlist_card-body">
-              <p class="reviewlist_card-text">
-                인생
-                리븅으으으으으으ㅡㅡ으으으으으으으으ㅡ으으으으으으으ㅡ으으으으으으ㅡ으으으으으으으ㅡ으으ㅡ으르아라아리뷰우우우우우우우우우우우우우ㅜ우우우우우우우우우ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅓ하ㅣㅇ러하ㅣㅇ러하ㅣㅇ러하ㅣㅓ곧ㅇ샤해ㅓㄱㄷ얗라ㅣㅓ갣이ㅓ하ㅣㅇ러하일허ㅏㄹ이라ㅓㅏㅇ니ㅣ허ㅏㅣㄹ어하ㅣㄹ어하ㅣㄹ어하ㅣㅇ러하ㅣㅇ러하하ㅓㅣ아어하ㅣㅇ라허일허ㅏㅣㅏㅇㄹ하ㅓ최대
-                10줄까지 가능합니다ㄹㄴㅇㄹㄴㅇㄹㅈㄱㄷㅅㄱㄷㅅㅎㄱㄷㅅㄷㄳㄷㄳ
-              </p>
+              <div class="reviewlist_card-text">
+                {{ review.review_content }}
+              </div>
             </div>
           </button>
         </div>
       </div>
       <!-- 버튼 -->
-        <div class="reviewlist_qna-section_button">
-          <button class="reviewlist_write-qna-btn">
-            <i class="fas fa-pen"></i> 리뷰 작성
-          </button>
-          <button class="reviewlist_write-qna-btn">
-            <i class="fas fa-pen"></i> 리뷰 수정
-          </button>
-          <button class="reviewlist_write-qna-btn">
-            <i class="fas fa-pen"></i> 리뷰 삭제
-          </button>
-        </div>
+    </div>
+
+    <!-- 페이지 -->
+    <div class="mypage-bottom">
+      <div class="nav-page justify-content-center">
+        <a :class="{ notVisible: page == 1 }" @click="prevBlock()"
+          ><div>&lt;&lt;</div></a
+        >
+        <a :class="{ notVisible: page == 1 }" @click="prevPage()"
+          ><div>&lt;</div></a
+        >
+        <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"
+          ><div>{{ page - 2 }}</div></a
+        >
+        <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"
+          ><div>{{ page - 1 }}</div></a
+        >
+        <a
+          ><div style="color: pink">{{ page }}</div></a
+        >
+        <a
+          :class="{ notVisible: page + 1 > maxPage }"
+          @click="goToPage(page + 1)"
+          ><div>{{ page + 1 }}</div></a
+        >
+        <a
+          :class="{ notVisible: page + 2 > maxPage }"
+          @click="goToPage(page + 2)"
+          ><div>{{ page + 2 }}</div></a
+        >
+        <a :class="{ notVisible: page == maxPage }" @click="nextPage()"
+          ><div>&gt;</div></a
+        >
+        <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"
+          ><div>&gt;&gt;</div></a
+        >
+      </div>
     </div>
 
     <!-- 푸터 -->
-    <footer class="common__footer">
-      <div class="common__footer-content">
-        <nav class="common__footer-nav">
-          <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-          <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-          <a href="#">제휴문의</a> |
-          <a href="#">광고문의</a>
-        </nav>
-        <div class="common__footer-details">
-          <p style="margin-bottom: 0px">
-            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-            02-123-1234 팩스: 02-111-2222
-          </p>
-
-          <p>
-            해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-            민원담당자에게 있습니다. 민원담당자: 강문정
-          </p>
-        </div>
-      </div>
-    </footer>
+    <MateFooter />
   </div>
 </template>
 
@@ -194,26 +160,187 @@
 export default {
   data() {
     return {
-      // 헤더
-      isVisible: false,
-      ismaintain: false,
       searchTitle: "",
       searchCount: 0,
+
+      // 페이지
+      page: 1,
+      productList: [],
+      isFirstPage: false,
+      isLastPage: false,
+      maxPage: 0,
+
+      reviewList: {},
+      // 신고팝업
+      isVisibleReport: false,
+      reportContent: "",
+      currentReviweIndex: 0,
+
+
+       // 별점
+      rating: 0,
+      currentRating: 0,
+
     };
   },
-  methods: {
-    // 헤더
-    showCategories() {
-      this.isVisible = true;
+
+  props: {
+    item_id: {
+      type: String,
+      required: true,
     },
-    hideCategories() {
-      this.isVisible = false;
+  },
+
+  async created() {
+    await this.fetchProductListData();
+  },
+
+  methods: {
+    async fetchProductListData() {
+      try {
+        //     const BoxResult = await this.$api(
+        //   "/product/boxlist",
+        //   { access_token: "temp-token" },
+        //   "POST"
+        // );
+        const reviewResult = await this.$api(
+          `/review/wholereview/${this.item_id}?page=${this.page}`,
+          { access_token: "temp-token" },
+          "POST"
+        );
+
+        if (reviewResult.status == 200) {
+          this.reviewList = reviewResult.reviewList;
+          this.maxPage = reviewResult.maxPage;
+          console.log("maxPage : ", this.maxPage);
+          this.updatePageStatus();
+          console.log(
+            "this.reviewList: ",
+            JSON.parse(JSON.stringify(this.reviewList))
+          );
+        }
+      } catch (error) {
+        console.error(
+          "ReviewList.vue fetchData Error fetching product data:",
+          error
+        );
+      }
+    },
+
+    gotoReviewModify(review_id) {
+      this.$router.push({
+        name: "reviewmodify",
+        query: { review_id: review_id },
+      });
+    },
+
+    goToReviewDetail(review_id) {
+      this.$router.push({
+        name: "reviewdetail",
+        query: { review_id: review_id },
+      });
+    },
+
+    async deleteReview(review_id) {
+      try {
+        const reviewResult = await this.$api(
+          `/review/delete`,
+          { access_token: "temp-token", review_id: review_id },
+          "POST"
+        );
+
+        if (reviewResult.status == 200) {
+          await this.fetchProductListData();
+        }
+      } catch (error) {
+        console.error(
+          "ReviewList.vue fetchData Error fetching product data:",
+          error
+        );
+      }
+    },
+
+
+
+    // 리뷰 신고
+    async reviewToReport(review_id) {
+      this.isVisibleReport = true;
+      this.currentReviweIndex = review_id;
+    },
+
+    collapseReportPopup() {
+      this.isVisibleReport = false;
+    },
+
+    async ToReport() {
+      if (this.reportContent == "") {
+        alert("신고내용을 입력해주세요");
+      }
+
+      try {
+        const result = await this.$api(
+          "/review/reviewreport",
+          {
+            access_token: "temp-token",
+            review_id: this.currentReviweIndex,
+            report_content: this.reportContent,
+          },
+          "POST"
+        );
+        if (result.status == 200) {
+          alert("신고 완료");
+          this.isVisibleReport = false;
+        }
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
+      }
     },
 
     // 본문
     // 검색
     clearSearch() {
       this.searchTitle = "";
+    },
+
+    // 페이지
+    async nextPage() {
+      if (!this.isLastPage) {
+        this.page++;
+        await this.fetchProductListData();
+      }
+    },
+
+    async prevPage() {
+      if (!this.isFirstPage) {
+        this.page--;
+        await this.fetchProductListData();
+      }
+    },
+
+    async goToPage(targetPage) {
+      if (targetPage >= 1 && targetPage <= this.maxPage) {
+        this.page = targetPage;
+        await this.fetchProductListData();
+      }
+    },
+
+    async prevBlock() {
+      let targetPage = this.page > 5 ? this.page - 5 : 1;
+      await this.goToPage(targetPage);
+    },
+
+    async nextBlock() {
+      let targetPage =
+        this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
+      await this.goToPage(targetPage);
+    },
+
+    updatePageStatus() {
+      this.isFirstPage = this.page === 1;
+      this.isLastPage = this.page === this.maxPage;
     },
   },
 };
@@ -222,91 +349,6 @@ export default {
 
 
 <style scoped>
-/* 헤더 */
-
-#common__header-login-padding {
-  margin-right: 30px;
-}
-#common__login-div-padding {
-  padding: 0px;
-  width: 1280px;
-}
-
-.common-header_navbar {
-  background-color: #f8f8f8;
-}
-
-.common-header_overlay {
-  position: relative;
-}
-
-/* 카테고리 + 이미지 */
-
-/* 큰 카테고리 */
-.common-header_nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  list-style: none;
-  padding: 0;
-  height: 80px;
-  width: 1280px;
-  margin: 0 auto;
-}
-
-.common-header_nav > li {
-  cursor: pointer;
-  transition: background-color 0.3s;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  box-sizing: border-box;
-  padding: 20px;
-  width: 140px;
-}
-
-.common-header_nav > li:hover {
-  background-color: #ddd;
-}
-
-.common-header_image-smallcategory {
-  position: relative;
-}
-/* 소카테고리 */
-.common-header_categories {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  z-index: 10;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.common-header_smallcategory-area {
-  width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  text-align: center;
-}
-
-.common-header_categories ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.common-header_categories li {
-  padding: 10px 0;
-  width: 140px; /* 각 항목의 너비를 140px로 고정 */
-}
-
-/* 본문 */
 /* 리뷰 */
 .reviewlist_container {
   width: 1280px;
@@ -369,8 +411,8 @@ export default {
 .reviewlist_review-cards {
   display: flex;
   flex-wrap: wrap;
-  /* gap: 20px; */
-  justify-content: space-between;
+  gap: 20px;
+  justify-content: start;
 }
 
 .reviewlist_review_card:last-child {
@@ -432,7 +474,8 @@ export default {
 .reviewlist_card-text {
   font-size: 14px;
   color: #333;
-  line-height: 1.5;
+  /* line-height: 1.5; */
+  text-align: left; /* 텍스트를 왼쪽 정렬 */
 }
 
 .reviewlist_review-section_title-div {
@@ -448,9 +491,6 @@ export default {
   font-size: 12px;
 }
 
-
-
-
 /* 버튼 */
 
 .reviewlist_qna-section_button {
@@ -460,7 +500,6 @@ export default {
   justify-content: space-between;
   margin-top: 40px;
 }
-
 
 .reviewlist_write-qna-btn {
   display: flex;
@@ -477,9 +516,154 @@ export default {
   margin-right: 8px;
 }
 
+/* 신고 */
+.report-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px); /* 블러 효과 추가 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* 배경을 덮도록 z-index 설정 */
+}
+
+.report-popup {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  border-radius: 12px;
+
+  padding: 20px;
+  /* visibility: collapse; */
+  flex-direction: column;
+}
+
+.report-popup_header {
+  display: flex;
+  align-items: center; /* Vertically centers the content */
+  height: 50px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.popupCloseButton {
+  cursor: pointer;
+}
+
+.report-popup_content {
+  width: 100%;
+  flex-grow: 1; /* This makes the content take up the remaining space */
+  display: flex;
+  flex-direction: column;
+}
+.report-popup_content_header {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.report-popup_content_input {
+  width: 100%;
+  flex-grow: 1;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.report-popup_content_footer {
+  display: flex;
+  justify-content: center; /* 버튼을 가운데 정렬 */
+}
+
+.report-popup_content_ok {
+  margin-top: 10px;
+  border: 1px solid black;
+  border-radius: 12px;
+  display: flex;
+  width: 70px;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+/* 별점 */
+.rating {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.rating__input {
+  display: none;
+}
+
+.rating__label {
+  width: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.rating__label .star-icon {
+  width: 12px;
+  height: 24px;
+  display: block;
+  position: relative;
+  left: 0;
+  background-image: url("/src/views/review/star/emptyStar.svg");
+  background-repeat: no-repeat;
+}
+
+.rating__label.half .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.filled .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.half_position .star-icon {
+  background-position: left;
+}
+.rating__label.filled_position .star-icon {
+  background-position: right;
+}
 
 
 
+
+/* 페이지 */
+.notVisible {
+  visibility: hidden;
+}
+
+.mypage-bottom {
+  display: grid;
+  place-items: center;
+}
+.nav-page {
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(9, 25px);
+  margin-bottom: 30px;
+  color: #888888;
+}
+
+.mypage-back {
+  background-color: #888888;
+  color: white;
+  font-weight: bold;
+  border: none;
+  width: 120px;
+  height: 40px;
+}
 
 /* 푸터 */
 .common__footer {

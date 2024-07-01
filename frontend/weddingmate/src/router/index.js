@@ -6,6 +6,9 @@ import QnAModify from '../views/QnA/QnAModify.vue'
 import QnADetail from '../views/QnA/QnADetail.vue'
 import QnAList from '../views/QnA/QnAList.vue'
 import ReviewList from '../views/review/ReviewList.vue'
+import ReviewModify from '../views/review/ReviewModify.vue'
+import ReviewWrite from '../views/review/ReviewWrite.vue'
+import ReviewDetail from '../views/review/ReviewDetail.vue'
 import Orderinfo from '../views/order_info/Orderinfo.vue'
 
 import UserLogin from '../views/nouser/UserLogin.vue'
@@ -60,8 +63,7 @@ const routes = [
     name: 'qnamodify',
     component: QnAModify,
     props: route => ({ qna_id: route.query.qna_id })
-  }
-  ,
+  },
   {
     path: '/qnadetail',
     name: 'qnadetail',
@@ -99,7 +101,26 @@ const routes = [
   {
     path: '/reviewlist',
     name: 'reviewlist',
-    component: ReviewList
+    component: ReviewList,
+    props: route => ({ item_id: route.query.item_id })
+  },
+  {
+    path: '/reviewmodify',
+    name: 'reviewmodify',
+    component: ReviewModify,
+    props: route => ({ review_id: route.query.review_id })
+  },
+  {
+    path: '/reviewwrite',
+    name: 'reviewwrite',
+    component: ReviewWrite,
+    props: route => ({ item_id: route.query.item_id })
+  },
+  {
+    path: '/eviewdetail',
+    name: 'reviewdetail',
+    component: ReviewDetail,
+    props: route => ({ review_id: route.query.review_id })
   },
   {
     path: '/admin/memberlist',

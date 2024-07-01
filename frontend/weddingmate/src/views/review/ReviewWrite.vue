@@ -5,56 +5,40 @@
 
     <!-- 본문 -->
     <div class="qnawrite_container">
-      <h2 class="qnawrite_header">Q&amp;A 수정</h2>
+      <h2 class="qnawrite_header">리뷰 작성</h2>
       <form @submit.prevent="handleSubmit">
+        <!-- 별점 -->
         <div class="qnawrite_row">
-          <label class="qnawrite_label">문의 유형</label>
-          <select
-            class="form-select qnawrite_chip"
-            v-model="form.inquiryType"
-            :style="{ color: '#555555' }"
-            required
-          >
-            <option value="" disabled>선택하세요</option>
-            <option value="상품">상품</option>
-            <option value="배송">배송</option>
-            <option value="반품/취소">반품/취소</option>
-            <option value="기타">기타</option>
-          </select>
-          <label class="qnawrite_label qnawrite_label_margin">공개 유형</label>
-          <select
-            class="form-select qnawrite_chip"
-            v-model="form.visibilityType"
-            :style="{ color: '#555555' }"
-            required
-          >
-            <option value="" disabled>선택하세요</option>
-            <option value="공개">공개</option>
-            <option value="비공개">비공개</option>
-          </select>
-        </div>
-        <div class="qnawrite_row">
-          <label class="qnawrite_label">제목</label>
-          <div class="qnawrite_chip">
-            <input
-              type="text"
-              class="qnawrite_input-title-content"
-              :value="form.title"
-              @input="updateTitle($event.target.value)"
-              placeholder="문의 제목을 입력하세요"
-              required
-            />
-            <button
-              type="button"
-              class="qnawrite_chip-close"
-              @click="clearTitle"
+          <label class="qnawrite_label">별점 등록</label>
+
+          <div class="rating" @mouseleave="resetRating">
+            <label
+              v-for="n in 10"
+              :key="n"
+              class="rating__label"
+              :class="{
+                half: n <= currentRating,
+                filled: n <= currentRating,
+                half_position: n % 2 !== 0,
+                filled_position: n % 2 === 0,
+              }"
+              @mouseenter="hoverRating(n)"
             >
-              ×
-            </button>
+              <input
+                type="radio"
+                :id="'star' + n"
+                class="rating__input"
+                name="rating"
+                :value="n"
+                v-model="rating"
+                @change="selectRating(n)"
+              />
+              <div class="star-icon"></div>
+            </label>
           </div>
         </div>
         <div class="qnawrite_row">
-          <label class="qnawrite_label">문의 내용</label>
+          <label class="qnawrite_label">리뷰 내용</label>
           <div class="qnawrite_chip qnawrite_chip-content">
             <textarea
               class="qnawrite_input-title-content"
@@ -124,22 +108,28 @@
 export default {
   data() {
     return {
+      // 본문
       form: {
-        inquiryType: "",
-        visibilityType: "",
-        title: "",
         content: "",
         image: "",
       },
-      QnAResult: {},
-      item_id: 0,
+    //   별점
+      rating: 0,
+      currentRating: 0,
     };
   },
 
   props: {
-    qna_id: {
+    item_id: {
       type: String,
       required: true,
+    },
+  },
+
+  // 별점
+  watch: {
+    rating(newRating) {
+      console.log("Selected rating:", newRating);
     },
   },
 
@@ -147,104 +137,67 @@ export default {
     await this.fetchProductListData();
   },
 
+  mounted() {
+    this.resetRating();
+  },
+
   methods: {
     async fetchProductListData() {
-      try {
-        // 데이터 가져오기
-        const result = await this.$api(
-          "/qna/getselectedqnadetail",
-          { access_token: "temp-token", qna_id: this.qna_id },
-          "POST"
-        );
-        this.QnAResult = result.data[0];
-        if (this.QnAResult) {
-          console.log(
-            "QnAResult: ",
-            JSON.parse(JSON.stringify(this.QnAResult))
-          );
-          // form 객체 업데이트
-          this.form.title = this.QnAResult.qna_title;
-          this.form.content = this.QnAResult.qna_content;
-          this.form.image = this.QnAResult.qna_image_path;
-
-          this.form.inquiryType = this.QnAResult.qna_type;
-          this.form.visibilityType = this.QnAResult.qna_visibility;
-          if (this.QnAResult.qna_visibility === "T") {
-            this.form.visibilityType = "공개";
-          } else {
-            this.form.visibilityType = "비공개";
-          }
-
-          console.log("this.form.visibilityType : ", this.form.visibilityType);
-        } else {
-          console.log("fail");
-        }
-      } catch (error) {
-        console.error(
-          "ProductDetail.vue fetchData Error fetching product data:",
-          error
-        );
+      if (!this.$verifiedUser()) {
+        alert("로그인하세요");
       }
-    },
-
-    updateTitle(value) {
-      this.form.title = value;
     },
 
     // 확인 버튼 클릭 시 동작
     async handleSubmit() {
-      if (
-        !this.form.title ||
-        !this.form.content ||
-        !this.form.inquiryType ||
-        !this.form.visibilityType
-      ) {
+      if (!this.form.content || !this.rating) {
         alert("모든 필드를 입력하세요.");
         return;
       }
-
       try {
-        // 데이터 가져오기
-        // qna_id, user_id, item_id, qna_type, qna_content, qna_title, qna_date, qna_image_path, qna_has_answer, qna_visibility
-        // 결과 : this.form.qna_visibility :  공개
-        if (this.form.visibilityType === "공개") {
-          this.form.visibilityType = "T";
-        } else {
-          this.form.visibilityType = "F";
-        }
-
-        console.log("this.form.qna_visibility : ", this.form.visibilityType);
         const result = await this.$api(
-          "/qna/updateselectedqnadetail",
+          "/review/insertreview",
           {
-            qna_id: this.qna_id,
-            qna_type: this.form.inquiryType,
-            qna_content: this.form.content,
-            qna_title: this.form.title,
-            qna_visibility: this.form.visibilityType,
-            qna_image_path: this.form.image,
+            access_token: "temp-token",
+            item_id: this.item_id,
+            review_content: this.form.content,
+            review_star: this.currentRating / 2,
+            review_image_path: this.form.image,
           },
           "POST"
         );
-
-          if (result.status === 200) {
-          alert("입력이 성공적으로 완료되었습니다")
-          this.item_id = result.item_id; 
-          this.$router.push({ name: "qnAlist", query: { item_id: this.item_id }});
-        } 
+        if (result.status == 200) {
+          alert("완료됨");
+          this.$router.push({
+            name: "reviewlist",
+            query: { item_id: this.item_id },
+          });
+        }
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
           error
         );
       }
+
+      // this.$router.push("/success-page");
+    },
+
+    // 별점
+    hoverRating(value) {
+      this.currentRating = value;
+    },
+    resetRating() {
+      this.currentRating = this.rating;
+    },
+    selectRating(value) {
+      this.rating = value;
+      this.currentRating = value;
     },
 
     // 취소 버튼 클릭 시 동작
     handleCancel() {
-      
       this.$router.go(-1);
-
     },
 
     // 제목 X 버튼 클릭 시 동작
@@ -411,5 +364,79 @@ export default {
   resize: none;
 }
 
+/* 별점 */
+.rating {
+  display: flex;
+  justify-content: flex-start;
+}
 
+.rating__input {
+  display: none;
+}
+
+.rating__label {
+  width: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.rating__label .star-icon {
+  width: 12px;
+  height: 24px;
+  display: block;
+  position: relative;
+  left: 0;
+  background-image: url("/src/views/review/star/emptyStar.svg");
+  background-repeat: no-repeat;
+}
+
+.rating__label.half .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.filled .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.half_position .star-icon {
+  background-position: left;
+}
+.rating__label.filled_position .star-icon {
+  background-position: right;
+}
+
+/* 푸터 */
+.common__footer {
+  background-color: #333333;
+  color: #999999;
+  padding: 20px 0;
+  margin-top: 100px;
+  font-size: 14px;
+}
+
+.common__footer-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.common__footer-nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.common__footer-nav a {
+  color: #999999;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.common__footer-nav a:hover {
+  text-decoration: underline;
+}
+
+.common__footer-details {
+  text-align: center;
+  font-size: 14px;
+}
 </style>

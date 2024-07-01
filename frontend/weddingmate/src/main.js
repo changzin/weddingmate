@@ -7,6 +7,7 @@ import vueCookies from 'vue-cookies'
 
 import EventCalendar from './components/EventCalendar.vue';
 import MateHeader from './components/MateHeader.vue';
+import MateFooter from './components/MateFooter.vue';
 
 import VCalendar from 'v-calendar'; // v-calendar 플러그인 임포트
 import 'v-calendar/dist/style.css'; // v-calendar 스타일 임포트
@@ -20,6 +21,8 @@ app.mixin(mixins);
 
 app.component('EventCalendar', EventCalendar);
 app.component('MateHeader', MateHeader);
+app.component('MateFooter', MateFooter);
+
 app.use(VCalendar, {});
 app.use(router).mount('#app');
 
