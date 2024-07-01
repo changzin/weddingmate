@@ -168,7 +168,7 @@ const routes = [
     component: TempVue
   },
   {
-    path:'/orderinfo',
+    path:'/orderinfo/:boxId',
     name:"Orderinfo",
     component: Orderinfo
   },
