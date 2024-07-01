@@ -1,9 +1,12 @@
 const express = require('express');
 const { loginCheck } = require('../middleware/login');
-const { scheduleList, scheduleAdd } = require('../controller/scheduleController');
+const { scheduleList, insertSchedule, deleteSchedule } = require('../controller/scheduleController');
 
 const router = express.Router();
 
-// router.post('/list', loginCheck, scheduleList);
-// router.post('/add', loginCheck, scheduleAdd);
+router.post('/list', loginCheck, scheduleList);
+router.post('/insertschedule', loginCheck, insertSchedule);
+router.post('/deleteschedule', loginCheck, deleteSchedule); 
+
+
 module.exports = router;

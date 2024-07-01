@@ -36,7 +36,7 @@
       <!-- QnA -->
       <div class="qnalist_qna-section">
         <div class="qnalist_qna-header">
-          <h2 class="qnalist_qna-title">전체 QnA &gt;</h2>
+          <div></div>
           <button
             class="qnalist_write-qna-btn"
             type="button"
@@ -220,6 +220,7 @@ export default {
         if (QnAResult.status == 200) {
           this.qnaList = QnAResult.qnaList;
           this.maxPage = QnAResult.maxPage;
+          this.searchCount = QnAResult.searchCount[0].total;
           console.log("maxPage : ", this.maxPage);
           console.log(
             "searchitemdetail: ",
@@ -412,12 +413,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 20px 0px;
-}
-
-.qnalist_qna-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
 }
 
 .qnalist_write-qna-btn {

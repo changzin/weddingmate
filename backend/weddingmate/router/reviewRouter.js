@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/adminlist', adminReviewList);
 router.post('/admindelete', adminLoginCheck,adminReviewDelete);
 router.post('/delete', loginCheck ,userReviewDelete);
-router.get('/itemdetail/:item_id', itemDetail);
+router.post('/itemdetail/:item_id', loginFilter, itemDetail);
 router.post('/reviewreport',loginCheck, reviewReport);
 router.post('/insertreview', loginCheck, insertReview); 
 

@@ -34,6 +34,16 @@
 
       <!-- 리뷰 섹션 -->
       <div class="reviewlist_review-section">
+        <div class="qnalist_qna-header">
+          <div></div>
+          <button
+            class="qnalist_write-qna-btn"
+            type="button"
+            @click="gotoReviewWrite"
+          >
+            <i class="fas fa-pen"></i> 리뷰 작성
+          </button>
+        </div>
         <div class="reviewlist_review-cards">
           <!-- v-for="(qna, index) in qnaList" -->
           <button
@@ -227,6 +237,10 @@ export default {
       }
     },
 
+    gotoReviewWrite() {
+      this.$router.push({ name: "reviewwrite", query: { item_id: this.item_id } });
+    },
+
     gotoReviewModify(review_id) {
       this.$router.push({
         name: "reviewmodify",
@@ -350,6 +364,27 @@ export default {
 
 <style scoped>
 /* 리뷰 */
+
+
+.qnalist_qna-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0px;
+}
+
+.qnalist_write-qna-btn {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
 .reviewlist_container {
   width: 1280px;
   margin: 0 auto;
@@ -377,7 +412,7 @@ export default {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  margin-top: 100px;
+  margin-top: 30px;
 }
 
 .reviewlist_review-header {
@@ -665,39 +700,5 @@ export default {
   height: 40px;
 }
 
-/* 푸터 */
-.common__footer {
-  background-color: #333333;
-  color: #999999;
-  padding: 20px 0;
-  margin-top: 100px;
-  font-size: 14px;
-}
 
-.common__footer-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.common__footer-nav {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.common__footer-nav a {
-  color: #999999;
-  text-decoration: none;
-  margin: 0 10px;
-}
-
-.common__footer-nav a:hover {
-  text-decoration: underline;
-}
-
-.common__footer-details {
-  text-align: center;
-  font-size: 14px;
-}
 </style>
