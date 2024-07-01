@@ -3393,10 +3393,11 @@ export default {
           { access_token: "temp-token" },
           "POST"
         );
-        this.BoxResultData = BoxResult.data;
+        this.BoxResultData = BoxResult.data || [];
+
         if (this.BoxResultData) {
           console.log(
-            "BoxResultData: ",
+            "BoxResultData111: ",
             JSON.parse(JSON.stringify(this.BoxResultData))
           );
         } else {
@@ -4665,6 +4666,7 @@ export default {
         .writeText(currentUrl)
         .then(() => {
           alert("링크가 복사되었습니다!");
+          console.log("currentUrl  : ", currentUrl);
         })
         .catch((err) => {
           console.error("링크 복사에 실패했습니다: ", err);
@@ -4699,7 +4701,7 @@ export default {
       });
     },
 
-    goToReviewWrite() {
+    async goToReviewWrite() {
       this.$router.push({
         name: "reviewwrite",
         query: { item_id: this.item_id },
@@ -4797,7 +4799,10 @@ export default {
     //QnA
 
     gotoQnaWrite() {
-      this.$router.push({ name: "qnawrite", query: { item_id: this.item_id } });
+      this.$router.push({
+        name: "qnawrite",
+        query: { item_id: this.item_id },
+      });
     },
 
     async gotoQnaDetail(index) {

@@ -153,8 +153,8 @@ exports.AddBox = async (req, res) => {
 
     // Box 데이터 생성
     const query = `
-            INSERT INTO box (user_id, box_name, box_quantity, box_total_price)
-      VALUES (?, ?, 0, 0);
+            INSERT INTO box (user_id, box_name, box_quantity)
+      VALUES (?, ?, 0);
           `;
     const result = await db(query, [user_id, box_name]);
 

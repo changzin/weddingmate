@@ -81,7 +81,10 @@ const routes = [
   {
     path: '/userlogin',
     name: 'userlogin',
-    component: UserLogin
+    component: UserLogin,
+    meta: {
+      savedUrl: null,
+    }
   },
   {
     path: '/signup',
