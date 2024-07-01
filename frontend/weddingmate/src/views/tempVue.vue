@@ -2,6 +2,7 @@
 <div>
         <MateHeader />
         <EventCalendar />
+        <MateFooter />
 </div>
 </template>
 

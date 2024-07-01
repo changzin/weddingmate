@@ -16,8 +16,7 @@
       </div>
       <!-- 별점 -->
       <div class="qnawrite_row">
-        <label class="qnawrite_label">별점 표시</label>
-
+        <label class="qnawrite_label">별점 </label>
         <div class="rating">
           <label
             v-for="n in 10"
@@ -46,7 +45,7 @@
       <form @submit.prevent="handleSubmit" class="form_margin">
         <!-- 문의 내용 -->
         <div class="qnadetail_row">
-          <label class="qnadetail_label">문의 내용</label>
+          <label class="qnadetail_label">리뷰 내용</label>
           <div class="qnadetail_chip qnadetail_chip-content">
             {{ form.content }}
           </div>
@@ -71,27 +70,7 @@
     </div>
 
     <!-- 푸터 -->
-    <footer class="common__footer">
-      <div class="common__footer-content">
-        <nav class="common__footer-nav">
-          <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-          <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-          <a href="#">제휴문의</a> |
-          <a href="#">광고문의</a>
-        </nav>
-        <div class="common__footer-details">
-          <p style="margin-bottom: 0px">
-            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-            02-123-1234 팩스: 02-111-2222
-          </p>
-
-          <p>
-            해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-            민원담당자에게 있습니다. 민원담당자: 강문정
-          </p>
-        </div>
-      </div>
-    </footer>
+    <MateFooter />
   </div>
 </template>
 
@@ -264,6 +243,16 @@ export default {
   background-position: right;
 }
 
+
+.qnawrite_row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.qnawrite_label {
+width: 100px;
+}
 
 
 
@@ -460,6 +449,8 @@ export default {
   height: 300px;
   background-color: #007bff;
 }
+
+
 
 /* 푸터 */
 .common__footer {
