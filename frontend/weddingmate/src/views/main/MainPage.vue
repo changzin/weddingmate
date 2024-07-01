@@ -183,7 +183,7 @@
             const requestBody = {}
             console.log(requestBody);
             await this.$api("/bestItem",requestBody,"GET")
-            this.$router.push({push: "/"});
+            this.$router.push({path: "/"});
 
             //전송한 아이템 가져오기 
             const result = await this.$api(`http://localhost:9090/bestItem`)

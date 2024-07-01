@@ -1,9 +1,31 @@
 const db = require('../util/db');
 
+
+
+// 결제내역
+exports.paymetList = async(req, res) =>{
+    try{
+
+        const user_id = req.body.user_id;
+        let reuslt = [];
+        let query = "SELECT ";
+        let responseBody= {};
+
+
+        
+
+
+        res.json(responseBody);
+    }catch(error) {
+
+        res.json(responseBody);
+    }
+}
+
+// 북마크
 exports.bookmarkList = async(req, res) =>{
     try{
-        console.log("req.body");
-        console.log(req.body);
+
         const user_id = req.body.user_id;
         let page = req.query.page;
 
@@ -15,10 +37,11 @@ exports.bookmarkList = async(req, res) =>{
         let responseBody ={};
 
         result = await db(query, [user_id, page * 10] );
-
+        result2 = req.body;
+      
         responseBody = {
             status: 200,
-            bookmarkList: result
+            bookmarkList: result, 
         };
         res.json(responseBody);
     }catch(err) {
@@ -31,77 +54,58 @@ exports.bookmarkList = async(req, res) =>{
     
     }
 }
-exports.mypageNation = async (req, res) => {
-    try {
-      // 데이터 준비
-      // const itemType = req.query.itemType;
-      const itemType = req.params.itemDetailType;
-      let keyword = req.query.keyword;
-      const page = parseInt(req.query.page) || 1;
-  
-      // 키워드가 null이거나 비어 있으면 %%을 붙여 쿼리문이 잘 돌아가도록 함.
-      keyword = !keyword ? "%%" : "%" + keyword + "%";
-      let result = [];
-      let maxPage = 1;
-  
-      // 페이지네이션
-      const pageSize = 12;
-      const offset = (page - 1) * pageSize;
-      if (itemType == "all") {
-        const countQuery = `
-            SELECT COUNT(*) AS totalCount 
-            FROM item 
-            WHERE item_name LIKE ?
-          `;
-        const countResult = await db(countQuery, [keyword]);
-        const totalCount = countResult[0].totalCount;
-        maxPage = Math.ceil(totalCount / pageSize);
-  
-        // 현재 페이지에 따른 item 데이터 가져오기
-        const query = `
-            SELECT item.item_id, item.item_name, item.item_discount_rate, item.item_tn_image_path
-            FROM item 
-            WHERE item.item_name LIKE ? 
-            LIMIT ? OFFSET ?
-          `;
-        result = await db(query, [keyword, pageSize, offset]);
-      } else {
-        const countQuery = `
-            SELECT COUNT(*) AS totalCount 
-            FROM item 
-            JOIN item_detail ON item.item_id = item_detail.item_id 
-            WHERE item_detail.item_detail_type = ? AND item_name LIKE ?
-          `;
-        const countResult = await db(countQuery, [itemType, keyword]);
-        const totalCount = countResult[0].totalCount;
-        maxPage = Math.ceil(totalCount / pageSize);
-  
-        // 현재 페이지에 따른 item 데이터 가져오기
-        const query = `
-            SELECT DISTINCT item.item_id, item.item_name, item.item_discount_rate, item.item_tn_image_path 
-            FROM item 
-            JOIN item_detail ON item.item_id = item_detail.item_id 
-            WHERE item_detail.item_detail_type = ? AND item.item_name LIKE ? 
-            LIMIT ? OFFSET ?
-          `;
-        result = await db(query, [itemType, keyword, pageSize, offset]);
-      }
-  
-      // 데이터 보낼 준비
-      const responseBody = {
+
+exports.bookmarkDel = async(req, res) =>{
+  try{
+
+    const bookmarkId = req.body.bookmark_id
+
+    let query = "DELETE FROM bookmark WHERE bookmark_id = ?"
+    let result = await db(query, [bookmarkId]);
+    responseBody = {
         status: 200,
-        message: "ProductController.js의 productList 데이터 성공",
-        data: result,
-        maxPage: maxPage,
-      };
-      // 데이터 보내기
-      res.json(responseBody);
-    } catch (err) {
-      console.error(err);
-      const responseBody = {
+        delBookmark: result
+    };
+    res.json(responseBody);
+  
+  } catch(err){
+    console.error(err);
+    responseBody = {
         status: 400,
-        message: err.message,
-      };
-      res.json(responseBody);
+        mesage: "잘못된 페이지 요청입니다"       
     }
-  };
+    res.json(responseBody);
+  }
+}
+
+exports.bookmarkDeleteC = async (req, res) => {
+  try {
+      const bookmarkIds = req.body.checkedbookmarkIds; // 클라이언트에서 전송된 체크된 북마크 ID들의 배열
+
+      if (!Array.isArray(bookmarkIds) || bookmarkIds.length === 0) {
+          throw new Error("삭제할 북마크를 선택해주세요.");
+      }
+
+      const query = 'DELETE FROM bookmark WHERE bookmark_id IN (?)'; // IN 절을 사용하여 여러 개의 bookmark_id를 한 번에 처리
+
+      const result = await db(query, [bookmarkIds]);
+
+      const affectedRows = result.affectedRows;
+
+      if (affectedRows > 0) {
+          res.status(200).json({
+              status: 200,
+              message: `${affectedRows}개의 북마크가 삭제되었습니다.`
+          });
+      } else {
+          throw new Error("선택된 북마크를 삭제할 수 없습니다.");
+      }
+  } catch (error) {
+    console.error(error);
+    responseBody = {
+        status : 400,
+        mesage: "잘못된 페이지 요청입니다"
+    }
+    res.json(responseBody);
+  }
+};

@@ -360,7 +360,6 @@ export default {
       await this.itemDetailList.splice(index, 1);
     },
     async createItem(){
-      console.log(this.itemTnImage);
 
       const requestBody = {
         access_token: this.$getAccessToken(),
@@ -378,7 +377,12 @@ export default {
         item_main_image_ext: this.itemMainImageExt
       }
       const result = await this.$api("/product/add", requestBody, "POST");
-      console.log(result);
+      if (result.status == 200){
+        alert("상품을 정상적으로 등록하였습니다.");
+      }
+      else{
+        alert("에러로 상품을 등록하지 못했습니다.");
+      }
       this.$router.push({path: "/admin/itemlist"});
     },
     async changeTnImage(file){

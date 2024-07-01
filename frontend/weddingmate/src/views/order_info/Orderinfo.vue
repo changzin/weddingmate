@@ -1,113 +1,7 @@
 <template>
     <div class="fix-width">
       <!-- 헤더 -->
-      <div class="common-header">
-        <!-- 로그인 + 회원가입 + 로고 -->
-        <header class="bg-light productdetail_padding_0">
-          <!-- 로그인 회원가입 -->
-          <div
-            class="container d-flex justify-content-end align-items-center"
-            id="common__login-div-padding"
-          >
-            <nav class="navbar-light">
-              <div class="" id="navbarNav">
-                <ul class="navbar-nav flex-row">
-                  <li class="nav-item" id="common__header-login-padding">
-                    <a href="#">로그인</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#">회원가입</a>
-                  </li>
-                </ul>
-              </div>
-            </nav>
-          </div>
-          <!-- 로고 -->
-          <div class="text-center">
-            <a class="navbar-brand" href="#">
-              <img src="https://via.placeholder.com/200x50" alt="Logo" />
-            </a>
-          </div>
-        </header>
-        <!-- 카테고리 + 이미지 -->
-        <nav
-          class="common-header_navbar navbar-light bg-light"
-          id="common_main-banner_div"
-          @mouseleave="hideCategories"
-        >
-          <div class="common-header_overlay">
-            <div class="common-header_overlay-content">
-              <!-- 대카테고리 -->
-              <ul class="common-header_nav" @mouseover="showCategories">
-                <li class="common-header_main-title">웨딩홀</li>
-                <li class="common-header_main-title">스드메</li>
-                <li class="common-header_main-title">혼수</li>
-                <li class="common-header_main-title">본식</li>
-                <li class="common-header_main-title">촬영팀</li>
-              </ul>
-              <!-- 이미지랑 소카테고리 -->
-              <div class="common-header_image-smallcategory">
-                <!-- 이미지 -->
-                <section class="productdetail_main-image-section">
-                  <img
-                    src="https://via.placeholder.com/1980x500"
-                    class="img-fluid w-100"
-                    alt="Main Image"
-                  />
-                </section>
-  
-                <!-- 소카테고리 -->
-                <div class="common-header_categories" v-if="isVisible">
-                  <div class="common-header_smallcategory-area">
-                    <div class="common-header_category">
-                      <ul>
-                        <li>추천 리스트</li>
-                        <li>웨딩홀 목록</li>
-                      </ul>
-                    </div>
-                    <div class="common-header_category">
-                      <ul>
-                        <li>독립 패키지</li>
-                        <li>스튜디오</li>
-                        <li>드레스</li>
-                        <li>메이크업</li>
-                      </ul>
-                    </div>
-                    <div class="common-header_category">
-                      <ul>
-                        <li>예복</li>
-                        <li>예물</li>
-                        <li>가전</li>
-                        <li>혼수 패키지</li>
-                      </ul>
-                    </div>
-                    <div class="common-header_category">
-                      <ul>
-                        <li>본식스냅</li>
-                        <li>영상</li>
-                        <li>부케</li>
-                        <li>연주</li>
-                        <li>사회자</li>
-                        <li>웨딩슈즈</li>
-                        <li>답례품</li>
-                        <li>청첩장</li>
-                      </ul>
-                    </div>
-                    <div class="common-header_category">
-                      <ul>
-                        <li>스냅</li>
-                        <li>본식</li>
-                        <li>제주도 야외</li>
-                        <li>고급 스튜디오 촬영</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
+      <MateHeader />
   
       <!-- 본문  -->
       <div class="container order_info_container">
@@ -115,7 +9,6 @@
             <div class="order_info_title">
                 주문 / 결제
             </div>
-            <hr class="order_info_hr">
             <div class="row justify-content-center">
               
               <!-- 구매자정보 -->
@@ -125,17 +18,17 @@
                     </div>
                     <thead></thead>
                     <tbody>
-                        <tr v-for="(member,index) in memberList" :key="index">
+                        <tr>
                             <td class="order_info_first_row order_info_td_child">이름</td>
-                            <td class="order_info_second_row">{{ member.user_name }}</td>                  
+                            <td class="order_info_second_row">{{ user.user_name }}</td>                  
                         </tr>
-                        <tr v-for="(member,index) in memberList" :key="index">
+                        <tr>
                             <td class="order_info_first_row order_info_td_child">이메일</td>
-                            <td class="order_info_second_row">{{ member.user_email }}</td>                           
+                            <td class="order_info_second_row">{{ user.user_email }}</td>                           
                         </tr>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">휴대폰 번호</td>
-                            <td><input class="order_info_phone_number" type="text" v-model="phonenumber"></td>
+                            <td><input class="order_info_phone_number" type="text" v-model="phoneNumber"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -146,48 +39,34 @@
                         주문 상품 (1건)
                     </div>
                     <thead></thead>
-                    <tbody v-for="(box,index) in boxlist" :key="index" >
+                    <tbody v-for="(boxItem,index) in boxItemList" :key="index" >
                         <tr class="order_info_td_line">
-                            <td class="order_info_td col-9">{{ box.boxitem }}</td>
-                            <td class="col-3">수량 {{ box.boxquantity }}개</td>
+                            <td class="order_info_td col-7">{{ boxItem.item_name }}</td>
+                            <td class="col-2">{{ boxItem.item_detail_type }}</td>
+                            <td class="col-1">{{ (boxItem.box_item_quantity) ? boxItem.box_item_quantity : 1 }}개</td>
+                            <td class="col-2">{{ this.$numberFormat(boxItem.item_price) }}원</td>
                         </tr>
                     </tbody>
                 </table>
-                <!-- 배송 상품 -->
-                <table class="order_info_table2">
-                    <div class="order_info_sub_title">
-                        배송 상품 (N건)
-                    </div>
-                    <thead></thead>
-                    <tbody v-for="(box,index) in boxlist" :key="index">
-                        <tr class="order_info_td_line">
-                            <td class="order_info_td col-9 ">{{ box.boxitem }}</td>
-                            <td class="col-3">수량 {{box.boxquantity }}개 / {{ box.orderdeliveryprice }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+
                 <!-- 결제정보테이블 -->
                 <table class="order_info_table">
                     <div class="order_info_sub_title">
                         결제정보
                     </div>
                     <thead></thead>
-                    <tbody v-for="(orderinfo,index) in order_info_list" :key="index">
+                    <tbody>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">총 상품가격</td>
-                            <td class="order_info_second_row">{{ orderinfo.order_total_price }}원</td>                  
+                            <td class="order_info_second_row">{{ order_info.order_total_price }}원</td>                  
                         </tr>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">할인 가격</td>
-                            <td class="order_info_second_row">{{ orderinfo.order_sale_price }}원</td>                           
-                        </tr>
-                        <tr>
-                            <td class="order_info_first_row order_info_td_child">배송비</td>
-                            <td class="order_info_second_row">{{ orderinfo.order_delivery_price }}원</td>
+                            <td class="order_info_second_row">{{ order_info.order_sale_price }}원</td>                           
                         </tr>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">총 결제가격</td>
-                            <td class="order_info_second_row">{{ orderinfo.order_price }}원</td>
+                            <td class="order_info_second_row">{{ order_info.order_price }}원</td>
                         </tr>
                     </tbody>
                 </table>
@@ -197,34 +76,22 @@
             <div class="order_info_sub_title">
                 결제 수단
             </div>
-            <button type="button" class="order_info_sub_box1 d-flex justify-content-start" @click="toggleKakaoActive()">
+            <button class="order_info_sub_box1 d-flex justify-content-start" @click="toggleKakaoActive();">
               <div class="order_info_defult_icon1" v-if="!isKakaoActive"></div>  
-              <div class="order_info_active_icon1" v-else-if="isKakaoActive">
-                </div>
+              <div class="order_info_active_icon2" style="margin-top:30px;" v-else-if="isKakaoActive"></div>
                 <div class="order_info_icon1"></div>
                 <div class="order_info_text1">카카오페이</div>
             </button>
             
-            <!-- 트라이 1 버튼 위치가 이상해졌다 비활성화는 됬는데 이게 비활성화기능이 된게 아니라 그냥 액티브버튼이 생겼다 사라졌다로 됨  -->
-            <!-- <button type="button" class="order_info_sub_box1 d-flex justify-content-start" @click="togglekakaoactive">
-                <div class="order_info_defult_icon1" v-if="iskakaoactive" >
-                </div> 
-                <div class="order_info_active_icon1" v-if="iskakaoactive"></div>
-                <div class="order_info_icon1"></div>
-                
-                <div class="order_info_text1">카카오페이</div>
-            </button> -->
-            <!-- <button class="btn admin_review_btn_active" v-if="!reportedOption" @click="getReportedReviewList()">신고된 리뷰만 보기</button>
-                  <button class="btn admin_review_btn_inactive" v-if="reportedOption" @click="getUnReportedReviewList()">전체 리뷰 보기</button> -->
-  
-
             <!-- 현금 영수증 -->
             <div class="order_info_sub_title">
                 현금영수증 신청
             </div>
-            <button type="button" @click="kakaopriceactive" class="order_info_sub_box2 d-flex justify-content-start">
-                <div class="order_info_defult_icon2 order_info_active_icon2"></div>
-                <div class="order_info_icon2"></div>
+            <button type="button" class="order_info_sub_box2 d-flex justify-content-start" @click="toggleBil();">
+                <!-- <div class="order_info_defult_icon2 order_info_active_icon2" v-if="isBil"></div> -->
+                <div class="order_info_defult_icon1" v-if="!isBil"></div>  
+                <div class="order_info_active_icon2" style="margin-top:30px;" v-else-if="isBil"></div>
+                <div class="order_info_icon2" style="margin-top:35px;"></div>
                 <div class="order_info_text2">
                     현금영수증 신청
                     <p class="order_info_table_sub_text">﹒할인 시 할인 금액을 제외한 결제 가격에 한하여 현금영수증이 발행됩니다.</p>
@@ -238,12 +105,12 @@
 
         <!-- 견적함상세페이지 전송 -->
         <div class="row justify-content-center">
-            <button class="order_info_button1">
+            <button class="order_info_button1" style="padding-bottom:25px;">
                 취소
             </button>
             
             <!-- 결제 실행 -->
-            <button class="order_info_button2" @click="requestPay">
+            <button class="order_info_button2" style="padding-bottom:25px;" @click="makeOrder();">
                 결제하기
             </button>
         </div>  
@@ -279,74 +146,101 @@
     name: "SearchComponent",
     data() {
       return {
-        // 헤더
-        isVisible: false,
-        ismaintain: false,
         // 구매자정보
-        memberList:[{
-          "user_name" : "user1",
-          "user_email" : "1234@1234.com"
-        }],
-        phonenumber:'01012341234',
+        user: null,
+        phoneNumber:'',
         //주문 상품
-        boxlist:[
+        boxItemlist:[],
+        order_info:
           {
-            "boxitem":"울트라드레스","boxquantity":"1","orderdeliveryprice":"무료배송"
-          },
-          {
-            "boxitem":"울트라드레스스","boxquantity":"2","orderdeliveryprice":"3000"
+            "order_total_price": 0,
+            "order_sale_price":0,
+            "order_price":0,
           }
-        ],
-        order_info_list:[
-          {
-            "order_total_price":"27000","order_sale_price":"0","order_delivery_price":"0","order_price":"27000"
-          }
-        ],
+        ,
         // 카카오결제여부
         isKakaoActive:false,
+        isBil:false,
         
-        //결제 시도 
-        requestPay:[],
       };
     },
-    mounted(){
-      // this.getMemberList();
-      this.getboxlist();
-      this.toggleKakaoActive();
-      this.requestPay();
+    async created(){
+      await this.getUser();
+      await this.getBoxItemList();
+      await this.toggleKakaoActive();
+      this.makeOrderInfo();
     },
     methods: {
-      // 헤더
-      showCategories() {
-        this.isVisible = true;
+      async getUser(){
+        try{
+          this.user = await this.$verifiedUser();
+          if (this.user == null){
+            alert("로그인 상태가 아닙니다!");
+          }
+        }
+        catch(err){
+          alert("로그인 상태가 아닙니다!");
+        }
       },
-      hideCategories() {
-        this.isVisible = false;
-      },
-      // 본문
-        //멤버 가져오는건 일단 고정 값으로 집어놓기 
-        // async getMemberList(){
-        //   let page = this.$route.params.page;
-        //   let block = this.$route.params.page;
-        //   page = (!page) ? 1 : page;
-        //   const result = await this.$api(`http://localhost:9090/user/list?page=`)
-        // }
+      async getBoxItemList(){
+        try{
+          let requestBody = {
+            "access_token": this.$getAccessToken(),
+            "order_id": this.$route.params.boxId
+          }
+          const result = await this.$api("http://localhost:9090/order/orderdata", requestBody,"POST");
+          console.log(result);
+          this.boxItemList = result.boxItemList; 
 
-        //카카오페이 버튼
+          if (result.status != 200){
+            alert("견적함 정보를 불러올 수 없습니다!");  
+          }
+        } catch(err){
+          alert("견적함 정보를 불러올 수 없습니다!");
+        }
+      },
+      makeOrderInfo(){
+        for(let i = 0; i < this.boxItemList.length; i++){
+          this.order_info.order_total_price += this.boxItemList[i].box_item_total_price;
+        }
+        for(let i = 0; i < this.boxItemList.length; i++){
+          this.order_info.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (100 / this.boxItemList[i].item_discount_rate)));
+        }
+        this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
+      },
+      makeOrder(){
+        if (!this.phoneNumber){
+          alert("전화번호는 필수로 입력해야 합니다.");
+          return;
+        }
+        if (!this.isKakaoActive){
+          alert("결제수단을 선택해야 합니다.");
+          return;
+        }
+        let requestBody = {
+          access_token: this.$getAccessToken(),
+          box_id: this.$route.params.boxId,
+          order_info_pay_type: "kakao",
+          order_info_price: this.order_info.order_price,
+          order_info_total_price: this.order_info.order_total_price,
+          order_info_sale_price: this.order_info.order_sale_price,
+          order_info_cash_receipt: this.isBil
+        };
+        const result = this.$api("http://localhost:9090/order/makeorder", requestBody, "POST");
+        if (result.status == 200){
+          alert("주문 완료하였습니다.");
+        }
+        else{
+          alert("에러가 발생하였습니다. 다시 시도해 주세요.");
+        }
+      },
       toggleKakaoActive(){
         this.isKakaoActive = !this.isKakaoActive;
-        console.log(this.isKakaoActive);
+      },
+      toggleBil(){
+        this.isBil = !this.isBil;
       },
 
-      //결제요청
-      async getPay(){
-        if(!this.isKakaoActive()){
-          // 로컬페이요청
-          return
-        }
-        this.requestPay = await  this.$api()
-
-      }
     },
   };
   </script>
@@ -376,9 +270,6 @@
   
   .common-header_overlay {
     position: relative;
-  }
-  
-  .common-header_overlay-content {
   }
   
   /* 카테고리 + 이미지 */
