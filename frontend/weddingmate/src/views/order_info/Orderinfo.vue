@@ -18,17 +18,17 @@
                     </div>
                     <thead></thead>
                     <tbody>
-                        <tr v-for="(member,index) in memberList" :key="index">
+                        <tr>
                             <td class="order_info_first_row order_info_td_child">이름</td>
-                            <td class="order_info_second_row">{{ member.user_name }}</td>                  
+                            <td class="order_info_second_row">{{ user.user_name }}</td>                  
                         </tr>
-                        <tr v-for="(member,index) in memberList" :key="index">
+                        <tr>
                             <td class="order_info_first_row order_info_td_child">이메일</td>
-                            <td class="order_info_second_row">{{ member.user_email }}</td>                           
+                            <td class="order_info_second_row">{{ user.user_email }}</td>                           
                         </tr>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">휴대폰 번호</td>
-                            <td><input class="order_info_phone_number" type="text" v-model="phonenumber"></td>
+                            <td><input class="order_info_phone_number" type="text" v-model="phoneNumber"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -39,10 +39,12 @@
                         주문 상품 (1건)
                     </div>
                     <thead></thead>
-                    <tbody v-for="(box,index) in boxlist" :key="index" >
+                    <tbody v-for="(boxItem,index) in boxItemList" :key="index" >
                         <tr class="order_info_td_line">
-                            <td class="order_info_td col-9">{{ box.item_name }}</td>
-                            <td class="col-3">수량 {{ box.box_item_quantity }}개</td>
+                            <td class="order_info_td col-7">{{ boxItem.item_name }}</td>
+                            <td class="col-2">{{ boxItem.item_detail_type }}</td>
+                            <td class="col-1">{{ (boxItem.box_item_quantity) ? boxItem.box_item_quantity : 1 }}개</td>
+                            <td class="col-2">{{ this.$numberFormat(boxItem.item_price) }}원</td>
                         </tr>
                     </tbody>
                 </table>
@@ -61,10 +63,6 @@
                         <tr>
                             <td class="order_info_first_row order_info_td_child">할인 가격</td>
                             <td class="order_info_second_row">{{ order_info.order_sale_price }}원</td>                           
-                        </tr>
-                        <tr>
-                            <td class="order_info_first_row order_info_td_child">배송비</td>
-                            <td class="order_info_second_row">{{ order_info.order_delivery_price }}원</td>
                         </tr>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">총 결제가격</td>
@@ -112,7 +110,7 @@
             </button>
             
             <!-- 결제 실행 -->
-            <button class="order_info_button2" style="padding-bottom:25px;">
+            <button class="order_info_button2" style="padding-bottom:25px;" @click="makeOrder();">
                 결제하기
             </button>
         </div>  
@@ -149,23 +147,15 @@
     data() {
       return {
         // 구매자정보
-        memberList:[{
-          "user_name" : "user1",
-          "user_email" : "1234@1234.com"
-        }],
-        phonenumber:'01012341234',
+        user: null,
+        phoneNumber:'',
         //주문 상품
-        boxlist:[
-          {
-            "boxitem":"울트라드레스","boxquantity":"1","orderdeliveryprice":"무료배송"
-          },
-          {
-            "boxitem":"울트라드레스스","boxquantity":"2","orderdeliveryprice":"3000"
-          }
-        ],
+        boxItemlist:[],
         order_info:
           {
-            "order_total_price":"27000","order_sale_price":"0","order_delivery_price":"0","order_price":"27000"
+            "order_total_price": 0,
+            "order_sale_price":0,
+            "order_price":0,
           }
         ,
         // 카카오결제여부
@@ -174,11 +164,76 @@
         
       };
     },
-    mounted(){
-      // this.getMemberList();
-      this.toggleKakaoActive();
+    async created(){
+      await this.getUser();
+      await this.getBoxItemList();
+      await this.toggleKakaoActive();
+      this.makeOrderInfo();
     },
     methods: {
+      async getUser(){
+        try{
+          this.user = await this.$verifiedUser();
+          if (this.user == null){
+            alert("로그인 상태가 아닙니다!");
+          }
+        }
+        catch(err){
+          alert("로그인 상태가 아닙니다!");
+        }
+      },
+      async getBoxItemList(){
+        try{
+          let requestBody = {
+            "access_token": this.$getAccessToken(),
+            "order_id": this.$route.params.boxId
+          }
+          const result = await this.$api("http://localhost:9090/order/orderdata", requestBody,"POST");
+          console.log(result);
+          this.boxItemList = result.boxItemList; 
+
+          if (result.status != 200){
+            alert("견적함 정보를 불러올 수 없습니다!");  
+          }
+        } catch(err){
+          alert("견적함 정보를 불러올 수 없습니다!");
+        }
+      },
+      makeOrderInfo(){
+        for(let i = 0; i < this.boxItemList.length; i++){
+          this.order_info.order_total_price += this.boxItemList[i].box_item_total_price;
+        }
+        for(let i = 0; i < this.boxItemList.length; i++){
+          this.order_info.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (100 / this.boxItemList[i].item_discount_rate)));
+        }
+        this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
+      },
+      makeOrder(){
+        if (!this.phoneNumber){
+          alert("전화번호는 필수로 입력해야 합니다.");
+          return;
+        }
+        if (!this.isKakaoActive){
+          alert("결제수단을 선택해야 합니다.");
+          return;
+        }
+        let requestBody = {
+          access_token: this.$getAccessToken(),
+          box_id: this.$route.params.boxId,
+          order_info_pay_type: "kakao",
+          order_info_price: this.order_info.order_price,
+          order_info_total_price: this.order_info.order_total_price,
+          order_info_sale_price: this.order_info.order_sale_price,
+          order_info_cash_receipt: this.isBil
+        };
+        const result = this.$api("http://localhost:9090/order/makeorder", requestBody, "POST");
+        if (result.status == 200){
+          alert("주문 완료하였습니다.");
+        }
+        else{
+          alert("에러가 발생하였습니다. 다시 시도해 주세요.");
+        }
+      },
       toggleKakaoActive(){
         this.isKakaoActive = !this.isKakaoActive;
       },
@@ -215,9 +270,6 @@
   
   .common-header_overlay {
     position: relative;
-  }
-  
-  .common-header_overlay-content {
   }
   
   /* 카테고리 + 이미지 */
