@@ -1,5 +1,28 @@
 const db = require('../util/db');
 
+
+
+// 결제내역
+exports.paymetList = async(req, res) =>{
+    try{
+
+        const user_id = req.body.user_id;
+        let reuslt = [];
+        let query = "SELECT ";
+        let responseBody= {};
+
+
+        
+
+
+        res.json(responseBody);
+    }catch(error) {
+
+        res.json(responseBody);
+    }
+}
+
+// 북마크
 exports.bookmarkList = async(req, res) =>{
     try{
 
@@ -19,7 +42,6 @@ exports.bookmarkList = async(req, res) =>{
         responseBody = {
             status: 200,
             bookmarkList: result, 
-            log : result2
         };
         res.json(responseBody);
     }catch(err) {
@@ -33,18 +55,26 @@ exports.bookmarkList = async(req, res) =>{
     }
 }
 
-exports.bookmarkDelete2 = async(req, res) =>{
+exports.bookmarkDel = async(req, res) =>{
   try{
 
-    const user_id = req.body.user_id;
+    const bookmarkId = req.body.bookmark_id
 
-    let result = [];
-    let query = "DELETE FROM bookmark"
-    let responseBody = [];
-
+    let query = "DELETE FROM bookmark WHERE bookmark_id = ?"
+    let result = await db(query, [bookmarkId]);
+    responseBody = {
+        status: 200,
+        delBookmark: result
+    };
+    res.json(responseBody);
   
   } catch(err){
     console.error(err);
+    responseBody = {
+        status: 400,
+        mesage: "잘못된 페이지 요청입니다"       
+    }
+    res.json(responseBody);
   }
 }
 
@@ -71,9 +101,11 @@ exports.bookmarkDeleteC = async (req, res) => {
           throw new Error("선택된 북마크를 삭제할 수 없습니다.");
       }
   } catch (error) {
-      res.status(400).json({
-          status: 400,
-          message: error.message
-      });
+    console.error(error);
+    responseBody = {
+        status : 400,
+        mesage: "잘못된 페이지 요청입니다"
+    }
+    res.json(responseBody);
   }
 };
