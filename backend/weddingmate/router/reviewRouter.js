@@ -1,6 +1,6 @@
 const express = require('express');
-const {adminReviewList, adminReviewDelete, itemDetail, userReviewDelete, reviewReport} = require('../controller/reviewController');
-const { adminLoginCheck, loginCheck } = require('../middleware/login');
+const {adminReviewList, adminReviewDelete, itemDetail, userReviewDelete, reviewReport, wholeReview, insertReview,getSelectedReviewDetail, updateSelectedReviewDetail} = require('../controller/reviewController');
+const { adminLoginCheck, loginCheck, loginFilter } = require('../middleware/login');
 
 const router = express.Router();
 
@@ -10,4 +10,12 @@ router.post('/admindelete', adminLoginCheck,adminReviewDelete);
 router.post('/delete', loginCheck ,userReviewDelete);
 router.get('/itemdetail/:item_id', itemDetail);
 router.post('/reviewreport',loginCheck, reviewReport);
+router.post('/insertreview', loginCheck, insertReview); 
+
+
+router.post('/wholereview/:item_id',loginFilter ,wholeReview);
+router.get('/getselectedreviewdetail', getSelectedReviewDetail); 
+router.post('/updateselectedreviewdetail', updateSelectedReviewDetail); 
+
+
 module.exports = router;

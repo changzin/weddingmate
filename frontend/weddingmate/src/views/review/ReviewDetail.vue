@@ -8,38 +8,42 @@
       <!-- Q&A 상세보기 + 아이콘 -->
       <div class="qnadetail_header">
         <div></div>
-        <h2 class="qnadetail_header_text">Q&A 상세보기</h2>
+        <h2 class="qnadetail_header_text">리뷰 상세보기</h2>
         <div class="qnadetail_header_icon" v-if="isVisibleEditTrash">
           <i class="fas fa-edit" type="button" @click="gotoQnAModify"></i>
           <i class="fas fa-trash" type="button" @click="deleteQnA"></i>
         </div>
-        <div v-if="!isVisibleEditTrash"></div>
       </div>
-      <!-- 제목 + 답변상태 + 타이틀 등등 -->
-      <div class="qnadetail_answer_row_large">
-        <label class="qnadetail_answer_label">제목</label>
-        <div
-          class="productdetail_qna-status"
-          v-if="QnAResult.qna_has_answer == 'T'"
-        >
-          답변 완료
+      <!-- 별점 -->
+      <div class="qnawrite_row">
+        <label class="qnawrite_label">별점 표시</label>
+
+        <div class="rating">
+          <label
+            v-for="n in 10"
+            :key="n"
+            class="rating__label"
+            :class="{
+              half: n <= currentRating,
+              filled: n <= currentRating,
+              half_position: n % 2 !== 0,
+              filled_position: n % 2 === 0,
+            }"
+          >
+            <input
+              type="radio"
+              :id="'star' + n"
+              class="rating__input"
+              name="rating"
+              :value="n"
+              v-model="rating"
+            />
+            <div class="star-icon"></div>
+          </label>
         </div>
-        <div
-          class="productdetail_qna-status incomplete"
-          v-if="QnAResult.qna_has_answer == 'F'"
-        >
-          미완료
-        </div>
-        <div class="qnadetail_answer_qna_title">
-          {{ form.title }}
-        </div>
-        <div class="qnadetail_answer_qna_writer">
-          {{ this.user_nickname }}
-        </div>
-        <div class="qnadetail_answer_qna_date">2024-06-12 20:32</div>
       </div>
 
-      <form @submit.prevent="handleSubmit">
+      <form @submit.prevent="handleSubmit" class="form_margin">
         <!-- 문의 내용 -->
         <div class="qnadetail_row">
           <label class="qnadetail_label">문의 내용</label>
@@ -55,14 +59,6 @@
               <img :src="form.image" alt="이미지" />
             </div>
           </a>
-        </div>
-
-        <!-- 답변 내용 -->
-        <div class="qnadetail_row" v-if="AnswerContent">
-          <label class="qnadetail_label">답변 내용</label>
-          <div class="qnadetail_chip qnadetail_chip-content">
-            {{ AnswerContent }}
-          </div>
         </div>
 
         <!-- 버튼 -->
@@ -109,24 +105,18 @@ export default {
 
       // 본문
       form: {
-        inquiryType: "상품",
-        visibilityType: "공개",
-        title: "문의 제목입니다",
-        content:
-          "문의 내용입니다. 문의 내용입니다. 문의 내용입니다. 문의 내용입니다.",
-        image: "이미지 파일 경로",
+        content: "",
+        image: "",
       },
+      rating: 0,
+      currentRating: 0,
 
-      QnAResult: {},
-      AnswerResult: {},
-      UserResult: {},
-      user_nickname: "",
 
-      AnswerContent: "",
+      ReviewResult: {},
     };
   },
   props: {
-    qna_id: {
+    review_id: {
       type: String,
       required: true,
     },
@@ -136,67 +126,34 @@ export default {
     await this.fetchProductListData();
   },
 
-  async beforeRouteEnter(to, from, next) {
-    next();
-  },
+  // async beforeRouteEnter(to, from, next) {
+  //   next();
+  // },
 
   methods: {
     async fetchProductListData() {
       try {
-        console.log("this.qna_id  : ", this.qna_id);
+        console.log("this.reiview_id  : ", this.review_id);
+        
+
 
         //  qna 데이터 가져오기
-        const result = await this.$api(
-          "/qna/getselectedqnadetail",
-          { access_token: "temp-token", qna_id: this.qna_id },
-          "POST"
-        );
+        const result = await this.$api(`http://localhost:9090/review/getselectedreviewdetail?review_id=${this.review_id}`);  
 
-        this.QnAResult = result.data[0];
-        if (this.QnAResult) {
+
+        this.ReviewResult = result.data[0];
+        if (this.ReviewResult) {
           console.log(
-            "QnAResult: ",
-            JSON.parse(JSON.stringify(this.QnAResult))
+            "ReviewResult: ",
+            JSON.parse(JSON.stringify(this.ReviewResult))
           );
+
+          this.currentRating = this.ReviewResult.review_star * 2;
+          this.rating = this.currentRating;
+
           // form 객체 업데이트
-          this.form.visibilityType = this.QnAResult.qna_visibility;
-          this.form.title = this.QnAResult.qna_title;
-          this.form.content = this.QnAResult.qna_content;
-          this.form.image = this.QnAResult.qna_image_path;
-
-          this.isVisibleEditTrash = result.isVisibleEditTrash;
-
-          this.form.inquiryType = this.QnAResult.qna_type;
-          this.form.visibilityType = this.QnAResult.qna_visibility;
-          if (this.QnAResult.qna_visibility === "T") {
-            this.form.visibilityType = "공개";
-          } else {
-            this.form.visibilityType = "비공개";
-          }
-
-          this.user_nickname = result.user_nickname.user_nickname;
-
-          // answer 데이터 가져오기
-          if (this.QnAResult.qna_visibility === "T") {
-            const result = await this.$api(
-              "/answer/getanswer",
-              { qna_id: this.qna_id },
-              "POST"
-            );
-            this.AnswerResult = result.data;
-            if (this.AnswerResult) {
-              console.log(
-                "AnswerResult: ",
-                JSON.parse(JSON.stringify(this.AnswerResult))
-              );
-            }
-            if(result.data.answer_content)
-            {
-
-              this.AnswerContent = result.data.answer_content;
-            console.log("this.AnswerContent : ", this.AnswerContent);
-              }
-          }
+          this.form.content = this.ReviewResult.review_content;
+          this.form.image = this.ReviewResult.review_image_path;
         } else {
           console.log("fail");
         }
@@ -209,14 +166,13 @@ export default {
       this.$router.push({ name: "qnamodify", query: { qna_id: this.qna_id } });
     },
     async deleteQnA() {
-
       const result = await this.$api(
         "/qna/deleteqna",
         { access_token: "temp-token", qna_id: this.qna_id },
         "POST"
       );
 
-      if(result.status == 200) {
+      if (result.status == 200) {
         alert("성공적으로 지웠습니다");
         this.$router.go(-1);
       }
@@ -224,16 +180,6 @@ export default {
 
     // 확인 버튼 클릭 시 동작
     handleSubmit() {
-      if (
-        !this.form.title ||
-        !this.form.content ||
-        !this.form.inquiryType ||
-        !this.form.visibilityType
-      ) {
-        alert("모든 필드를 입력하세요.");
-        return;
-      }
-
       this.$router.go(-1);
     },
 
@@ -270,87 +216,58 @@ export default {
 <style scoped>
 /* 헤더 */
 
-#common__header-login-padding {
-  margin-right: 30px;
-}
-#common__login-div-padding {
-  padding: 0px;
-  width: 1280px;
+.form_margin {
+  margin-top: 20px;
 }
 
-.common-header_navbar {
-  background-color: #f8f8f8;
-}
 
-.common-header_overlay {
-  position: relative;
-}
 
-/* 카테고리 + 이미지 */
 
-/* 큰 카테고리 */
-.common-header_nav {
+
+
+.rating {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  list-style: none;
-  padding: 0;
-  height: 80px;
-  width: 1280px;
-  margin: 0 auto;
+  justify-content: flex-start;
 }
 
-.common-header_nav > li {
+.rating__input {
+  display: none;
+}
+
+.rating__label {
+  width: 12px;
+  overflow: hidden;
   cursor: pointer;
-  transition: background-color 0.3s;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  box-sizing: border-box;
-  padding: 20px;
-  width: 140px;
 }
-
-.common-header_nav > li:hover {
-  background-color: #ddd;
-}
-
-.common-header_image-smallcategory {
+.rating__label .star-icon {
+  width: 12px;
+  height: 24px;
+  display: block;
   position: relative;
-}
-/* 소카테고리 */
-.common-header_categories {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  z-index: 10;
-
-  position: absolute;
-  top: 0;
   left: 0;
+  background-image: url("/src/views/review/star/emptyStar.svg");
+  background-repeat: no-repeat;
 }
 
-.common-header_smallcategory-area {
-  width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  text-align: center;
+.rating__label.half .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
 }
 
-.common-header_categories ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.rating__label.filled .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
 }
 
-.common-header_categories li {
-  padding: 10px 0;
-  width: 140px; /* 각 항목의 너비를 140px로 고정 */
+.rating__label.half_position .star-icon {
+  background-position: left;
 }
+.rating__label.filled_position .star-icon {
+  background-position: right;
+}
+
+
+
+
+
 
 /* 본문 */
 
@@ -366,8 +283,7 @@ export default {
 
 .qnadetail_header {
   display: flex;
-  justify-content: space-between;
-  /* justify-content: center; */
+  justify-content: center;
   align-items: center;
   font-size: 30px;
   margin-bottom: 30px;

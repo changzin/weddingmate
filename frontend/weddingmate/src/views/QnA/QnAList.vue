@@ -91,6 +91,8 @@
         <div class="qnalist_qna-section_button"></div>
       </div>
     </div>
+
+    <!-- 페이지 -->
     <div class="mypage-bottom">
       <div class="nav-page justify-content-center">
         <a :class="{ notVisible: page == 1 }" @click="prevBlock()"

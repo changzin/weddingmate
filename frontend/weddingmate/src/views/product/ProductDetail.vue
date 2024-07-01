@@ -2988,23 +2988,30 @@
         </div>
 
         <!-- 신고 팝업창 -->
+        <div v-if="isVisibleReport" class="report-overlay">
+          <div class="report-popup">
+            <!-- <div v-if="isVisibleReport" class="report-popup"> -->
 
-        <div v-if="isVisibleReport" class="report-popup">
-        <!-- <div class="report-popup"> -->
-          <div class="report-popup_header">
-            <div></div>
-            <div>신고 팝업창</div>
-            <i
-              class="fas fa-times popupCloseButton"
-              @click="collapseReportPopup"
-            ></i>
-          </div>
-          <div class="report-popup_content">
-            <div class="report-popup_content_header">신고사유 :</div>
-            <textarea class="report-popup_content_input" v-model="reportContent"></textarea>
-            <div class="report-popup_content_footer">
-      <div class="report-popup_content_ok" @click="ToReport">전송</div>
-    </div>
+            <div class="report-popup_header">
+              <div></div>
+              <div>신고 팝업창</div>
+              <i
+                class="fas fa-times popupCloseButton"
+                @click="collapseReportPopup"
+              ></i>
+            </div>
+            <div class="report-popup_content">
+              <div class="report-popup_content_header">신고사유 :</div>
+              <textarea
+                class="report-popup_content_input"
+                v-model="reportContent"
+              ></textarea>
+              <div class="report-popup_content_footer">
+                <div class="report-popup_content_ok" @click="ToReport">
+                  전송
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -3018,7 +3025,11 @@
             >
               전체 리뷰 &gt;
             </h2>
-            <button class="productdetail_write-qna-btn">
+            <button
+              class="productdetail_write-qna-btn"
+              type="button"
+              @click="goToReviewWrite"
+            >
               <i class="fas fa-pen"></i> 리뷰작성
             </button>
           </div>
@@ -3029,7 +3040,7 @@
               v-for="(review, index) in reviewList"
               :key="index"
               style="margin-left: 20px"
-              @click="clickReview"
+              @click="goToReviewDetail(review.review_id)"
             >
               <div class="productdetail_card-header">
                 <div class="productdetail_review-section_title-div">
@@ -3046,7 +3057,32 @@
               </div>
               <div class="productdetail_review-section_title-div">
                 <div class="productdetail_card-rating">
-                  {{ this.makeStar(review.review_star) }}
+                  <!-- 별점 -->
+                  <div class="qnawrite_row">
+                    <div class="rating">
+                      <label
+                        v-for="n in 10"
+                        :key="n"
+                        class="rating__label"
+                        :class="{
+                          half: n <= review.review_star * 2,
+                          filled: n <= review.review_star * 2,
+                          half_position: n % 2 !== 0,
+                          filled_position: n % 2 === 0,
+                        }"
+                      >
+                        <input
+                          type="radio"
+                          :id="'star' + n"
+                          class="rating__input"
+                          name="rating"
+                          :value="n"
+                          v-model="rating"
+                        />
+                        <div class="star-icon"></div>
+                      </label>
+                    </div>
+                  </div>
                 </div>
                 <div class="productdetail_review-section_date-div">
                   {{ this.$dateFormat(review.review_date) }}
@@ -3225,6 +3261,11 @@ export default {
       // 신고팝업
       isVisibleReport: false,
       reportContent: "",
+      currentReviweIndex: 0,
+
+      // 별점
+      rating: 0,
+      currentRating: 0,
     };
   },
 
@@ -4274,13 +4315,9 @@ export default {
       )}-${String(d.getDate()).padStart(2, "0")}`;
     },
 
-    makeStar(num) {
-      let star = "";
-      for (let i = 0; i < num; i++) {
-        star += "★";
-      }
-      return star;
-    },
+
+
+
     formatQnaType(data) {
       if (data == "delivery") {
         return "배송문의";
@@ -4652,44 +4689,65 @@ export default {
     },
 
     // 리뷰
+    goToReviewList() {
+      this.$router.push({
+        name: "reviewlist",
+        query: { item_id: this.item_id },
+      });
+    },
+
+    goToReviewWrite() {
+      this.$router.push({
+        name: "reviewwrite",
+        query: { item_id: this.item_id },
+      });
+    },
+
+    goToReviewDetail(review_id) {
+      this.$router.push({
+        name: "reviewdetail",
+        query: { review_id: review_id },
+      });
+    },
+
+    // clickReview(review_id) {
+    // },
+
+    // 리뷰 신고
     async reviewToReport(review_id) {
-      (this.isVisibleReport = true),
-        console.log("reviewToReport : ", review_id);
+      this.isVisibleReport = true;
+      this.currentReviweIndex = review_id;
+    },
+
+    collapseReportPopup() {
+      this.isVisibleReport = false;
+    },
+
+    async ToReport() {
+      if (this.reportContent == "") {
+        alert("신고내용을 입력해주세요");
+      }
 
       try {
-        await this.$api(
+        const result = await this.$api(
           "/review/reviewreport",
           {
             access_token: "temp-token",
-            review_id: this.review_id,
+            review_id: this.currentReviweIndex,
+            report_content: this.reportContent,
           },
           "POST"
         );
-
-        // alert("상품 넣기 성공");
+        if (result.status == 200) {
+          alert("신고 완료");
+          this.isVisibleReport = false;
+        }
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
           error
         );
       }
-    },
-
-    goToReviewList() {
-      this.$router.push({ name: "reviewlist" });
-    },
-
-    //신고
-    collapseReportPopup() {
-      this.isVisibleReport = false;
-    },
-
-    ToReport() {
-      if(this.reportContent == "")
-      {
-        alert("신고내용을 입력해주세요")
-      }
-
     },
 
     //QnA
@@ -5291,6 +5349,21 @@ export default {
   margin-bottom: 10px;
 }
 
+/* 신고 */
+.report-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px); /* 블러 효과 추가 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* 배경을 덮도록 z-index 설정 */
+}
+
 .report-popup {
   position: fixed;
   bottom: 70px;
@@ -5303,6 +5376,7 @@ export default {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   display: flex;
+  border-radius: 12px;
 
   padding: 20px;
   /* visibility: collapse; */
@@ -5342,10 +5416,7 @@ export default {
 .report-popup_content_footer {
   display: flex;
   justify-content: center; /* 버튼을 가운데 정렬 */
-  
-  
 }
-
 
 .report-popup_content_ok {
   margin-top: 10px;
@@ -5353,11 +5424,54 @@ export default {
   border-radius: 12px;
   display: flex;
   width: 70px;
-   justify-content: center;
-   padding : 10px;
+  justify-content: center;
+  padding: 10px;
   cursor: pointer;
-
 }
+
+
+
+/* 별점 */
+.rating {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.rating__input {
+  display: none;
+}
+
+.rating__label {
+  width: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.rating__label .star-icon {
+  width: 12px;
+  height: 24px;
+  display: block;
+  position: relative;
+  left: 0;
+  background-image: url("/src/views/review/star/emptyStar.svg");
+  background-repeat: no-repeat;
+}
+
+.rating__label.half .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.filled .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.half_position .star-icon {
+  background-position: left;
+}
+.rating__label.filled_position .star-icon {
+  background-position: right;
+}
+
+
 
 /* 푸터 */
 
