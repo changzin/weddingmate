@@ -10,7 +10,7 @@ router.post('/',loginCheck, myBoxCategory);
 
 router.get('/category',myBoxCategory);
 //견적함 내  상품이름
-router.get('/name',loginCheck,myBoxItemName);
+router.get('/name',myBoxItemName);
 //견적함 내 상품옵션
 router.get('/option',loginCheck,myBoxItemOption);
 
