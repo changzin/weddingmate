@@ -29,7 +29,6 @@ exports.myBoxCategory = async(req,res)=>{
 
         category_info = await db(mybox_category)
 
-
         console.log(category_info);
         const responseBody = { 
             status : 200,
@@ -50,7 +49,8 @@ exports.myBoxCategory = async(req,res)=>{
 exports.myBoxItemName = async(req,res)=>{
     try{
         const user_id = req.body.user_id;
-        const query = "SELECT DISTINCT i.item_name FROM item AS i INNER JOIN item_detail AS ide ON i.item_id = ide.item_id INNER JOIN box_item AS bi ON ide.item_detail_id = bi.item_detail_id"
+        // const query = "SELECT DISTINCT i.item_name FROM item AS i INNER JOIN item_detail AS ide ON i.item_id = ide.item_id INNER JOIN box_item AS bi ON ide.item_detail_id = bi.item_detail_id"
+        const query = "SELECT DISTINCT b.user_id, bi.box_id, ide.*, i.item_name,i.item_price,bi.box_item_total_price FROM item_detail AS  ide INNER JOIN box_item AS bi  ON ide.item_detail_id = bi.item_detail_id INNER JOIN item AS i ON ide.item_id = i.item_id INNER JOIN box AS b ON bi.box_id = b.box_id";
         box_name = await db(query);
 
         console.log(box_name);
