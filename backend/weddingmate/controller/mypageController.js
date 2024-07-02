@@ -129,11 +129,11 @@ exports.reviewList = async(req, res) =>{
 
         let result =[];
         let responseBody ={};
-        let query =`SELECT item.item_name, item_detail_quantity, item.item_tn_image_path, item_detail.item_detail_size, item_detail.item_detail_color,review_id, review_star, review_content 
+        let query =`SELECT item.item_name ,review_id, review_star, review_content 
                     FROM review 
                     JOIN item ON review.item_id = item.item_id
                     JOIN item_detail ON item.item_id = item_detail.item_id
-                    WHERE user_id = 5;`
+                    WHERE user_id = ?;`
 
         result = await db(query, [user_id]);
         responseBody = {
@@ -164,6 +164,7 @@ exports.reviewDel = async (req, res) => {
         responseBody = {
           status: 200,
           message: "리뷰 삭제 완료.",
+          affectedRows
         };
         res.status(200).json(responseBody);
       }
@@ -188,7 +189,7 @@ exports.qnaList = async (req, res) => {
         const user_id = req.body.user_id;
         let result = [];
         let responseBody = {};
-        query ="SELECT qna_data, qna_title FROM qna WHERE user_id = ? "
+        query ="SELECT qna_date, qna_title FROM qna WHERE user_id = ? "
         result = await db(query, [user_id]);
 
         responseBody = {
@@ -205,4 +206,53 @@ exports.qnaList = async (req, res) => {
         
     }
 }
-  
+
+// 견적함
+
+exports.boxList = async(req, res) =>{
+    try{
+        const user_id = req.body.user_id;
+        let responseBody = {};
+        let result = [];
+        const query = "SELECT box.box_id, box_name, box_date, box_quantity, box_item_total_price FROM box JOIN box_item WHERE user_id = ? LIMIT 15;";
+        result = await db(query,[user_id]);
+
+        responseBody = {
+            status: 200,
+            boxList : result
+        }
+        res.json(responseBody);
+
+    } catch(error){
+        responseBody = {
+            status: 400,
+            message : "견적함 목록을 불러올 수 없습니다"
+        }
+        res.json(responseBody);        
+    }
+}
+
+exports.boxAdd = async(req, res) =>{
+    try{
+        const boxName = req.body.boxName;
+        const user_id = req.body.user_id;
+        let result = [];
+        let responseBody ={};
+        let query ="INSERT INTO box(user_id, box_name, box_quantity) VALUES(?,?,0);"
+        result = await db(query, [user_id, boxName]);
+
+        responseBody ={
+            status: 200,
+            boxAdd : result
+        }
+        res.json(responseBody);
+
+    }catch(error) {
+       responseBody ={
+        status : 400,
+        mesage: "견적함 추가에 실패했습니다."
+       }
+
+    }
+}
+

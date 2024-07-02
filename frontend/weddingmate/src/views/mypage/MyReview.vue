@@ -9,25 +9,48 @@
         <hr class="title">
     </div>
     <div class="container-middle">
-        <div v-for="(review, index) in reviewList" :key="index"   class="container-content">
+      <div v-for="review in reviewList" :key="review.review_id" class="container-content">
             <div class="container-content-top">
                 <img class="bookmark" src="{{ review.item_tn_image_path }}">
                 <div class="container-name_option">
                     <div class="font-option">{{ review.item_name }}</div>
-                    <div>[옵션]</div>
-                    <div class="font-option">{{ review.item_detail_quantity}}</div>
-                    <div class="font-option">{{ review.item_detail_size}}</div>
-                    <div class="font-option">{{ review.item_detail_color }}</div>
                 </div>
             </div>
             <div><hr class="text"></div>
             <div class="container-content-middle">
-                <div class="container-star_edit">
-                    <div class="star">{{ review.review_star }}</div>
-                    <div class="edit">
-                        <i class="fas fa-edit"></i>
-                        <div style="cursor: pointer;" @click="delReview(review)"><i class="fas fa-trash"></i></div>
-                    </div>
+                <div class="container-star_edit">           
+                    <div class="star">
+                      <div class="qnawrite_row">
+                        <label class="qnawrite_label"></label>
+                        <div class="rating">
+                          <label
+                            v-for="n in 10"
+                            :key="n"
+                            class="rating__label"
+                            :class="{
+                              half: n <= review.review_star * 2,
+                              filled: n <= review.review_star * 2,
+                              half_position: n % 2 !== 0,
+                              filled_position: n % 2 === 0,
+                            }"
+                          >
+                            <input
+                              type="radio"
+                              :id="'star' + n"
+                              class="rating__input"
+                              name="rating"
+                              :value="n"
+                              v-model="rating"
+                            />                           
+                              <div class="star-icon"></div>
+                            </label>
+                            <div class="edit">
+                                <i class="fas fa-edit"></i>
+                                <div style="cursor: pointer;" @click="delReview(review)"><i class="fas fa-trash"></i></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                 </div>
                 <div class="review">
                     <p>
@@ -90,7 +113,9 @@
     name: "SearchComponent",
     data() {
       return {
-        reviewList : []
+        reviewList : [],
+        rating: 3,
+        currentRating: null
 
       };
     },
@@ -100,7 +125,7 @@
     methods: {
       async getReviewList(){
         const requestBody = {
-          access_token: "73b4c982-e162-48ff-aad7-6ff3fd836966"
+          access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734"
         };
         try{
           const response = await this.$api("/mypage/review", requestBody, "post");
@@ -119,6 +144,8 @@
         try{
           const response = await this.$api("/mypage/review/del", requestBody, "post");
           alert("리뷰가 삭제되었습니다.");
+          console.log("리스폰스",response);
+          console.log("리뷰리스트", this.reviewList);
 
           if (response.status === 200) {
           await this.getReviewList();
@@ -352,12 +379,13 @@
 }
 .container-star_edit{
     display: grid;
-    grid-template-columns: 110px auto;
+    grid-template-columns: auto auto auto;
     /* border: 1px solid orange;            */
 }  
 .edit{
     display: grid;
     align-items: center;
+    margin-left : 10px;
     grid-template-columns: 30px auto;
     /* border: 1px solid gray; */
 }
@@ -393,6 +421,51 @@ img.bookmark{
     width: 60px;
     height: 60px;
     border: 1px solid #333333;
+}
+
+/* 별점 */
+.rating {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.rating__input {
+  display: none;
+}
+
+.rating__label {
+  width: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.rating__label .star-icon {
+  width: 12px;
+  height: 24px;
+  display: block;
+  position: relative;
+  left: 0;
+  background-image: url("/src/views/review/star/emptyStar.svg");
+  background-repeat: no-repeat;
+}
+
+.rating__label.half .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.filled .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.half_position .star-icon {
+  background-position: left;
+}
+.rating__label.filled_position .star-icon {
+  background-position: right;
+}
+.qnawrite_row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
 /* bottom */
