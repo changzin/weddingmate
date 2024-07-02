@@ -199,7 +199,7 @@ exports.itemDetail = async (req, res) => {
     FROM review
     JOIN user ON review.user_id = user.user_id 
     WHERE item_id=? 
-    ORDER BY review.review_date 
+    ORDER BY review.review_id
     LIMIT 6`;
 
     let result = [];
@@ -283,7 +283,7 @@ exports.wholeReview = async (req, res) => {
                     ELSE 0 
                     END AS is_current_user
                 FROM review JOIN user ON review.user_id = user.user_id 
-                WHERE review.item_id = ? ORDER BY review.review_date LIMIT ? OFFSET ?`;
+                WHERE review.item_id = ? ORDER BY review.review_id LIMIT ? OFFSET ?`;
 
     let result = [];
     result = await db(query, [user_id, item_id, pageSize, offset]);
@@ -316,7 +316,7 @@ exports.insertReview = async (req, res) => {
     const item_id = req.body.item_id;
     const review_content = req.body.review_content;
     const review_star = req.body.review_star;
-    const review_image_path = req.body.reiview_image_path;
+    const review_image_path = req.body.review_image_path;
 
     //결과 qna_visibility :  undefined
 
@@ -383,6 +383,8 @@ exports.updateSelectedReviewDetail = async (req, res) => {
     const review_content = req.body.review_content;
     const review_image_path = req.body.review_image_path;
     const review_star = req.body.review_star;
+
+    console.log("review_image_path : ", review_image_path);
 
     // SQL Update Query
     const updateQuery = `

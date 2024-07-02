@@ -34,7 +34,7 @@
           {{ form.title }}
         </div>
         <div class="qnadetail_answer_qna_writer">
-          {{ this.user_nickname }}
+          {{ maskNickname(this.user_nickname) }}
         </div>
         <div class="qnadetail_answer_qna_date">2024-06-12 20:32</div>
       </div>
@@ -52,7 +52,8 @@
           <label class="qnadetail_answer_label">이미지</label>
           <a :href="form.image">
             <div class="qnadetail_answer_image">
-              <img :src="form.image" alt="이미지" />
+              <img :src="this.$imageFileFormat(QnAResult.qna_image_path)" 
+              class="qnadetail_answer_image_src"/>
             </div>
           </a>
         </div>
@@ -116,9 +117,20 @@ export default {
     await this.fetchProductListData();
   },
 
-  async beforeRouteEnter(to, from, next) {
-    next();
-  },
+  //   async beforeRouteEnter(to, from, next) {
+  //   next(async vm => {
+  //     const userInfo = await vm.$verifiedUser();
+  //     if (userInfo) {
+  //       next();
+  //     } else {
+  //       alert("QnA 작성을 위하여 로그인하세요");
+  //       vm.$router.push({
+  //         name: "userlogin",
+  //         query: { savedUrl: true }
+  //       });
+  //     }
+  //   });
+  // },
 
   methods: {
     async fetchProductListData() {
@@ -128,7 +140,7 @@ export default {
         //  qna 데이터 가져오기
         const result = await this.$api(
           "/qna/getselectedqnadetail",
-          { access_token: "temp-token", qna_id: this.qna_id },
+          { access_token: this.$getAccessToken(), qna_id: this.qna_id },
           "POST"
         );
 
@@ -155,28 +167,6 @@ export default {
           }
 
           this.user_nickname = result.user_nickname.user_nickname;
-
-          // answer 데이터 가져오기
-          if (this.QnAResult.qna_visibility === "T") {
-            const result = await this.$api(
-              "/answer/getanswer",
-              { qna_id: this.qna_id },
-              "POST"
-            );
-            this.AnswerResult = result.data;
-            if (this.AnswerResult) {
-              console.log(
-                "AnswerResult: ",
-                JSON.parse(JSON.stringify(this.AnswerResult))
-              );
-            }
-            if(result.data.answer_content)
-            {
-
-              this.AnswerContent = result.data.answer_content;
-            console.log("this.AnswerContent : ", this.AnswerContent);
-              }
-          }
         } else {
           console.log("fail");
         }
@@ -185,18 +175,29 @@ export default {
       }
     },
 
+     maskNickname(nickname) {
+      if (nickname.length <= 4) {
+        return nickname;
+      }
+      return nickname.slice(0, 4) + "*".repeat(4);
+    },
+
     gotoQnAModify() {
       this.$router.push({ name: "qnamodify", query: { qna_id: this.qna_id } });
     },
     async deleteQnA() {
-
       const result = await this.$api(
         "/qna/deleteqna",
-        { access_token: "temp-token", qna_id: this.qna_id },
+        {
+          access_token: this.$getAccessToken(),
+          qna_id: this.qna_id,
+          prev_qna_image_path: this.QnAResult.qna_image_path,
+          upload_type: "qna",
+        },
         "POST"
       );
 
-      if(result.status == 200) {
+      if (result.status == 200) {
         alert("성공적으로 지웠습니다");
         this.$router.go(-1);
       }
@@ -248,8 +249,6 @@ export default {
 
 
 <style scoped>
-
-
 /* 본문 */
 
 .qnadetail_container {
@@ -443,7 +442,10 @@ export default {
   background-color: #007bff;
 }
 
- 
+.qnadetail_answer_image_src {
+  width: 300px;
+  height: 300px;
+}
 
 .productdetail_qna-status {
   display: inline-block;

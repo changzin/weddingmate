@@ -54,7 +54,11 @@
           >
             <div class="reviewlist_card-header">
               <div class="reviewlist_review-section_title-div">
-                {{ review.user_nickname }}
+                {{
+                  review.is_current_user
+                    ? review.user_nickname
+                    : maskNickname(review.user_nickname)
+                }}
               </div>
               <div class="reviewlist_card-icons">
                 <i
@@ -70,47 +74,55 @@
                 <i
                   class="fas fa-trash"
                   v-if="review.is_current_user"
-                  @click.stop="deleteReview(review.review_id)"
+                  @click.stop="deleteReview(review)"
                 ></i>
               </div>
             </div>
             <div class="reviewlist_review-section_title-div">
               <div class="reviewlist_card-rating">
                 <div class="qnawrite_row">
-                    <div class="rating">
-                      <label
-                        v-for="n in 10"
-                        :key="n"
-                        class="rating__label"
-                        :class="{
-                          half: n <= review.review_star * 2,
-                          filled: n <= review.review_star * 2,
-                          half_position: n % 2 !== 0,
-                          filled_position: n % 2 === 0,
-                        }"
-                      >
-                        <input
-                          type="radio"
-                          :id="'star' + n"
-                          class="rating__input"
-                          name="rating"
-                          :value="n"
-                          v-model="rating"
-                        />
-                        <div class="star-icon"></div>
-                      </label>
-                    </div>
+                  <div class="rating">
+                    <label
+                      v-for="n in 10"
+                      :key="n"
+                      class="rating__label"
+                      :class="{
+                        half: n <= review.review_star * 2,
+                        filled: n <= review.review_star * 2,
+                        half_position: n % 2 !== 0,
+                        filled_position: n % 2 === 0,
+                      }"
+                    >
+                      <input
+                        type="radio"
+                        :id="'star' + n"
+                        class="rating__input"
+                        name="rating"
+                        :value="n"
+                        v-model="rating"
+                      />
+                      <div class="star-icon"></div>
+                    </label>
                   </div>
+                </div>
               </div>
               <div class="reviewlist_review-section_date-div">
                 {{ this.$dateFormat(review.review_date) }}
               </div>
             </div>
             <img
+              v-if="review.review_image_path"
+              :src="this.$imageFileFormat(review.review_image_path)"
+              class="reviewlist_card-img-top"
+              alt="Review Image"
+            />
+            <img
+              v-else
               src="https://via.placeholder.com/300x200"
               class="reviewlist_card-img-top"
               alt="Review Image"
             />
+
             <div class="reviewlist_card-body">
               <div class="reviewlist_card-text">
                 {{ review.review_content }}
@@ -186,11 +198,9 @@ export default {
       reportContent: "",
       currentReviweIndex: 0,
 
-
-       // 별점
+      // 별점
       rating: 0,
       currentRating: 0,
-
     };
   },
 
@@ -210,12 +220,12 @@ export default {
       try {
         //     const BoxResult = await this.$api(
         //   "/product/boxlist",
-        //   { access_token: "temp-token" },
+        //   { access_token: this.$getAccessToken() },
         //   "POST"
         // );
         const reviewResult = await this.$api(
           `/review/wholereview/${this.item_id}?page=${this.page}`,
-          { access_token: "temp-token" },
+          { access_token: this.$getAccessToken() },
           "POST"
         );
 
@@ -237,8 +247,18 @@ export default {
       }
     },
 
+    maskNickname(nickname) {
+      if (nickname.length <= 4) {
+        return nickname;
+      }
+      return nickname.slice(0, 4) + "*".repeat(4);
+    },
+
     gotoReviewWrite() {
-      this.$router.push({ name: "reviewwrite", query: { item_id: this.item_id } });
+      this.$router.push({
+        name: "reviewwrite",
+        query: { item_id: this.item_id },
+      });
     },
 
     gotoReviewModify(review_id) {
@@ -255,11 +275,16 @@ export default {
       });
     },
 
-    async deleteReview(review_id) {
+    async deleteReview(review) {
       try {
         const reviewResult = await this.$api(
           `/review/delete`,
-          { access_token: "temp-token", review_id: review_id },
+          {
+            access_token: this.$getAccessToken(),
+            review_id: review.review_id,
+            prev_review_image_path: review.review_image_path,
+            upload_type: "review",
+          },
           "POST"
         );
 
@@ -273,8 +298,6 @@ export default {
         );
       }
     },
-
-
 
     // 리뷰 신고
     async reviewToReport(review_id) {
@@ -295,7 +318,7 @@ export default {
         const result = await this.$api(
           "/review/reviewreport",
           {
-            access_token: "temp-token",
+            access_token: this.$getAccessToken(),
             review_id: this.currentReviweIndex,
             report_content: this.reportContent,
           },
@@ -365,7 +388,6 @@ export default {
 <style scoped>
 /* 리뷰 */
 
-
 .qnalist_qna-header {
   display: flex;
   justify-content: space-between;
@@ -383,7 +405,6 @@ export default {
   font-size: 16px;
   cursor: pointer;
 }
-
 
 .reviewlist_container {
   width: 1280px;
@@ -671,9 +692,6 @@ export default {
   background-position: right;
 }
 
-
-
-
 /* 페이지 */
 .notVisible {
   visibility: hidden;
@@ -699,6 +717,4 @@ export default {
   width: 120px;
   height: 40px;
 }
-
-
 </style>

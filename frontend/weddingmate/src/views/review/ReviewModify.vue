@@ -117,6 +117,11 @@ export default {
       //   별점
       rating: 0,
       currentRating: 0,
+
+      // 이미지
+      itemTnImage: null,
+      itemTnImageExt: null,
+      review_image_change: false,
     };
   },
 
@@ -206,10 +211,15 @@ export default {
         const result = await this.$api(
           "/review/updateselectedreviewdetail",
           {
+            access_token: this.$getAccessToken(),
             review_id: this.review_id,
             review_content: this.form.content,
-            review_image_path: this.form.image,
+            // review_image_path: this.form.image,
             review_star: this.currentRating / 2,
+            review_image_change: this.review_image_change,
+            review_image: this.itemTnImage,
+            review_image_ext: this.itemTnImageExt,
+            upload_type: "review",
           },
           "POST"
         );
@@ -244,10 +254,33 @@ export default {
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
-    handleFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.form.image = file.name;
+    async handleFileChange(file) {
+      this.review_image_change = true;
+      this.itemTnImage = file;
+      const files = event.target?.files;
+      if (files.length > 0) {
+        const file = files[0];
+
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        this.form.image = filename;
+        var _lastDot = filename.lastIndexOf(".");
+        this.itemTnImageExt = filename
+          .substring(_lastDot, filename.length)
+          .toLowerCase();
+
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          this.itemTnImage = e.target.result;
+          console.log("itemTnImage : ", this.itemTnImage);
+          console.log("itemTnImageExt : ", this.itemTnImageExt);
+        };
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemTnImage = await reader.readAsDataURL(file);
       }
     },
   },
@@ -257,8 +290,6 @@ export default {
 
 
 <style scoped>
-
-
 /* 본문 */
 
 .qnawrite_container {
@@ -434,6 +465,4 @@ export default {
 .rating__label.filled_position .star-icon {
   background-position: right;
 }
-
-
 </style>

@@ -76,12 +76,12 @@
                   미완료
                 </div>
                 <div>
-                  {{ qna.qna_title }} {{ qna.qna_title }}
+                  {{ qna.qna_title }} 
                   <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
                 </div>
               </td>
               <td class="productdetail_qna-section_status-nickname-div">
-                {{ qna.user_nickname }}
+                {{ maskNickname(qna.user_nickname) }}
               </td>
               <td>{{ this.$dateFormat(qna.qna_date) }}</td>
             </tr>
@@ -140,9 +140,7 @@
 export default {
   data() {
     return {
-      // 헤더
-      isVisible: false,
-      ismaintain: false,
+     
       searchTitle: "",
       searchCount: 0,
 
@@ -202,6 +200,13 @@ export default {
           error
         );
       }
+    },
+
+    maskNickname(nickname) {
+      if (nickname.length <= 4) {
+        return nickname;
+      }
+      return nickname.slice(0, 4) + "*".repeat(4);
     },
 
     clearSearch() {
@@ -284,7 +289,7 @@ export default {
 
       const result = await this.$api(
         "/qna/isselectedqnavisibility",
-        { access_token: "temp-token", qna_id: index },
+        { access_token: this.$getAccessToken(), qna_id: index },
         "POST"
       );
       console.log("result.status : ",result.status);

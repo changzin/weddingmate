@@ -11,7 +11,7 @@
           <div class="productdetail_main_content-div">
             <div class="col-md-6">
               <img
-                src="https://via.placeholder.com/600x400"
+                :src="this.$imageFileFormat(productDetail.item_main_image_path)"
                 class="img-fluid"
                 alt="Product Image"
               />
@@ -3061,7 +3061,7 @@
         <!-- 상세 설명 이미지 -->
         <div class="text-center productdetail_main-detail-image-div">
           <img
-            src="https://via.placeholder.com/1280x800"
+            :src="this.$imageFileFormat(productDetail.item_detail_image_path)"
             class="img-fluid"
             alt="Detailed Description Image"
           />
@@ -3114,7 +3114,10 @@
             </button>
           </div>
 
-          <div class="productdetail_review-cards justify-content-start">
+          <div
+            class="productdetail_review-cards justify-content-start"
+            v-if="reviewList && reviewList.length"
+          >
             <div
               class="productdetail_review-card"
               v-for="(review, index) in reviewList"
@@ -3124,7 +3127,11 @@
             >
               <div class="productdetail_card-header">
                 <div class="productdetail_review-section_title-div">
-                  {{ review.user_nickname }}
+                  {{
+                    review.is_current_user
+                      ? review.user_nickname
+                      : maskNickname(review.user_nickname)
+                  }}
                 </div>
                 <div class="productdetail_card-icons">
                   <i
@@ -3139,7 +3146,7 @@
                   ></i>
                   <i
                     class="fas fa-trash"
-                    @click.stop="deleteReview(review.review_id)"
+                    @click.stop="deleteReview(review)"
                     v-if="review.is_current_user"
                   ></i>
                 </div>
@@ -3178,10 +3185,18 @@
                 </div>
               </div>
               <img
+                v-if="review.review_image_path"
+                :src="this.$imageFileFormat(review.review_image_path)"
+                class="productdetail_card-img-top"
+                alt="Review Image"
+              />
+              <img
+                v-else
                 src="https://via.placeholder.com/300x200"
                 class="productdetail_card-img-top"
                 alt="Review Image"
               />
+
               <div class="productdetail_card-body">
                 <p class="productdetail_card-text">
                   {{ review.review_content }}
@@ -3189,6 +3204,7 @@
               </div>
             </div>
           </div>
+          <div v-else>현재 등록된 리뷰가 없습니다</div>
         </div>
 
         <!-- Q&A 섹션 -->
@@ -3209,7 +3225,10 @@
               <i class="fas fa-pen"></i> QnA작성
             </button>
           </div>
-          <table class="productdetail_qna-table">
+          <table
+            class="productdetail_qna-table"
+            v-if="qnaList && qnaList.length"
+          >
             <thead>
               <tr>
                 <th style="width: 80px">문의유형</th>
@@ -3243,12 +3262,15 @@
                   </div>
                 </td>
                 <td class="productdetail_qna-section_status-nickname-div">
-                  {{ qna.user_nickname }}
+                  {{ maskNickname(qna.user_nickname) }}
                 </td>
                 <td>{{ this.$dateFormat(qna.qna_date) }}</td>
               </tr>
             </tbody>
           </table>
+          <div v-else style="text-align: left; font-size: 16px">
+            현재 등록된 QnA가 없습니다
+          </div>
         </div>
       </div>
       <!-- 콘텐츠 섹션 끝 -->
@@ -3408,12 +3430,12 @@ export default {
   methods: {
     async fetchData() {
       try {
-         const startTime = performance.now();
+        const startTime = performance.now();
 
         // 해당 페이지 item + itemDetail 데이터 가져오기
         const totalResult = await this.$api(
           `/product/totalproductdetail/${this.item_id}`,
-          { access_token: "temp-token" },
+          { access_token: this.$getAccessToken() },
           "POST"
         );
 
@@ -3429,16 +3451,14 @@ export default {
           this.reviewList = totalproductdetailData.reviewList;
           this.qnaList = totalproductdetailData.qnaList;
           this.BoxResultData = totalproductdetailData.data || [];
-
         } else {
           console.log("fail");
         }
 
-
-         // 로딩 시간 측정 끝
-      const endTime = performance.now();
-      this.loadingTime = endTime - startTime;
-      console.log(`데이터 로딩 시간: ${this.loadingTime} ms`);
+        // 로딩 시간 측정 끝
+        const endTime = performance.now();
+        this.loadingTime = endTime - startTime;
+        console.log(`데이터 로딩 시간: ${this.loadingTime} ms`);
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
@@ -4404,7 +4424,7 @@ export default {
         try {
           const BoxResult = await this.$api(
             "/product/addbox",
-            { access_token: "temp-token", box_name: this.newBoxName },
+            { access_token: this.$getAccessToken(), box_name: this.newBoxName },
             "POST"
           );
           this.BoxResultData = BoxResult.data;
@@ -4699,7 +4719,7 @@ export default {
           await this.$api(
             "/product/insertitemintobox",
             {
-              access_token: "temp-token",
+              access_token: this.$getAccessToken(),
               box_id: this.selectedBoxId,
               item_detail_id: this.selectedItemDetailId,
               box_item_quantity: this.quantity,
@@ -4738,7 +4758,7 @@ export default {
         await this.$api(
           "/product/bookmark",
           {
-            access_token: "temp-token",
+            access_token: this.$getAccessToken(),
             item_id: this.item_id,
           },
           "POST"
@@ -4753,6 +4773,13 @@ export default {
     },
 
     // 리뷰
+    maskNickname(nickname) {
+      if (nickname.length <= 4) {
+        return nickname;
+      }
+      return nickname.slice(0, 4) + "*".repeat(4);
+    },
+
     goToReviewList() {
       this.$router.push({
         name: "reviewlist",
@@ -4781,11 +4808,16 @@ export default {
       });
     },
 
-    async deleteReview(review_id) {
+    async deleteReview(review) {
       try {
         const reviewResult = await this.$api(
           `/review/delete`,
-          { access_token: "temp-token", review_id: review_id },
+          {
+            access_token: this.$getAccessToken(),
+            review_id: review.review_id,
+            prev_review_image_path: review.review_image_path,
+            upload_type: "review",
+          },
           "POST"
         );
 
@@ -4804,7 +4836,7 @@ export default {
       try {
         const result = await this.$api(
           `/review/itemdetail/${this.item_id}`,
-          { access_token: "temp-token" },
+          { access_token: this.$getAccessToken() },
           "POST"
         );
         if (result.status == 200) {
@@ -4820,6 +4852,15 @@ export default {
 
     // 리뷰 신고
     async reviewToReport(review_id) {
+      const userInfo = await this.$verifiedUser();
+      if (!userInfo) {
+        alert("신고 작성을 위하여 로그인하세요");
+        this.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true },
+        });
+      }
+
       this.isVisibleReport = true;
       this.currentReviweIndex = review_id;
     },
@@ -4837,7 +4878,7 @@ export default {
         const result = await this.$api(
           "/review/reviewreport",
           {
-            access_token: "temp-token",
+            access_token: this.$getAccessToken(),
             review_id: this.currentReviweIndex,
             report_content: this.reportContent,
           },
@@ -4868,7 +4909,7 @@ export default {
       //  this.$router.push({ name: "qnadetail" });
       const result = await this.$api(
         "/qna/isselectedqnavisibility",
-        { access_token: "temp-token", qna_id: index },
+        { access_token: this.$getAccessToken(), qna_id: index },
         "POST"
       );
       console.log("result.status : ", result.status);
