@@ -171,7 +171,7 @@ export default {
         const result = await this.$api(
           "/review/insertreview",
           {
-            access_token: "temp-token",
+            access_token: this.$getAccessToken(),
             item_id: this.item_id,
             review_content: this.form.content,
             review_star: this.currentRating / 2,

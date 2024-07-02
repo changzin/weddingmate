@@ -34,7 +34,7 @@
           {{ form.title }}
         </div>
         <div class="qnadetail_answer_qna_writer">
-          {{ this.user_nickname }}
+          {{ maskNickname(this.user_nickname) }}
         </div>
         <div class="qnadetail_answer_qna_date">2024-06-12 20:32</div>
       </div>
@@ -117,9 +117,20 @@ export default {
     await this.fetchProductListData();
   },
 
-  async beforeRouteEnter(to, from, next) {
-    next();
-  },
+  //   async beforeRouteEnter(to, from, next) {
+  //   next(async vm => {
+  //     const userInfo = await vm.$verifiedUser();
+  //     if (userInfo) {
+  //       next();
+  //     } else {
+  //       alert("QnA 작성을 위하여 로그인하세요");
+  //       vm.$router.push({
+  //         name: "userlogin",
+  //         query: { savedUrl: true }
+  //       });
+  //     }
+  //   });
+  // },
 
   methods: {
     async fetchProductListData() {
@@ -129,7 +140,7 @@ export default {
         //  qna 데이터 가져오기
         const result = await this.$api(
           "/qna/getselectedqnadetail",
-          { access_token: "temp-token", qna_id: this.qna_id },
+          { access_token: this.$getAccessToken(), qna_id: this.qna_id },
           "POST"
         );
 
@@ -164,6 +175,13 @@ export default {
       }
     },
 
+     maskNickname(nickname) {
+      if (nickname.length <= 4) {
+        return nickname;
+      }
+      return nickname.slice(0, 4) + "*".repeat(4);
+    },
+
     gotoQnAModify() {
       this.$router.push({ name: "qnamodify", query: { qna_id: this.qna_id } });
     },
@@ -171,7 +189,7 @@ export default {
       const result = await this.$api(
         "/qna/deleteqna",
         {
-          access_token: "temp-token",
+          access_token: this.$getAccessToken(),
           qna_id: this.qna_id,
           prev_qna_image_path: this.QnAResult.qna_image_path,
           upload_type: "qna",

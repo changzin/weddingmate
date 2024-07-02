@@ -6,15 +6,26 @@
     <!-- 본문 -->
     <div class="productdetail_main_content">
       <!-- 청첩장 -->
-      <div :class="['productdetaillist-content', getClass('letter'), 'productdetaillist-content_margin']">
+      <div
+        :class="[
+          'productdetaillist-content',
+          getClass('letter'),
+          'productdetaillist-content_margin',
+        ]"
+      >
         <img src="https://via.placeholder.com/1280x500" />
       </div>
 
       <!-- 검색 -->
       <div class="search-container-wrapper">
         <div class="search-container">
-          <input type="text" placeholder="Search" class="search-input" />
-          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            placeholder="Search"
+            class="search-input"
+            v-model="searchTitle"
+          />
+          <i class="fas fa-search search-icon" @click="fetchProductListData"></i>
         </div>
       </div>
 
@@ -23,19 +34,28 @@
         <!-- 상품들 -->
         <div class="reviewlist_review-section">
           <div class="reviewlist_review-cards">
-            <button class="reviewlist_review-card" v-for="(product, index) in productList" :key="index" @click="goToProductDetail(product.item_id)">
+            <button
+              class="reviewlist_review-card"
+              v-for="(product, index) in productList"
+              :key="index"
+              @click="goToProductDetail(product.item_id)"
+            >
               <img
                 :src="this.$imageFileFormat(product.item_tn_image_path)"
                 class="reviewlist_card-img-top"
                 alt="Review Image"
               />
               <div class="reviewlist_card-body">
-                <div class="reviewlist_review-section_title-div letter-title-flex">
+                <div
+                  class="reviewlist_review-section_title-div letter-title-flex"
+                >
                   <div class="letter-title-flex_title">
                     {{ product.item_name }}
                   </div>
                   <div class="letter-title-flex-dummy"></div>
-                  <div class="letter-title-flex_per">{{ product.item_discount_rate }}%</div>
+                  <div class="letter-title-flex_per">
+                    {{ product.item_discount_rate }}%
+                  </div>
                 </div>
               </div>
             </button>
@@ -48,7 +68,12 @@
         <!-- 상품들 -->
         <div class="reviewlist_review-section">
           <div class="reviewlist_review-cards">
-            <button class="reviewlist_review-card" v-for="(product, index) in productList" :key="index" @click="goToProductDetail(product.item_id)">
+            <button
+              class="reviewlist_review-card"
+              v-for="(product, index) in productList"
+              :key="index"
+              @click="goToProductDetail(product.item_id)"
+            >
               <img
                 :src="this.$imageFileFormat(product.item_tn_image_path)"
                 class="reviewlist_card-img-top"
@@ -67,15 +92,37 @@
 
     <div class="mypage-bottom">
       <div class="nav-page justify-content-center">
-        <a :class="{ notVisible: page == 1 }" @click="prevBlock()"><div>&lt;&lt;</div></a>
-        <a :class="{ notVisible: page == 1 }" @click="prevPage()"><div>&lt;</div></a>
-        <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"><div>{{ page - 2 }}</div></a>
-        <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"><div>{{ page - 1 }}</div></a>
-        <a><div style="color: pink">{{ page }}</div></a>
-        <a :class="{ notVisible: page + 1 > maxPage }" @click="goToPage(page + 1)"><div>{{ page + 1 }}</div></a>
-        <a :class="{ notVisible: page + 2 > maxPage }" @click="goToPage(page + 2)"><div>{{ page + 2 }}</div></a>
-        <a :class="{ notVisible: page == maxPage }" @click="nextPage()"><div>&gt;</div></a>
-        <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"><div>&gt;&gt;</div></a>
+        <a :class="{ notVisible: page == 1 }" @click="prevBlock()"
+          ><div>&lt;&lt;</div></a
+        >
+        <a :class="{ notVisible: page == 1 }" @click="prevPage()"
+          ><div>&lt;</div></a
+        >
+        <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"
+          ><div>{{ page - 2 }}</div></a
+        >
+        <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"
+          ><div>{{ page - 1 }}</div></a
+        >
+        <a
+          ><div style="color: pink">{{ page }}</div></a
+        >
+        <a
+          :class="{ notVisible: page + 1 > maxPage }"
+          @click="goToPage(page + 1)"
+          ><div>{{ page + 1 }}</div></a
+        >
+        <a
+          :class="{ notVisible: page + 2 > maxPage }"
+          @click="goToPage(page + 2)"
+          ><div>{{ page + 2 }}</div></a
+        >
+        <a :class="{ notVisible: page == maxPage }" @click="nextPage()"
+          ><div>&gt;</div></a
+        >
+        <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"
+          ><div>&gt;&gt;</div></a
+        >
       </div>
     </div>
 
@@ -89,10 +136,12 @@
         </nav>
         <div class="common__footer-details">
           <p style="margin-bottom: 0px">
-            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화: 02-123-1234 팩스: 02-111-2222
+            (주)웨딩데이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
+            02-123-1234 팩스: 02-111-2222
           </p>
           <p>
-            해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은 민원담당자에게 있습니다. 민원담당자: 강문정
+            해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
+            민원담당자에게 있습니다. 민원담당자: 강문정
           </p>
         </div>
       </div>
@@ -111,13 +160,14 @@ export default {
 
   data() {
     return {
+      searchTitle: "",
+
       // 페이지
       page: 1,
       productList: [],
       isFirstPage: false,
       isLastPage: false,
       maxPage: 0,
-
     };
   },
 
@@ -138,9 +188,10 @@ export default {
   methods: {
     async fetchProductListData() {
       try {
+        const response = await this.$api(
+          `/product/list/${this.itemType}?page=${this.page}&keyword=${this.searchTitle}`,
+        );
 
-        // const response = await this.$api(`/product/list?page=${this.page}&itemType=${this.itemType}`);
-        const response = await this.$api(`/product/list/${this.itemType}?page=${this.page}`);
         const productData = response.data;
         const maxPage = response.maxPage;
 
@@ -148,14 +199,47 @@ export default {
           this.productList = productData;
           this.maxPage = maxPage;
 
-         
           console.log("Max page:", this.maxPage);
         } else {
-          console.error("ProductDetailList.vue fetchProductListData : No product data");
+          console.error(
+            "ProductDetailList.vue fetchProductListData : No product data"
+          );
         }
         this.updatePageStatus();
       } catch (error) {
-        console.error("ProductDetailList.vue fetchProductListData Error fetching product data:", error);
+        console.error(
+          "ProductDetailList.vue fetchProductListData Error fetching product data:",
+          error
+        );
+      }
+    },
+
+    async clickSearch() {
+      console.log("this.searchTitle : ", this.searchTitle);
+      try {
+        const response = await this.$api(
+          `/product/list/${this.itemType}?page=${this.page}&keyword=${this.searchTitle}`,
+        );
+
+         const productData = response.data;
+        const maxPage = response.maxPage;
+
+        if (productData) {
+          this.productList = productData;
+          this.maxPage = maxPage;
+
+          console.log("Max page:", this.maxPage);
+        } else {
+          console.error(
+            "ProductDetailList.vue fetchProductListData : No product data"
+          );
+        }
+        this.updatePageStatus();
+      } catch (error) {
+        console.error(
+          "ProductDetailList.vue fetchProductListData Error fetching product data:",
+          error
+        );
       }
     },
 
@@ -168,7 +252,10 @@ export default {
     },
 
     goToProductDetail(item_id) {
-       this.$router.push({ name: 'productdetail', query: { itemType: this.itemType, item_id } });
+      this.$router.push({
+        name: "productdetail",
+        query: { itemType: this.itemType, item_id },
+      });
     },
 
     // 페이지 네이션
@@ -199,7 +286,8 @@ export default {
     },
 
     async nextBlock() {
-      let targetPage = this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
+      let targetPage =
+        this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
       await this.goToPage(targetPage);
     },
 
@@ -371,7 +459,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  justify-content:flex-start;
+  justify-content: flex-start;
 }
 
 .reviewlist_review_card:last-child {

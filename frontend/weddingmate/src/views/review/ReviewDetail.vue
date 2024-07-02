@@ -52,7 +52,7 @@
         </div>
 
         <div class="qnadetail_answer_row_large">
-          <label class="qnadetail_answer_label">이미지2</label>
+          <label class="qnadetail_answer_label">이미지</label>
           <a :href="form.image">
             <div class="qnadetail_answer_image">
               <img
@@ -148,7 +148,7 @@ export default {
     async deleteQnA() {
       const result = await this.$api(
         "/qna/deleteqna",
-        { access_token: "temp-token", qna_id: this.qna_id },
+        { access_token: this.$getAccessToken(), qna_id: this.qna_id },
         "POST"
       );
 

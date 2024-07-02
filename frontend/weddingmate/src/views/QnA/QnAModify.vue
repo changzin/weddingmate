@@ -148,20 +148,20 @@ export default {
     },
   },
 
-  //    async beforeRouteEnter(to, from, next) {
-  //   next(async vm => {
-  //     const userInfo = await vm.$verifiedUser();
-  //     if (userInfo) {
-  //       next();
-  //     } else {
-  //       alert("QnA 수정을 위하여 로그인하세요");
-  //       vm.$router.push({
-  //         name: "userlogin",
-  //         query: { savedUrl: true }
-  //       });
-  //     }
-  //   });
-  // },
+     async beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      const userInfo = await vm.$verifiedUser();
+      if (userInfo) {
+        next();
+      } else {
+        alert("QnA 수정을 위하여 로그인하세요");
+        vm.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true }
+        });
+      }
+    });
+  },
 
   async created() {
     await this.fetchProductListData();
@@ -173,7 +173,7 @@ export default {
         // 데이터 가져오기
         const result = await this.$api(
           "/qna/getselectedqnadetail",
-          { access_token: "temp-token", qna_id: this.qna_id },
+          { access_token: this.$getAccessToken(), qna_id: this.qna_id },
           "POST"
         );
         this.QnAResult = result.data[0];
@@ -237,7 +237,7 @@ export default {
         const result = await this.$api(
           "/qna/updateselectedqnadetail",
           {
-            access_token: "temp-token",
+            access_token: this.$getAccessToken(),
             qna_id: this.qna_id,
             qna_type: this.form.inquiryType,
             qna_content: this.form.content,

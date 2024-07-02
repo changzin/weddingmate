@@ -211,7 +211,7 @@ export default {
         const result = await this.$api(
           "/review/updateselectedreviewdetail",
           {
-            access_token: "temp-token",
+            access_token: this.$getAccessToken(),
             review_id: this.review_id,
             review_content: this.form.content,
             // review_image_path: this.form.image,

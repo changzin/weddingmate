@@ -201,7 +201,7 @@ export default {
         const result = await this.$api(
           "/qna/insertqna",
           {
-            access_token: "temp-token",
+            access_token: this.$getAccessToken(),
             item_id: this.item_id,
             qna_type: this.form.inquiryType,
             qna_content: this.form.content,
