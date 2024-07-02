@@ -99,7 +99,7 @@ export default {
   methods: {
     async getBookmarkList() {
       const requestBody = {
-        access_token: "0f414da0-ac8d-4a2d-9136-25fca765b8dd",
+        access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734",
       };
       try {
         const response = await this.$api("/mypage/bookmarklist", requestBody, "post");

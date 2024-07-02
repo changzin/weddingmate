@@ -9,15 +9,15 @@
             <div class="title-font">나의 QnA</div>
             <hr class="title">
         </div>
-        <div v-for="(qna, index) in qnaList" :key="index" class="container-middle">
+        <div class="container-middle">
             <div class="container-middle-bar">
             <div>작성일</div>
             <div>제목</div>
             </div>
             <hr class="bar">
-            <div class="container-middle-content">
-            <div>2024-06-01</div>
-            <div><a href="#">언제까지 가능할까요</a></div>
+            <div  v-for="(qna, index) in qnaList" :key="index"  class="container-middle-content">
+            <div>{{this.$dayFormat(qna.qna_date)}}</div>
+            <div><a href="#">{{ qna.qna_title }}</a></div>
             </div>
             <hr class="text">
         </div>
@@ -74,10 +74,13 @@
    
       };
     },
+    mounted(){
+      this.getQnaList()
+    },
     methods: {
       async getQnaList(){
         const requestBody ={
-           access_token: "73b4c982-e162-48ff-aad7-6ff3fd836966"
+           access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734"
         };
         try{
           const response = await this.$api("/mypage/qnaList", requestBody, "post");

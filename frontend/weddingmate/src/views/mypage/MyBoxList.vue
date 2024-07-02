@@ -1,200 +1,59 @@
 <template>
   <div class="fix-width">
-    <!-- 헤더 -->
-    <div class="common-header">
-      <!-- 로그인 + 회원가입 + 로고 -->
-      <header class="bg-light productdetail_padding_0">
-        <!-- 로그인 회원가입 -->
-        <div
-          class="container d-flex justify-content-end align-items-center"
-          id="common__login-div-padding"
-        >
-          <nav class="navbar-light">
-            <div class="" id="navbarNav">
-              <ul class="navbar-nav flex-row">
-                <li class="nav-item" id="common__header-login-padding">
-                  <a href="#">로그인</a>
-                </li>
-                <li class="nav-item">
-                  <a href="#">회원가입</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-        <!-- 로고 -->
-        <div class="text-center">
-          <a class="navbar-brand" href="#">
-            <img src="https://via.placeholder.com/200x50" alt="Logo" />
-          </a>
-        </div>
-      </header>
-      <!-- 카테고리 + 이미지 -->
-      <nav
-        class="common-header_navbar navbar-light bg-light"
-        id="common_main-banner_div"
-        @mouseleave="hideCategories"
-      >
-        <div class="common-header_overlay">
-          <div class="common-header_overlay-content">
-            <!-- 대카테고리 -->
-            <ul class="common-header_nav" @mouseover="showCategories">
-              <li class="common-header_main-title">웨딩홀</li>
-              <li class="common-header_main-title">스드메</li>
-              <li class="common-header_main-title">혼수</li>
-              <li class="common-header_main-title">본식</li>
-              <li class="common-header_main-title">촬영팀</li>
-            </ul>
-            <!-- 이미지랑 소카테고리 -->
-            <div class="common-header_image-smallcategory">
-              <!-- 이미지 -->
-              <section class="productdetail_main-image-section">
-                <img
-                  src="https://via.placeholder.com/1980x500"
-                  class="img-fluid w-100"
-                  alt="Main Image"
-                />
-              </section>
-
-              <!-- 소카테고리 -->
-              <div class="common-header_categories" v-if="isVisible">
-                <div class="common-header_smallcategory-area">
-                  <div class="common-header_category">
-                    <ul>
-                      <li>추천 리스트</li>
-                      <li>웨딩홀 목록</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>독립 패키지</li>
-                      <li>스튜디오</li>
-                      <li>드레스</li>
-                      <li>메이크업</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>예복</li>
-                      <li>예물</li>
-                      <li>가전</li>
-                      <li>혼수 패키지</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>본식스냅</li>
-                      <li>영상</li>
-                      <li>부케</li>
-                      <li>연주</li>
-                      <li>사회자</li>
-                      <li>웨딩슈즈</li>
-                      <li>답례품</li>
-                      <li>청첩장</li>
-                    </ul>
-                  </div>
-                  <div class="common-header_category">
-                    <ul>
-                      <li>스냅</li>
-                      <li>본식</li>
-                      <li>제주도 야외</li>
-                      <li>고급 스튜디오 촬영</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
-
-    <!-- 본문  -->\
+  <!-- 헤더 -->
+  <MateHeader />
+              
+    <!-- 본문  -->
+     
     <div class="container0">
     <div class="container-top">
         <div class="title-font">나의 견적함</div>
         <hr class="title">
     </div>
     <div class="container-button">
-        <button class="box-add">견적함 추가</button>
-        <button class="box-sort">최근 수정순</button>
+                      <div
+                        v-if="!isEditing"
+                        @click="startEditing"
+                        class="box-div_add-item"
+                      >
+                        견적함 이름을 입력하세요
+                      </div>
+                      <input
+                        v-else
+                        class="box-div_add-item"
+                        v-model="newBoxName"
+                        type="text"
+                        placeholder="견적함 이름을 입력하세요"
+                      />
+                      <div class="plus_btn">
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        @click="boxAdd()"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+    
+    <div class="container-sort">
+      <div class="sort" style="cursor: pointer;">최근 수정순</div>
+      <div>｜</div>
+      <div class="sort" style="cursor: pointer;" >가격 높은순</div>
+      <div>｜</div>
+      <div class="sort" style="cursor: pointer;">상품 많은순</div>
     </div>
-    <div class="container-middle">
-        <div class="container-box_list">
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
+ 
+                
+    <div class="container-middle">                      
+            <div v-for="(box, index) in boxList" :key="index" class="container-box">
+                <div class="box-name">{{ box.box_name }}</div>
+                <div class="box-count">담긴 상품 {{box.box_quantity}}개(최근 수정 {{ this.$dayFormat(box.box_date)}})</div>
                 <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
-            </div>
-            <div class="container-box">
-                <div class="box-name">더미견적함더미더미더미더미...</div>
-                <div class="box-count">담긴 상품 99개(최근 수정 2024-06-12)</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 999,999,999,999,999원</div>
+                <div class="box-cost">합계 금액 : {{this.$numberFormat(box.box_item_total_price)}}원</div>
             </div>
         </div>              
-    </div>
+
     
     <div class="mypage-bottom">
         <div class="nav-page">
@@ -244,21 +103,75 @@ export default {
   name: "SearchComponent",
   data() {
     return {
-      // 헤더
-      isVisible: false,
-      ismaintain: false,
-      // 본문
+      boxList: [],
+
+      //견적함
+      selectedIndex: null,
+      isEditing: false, // 입력 상태를 추적하는 상태
+      newBoxName: "", // 새로운 견적함 이름을 저장하는 상태
+
     };
   },
+  mounted() {
+    this.getBoxList();
+  },
+
   methods: {
-    // 헤더
-    showCategories() {
-      this.isVisible = true;
+    async getBoxList() {
+      const requestBody = {
+          access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734"
+        }
+      try{
+        const response = await this.$api("/mypage/boxlist",requestBody, "post");
+        this.boxList = response.boxList;       
+
+
+      }catch(error){
+        console.log(error);
+
+      }
     },
-    hideCategories() {
-      this.isVisible = false;
+    addBox() {
+      console.log("a");
     },
-    // 본문
+    sortBox(){
+      console.log("b");
+    },
+
+
+   // 견적함
+   startEditing() {
+      this.isEditing = true;
+    },
+    cancelEditing() {
+      this.isEditing = false;
+    },
+
+
+    async boxAdd() {
+
+      if (this.newBoxName.trim() !== "") {
+        try {
+          const requestBody = {
+            access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734",
+            boxName : this.newBoxName
+          }
+          const response = await this.$api("/mypage/boxlist/add", requestBody, "post");
+          console.log(response);
+
+          if (response.status === 200) {
+          await this.getBoxList();
+      }
+        
+
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      this.newBoxName = "";
+      this.isEditing = false;
+    }
+
   },
 };
 </script>
@@ -421,6 +334,10 @@ export default {
 .box-count{
     font-size: 14px;         
 }
+.sort{
+    font-size: 14px; 
+    color:#888888;        
+}
 
 .box-cost{
     font-size: 20px;
@@ -447,6 +364,7 @@ export default {
     margin-left: var(--container-margin-left);
     margin-right: var(--container-margin-right);
     margin-top:30px;
+    margin-bottom: 30px;
     width: var(--container-width);
     display: flex;
     justify-content: center; 
@@ -463,6 +381,22 @@ export default {
     align-items: start;
     width: var(--container-width);
     /* border: 1px solid red; */
+
+    grid-template-columns: auto auto auto;
+    justify-content:space-between;
+    grid-row-gap: 30px;
+}
+.container-sort{
+  margin-left: var(--container-margin-left);
+    margin-right: var(--container-margin-right);
+    margin-top:30px;
+    margin-bottom: 30px;
+    width: var(--container-width);
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    gap: 10px; /* 요소 간의 간격 */
+    /* border: 1px solid green; */
 }
 
 .container-box_list{          
@@ -475,6 +409,7 @@ export default {
     box-sizing: border-box;
     color:#888888;
     /* border: 1px solid blue; */
+
 }
 
 .container-box{
@@ -524,6 +459,67 @@ button.box-sort{
     font-weight: bold;
 }
 
+
+/* 견적함*/ 
+.box-div_header {
+  display: flex;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
+
+.box-div_header_list {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+
+.box-div_item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50px;
+  border: 1px solid #dddddd;
+  color: #888;
+  border-radius: 10px;
+  width: 300px;
+  background-color: white;
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.box-div_item.selected {
+  color: #f7cac9;
+  font-weight: bold;
+  border: 1px solid #f7cac9;
+}
+
+.box-div_add {
+  display: flex;
+
+  margin-bottom: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.box-div_add-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50px;
+  border: 1px solid #dddddd;
+  color: #888;
+  border-radius: 10px;
+  width: 300px;
+  background-color: white;
+  padding-left: 20px;
+  margin-bottom: 10px;
+} 
+
+.plus_btn{
+  /* border: 1px solid red; */
+  margin-bottom: 10px;
+}
 /* bottom */
 div.mypage-bottom{
     display: grid;         
