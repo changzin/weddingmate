@@ -414,6 +414,10 @@ methods: {
     }
     this.$router.push({path: "/admin/itemlist"});
   },
+  /**
+   * 
+   * 파일이 바뀌는 예시
+   */
   async changeTnImage(file){
     this.itemTnImageChange = true;
     this.itemTnImage = file;
