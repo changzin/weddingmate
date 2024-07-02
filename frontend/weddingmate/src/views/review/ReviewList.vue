@@ -70,7 +70,7 @@
                 <i
                   class="fas fa-trash"
                   v-if="review.is_current_user"
-                  @click.stop="deleteReview(review.review_id)"
+                  @click.stop="deleteReview(review)"
                 ></i>
               </div>
             </div>
@@ -107,7 +107,8 @@
               </div>
             </div>
             <img
-              src="https://via.placeholder.com/300x200"
+                              :src="this.$imageFileFormat(review.review_image_path)"
+
               class="reviewlist_card-img-top"
               alt="Review Image"
             />
@@ -255,11 +256,15 @@ export default {
       });
     },
 
-    async deleteReview(review_id) {
+    async deleteReview(review) {
       try {
         const reviewResult = await this.$api(
           `/review/delete`,
-          { access_token: "temp-token", review_id: review_id },
+          { access_token: "temp-token", 
+          review_id: review.review_id,
+          prev_review_image_path: review.review_image_path,
+          upload_type: "review",
+           },
           "POST"
         );
 

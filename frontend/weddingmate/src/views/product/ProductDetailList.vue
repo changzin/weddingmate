@@ -25,7 +25,7 @@
           <div class="reviewlist_review-cards">
             <button class="reviewlist_review-card" v-for="(product, index) in productList" :key="index" @click="goToProductDetail(product.item_id)">
               <img
-                src="https://via.placeholder.com/300x300"
+                :src="this.$imageFileFormat(product.item_tn_image_path)"
                 class="reviewlist_card-img-top"
                 alt="Review Image"
               />
@@ -50,7 +50,7 @@
           <div class="reviewlist_review-cards">
             <button class="reviewlist_review-card" v-for="(product, index) in productList" :key="index" @click="goToProductDetail(product.item_id)">
               <img
-                src="https://via.placeholder.com/300x300"
+                :src="this.$imageFileFormat(product.item_tn_image_path)"
                 class="reviewlist_card-img-top"
                 alt="Review Image"
               />

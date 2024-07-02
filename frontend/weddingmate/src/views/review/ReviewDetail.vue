@@ -52,10 +52,13 @@
         </div>
 
         <div class="qnadetail_answer_row_large">
-          <label class="qnadetail_answer_label">이미지</label>
+          <label class="qnadetail_answer_label">이미지2</label>
           <a :href="form.image">
             <div class="qnadetail_answer_image">
-              <img :src="form.image" alt="이미지" />
+              <img
+                :src="this.$imageFileFormat(ReviewResult.review_image_path)"
+                class="qnadetail_answer_image_src"
+              />
             </div>
           </a>
         </div>
@@ -90,7 +93,6 @@ export default {
       rating: 0,
       currentRating: 0,
 
-
       ReviewResult: {},
     };
   },
@@ -113,12 +115,11 @@ export default {
     async fetchProductListData() {
       try {
         console.log("this.reiview_id  : ", this.review_id);
-        
-
 
         //  qna 데이터 가져오기
-        const result = await this.$api(`http://localhost:9090/review/getselectedreviewdetail?review_id=${this.review_id}`);  
-
+        const result = await this.$api(
+          `http://localhost:9090/review/getselectedreviewdetail?review_id=${this.review_id}`
+        );
 
         this.ReviewResult = result.data[0];
         if (this.ReviewResult) {
@@ -199,11 +200,6 @@ export default {
   margin-top: 20px;
 }
 
-
-
-
-
-
 .rating {
   display: flex;
   justify-content: flex-start;
@@ -243,7 +239,6 @@ export default {
   background-position: right;
 }
 
-
 .qnawrite_row {
   display: flex;
   align-items: center;
@@ -251,12 +246,8 @@ export default {
 }
 
 .qnawrite_label {
-width: 100px;
+  width: 100px;
 }
-
-
-
-
 
 /* 본문 */
 
@@ -447,10 +438,12 @@ width: 100px;
 .qnadetail_answer_image {
   width: 300px;
   height: 300px;
-  background-color: #007bff;
 }
 
-
+.qnadetail_answer_image_src {
+  width: 300px;
+  height: 300px;
+}
 
 
 

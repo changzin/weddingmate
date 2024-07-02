@@ -133,6 +133,11 @@ export default {
       },
       QnAResult: {},
       item_id: 0,
+
+      // 이미지
+      itemTnImage: null,
+      itemTnImageExt: null,
+      qna_image_change: false,
     };
   },
 
@@ -142,6 +147,21 @@ export default {
       required: true,
     },
   },
+
+  //    async beforeRouteEnter(to, from, next) {
+  //   next(async vm => {
+  //     const userInfo = await vm.$verifiedUser();
+  //     if (userInfo) {
+  //       next();
+  //     } else {
+  //       alert("QnA 수정을 위하여 로그인하세요");
+  //       vm.$router.push({
+  //         name: "userlogin",
+  //         query: { savedUrl: true }
+  //       });
+  //     }
+  //   });
+  // },
 
   async created() {
     await this.fetchProductListData();
@@ -217,21 +237,30 @@ export default {
         const result = await this.$api(
           "/qna/updateselectedqnadetail",
           {
+            access_token: "temp-token",
             qna_id: this.qna_id,
             qna_type: this.form.inquiryType,
             qna_content: this.form.content,
             qna_title: this.form.title,
             qna_visibility: this.form.visibilityType,
-            qna_image_path: this.form.image,
+            // qna_image_path: this.form.image,
+
+            qna_image_change: this.qna_image_change,
+            qna_image: this.itemTnImage,
+            qna_image_ext: this.itemTnImageExt,
+            upload_type: "qna",
           },
           "POST"
         );
 
-          if (result.status === 200) {
-          alert("입력이 성공적으로 완료되었습니다")
-          this.item_id = result.item_id; 
-          this.$router.push({ name: "qnAlist", query: { item_id: this.item_id }});
-        } 
+        if (result.status === 200) {
+          alert("입력이 성공적으로 완료되었습니다");
+          this.item_id = result.item_id;
+          this.$router.push({
+            name: "qnAlist",
+            query: { item_id: this.item_id },
+          });
+        }
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
@@ -242,9 +271,7 @@ export default {
 
     // 취소 버튼 클릭 시 동작
     handleCancel() {
-      
       this.$router.go(-1);
-
     },
 
     // 제목 X 버튼 클릭 시 동작
@@ -260,10 +287,33 @@ export default {
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
-    handleFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.form.image = file.name;
+    async handleFileChange(file) {
+      this.qna_image_change = true;
+      this.itemTnImage = file;
+      const files = event.target?.files;
+      if (files.length > 0) {
+        const file = files[0];
+
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        this.form.image = filename;
+        var _lastDot = filename.lastIndexOf(".");
+        this.itemTnImageExt = filename
+          .substring(_lastDot, filename.length)
+          .toLowerCase();
+
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          this.itemTnImage = e.target.result;
+          console.log("itemTnImage : ", this.itemTnImage);
+          console.log("itemTnImageExt : ", this.itemTnImageExt);
+        };
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemTnImage = await reader.readAsDataURL(file);
       }
     },
   },
@@ -273,8 +323,6 @@ export default {
 
 
 <style scoped>
-
-
 /* 본문 */
 
 .qnawrite_container {
@@ -410,6 +458,4 @@ export default {
   height: 100%;
   resize: none;
 }
-
-
 </style>

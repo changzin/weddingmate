@@ -55,7 +55,7 @@
                   <button
                     class="common-caldate_save-button"
                     type="button"
-                    @click="saveEvent2"
+                    @click="saveEvent"
                   >
                     일정등록
                   </button>
@@ -110,12 +110,30 @@ export default {
     };
   },
 
+   async beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      const userInfo = await vm.$verifiedUser();
+      if (userInfo) {
+        next();
+      } else {
+        alert("스케쥴 확인을 위하여 로그인하세요");
+        vm.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true }
+        });
+      }
+    });
+  },
+
   async created() {
     await this.fetchScheduleListData();
   },
 
   methods: {
     async fetchScheduleListData() {
+     
+
+
       try {
         // 데이터 가져오기
         const result = await this.$api(
@@ -142,46 +160,11 @@ export default {
       }
     },
 
-    // 캘린더
-    // async saveEvent(event) {
-    //   event.preventDefault();
 
-    //   console.log(
-    //     `Event from ${this.dateRange.start} to ${this.dateRange.end}`
-    //   );
 
-    //    if (!this.dateRange.start || !this.dateRange.end) {
-    //     alert("모든 필드를 입력하세요.");
-    //     return;
-    //   }
-    //   try {
-    //     const result = await this.$api(
-    //       "/schedule/insertschedule",
-    //       {
-    //         access_token: "temp-token",
-    //         schedule_title: this.schedule_title,
-    //         schedule_start: this.dateRange.start,
-    //         schedule_end: this.dateRange.end,
-    //         calendar_id: this.calendar_id,
-    //       },
-    //       "POST"
-    //     );
-    //     if (result.status == 200) {
-    //       alert("완료됨");
-
-    //     }
-    //   } catch (error) {
-    //     console.error(
-    //       "ProductDetail.vue fetchData Error fetching product data:",
-    //       error
-    //     );
-    //   }
-    // },
-
-    async saveEvent2(event) {
+    async saveEvent(event) {
       event.preventDefault();
 
-      // Event from Tue Jul 16 2024 00:00:00 GMT+0900 (한국 표준시) to Wed Jul 24 2024 00:00:00 GMT+0900 (한국 표준시)
       console.log(
         `Event from ${this.dateRange.start} to ${this.dateRange.end}`
       );
@@ -208,6 +191,7 @@ export default {
         );
         if (result.status == 200) {
           alert("완료됨");
+          this.fetchScheduleListData();
         }
       } catch (error) {
         console.error(

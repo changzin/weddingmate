@@ -108,12 +108,14 @@ exports.uploadUpdate = async(req, res, next)=>{
         let {review_image, qna_image, item_tn_image, item_detail_image, item_main_image, review_image_ext, qna_image_ext, item_tn_image_ext, item_main_image_ext, item_detail_image_ext} = req.body;
         let {review_image_change, qna_image_change, item_main_image_change, item_tn_image_change, item_detail_image_change} = req.body;
         let {prev_review_image_path, prev_qna_image_path, prev_item_main_image_path, prev_item_tn_image_path, prev_item_detail_image_path} = req.body;
+        
 
         let insertFileList = [];
 
         // 어떤 변수가 null이 아닌지에 따라 사진 위치 지정 가능  -> 리뷰, Q&A 등 다른 종류의 파일 업로드 처리 가능함
         if (req.body.upload_type=='review'){
-            if (review_image && review_image_ext && review_image_change){
+            if (review_image && review_image_ext && req.body.review_image_change){
+
                 // 'YYYY-MM-DD'로 파일 이름의 시작을 만듦
                 const date = getToday();
 
@@ -142,7 +144,7 @@ exports.uploadUpdate = async(req, res, next)=>{
             }
         }
         else if (req.body.upload_type=='qna'){
-            if (qna_image && qna_image_ext && qna_image_change){
+            if (qna_image && qna_image_ext && req.body.qna_image_change){
                 const date = getToday();
                 const filename = date + v4() + qna_image_ext;
                 const filePath = `qna/${filename}`;

@@ -52,7 +52,8 @@
           <label class="qnadetail_answer_label">이미지</label>
           <a :href="form.image">
             <div class="qnadetail_answer_image">
-              <img :src="form.image" alt="이미지" />
+              <img :src="this.$imageFileFormat(QnAResult.qna_image_path)" 
+              class="qnadetail_answer_image_src"/>
             </div>
           </a>
         </div>
@@ -155,28 +156,6 @@ export default {
           }
 
           this.user_nickname = result.user_nickname.user_nickname;
-
-          // answer 데이터 가져오기
-          if (this.QnAResult.qna_visibility === "T") {
-            const result = await this.$api(
-              "/answer/getanswer",
-              { qna_id: this.qna_id },
-              "POST"
-            );
-            this.AnswerResult = result.data;
-            if (this.AnswerResult) {
-              console.log(
-                "AnswerResult: ",
-                JSON.parse(JSON.stringify(this.AnswerResult))
-              );
-            }
-            if(result.data.answer_content)
-            {
-
-              this.AnswerContent = result.data.answer_content;
-            console.log("this.AnswerContent : ", this.AnswerContent);
-              }
-          }
         } else {
           console.log("fail");
         }
@@ -189,14 +168,18 @@ export default {
       this.$router.push({ name: "qnamodify", query: { qna_id: this.qna_id } });
     },
     async deleteQnA() {
-
       const result = await this.$api(
         "/qna/deleteqna",
-        { access_token: "temp-token", qna_id: this.qna_id },
+        {
+          access_token: "temp-token",
+          qna_id: this.qna_id,
+          prev_qna_image_path: this.QnAResult.qna_image_path,
+          upload_type: "qna",
+        },
         "POST"
       );
 
-      if(result.status == 200) {
+      if (result.status == 200) {
         alert("성공적으로 지웠습니다");
         this.$router.go(-1);
       }
@@ -248,8 +231,6 @@ export default {
 
 
 <style scoped>
-
-
 /* 본문 */
 
 .qnadetail_container {
@@ -443,7 +424,10 @@ export default {
   background-color: #007bff;
 }
 
- 
+.qnadetail_answer_image_src {
+  width: 300px;
+  height: 300px;
+}
 
 .productdetail_qna-status {
   display: inline-block;

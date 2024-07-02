@@ -123,9 +123,9 @@
 export default {
   data() {
     return {
-      // 헤더
-      isVisible: false,
-      ismaintain: false,
+        // 이미지
+      itemTnImage: null,
+      itemTnImageExt: null,
 
       // 본문
       form: {
@@ -149,20 +149,20 @@ export default {
     await this.fetchProductListData();
   },
 
-  async beforeRouteEnter(to, from, next) {
-    next(async vm => {
-      const userInfo = await vm.$verifiedUser();
-      if (userInfo) {
-        next();
-      } else {
-        alert("QnA 작성을 위하여 로그인하세요");
-        vm.$router.push({
-          name: "userlogin",
-          query: { savedUrl: true }
-        });
-      }
-    });
-  },
+  // async beforeRouteEnter(to, from, next) {
+  //   next(async vm => {
+  //     const userInfo = await vm.$verifiedUser();
+  //     if (userInfo) {
+  //       next();
+  //     } else {
+  //       alert("QnA 작성을 위하여 로그인하세요");
+  //       vm.$router.push({
+  //         name: "userlogin",
+  //         query: { savedUrl: true }
+  //       });
+  //     }
+  //   });
+  // },
   
 
   methods: {
@@ -207,7 +207,12 @@ export default {
             qna_content: this.form.content,
             qna_title: this.form.title,
             qna_visibility: this.form.visibilityType,
-            qna_image_path: this.form.image,
+            // qna_image_path: this.form.image,
+
+
+             qna_image: this.itemTnImage,
+            qna_image_ext: this.itemTnImageExt,
+            upload_type: "qna",
           },
           "POST"
         );
@@ -244,10 +249,32 @@ export default {
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
-    handleFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.form.image = file.name;
+    async handleFileChange(file) {
+      this.itemTnImage = file;
+      const files = event.target?.files
+      if (files.length > 0){
+        const file = files[0];
+
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        this.form.image = filename;
+        var _lastDot = filename.lastIndexOf('.');
+        this.itemTnImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader() 
+  
+        reader.onload = (e) => {
+          this.itemTnImage = e.target.result 
+        console.log("itemTnImage : ", this.itemTnImage);
+        console.log("itemTnImageExt : ", this.itemTnImageExt);
+
+
+        } 
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemTnImage = await reader.readAsDataURL(file);
       }
     },
   },

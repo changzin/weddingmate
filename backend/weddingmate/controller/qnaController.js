@@ -119,7 +119,7 @@ exports.itemDetail = async (req, res) => {
     const item_id = req.params.item_id;
     // item_id로 최근 Q&A 5개를 가져오는 쿼리문
     const query =
-      "SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date FROM qna, user WHERE qna.user_id=user.user_id AND qna.item_id=? ORDER BY qna.qna_date LIMIT 5";
+      "SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date FROM qna, user WHERE qna.user_id=user.user_id AND qna.item_id=? ORDER BY qna.qna_id LIMIT 5";
 
     let result = [];
     result = await db(query, [item_id]);

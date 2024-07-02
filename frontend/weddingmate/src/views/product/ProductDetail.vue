@@ -11,7 +11,7 @@
           <div class="productdetail_main_content-div">
             <div class="col-md-6">
               <img
-                src="https://via.placeholder.com/600x400"
+                :src="this.$imageFileFormat(productDetail.item_main_image_path)"
                 class="img-fluid"
                 alt="Product Image"
               />
@@ -3061,7 +3061,7 @@
         <!-- 상세 설명 이미지 -->
         <div class="text-center productdetail_main-detail-image-div">
           <img
-            src="https://via.placeholder.com/1280x800"
+            :src="this.$imageFileFormat(productDetail.item_detail_image_path)"
             class="img-fluid"
             alt="Detailed Description Image"
           />
@@ -3139,7 +3139,7 @@
                   ></i>
                   <i
                     class="fas fa-trash"
-                    @click.stop="deleteReview(review.review_id)"
+                    @click.stop="deleteReview(review)"
                     v-if="review.is_current_user"
                   ></i>
                 </div>
@@ -3178,10 +3178,15 @@
                 </div>
               </div>
               <img
-                src="https://via.placeholder.com/300x200"
+                :src="this.$imageFileFormat(review.review_image_path)"
                 class="productdetail_card-img-top"
                 alt="Review Image"
               />
+              <!-- <img
+                src="https://via.placeholder.com/300x200"
+                class="productdetail_card-img-top"
+                alt="Review Image"
+              /> -->
               <div class="productdetail_card-body">
                 <p class="productdetail_card-text">
                   {{ review.review_content }}
@@ -3408,7 +3413,7 @@ export default {
   methods: {
     async fetchData() {
       try {
-         const startTime = performance.now();
+        const startTime = performance.now();
 
         // 해당 페이지 item + itemDetail 데이터 가져오기
         const totalResult = await this.$api(
@@ -3429,16 +3434,14 @@ export default {
           this.reviewList = totalproductdetailData.reviewList;
           this.qnaList = totalproductdetailData.qnaList;
           this.BoxResultData = totalproductdetailData.data || [];
-
         } else {
           console.log("fail");
         }
 
-
-         // 로딩 시간 측정 끝
-      const endTime = performance.now();
-      this.loadingTime = endTime - startTime;
-      console.log(`데이터 로딩 시간: ${this.loadingTime} ms`);
+        // 로딩 시간 측정 끝
+        const endTime = performance.now();
+        this.loadingTime = endTime - startTime;
+        console.log(`데이터 로딩 시간: ${this.loadingTime} ms`);
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
@@ -4781,11 +4784,16 @@ export default {
       });
     },
 
-    async deleteReview(review_id) {
+    async deleteReview(review) {
       try {
         const reviewResult = await this.$api(
           `/review/delete`,
-          { access_token: "temp-token", review_id: review_id },
+          {
+            access_token: "temp-token",
+            review_id: review.review_id,
+            prev_review_image_path: review.review_image_path,
+            upload_type: "review",
+          },
           "POST"
         );
 
