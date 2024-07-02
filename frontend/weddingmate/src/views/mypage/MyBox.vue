@@ -16,13 +16,13 @@
           </div>
         </div>
         <div class="container-middle">
-          <div class="container-middle-category_title" v-for="(type,index) in showBoxDetail" :key="index">
-            <div class="title-font">{{ type.ide_type }}</div>
+          <div class="container-middle-category_title">
+            <div class="title-font"></div>
             <div>
               <hr class="title" />
             </div>
           </div>
-          <table>
+          <table v-for="item in itemNames" :key="item.item_name">
             <colgroup>
               <col />
               <col />
@@ -39,7 +39,7 @@
                   <input type="checkbox" />
                   <img class="bookmark" src="http://localhost:8080/icon/icon.png" />
                   <div class="content-table_col1">
-                    <div class="content-table_col1-name" v-for="(item,index) in showBoxDetail" :key="index">
+                    <div class="content-table_col1-name">
                       <!-- 제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목 -->
                       {{ item.item_name }}
 
@@ -65,15 +65,15 @@
               <td>999,999,999,999,999</td>
               <td><button class="boxdelete">삭제</button></td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td>
                 <div class="container-table_col1">
                   <input type="checkbox" />
                   <img class="bookmark" src="http://localhost:8080/icon/icon.png" />
                   <div class="content-table_col1">
-                    <div class="content-table_col1-name">
+                     <div class="content-table_col1-name">
                       제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목
-                    </div>
+                    </div> 
                     <div class="content-table_col1-option">
                       <div>
                         옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
@@ -89,7 +89,7 @@
               </td>
               <td>999,999,999</td>
               <td><button class="boxdelete">삭제</button></td>
-            </tr>
+            </tr> -->
           </table>
           <!-- <div class="container-middle-category_title">
             <div class="title-font">예물</div>
@@ -244,28 +244,9 @@
         page: 1,
         maxPage: 0,
         boxid:"",
-        // itemType: "",
-        // itemName: "",
-        // itemFactoryName: "",
-        // itemPrice: "",
-        // itemDiscountRate: "",
-        itemDetailList: [
-        // {
-        //   item_detail_quantity: 0,
-        //   item_detail_id:'',
-        //   item_detail_type: '',
-        //   item_detail_ticket: '',
-        //   item_detail_local: '',
-        //   item_detail_loc: '',
-        //   item_detail_size: '',
-        //   item_detail_color: '',
-        //   item_detail_makeup: '',
-        //   item_detail_heel_height: '',
-        //   item_detail_flower_life: '',
-        //   item_detail_quality: '',
-        //   item_detail_kind: '',
-        // }
-      ],
+        itemType:[],
+        categories: [],
+        itemNames:[],
       itemTnImage: null,
       itemTnImageExt: null,
       itemMainImage: null,
@@ -276,6 +257,8 @@
     },
     mounted(){
       this.showBoxDetail();
+      this.fetchItmeCategory();
+      this.fetchItemName();
     },
 
     methods: {
@@ -297,27 +280,46 @@
         this.userid = this.$route.userid;
         const requestBody = {
           
-          access_token: "a01b3a6a-8ef7-426b-ac8b-3f97b091013a"
+          access_token: "80060f2c-e894-472c-930b-9495e149e13c"
         }
         console.log(requestBody);
         //백 인덱스로 보내줌 
         const result = await this.$api("/mybox",requestBody,"POST")
        console.log(result);
-        //프론트 인덱스로 보내줌
-        await this.$router.push({path: `/mypage/boxlist/boxname/`})
+       
+        
+        
+        //아이템 내에 넣어주기
+      },
+      async fetchItmeCategory(){
+         //아이템 카테고리 가져오기 
+        const category = await this.$api(`/mybox/category`);
+        console.log(category);
+        const iType = category.itemType.map((item_type)=> item_type);
+        console.log(iType);
+        this.categories = iType;
+        console.log(this.categories);
+        
 
-        //아이템 카테고리 가져오기 
-        const res = await this.$api(`http://localhost:9090/mybox/category`);
-        this.ide_type = res.ide_type;
-        console.log(this.ide_type);
+      } ,     
+      async fetchItemName(){
+          const response = await this.$api(`/mybox/name`)
+          console.log(response);
+          const iName = response.box_itemName.map((item_name)=> item_name);
+          //아이템 이름을 담고 있는 배열 iName 
+          console.log(iName);
+          this.itemNames = iName;
+          console.log(this.itemNames);
+          }
+      },
 
-        //아이템 이름 가져오기
-        const name = await this.$api(`http://localhost:9090/mybox/name`)
-        this.item_name = name.item_name
-        console.log(this.item_name);
-      }
-    },
-  };
+      //한 유저에 대한 여러개의 박스상세를 볼 수 있어야함 
+      async showUserbox(){
+        await this.$router.push({path: '/mypage/boxlist/boxname'})
+
+      },
+
+    }
   </script>
   
   
