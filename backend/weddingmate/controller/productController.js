@@ -153,8 +153,8 @@ exports.AddBox = async (req, res) => {
 
     // Box 데이터 생성
     const query = `
-            INSERT INTO box (user_id, box_name, box_quantity, box_total_price)
-      VALUES (?, ?, 0, 0);
+            INSERT INTO box (user_id, box_name, box_quantity)
+      VALUES (?, ?, 0);
           `;
     const result = await db(query, [user_id, box_name]);
 
@@ -249,6 +249,91 @@ exports.Bookmark = async (req, res) => {
       data: result,
     };
     // 데이터 보내기
+    res.json(responseBody);
+  } catch (err) {
+    console.error(err);
+    const responseBody = {
+      status: 400,
+      message: err.message,
+    };
+    res.json(responseBody);
+  }
+};
+
+
+exports.totalProductDetail = async (req, res) => {
+  try {
+    const user_id = req.body.user_id;
+    const itemId = req.params.itemId;
+
+    console.log("itemId : ", itemId);
+
+    // item 테이블에서 item_id에 해당하는 데이터 가져오기
+    const itemQuery = `SELECT * FROM item WHERE item_id = ?`;
+    const itemResult = await db(itemQuery, [itemId]);
+
+    if (itemResult.length === 0) {
+      return res.status(404).json({
+        status: 404,
+        message: "Item not found",
+      });
+    }
+
+    // item_detail 테이블에서 item_id에 해당하는 데이터 가져오기
+    const itemDetailQuery = `SELECT * FROM item_detail WHERE item_id = ?`;
+    const itemDetailResult = await db(itemDetailQuery, [itemId]);
+
+
+
+    // 리뷰
+    const reviewQuery =
+  `SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date,
+     CASE 
+      WHEN review.user_id = ? THEN 1 
+      ELSE 0 
+      END AS is_current_user
+    FROM review
+    JOIN user ON review.user_id = user.user_id 
+    WHERE item_id=? 
+    ORDER BY review.review_date 
+    LIMIT 6`;
+
+    let reviewResult = [];
+    reviewResult = await db(reviewQuery, [user_id, itemId]);
+
+
+
+    // QnA
+    const qnaQuery =
+      "SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date FROM qna, user WHERE qna.user_id=user.user_id AND qna.item_id=? ORDER BY qna.qna_date LIMIT 5";
+
+    let qnaResult = [];
+    qnaResult = await db(qnaQuery, [itemId]);
+
+
+
+
+    // 견적함
+    const boxQuery = `
+    SELECT * FROM box where user_id = ?;
+  `;
+const boxResult = await db(boxQuery, [user_id]);
+
+
+
+
+    const responseBody = {
+      status: 200,
+      message: "ProductController.js의 productDetail 데이터 성공",
+      data: {
+        item: itemResult[0],
+        itemDetails: itemDetailResult,
+        reviewList: reviewResult,
+        qnaList: qnaResult,
+        data: boxResult,
+      },
+    };
+
     res.json(responseBody);
   } catch (err) {
     console.error(err);

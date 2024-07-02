@@ -1,6 +1,6 @@
 const express = require('express');
-const {productList, productDetail, BoxList, AddBox, InsertItemIntoBox, Bookmark} = require('../controller/productController');
-const { adminLoginCheck, loginCheck } = require('../middleware/login');
+const {productList, productDetail, BoxList, AddBox, InsertItemIntoBox, Bookmark, totalProductDetail} = require('../controller/productController');
+const { adminLoginCheck, loginCheck, loginFilter } = require('../middleware/login');
 const {addProduct, updateProduct, deleteProduct} = require('../controller/adminController')
 const {upload, uploadUpdate, uploadDelete} = require('../middleware/imageHandler');
 
@@ -24,5 +24,8 @@ router.post('/update', adminLoginCheck, uploadUpdate, updateProduct);
 router.post('/delete', adminLoginCheck, uploadDelete, deleteProduct);
 
 router.post('/bookmark',loginCheck, Bookmark);
+
+
+router.post('/totalproductdetail/:itemId', loginFilter, totalProductDetail);
 
 module.exports = router;

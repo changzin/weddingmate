@@ -133,20 +133,31 @@ export default {
     },
   },
 
-  async created() {
-    await this.fetchProductListData();
+    async beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      const userInfo = await vm.$verifiedUser();
+      if (userInfo) {
+        next();
+      } else {
+        alert("리뷰 작성을 위하여 로그인하세요");
+        vm.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true }
+        });
+      }
+    });
   },
+
+  // async created() {
+  //   await this.fetchProductListData();
+  // },
 
   mounted() {
     this.resetRating();
   },
 
   methods: {
-    async fetchProductListData() {
-      if (!this.$verifiedUser()) {
-        alert("로그인하세요");
-      }
-    },
+   
 
     // 확인 버튼 클릭 시 동작
     async handleSubmit() {

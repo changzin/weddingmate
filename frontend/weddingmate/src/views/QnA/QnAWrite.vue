@@ -149,11 +149,27 @@ export default {
     await this.fetchProductListData();
   },
 
+  async beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      const userInfo = await vm.$verifiedUser();
+      if (userInfo) {
+        next();
+      } else {
+        alert("QnA 작성을 위하여 로그인하세요");
+        vm.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true }
+        });
+      }
+    });
+  },
+  
+
   methods: {
     async fetchProductListData() {
-      if (!this.$verifiedUser()) {
-        alert("로그인하세요");
-      }
+      // if (!this.$verifiedUser()) {
+      //   alert("로그인하세요");
+      // }
     },
 
     // 확인 버튼 클릭 시 동작
