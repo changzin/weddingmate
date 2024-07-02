@@ -14,6 +14,7 @@ import 'v-calendar/dist/style.css'; // v-calendar 스타일 임포트
 import './views/mypage/mypage.css'
 
 const app = createApp(App);
+
 app.use(store);
 app.use(vueCookies);
 app.$cookies.config("7d");
@@ -25,4 +26,4 @@ app.component('MateFooter', MateFooter);
 
 app.use(VCalendar, {});
 app.use(router).mount('#app');
-
+window.Kakao.init(process.env.VUE_APP_KAKAO_APP_KEY);

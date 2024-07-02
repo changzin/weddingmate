@@ -8,54 +8,43 @@ exports.login = async(req,res)=>{
         // req.body 받아옴.
         const email = req.body.email;
         const password = req.body.password;
-
+        const loginType = req.body.loginType;
+        
         let count = 0;
         let result = 0;
         let responseBody = {};
-        // 이메일과 비밀번호가 일치하고, 이메일 인증이 완료된 유저를 가져옴
-        query = "SELECT * FROM user WHERE user_email = ? AND user_password = ? AND user_email_verified = 'T' AND user_block='F'";
-        result = await db(query, [email, password]);
-        count = result.length;
 
-        // accessToken을 uuid로 생성
         const accessToken = v4();
 
-        // count 가 1이면 유저를 하나 찾음 -> 로그인 가능
-        if (count == 1){
-            user = result[0];
-
-            // user_access_token을 update해주는 쿼리문 실행
-            query = "UPDATE user SET user_access_token = ? WHERE user_id = ?";
-            result = await db(query, [accessToken, user.user_id]);
+        if (loginType == 'local'){
+            // 이메일과 비밀번호가 일치하고, 이메일 인증이 완료된 유저를 가져옴
+            query = "SELECT * FROM user WHERE user_email = ? AND user_password = ? AND user_email_verified = 'T' AND user_block='F' AND user_type=?";
+            result = await db(query, [email, password, loginType]);
+            count = result.length;
+            // accessToken을 uuid로 생성
+            
+            // count 가 1이면 유저를 하나 찾음 -> 로그인 가능
+            if (count == 1){
+                user = result[0];
+                // user_access_token을 update해주는 쿼리문 실행
+                query = "UPDATE user SET user_access_token = ? WHERE user_id = ?";
+                result = await db(query, [accessToken, user.user_id]);
         
-            // 로그인 방법 분리
-            if (user.user_type === "local"){
                 responseBody = {
                     status: 200,
                     accessToken: accessToken,
                     type: "local",
                     message: "로그인 완료했습니다"
                 }
+                res.json(responseBody);
+                return;
             }
-            else if (user.user_type === "naver"){
 
-            }
-            else if (user.user_type === "kakao"){
-
-            }
-            else if (user.user_type === "google"){
-
-            }
-            else{
-                throw new Error("로그인을 할 수 없습니다 : API를 불러올 수 없거나 사용자 정보가 정확하지 않습니다");
-            }            
-        }
-        else{
+            // 관리자 로그인 -- 이메일이 관리자의 것인지 확인합니다.
             query = "SELECT * FROM admin WHERE admin_email = ? AND admin_password = ?"
             result = await db(query, [email, password]);
             count = result.length;
-
-            // 관리자 로그인
+            
             if (count == 1){
                 admin = result[0];
 
@@ -70,10 +59,51 @@ exports.login = async(req,res)=>{
                 }
             }
             else{
-                throw new Error("로그인을 할 수 없습니다 : 잘못된 정보 입력");
+                throw new Error("로그인을 할 수 없습니다 : 정확하지 않은 정보입니다.")
             }
         }
-        res.json(responseBody);
+        else {
+            // 소셜의 경우 - 로그인할 수 있는지 먼저 확인한다. (계정이 있음 로그인, 없음 회원가입으로 보낸다.)
+            query = "SELECT * FROM user WHERE user_email = ? AND user_block='F' AND user_type=?";                
+            result = await db(query, [email, loginType]);
+            // 로그인 가능하다.
+            if (result.length == 1){
+                user = result[0];   
+                query = "UPDATE user SET user_access_token = ? WHERE user_id = ?";
+                result = await db(query, [accessToken, user.user_id]);
+        
+                responseBody = {
+                    status: 200,
+                    accessToken: accessToken,
+                    type: loginType,
+                    message: "로그인 완료했습니다"
+                }
+                res.json(responseBody);
+                return;
+            }
+
+            // 로그인을 못하면 일단 이메일 중복 체크부터 시작함.
+            query = "SELECT count(*) AS count FROM user WHERE user_email=?";                
+            result = await db(query, [email]);
+            count = result[0]['count'];
+            if (count != 0){
+                throw new Error("중복된 이메일입니다.")
+            }
+            query = "SELECT count(*) AS count FROM admin WHERE admin_email=?";                
+            result = await db(query, [email]);
+            count = result[0]['count'];
+            if (count != 0){
+                throw new Error("중복된 이메일입니다.")
+            }
+
+            responseBody = {
+                status: 300,
+                message: "로그인이 필요한 소셜 계정입니다.",
+                user_email: email
+            };
+            res.json(responseBody); 
+            return;
+        }
     }
     catch(err){
         console.error(err);
@@ -143,23 +173,39 @@ exports.signUp = async (req, res)=>{
         if (count != 0){
             throw new Error("중복된 이메일입니다.")
         }
+        if(user_type == 'local'){
+            query = "INSERT INTO user(user_email, user_password, user_name, user_nickname, user_type, user_addr1, user_addr2) values(?, ?, ?, ?, ?, ?, ?)";
+            result = await db(query, [user_email, user_password, user_name, user_nickname, user_type, user_addr1, user_addr2]);
+            result = result.affectedRows;
 
-        query = "INSERT INTO user(user_email, user_password, user_name, user_nickname, user_type, user_addr1, user_addr2) values(?, ?, ?, ?, ?, ?, ?)";
-        result = await db(query, [user_email, user_password, user_name, user_nickname, user_type, user_addr1, user_addr2]);
-        result = result.affectedRows;
-
-        if (result == 1){
-            // 성공
-            responseBody = {
-                status: 200,
-                message: "회원가입 완료"
-            };
-            res.status(200).json(responseBody);
+            if (result == 1){
+                // 성공
+                responseBody = {
+                    status: 200,
+                    message: "회원가입 완료"
+                };
+                res.status(200).json(responseBody);
+            }
+            else{
+                throw new Error("회원가입을 완료하지 못했습니다.")
+            }
         }
         else{
-            throw new Error("회원가입을 완료하지 못했습니다.")
+            query = "INSERT INTO user(user_email, user_password, user_name, user_nickname, user_type, user_addr1, user_addr2, user_email_verified) values(?, ?, ?, ?, ?, ?, ?, ?)";
+            result = await db(query, [user_email, user_password, user_name, user_nickname, user_type, user_addr1, user_addr2, 'T']);
+            result = result.affectedRows;
+            if (result == 1){
+                // 성공
+                responseBody = {
+                    status: 200,
+                    message: "회원가입 완료"
+                };
+                res.status(200).json(responseBody);
+            }
+            else{
+                throw new Error("회원가입을 완료하지 못했습니다.")
+            }
         }
-
     }
     catch(err){
         console.error(err);
@@ -174,7 +220,6 @@ exports.signUp = async (req, res)=>{
 exports.emailVerify = async(req, res)=>{
     try{
             const user_email = req.body.user_email;
-            console.log(user_email);
             let count = 0;
             let result = 0;
             let responseBody = {};

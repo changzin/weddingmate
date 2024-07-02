@@ -1,6 +1,6 @@
 <template>
     <MateHeader/>
-    <div class="container login_container">
+    <div class="container login_container" style="margin-bottom:200px;">
         <div class="row justify-content-center" style="margin-top:200px;">
             <div class="login_text">
                 안녕하세요
@@ -48,13 +48,19 @@
         <div class="row justify-content-center mb-3">
             간편 로그인
         </div>
-        <div class="row justify-content-center" style="margin-bottom: 300px;">
-            <div class="login_box">
-                <div class="d-flex justify-content-center">
-                    <img src="http://localhost:8080/icon/kakao_logo.jpg" alt="" class="login_icon_first">
-                    <img src="http://localhost:8080/icon/google_logo.png" alt="" class="login_icon">
-                    <img src="http://localhost:8080/icon/naver_logo.png" alt="" class="login_icon_last">
-                </div>
+        <div class="row justify-content-center">
+            <div style="width:250px; margin-bottom:15px;">
+                <button id="custom-login-btn" @click="kakaoLogin" style="border:none; padding:0px;">
+                    <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="222">
+                </button>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="h-screen dark:bg-gray-800" style="width: 250px;">
+                <button @click="googleLogin" class="px-4 py-2 border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150">
+                    <img class="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" width="25" height="25">
+                    <span> Login with Google</span>
+                </button>
             </div>
         </div>
     </div>
@@ -62,7 +68,7 @@
 
 <script>
     import { firebaseApp } from "../../util/firebase";
-    import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+    import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
     export default {
         data(){
             return {
@@ -75,7 +81,6 @@
         },
         methods: {
             async login(){
-                 
                 // 파이어베이스로 먼저 인증을 시작한다.
                 try{
                     const auth = await getAuth(firebaseApp);
@@ -83,7 +88,7 @@
                     await signInWithEmailAndPassword(auth, this.email, this.password);
 
                     // 서버 쪽에서 계정이 있는지 또 확인하고, 성공하면 DB에 저장된 accessToken을 가져온다.
-                    const result = await this.$api(`/user/login`, {email: this.email, password: this.password}, "POST");                    
+                    const result = await this.$api(`/user/login`, {email: this.email, password: this.password, loginType: "local"}, "POST");                    
                     
                     if (result.status == 200){                        
                         // 쿠키에 accessToken 저장하고 로그인 유지 시엔 LocalStoreage(vuex)에도 저장
@@ -107,6 +112,64 @@
                     console.error(err);
                     this.errorMessage= true;
                 }
+            },
+
+            // 카카오 로그인 관련 함수 -> 로그인 결과로 accessToken을 받아오거나, 회원가입으로 보낸다.
+            kakaoLogin(){
+                window.Kakao.Auth.login({
+                    scope: 'profile_nickname account_email',
+                    success: this.getKakaoAccount,
+                });
+            },
+            async getKakaoAccount(){
+                let nickname = null;
+                let email = null;
+                await window.Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: res=>{
+                        const kakao_account = res.kakao_account;
+                        nickname = kakao_account.profile.nickname;
+                        email = kakao_account.email;
+                    },
+                    fail: error => {
+                        console.log(error);
+                    }
+                });
+                if (nickname && email){
+                    await window.Kakao.Auth.logout();
+
+                    const requestBody = {
+                        email: email, 
+                        password: null, 
+                        loginType: "kakao"
+                    }
+                    const result = await this.$api("/user/login", requestBody, "POST");
+                    if (result.status == 300){
+                        this.$router.push({
+                            name: "signup",
+                            query: { "type": "kakao", "email": email }
+                        });
+                    }
+                    if (result.status == 200){
+                        this.$cookies.set("weddingCookie", result.accessToken);
+                        if (this.autoLogin){
+                            await this.$store.commit("user", {accessToken: result.accessToken})
+                        }
+                        this.$router.push({path: '/'});
+                    }
+                }
+            },
+            async googleLogin(){
+                const provider = new GoogleAuthProvider();
+                let auth = await getAuth(firebaseApp);
+                await signInWithPopup(auth, provider);
+
+                await onAuthStateChanged(auth, (user)=>{
+                    if (user){
+                        console.log(user.uid);
+                        console.log(user);
+                    }
+                });
             }
         }
     };
