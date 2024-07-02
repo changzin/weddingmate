@@ -3,6 +3,22 @@ const path = require('path');
 const { v4  } = require('uuid');
 
 // 컨트롤러가 요청을 받기 전, 먼저 요청을 받아 이미지 파일 업로드를 먼저 처리하는 미들웨어
+
+/**
+ * 리뷰, Q&A, 상품을 등록할 때의 미들웨어
+ * 
+ * 리뷰 시 필요 
+ * review_image (64base encoding된 파일 데이터)
+ * review_image_ext (확장자)
+ * 
+ * Q&A
+ * qna_image
+ * qna_image_ext
+ * 
+ * 상품
+ * item_tn_image, item_main_image, item_detail_image
+ * item_tn_image_ext, item_main_image_ext, item_detail_image_ext
+ */
 exports.upload = async(req, res, next)=>{
     try{
         // requestBody에서 Image file, 확장자(.png 등)를 가져온다.
@@ -98,6 +114,27 @@ exports.upload = async(req, res, next)=>{
     }
 };
 
+/**
+ * 리뷰, Q&A, 상품을 수정
+ * 
+ * 리뷰 시 필요 
+ * review_image (새 이미지 64base encoding 된 데이터)
+ * review_image_ext (확장자)
+ * review_image_change (바뀐 여부, true or false)
+ * prev_review_image_path (기존 db에 들어가 있던 파일 경로)
+ * 
+ * Q&A
+ * qna_image
+ * qna_image_ext
+ * qna_image_change
+ * prev_qna_image_path
+
+ * 상품
+ * item_tn_image, item_main_image, item_detail_image
+ * item_tn_image_ext, item_main_image_ext, item_detail_image_ext
+ * item_tn_image_change, item_main_image_change, item_detail_image_change
+ * prev_item_tn_image_path, prev_item_main_image_path, prev_item_detail_image_path
+ */
 // 이미지 수정 파일
 exports.uploadUpdate = async(req, res, next)=>{
     try{
@@ -213,6 +250,19 @@ exports.uploadUpdate = async(req, res, next)=>{
         res.json(responseBody);
     }
 };
+
+/**
+ * 리뷰, Q&A, 상품을 수정
+ * 
+ * 리뷰 시 필요 
+ * prev_review_image_path (기존 db에 들어가 있던 파일 경로)
+ * 
+ * Q&A
+ * prev_qna_image_path
+
+ * 상품
+ * prev_item_tn_image_path, prev_item_main_image_path, prev_item_detail_image_path
+ */
 
 exports.uploadDelete = async(req, res, next)=>{
     console.log(req.body);
