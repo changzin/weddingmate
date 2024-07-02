@@ -18,7 +18,7 @@ exports.orderData = async (req,res)=>{
         responseBody = {
             status: 200,
             boxItemList: result
-        }
+        };
         res.json(responseBody);
     }catch(err){
         console.error(err);
@@ -33,13 +33,30 @@ exports.orderData = async (req,res)=>{
 
 exports.makeOrder = async (req, res)=>{
     try{
-        
-        const uuid = v4();
         const box_id = req.body.box_id;
+        const order_info_pay_type = req.body.order_info_pay_type;
+        const order_info_price = req.body.order_info_price;
+        const order_info_total_price = req.body.order_info_total_price;
+        const order_info_sale_price = req.body.order_info_sale_price;
+        const order_info_cash_receipt = req.body.order_info_cash_receipt;
+        const order_info_name = v4();
 
-        // let query = "insert into order_info(box_id, order_info_name, order_info_pay_type, order_info_price, order_info_total_price, order_info_sale_price, order_info_cash_receipt) values(?, ?, ?, ?, ?, ?, ?)";
+        let responseBody = {};
+        let result = "";
+        let query = "INSERT INTO order_info(box_id, order_info_name, order_info_pay_type, order_info_price, order_info_total_price, order_info_sale_price, order_info_cash_receipt) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
+        result = await db(query, [box_id, order_info_name, order_info_pay_type, order_info_price, order_info_total_price, order_info_sale_price, order_info_cash_receipt]);
 
+        if (result.affectedRows == 1){
+            responseBody = {
+                status: 200,
+                message: "주문 정보 추가 완료"
+            }
+            res.json(responseBody);
+        }
+        else{
+            throw new Error("주문 정보를 추가하지 못했습니다.");
+        }
     }catch(err){
         console.error(err);
         responseBody = {

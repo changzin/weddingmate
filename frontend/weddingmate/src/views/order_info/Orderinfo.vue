@@ -191,7 +191,7 @@
           const result = await this.$api("http://localhost:9090/order/orderdata", requestBody,"POST");
           console.log(result);
           this.boxItemList = result.boxItemList; 
-
+          
           if (result.status != 200){
             alert("견적함 정보를 불러올 수 없습니다!");  
           }
@@ -203,12 +203,14 @@
         for(let i = 0; i < this.boxItemList.length; i++){
           this.order_info.order_total_price += this.boxItemList[i].box_item_total_price;
         }
+
         for(let i = 0; i < this.boxItemList.length; i++){
-          this.order_info.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (100 / this.boxItemList[i].item_discount_rate)));
+          this.order_info.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
+          console.log(this.boxItemList[i].box_item_total_price , this.boxItemList[i].item_discount_rate);
         }
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
       },
-      makeOrder(){
+      async makeOrder(){
         if (!this.phoneNumber){
           alert("전화번호는 필수로 입력해야 합니다.");
           return;
@@ -226,7 +228,8 @@
           order_info_sale_price: this.order_info.order_sale_price,
           order_info_cash_receipt: this.isBil
         };
-        const result = this.$api("http://localhost:9090/order/makeorder", requestBody, "POST");
+        const result = await this.$api("http://localhost:9090/order/makeorder", requestBody, "POST");
+        console.log(result);
         if (result.status == 200){
           alert("주문 완료하였습니다.");
         }
