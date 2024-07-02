@@ -1,5 +1,5 @@
 const express = require('express');
-const {bookmarkList, bookmarkDeleteC, bookmarkDel} = require('../controller/mypageController');
+const {bookmarkList, bookmarkDeleteC, bookmarkDel, paymentList, reviewList, reviewDel, qnaList} = require('../controller/mypageController');
 const {loginCheck} = require('../middleware/login');
 const router = express.Router();
 
@@ -7,6 +7,10 @@ const router = express.Router();
 router.post('/bookmarklist', loginCheck, bookmarkList);
 router.post('/bookmarklist/delchekced', bookmarkDeleteC);
 router.post('/bookmarklist/del', bookmarkDel);
+router.post('/payment', loginCheck, paymentList);
+router.post('/review', loginCheck, reviewList);
+router.post('/review/del', reviewDel);
+router.post('/qnaList',loginCheck, qnaList);
 
 
 module.exports = router;

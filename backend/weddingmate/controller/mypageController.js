@@ -3,21 +3,26 @@ const db = require('../util/db');
 
 
 // 결제내역
-exports.paymetList = async(req, res) =>{
+exports.paymentList = async(req, res) =>{
     try{
 
         const user_id = req.body.user_id;
-        let reuslt = [];
-        let query = "SELECT ";
+        let result = [];
         let responseBody= {};
+        let query = "SELECT order_info_end_date, box_name, order_info_total_price FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE box.user_id = ? ORDER BY order_info_id LIMIT 15 ";
 
-
-        
-
+        result = await db(query, [user_id]);
+        responseBody ={
+            status: 200,
+            paymentList : result
+        }
 
         res.json(responseBody);
     }catch(error) {
-
+        responseBody = {
+            status: 400,
+            mesage: "잘못된 페이지 요청입니다"
+        }
         res.json(responseBody);
     }
 }
@@ -37,7 +42,6 @@ exports.bookmarkList = async(req, res) =>{
         let responseBody ={};
 
         result = await db(query, [user_id, page * 10] );
-        result2 = req.body;
       
         responseBody = {
             status: 200,
@@ -59,14 +63,21 @@ exports.bookmarkDel = async(req, res) =>{
   try{
 
     const bookmarkId = req.body.bookmark_id
-
     let query = "DELETE FROM bookmark WHERE bookmark_id = ?"
     let result = await db(query, [bookmarkId]);
-    responseBody = {
-        status: 200,
-        delBookmark: result
-    };
-    res.json(responseBody);
+
+    const affectedRows = result.affectedRows;
+
+    if (affectedRows == 1){
+        responseBody = {
+            status: 200,
+            delBookmark: result
+        };
+        res.json(responseBody);
+    
+    } else{
+        throw new Error("선택된 북마크를 삭제할 수 없습니다.");
+    }
   
   } catch(err){
     console.error(err);
@@ -109,3 +120,89 @@ exports.bookmarkDeleteC = async (req, res) => {
     res.json(responseBody);
   }
 };
+
+// 리뷰
+
+exports.reviewList = async(req, res) =>{
+    try{
+        const user_id = req.body.user_id;
+
+        let result =[];
+        let responseBody ={};
+        let query =`SELECT item.item_name, item_detail_quantity, item.item_tn_image_path, item_detail.item_detail_size, item_detail.item_detail_color,review_id, review_star, review_content 
+                    FROM review 
+                    JOIN item ON review.item_id = item.item_id
+                    JOIN item_detail ON item.item_id = item_detail.item_id
+                    WHERE user_id = 5;`
+
+        result = await db(query, [user_id]);
+        responseBody = {
+            status: 200,
+            reviewList: result
+        }
+        res.json(responseBody);
+
+    }catch(error){
+        console.log(error);
+    }
+}
+
+// 리뷰 삭제 요청
+exports.reviewDel = async (req, res) => {
+    try {
+      const review_id = req.body.reviewId;
+      const query = "DELETE FROM review WHERE review_id=?"
+  
+      console.log(review_id,);
+  
+      let result = [];
+      result = await db(query, [review_id]);
+      const affectedRows = result.affectedRows;
+  
+      console.log(result);
+      if (affectedRows == 1) {
+        responseBody = {
+          status: 200,
+          message: "리뷰 삭제 완료.",
+        };
+        res.status(200).json(responseBody);
+      }
+      // 하나 이상 바뀌거나 0개 바뀌었다면 에러를 던짐 -> 아래의 catch문이 400 에러로 응답한다.
+      else {
+        throw Error("리뷰를 찾을 수 없습니다.");
+      }
+    } catch (err) {
+      console.error(err);
+      responseBody = {
+        status: 400,
+        message: err.message,
+      };
+      res.json(responseBody);
+    }
+  };
+
+// qna
+
+exports.qnaList = async (req, res) => {
+    try{
+        const user_id = req.body.user_id;
+        let result = [];
+        let responseBody = {};
+        query ="SELECT qna_data, qna_title FROM qna WHERE user_id = ? "
+        result = await db(query, [user_id]);
+
+        responseBody = {
+            status: 200,
+            qnaList : result
+        }
+        res.json(responseBody);
+    } catch(error){
+        responseBody = {
+            status: 400,
+            message: "qna를 불러올 수 없습니다"
+        }
+        res.json(responseBody);
+        
+    }
+}
+  

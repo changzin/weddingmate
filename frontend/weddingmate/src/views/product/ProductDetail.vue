@@ -3393,7 +3393,7 @@ export default {
           { access_token: "temp-token" },
           "POST"
         );
-        this.BoxResultData = BoxResult.data;
+        this.BoxResultData = BoxResult.data || [];
         if (this.BoxResultData) {
           console.log(
             "BoxResultData: ",

@@ -92,6 +92,32 @@ export default{
             
             return year + "-" + month + "-" + date + " " + hour + ":" + min + ":" + sec;
         },
+        $dayFormat(value){
+            if(value == null) {
+                return null;
+            }
+            const format = new Date(value);
+            var year = format.getFullYear();
+            var month = format.getMonth() + 1;
+
+            if(month<10) 
+                month = '0' + month;
+            var date = format.getDate();
+            if(date<10) 
+                date = '0' + date;
+            var hour = format.getHours();
+            if(hour<10) hour = '0' + hour;
+                var min = format.getMinutes();
+            if(min<10) 
+                min = '0' + min;
+
+            var sec = format.getSeconds();
+            if(sec < 10) 
+                sec = '0' + sec;
+            
+            return year + "-" + month + "-" + date + " ";
+        },
+
         $imageFileFormat(image_path){
             return process.env.VUE_APP_SERVER_URL + '/' + image_path;
         },

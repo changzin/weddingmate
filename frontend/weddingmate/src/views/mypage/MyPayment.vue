@@ -17,10 +17,11 @@
                 <div class="font-bar">청구서</div>
             </div>
             <hr class="bar">
-            <div class="container-middle-content">
-                <div>2024-06-01</div>
-                <div>더미견적함1</div>
-                <div>500,000</div>
+            <div v-for="(payment, index) in paymentList" :key="index" class="container-middle-content">
+
+                <div>{{ this.$dayFormat(payment.order_info_end_date) }}</div>
+                <div @click="getPaymentList()">{{payment.box_name}}</div>
+                <div>{{this.$numberFormat(payment.order_info_total_price)}}</div>
                 <div><a href="#">영수증</a></div>
             </div>
             <hr class="text">
@@ -73,23 +74,29 @@
     name: "SearchComponent",
     data() {
       return {
-        // 헤더
-        isVisible: false,
-        ismaintain: false,
-        // 본문
+        paymentList: []
       };
     },
-    methods: {
-      // 헤더
-      showCategories() {
-        this.isVisible = true;
-      },
-      hideCategories() {
-        this.isVisible = false;
-      },
-      // 본문
+    mounted(){
+      this.getPaymentList()
     },
-  };
+    methods: {
+
+      async getPaymentList(){
+        const requestBody = {
+          access_token: "0f414da0-ac8d-4a2d-9136-25fca765b8dd"
+        };
+        try{
+          const response = await this.$api("/mypage/payment", requestBody, "post");
+          this.paymentList = response.paymentList;
+
+        }catch(error){
+          console.log(error);
+
+        }
+      }
+    }
+  }
   </script>
   
   
