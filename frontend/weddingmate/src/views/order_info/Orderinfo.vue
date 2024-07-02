@@ -147,7 +147,7 @@
     data() {
       return {
         // 구매자정보
-        user: null,
+        user: {},
         phoneNumber:'',
         //주문 상품
         boxItemlist:[],
@@ -165,77 +165,102 @@
       };
     },
     async created(){
-      await this.getUser();
       await this.getBoxItemList();
       await this.toggleKakaoActive();
       this.makeOrderInfo();
     },
     methods: {
-      async getUser(){
+      async getBoxItemList(){
         try{
           this.user = await this.$verifiedUser();
           if (this.user == null){
             alert("로그인 상태가 아닙니다!");
+            this.$router.push({
+              name: "userlogin",
+              query: { savedUrl: true },
+            });
           }
-        }
-        catch(err){
-          alert("로그인 상태가 아닙니다!");
-        }
-      },
-      async getBoxItemList(){
-        try{
           let requestBody = {
             "access_token": this.$getAccessToken(),
             "order_id": this.$route.params.boxId
           }
           const result = await this.$api("http://localhost:9090/order/orderdata", requestBody,"POST");
-          console.log(result);
-          this.boxItemList = result.boxItemList; 
           
-          if (result.status != 200){
+          if (result.status != 200 || result.boxItemList == null){
             alert("견적함 정보를 불러올 수 없습니다!");  
+            this.$router.push({
+              name: "MyBoxList",
+            });
           }
+          else if (result.boxItemList.length == 0){
+            alert("견적함 정보를 불러올 수 없습니다!");  
+            this.$router.push({
+              name: "MyBoxList",
+            });
+          }
+          this.boxItemList = result.boxItemList; 
         } catch(err){
           alert("견적함 정보를 불러올 수 없습니다!");
+          this.$router.push({
+              name: "MyBoxList",
+              query: { savedUrl: true },
+          });
         }
       },
       makeOrderInfo(){
         for(let i = 0; i < this.boxItemList.length; i++){
           this.order_info.order_total_price += this.boxItemList[i].box_item_total_price;
         }
-
         for(let i = 0; i < this.boxItemList.length; i++){
           this.order_info.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
-          console.log(this.boxItemList[i].box_item_total_price , this.boxItemList[i].item_discount_rate);
         }
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
       },
       async makeOrder(){
-        if (!this.phoneNumber){
-          alert("전화번호는 필수로 입력해야 합니다.");
-          return;
+        try{
+          if (!this.isHpFormat(this.phoneNumber)){
+            alert("전화번호는 필수로 입력해야 합니다.");
+            return;
+          }
+          if (!this.isKakaoActive){
+            alert("결제수단을 선택해야 합니다.");
+            return;
+          }
+          let responseBody = {
+            "cid": "TC0ONETIME",
+            "partner_order_id": "unused",
+            "partner_user_id": "unused",
+            "item_name": `${this.boxItemList[0].item_name} 등 ${this.boxItemList.length}건`,
+            "quantity": this.boxItemList.length,
+            "total_amount": this.order_info.order_price,
+            "tax_free_amount": this.order_info.order_price,
+            // 나중에 바꾸기
+            "approval_url": `http://localhost:8080/orderend?box_id=${this.$route.params.boxId}&isBill=${this.isBil}`,
+            "fail_url": "http://localhost:8080/mypage/boxlist",
+            "cancel_url": "http://localhost:8080/mypage/boxlist"
+          }
+          
+          const result = await this.$api("/order/kakaopay", responseBody, "POST");
+          console.log(result);
+          if (result.status == 200){
+            window.location.href=result.data.next_redirect_pc_url;
+          }
+          else{
+            alert("kakaoPay가 응답하지 않습니다.")
+            this.$router.push({
+              name: "MyBoxList",
+              query: { savedUrl: true },
+            });
+          }
         }
-        if (!this.isKakaoActive){
-          alert("결제수단을 선택해야 합니다.");
-          return;
+        catch(err){
+          console.error(err);
+          this.$router.push({
+              name: "MyBoxList",
+              query: { savedUrl: true },
+          });
         }
-        let requestBody = {
-          access_token: this.$getAccessToken(),
-          box_id: this.$route.params.boxId,
-          order_info_pay_type: "kakao",
-          order_info_price: this.order_info.order_price,
-          order_info_total_price: this.order_info.order_total_price,
-          order_info_sale_price: this.order_info.order_sale_price,
-          order_info_cash_receipt: this.isBil
-        };
-        const result = await this.$api("http://localhost:9090/order/makeorder", requestBody, "POST");
-        console.log(result);
-        if (result.status == 200){
-          alert("주문 완료하였습니다.");
-        }
-        else{
-          alert("에러가 발생하였습니다. 다시 시도해 주세요.");
-        }
+        
       },
       toggleKakaoActive(){
         this.isKakaoActive = !this.isKakaoActive;
@@ -243,7 +268,12 @@
       toggleBil(){
         this.isBil = !this.isBil;
       },
-
+      isHpFormat(hp){	
+        if(hp == ""){		return true;	}	
+        const phoneRule = /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/;	
+        return phoneRule.test(hp);
+      }
+      
     },
   };
   </script>

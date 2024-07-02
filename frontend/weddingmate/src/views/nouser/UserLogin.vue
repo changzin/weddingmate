@@ -12,35 +12,31 @@
             </div>
         </div>
         <div class="row d-flex justify-content-center">            
-                <div class="login_errorMessage" v-if="errorMessage">아이디나 비밀번호가 잘못됐습니다</div>
+            <div class="login_errorMessage" v-if="errorMessage">아이디나 비밀번호가 잘못됐습니다</div>
         </div>
         <div class="row">
-            
-                <div class="d-flex justify-content-center mb-4">
-                    <input class="login_input" type="text" placeholder="이메일을 입력하세요" v-model="email">
-                    <button class="login_input_xbutton"></button>
-                </div>
-                <div class="d-flex justify-content-center mb-4">
-                    <input class="login_input" type="text" placeholder="비밀번호를 입력하세요" v-model="password">
-                    <button class="login_input_xbutton"></button>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <div class="login_box">
-                        <div class="d-flex justify-content-start">
-                            
-                            <input id="auto_login" type="checkbox" class="login_checkbox" v-model="autoLogin">
-                            <label for="auto_login" class="login_label">자동로그인</label>                            
-                        </div>
+            <div class="d-flex justify-content-center mb-4">
+                <input class="login_input" type="text" placeholder="이메일을 입력하세요" v-model="email">
+            </div>
+            <div class="d-flex justify-content-center mb-4">
+                <input class="login_input" type="text" placeholder="비밀번호를 입력하세요" v-model="password">
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="login_box">
+                    <div class="d-flex justify-content-start">
+                        
+                        <input id="auto_login" type="checkbox" class="login_checkbox" v-model="autoLogin">
+                        <label for="auto_login" class="login_label">자동로그인</label>                            
                     </div>
                 </div>
-                <div class="d-flex justify-content-center mb-5">
-                    <button class="login_input_button login_button_text" @click="login()">login</button>
-                </div>
+            </div>
+            <div class="d-flex justify-content-center mb-5">
+                <button class="login_input_button login_button_text" @click="login()">login</button>
+            </div>
         </div>
         <div class="row d-flex justify-content-center">
             <div class="login_box">
                 <div class="d-flex justify-content-center">
-                    <a class="col login_col_text" href="#">비밀번호 찾기</a> 
                     <a class="col login_col_text" @click="this.$router.push({path: '/terms'})">회원가입</a>
                 </div>
             </div>
@@ -76,8 +72,15 @@
                 password: "",
                 email: "",
                 errorMessage: false,
-                user: this.$verifiedUser(),
+                user: {},
             };     
+        },
+        async created(){
+            this.user = await this.$verifiedUser();
+            if (this.user){
+                alert("로그인 상태입니다. 메인 페이지로 이동합니다.")
+                this.$router.push({path: '/'});   
+            }
         },
         methods: {
             async login(){
@@ -116,10 +119,16 @@
 
             // 카카오 로그인 관련 함수 -> 로그인 결과로 accessToken을 받아오거나, 회원가입으로 보낸다.
             kakaoLogin(){
-                window.Kakao.Auth.login({
-                    scope: 'profile_nickname account_email',
-                    success: this.getKakaoAccount,
-                });
+                try{
+                    window.Kakao.Auth.login({
+                        scope: 'profile_nickname account_email',
+                        success: this.getKakaoAccount,
+                    });
+                }
+                catch(err){
+                    console.error(err);
+                    alert("KAKAO 로그인 에러가 발생하였습니다. 다시 시도해 주세요.");
+                }
             },
             async getKakaoAccount(){
                 let nickname = null;
@@ -137,7 +146,6 @@
                 });
                 if (nickname && email){
                     await window.Kakao.Auth.logout();
-
                     const requestBody = {
                         email: email, 
                         password: null, 
@@ -155,6 +163,9 @@
                         if (this.autoLogin){
                             await this.$store.commit("user", {accessToken: result.accessToken})
                         }
+                        if (this.$route.query.savedUrl){
+                            this.$router.go(-1);
+                        }
                         this.$router.push({path: '/'});
                     }
                 }
@@ -162,15 +173,46 @@
             async googleLogin(){
                 const provider = new GoogleAuthProvider();
                 let auth = await getAuth(firebaseApp);
-                await signInWithPopup(auth, provider);
-
-                await onAuthStateChanged(auth, (user)=>{
-                    if (user){
-                        console.log(user.uid);
-                        console.log(user);
-                        
+                try{
+                  let email = null;
+                  await signInWithPopup(auth, provider);
+                  await onAuthStateChanged(auth, (user)=>{
+                      if (user){
+                          console.log(user.uid);
+                          console.log(user.email);
+                          email = user.email;
+                      }
+                  });
+                  if(email){
+                    const requestBody = {
+                        email: email, 
+                        password: null, 
+                        loginType: "google"
                     }
-                });
+                    const result = await this.$api("/user/login", requestBody, "POST");
+                    if (result.status == 300){
+                        this.$router.push({
+                            name: "signup",
+                            query: { "type": "google", "email": email }
+                        });
+                    }
+                    if (result.status == 200){
+                        this.$cookies.set("weddingCookie", result.accessToken);
+                        if (this.autoLogin){
+                            await this.$store.commit("user", {accessToken: result.accessToken})
+                        }
+                        if (this.$route.query.savedUrl){
+                            this.$router.go(-1);
+                        }
+                        this.$router.push({path: '/'});
+                        this.$router.push({path: '/'});
+                    }
+                  }
+              }
+              catch(err){
+                console.error(err);
+                alert("예기치 못한 에러로 로그인이 실패했습니다. 다시 시도해 주세요.")
+              }
             }
         }
     };
@@ -181,11 +223,13 @@
   flex: none;
   width: 500px;
 }
+
 .login_icon_first {
   border-radius: 50px;
   width: 60px;
   height: 60px;
 }
+
 .login_icon {
   border-radius: 50px;
   width: 60px;
@@ -201,7 +245,6 @@
 .login_col_text {
   flex: none;
   font-size: 14px;
-  margin-left: 20px;
   margin-bottom: 66px;
 }
 .login_input {
