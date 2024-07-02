@@ -72,8 +72,9 @@
             :key="index"
           >
             <div class="font-schedule-date">
-               {{schedule.schedule_start }} 
+              {{SetCalDate(schedule.schedule_start, schedule.schedule_end) }} 
             </div>
+        
             <div>{{ schedule.schedule_title }}</div>
             <button class="qnalist_search-clear-button" @click="deleteSchedule(schedule.schedule_id)">
               ×
@@ -242,17 +243,14 @@ export default {
     },
 
 
-    // SetCalDate(schedule_start, schedule_end) {
-    //   if(formatDate(schedule_start) === formatDate(schedule_end)) {
-    //     return formatDate(schedule_start);
-    //   }
-    //   else {
-
-    //     return formatDate(schedule_start) + ~ + formatDate(schedule_start);
-
-    //   }
-    //   return "ㅇㅇㅇㅇㅇ";
-    // }
+    SetCalDate(schedule_start, schedule_end) {
+      if(this.formatDate(schedule_start) === this.formatDate(schedule_end)) {
+        return this.formatDate(schedule_start);
+      }
+      else {
+       return `${this.formatDate(schedule_start)}\n${this.formatDate(schedule_end)}`;
+      }
+    }
 
  
   },

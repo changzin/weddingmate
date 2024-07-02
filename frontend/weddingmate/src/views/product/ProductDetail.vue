@@ -3408,6 +3408,8 @@ export default {
   methods: {
     async fetchData() {
       try {
+         const startTime = performance.now();
+
         // 해당 페이지 item + itemDetail 데이터 가져오기
         const totalResult = await this.$api(
           `/product/totalproductdetail/${this.item_id}`,
@@ -3427,9 +3429,16 @@ export default {
           this.reviewList = totalproductdetailData.reviewList;
           this.qnaList = totalproductdetailData.qnaList;
           this.BoxResultData = totalproductdetailData.data || [];
+
         } else {
           console.log("fail");
         }
+
+
+         // 로딩 시간 측정 끝
+      const endTime = performance.now();
+      this.loadingTime = endTime - startTime;
+      console.log(`데이터 로딩 시간: ${this.loadingTime} ms`);
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",

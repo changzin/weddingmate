@@ -344,3 +344,81 @@ const boxResult = await db(boxQuery, [user_id]);
     res.json(responseBody);
   }
 };
+
+
+
+
+
+// exports.totalProductDetail = async (req, res) => {
+//   try {
+//     const user_id = req.body.user_id;
+//     const itemId = req.params.itemId;
+
+//     console.log("itemId : ", itemId);
+
+//     // item 테이블에서 item_id에 해당하는 데이터 가져오기
+//     const itemQuery = `SELECT * FROM item WHERE item_id = ?`;
+//     const itemDetailQuery = `SELECT * FROM item_detail WHERE item_id = ?`;
+//     const reviewQuery = `
+//       SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date,
+//         CASE 
+//           WHEN review.user_id = ? THEN 1 
+//           ELSE 0 
+//         END AS is_current_user
+//       FROM review
+//       JOIN user ON review.user_id = user.user_id 
+//       WHERE item_id = ? 
+//       ORDER BY review.review_date 
+//       LIMIT 6`;
+//     const qnaQuery = `
+//       SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date 
+//       FROM qna 
+//       JOIN user ON qna.user_id = user.user_id 
+//       WHERE qna.item_id = ? 
+//       ORDER BY qna.qna_date 
+//       LIMIT 5`;
+//     const boxQuery = `SELECT * FROM box WHERE user_id = ?`;
+
+//     const [
+//       itemResult,
+//       itemDetailResult,
+//       reviewResult,
+//       qnaResult,
+//       boxResult
+//     ] = await Promise.all([
+//       db(itemQuery, [itemId]),
+//       db(itemDetailQuery, [itemId]),
+//       db(reviewQuery, [user_id, itemId]),
+//       db(qnaQuery, [itemId]),
+//       db(boxQuery, [user_id])
+//     ]);
+
+//     if (itemResult.length === 0) {
+//       return res.status(404).json({
+//         status: 404,
+//         message: "Item not found",
+//       });
+//     }
+
+//     const responseBody = {
+//       status: 200,
+//       message: "ProductController.js의 productDetail 데이터 성공",
+//       data: {
+//         item: itemResult[0],
+//         itemDetails: itemDetailResult,
+//         reviewList: reviewResult,
+//         qnaList: qnaResult,
+//         data: boxResult,
+//       },
+//     };
+
+//     res.json(responseBody);
+//   } catch (err) {
+//     console.error(err);
+//     const responseBody = {
+//       status: 400,
+//       message: err.message,
+//     };
+//     res.json(responseBody);
+//   }
+// };
