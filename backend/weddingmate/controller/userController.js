@@ -57,6 +57,8 @@ exports.login = async(req,res)=>{
                     type: "admin",
                     message: "로그인 완료했습니다"
                 }
+                res.json(responseBody);
+                return;
             }
             else{
                 throw new Error("로그인을 할 수 없습니다 : 정확하지 않은 정보입니다.")

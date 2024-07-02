@@ -173,6 +173,7 @@ export default{
             userNameVerify: true,
             userNicknameVerify: true,
             userEmailDuplicateCheck: false,
+            user: {}
         }
     },
     mounted(){
@@ -181,9 +182,15 @@ export default{
         this.userEmail = this.$route.query.email;  
       }
     },
+    async created(){
+        this.user = await this.$verifiedUser();
+        if (this.user){
+            alert("로그인 상태입니다. 메인 페이지로 이동합니다.")
+            this.$router.push({path: '/'});   
+        }
+    },
     methods:{
         verifyUser(){
-            
             const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
             if (this.userType == 'local'){
                 if (this.userEmail == "" || !emailRegex.test(this.userEmail)){
@@ -266,33 +273,46 @@ export default{
                             })
                             .catch((error) => {
                                 console.error(error);
+                                alert("firebase 오류입니다. 처음부터 다시 시도해 주십시오.");
                             });
-                        
                     }
                     else if(result.status == 200 && this.userType != 'local'){
                         alert("회원가입 성공");
                         this.$router.push({path:'/'});
                     }
                     else{
-                        alert("회원가입을 진행할 수 없습니다. 다시 입력해주세요");
+                        alert("회원가입을 진행할 수 없습니다. 다시 시도해주세요");
                     }
                 }
             }
             catch(err){
                 console.error(err);
-                alert("회원가입을 진행할 수 없습니다. 다시 입력해주세요");
+                alert("회원가입을 진행할 수 없습니다. 메인 화면으로 이동합니다.");
+                this.$router.push({path:'/'});
             }
         },
         async emailDuplicateCheck(){
-            const result = await this.$api("http://localhost:9090/user/emailverify", {user_email: this.userEmail}, "POST");
-            if (result.status == 200){
-                this.userEmailDuplicateCheck = true;
-                alert("중복 처리 완료했습니다!")
+            try{
+                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+                if (this.userEmail == "" || !emailRegex.test(this.userEmail)){
+                    alert("잘못된 로그인 양식입니다.");
+                    return;
+                }
+                const result = await this.$api("http://localhost:9090/user/emailverify", {user_email: this.userEmail}, "POST");
+                if (result.status == 200){
+                    this.userEmailDuplicateCheck = true;
+                    alert("중복 처리 완료했습니다!");
+                }
+                else{
+                    this.userEmailDuplicateCheck = false;
+                    alert("이미 중복된 이메일이 존재합니다.");
+                }
             }
-            else{
-                this.userEmailDuplicateCheck = false;
-                alert("중복 처리 실패..")
+            catch(err){
+                console.error(err);
+                alert("예기치 못한 오류가 발생하였습니다.");
             }
+            
         }
     }
 }

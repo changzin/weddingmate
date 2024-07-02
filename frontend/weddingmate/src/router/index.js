@@ -36,6 +36,7 @@ import MyReview from '@/views/mypage/MyReview.vue'
 import MyPayment from '@/views/mypage/MyPayment.vue'
 import MainPage from '../views/main/MainPage.vue'
 import test from '../views/mypage/test.vue'
+import OrderEnd from '../views/order_info/OrderEnd.vue'
 
 
 
@@ -229,6 +230,11 @@ const routes = [
     path: '/',
     name: 'mainPage',
     component: MainPage,
+  },
+  {
+    path: '/orderend',
+    name: 'orderend',
+    component: OrderEnd,
   }
   
 ]

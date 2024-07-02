@@ -28,11 +28,19 @@ export default{
     data(){
         return {
             userType: "",
-            auth: null,
+            auth: {},
+            user: {},
         }
     },
     mounted(){
       this.sendEmailAuth();
+    },
+    async created(){
+        this.user = await this.$verifiedUser();
+        if (this.user){
+            alert("로그인 상태입니다. 메인 페이지로 이동합니다.")
+            this.$router.push({path: '/'});   
+        }
     },
     methods:{
         async sendEmailAuth(){

@@ -6,113 +6,44 @@
       <!-- 본문  -->
       <div class="container order_info_container">
         <div class="row justify-content-center">
-            <div class="order_info_title">
+            <div class="order_info_title" style="border-bottom: 1px solid black; padding-bottom: 5px;">
                 주문 / 결제
             </div>
-            <div class="row justify-content-center">
-              
-              <!-- 구매자정보 -->
-                <table class="order_info_table">
-                    <div class="order_info_sub_title">
-                        구매자정보
-                    </div>
-                    <thead></thead>
-                    <tbody>
-                        <tr>
-                            <td class="order_info_first_row order_info_td_child">이름</td>
-                            <td class="order_info_second_row">{{ user.user_name }}</td>                  
-                        </tr>
-                        <tr>
-                            <td class="order_info_first_row order_info_td_child">이메일</td>
-                            <td class="order_info_second_row">{{ user.user_email }}</td>                           
-                        </tr>
-                        <tr>
-                            <td class="order_info_first_row order_info_td_child">휴대폰 번호</td>
-                            <td><input class="order_info_phone_number" type="text" v-model="phoneNumber"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <!-- 주문상품 -->
-                <table class="order_info_table2">
-                    <div class="order_info_sub_title" >
-                        주문 상품 (1건)
-                    </div>
-                    <thead></thead>
-                    <tbody v-for="(boxItem,index) in boxItemList" :key="index" >
-                        <tr class="order_info_td_line">
-                            <td class="order_info_td col-7">{{ boxItem.item_name }}</td>
-                            <td class="col-2">{{ boxItem.item_detail_type }}</td>
-                            <td class="col-1">{{ (boxItem.box_item_quantity) ? boxItem.box_item_quantity : 1 }}개</td>
-                            <td class="col-2">{{ this.$numberFormat(boxItem.item_price) }}원</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- 결제정보테이블 -->
-                <table class="order_info_table">
-                    <div class="order_info_sub_title">
-                        결제정보
-                    </div>
-                    <thead></thead>
-                    <tbody>
-                        <tr>
-                            <td class="order_info_first_row order_info_td_child">총 상품가격</td>
-                            <td class="order_info_second_row">{{ order_info.order_total_price }}원</td>                  
-                        </tr>
-                        <tr>
-                            <td class="order_info_first_row order_info_td_child">할인 가격</td>
-                            <td class="order_info_second_row">{{ order_info.order_sale_price }}원</td>                           
-                        </tr>
-                        <tr>
-                            <td class="order_info_first_row order_info_td_child">총 결제가격</td>
-                            <td class="order_info_second_row">{{ order_info.order_price }}원</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-    
-            <!-- 결제 수단 선택 -->
-            <div class="order_info_sub_title">
-                결제 수단
-            </div>
-            <button class="order_info_sub_box1 d-flex justify-content-start" @click="toggleKakaoActive();">
-              <div class="order_info_defult_icon1" v-if="!isKakaoActive"></div>  
-              <div class="order_info_active_icon2" style="margin-top:30px;" v-else-if="isKakaoActive"></div>
-                <div class="order_info_icon1"></div>
-                <div class="order_info_text1">카카오페이</div>
-            </button>
-            
-            <!-- 현금 영수증 -->
-            <div class="order_info_sub_title">
-                현금영수증 신청
-            </div>
-            <button type="button" class="order_info_sub_box2 d-flex justify-content-start" @click="toggleBil();">
-                <!-- <div class="order_info_defult_icon2 order_info_active_icon2" v-if="isBil"></div> -->
-                <div class="order_info_defult_icon1" v-if="!isBil"></div>  
-                <div class="order_info_active_icon2" style="margin-top:30px;" v-else-if="isBil"></div>
-                <div class="order_info_icon2" style="margin-top:35px;"></div>
-                <div class="order_info_text2">
-                    현금영수증 신청
-                    <p class="order_info_table_sub_text">﹒할인 시 할인 금액을 제외한 결제 가격에 한하여 현금영수증이 발행됩니다.</p>
-                </div>
-            </button>
-    
-            <div class="order_info_sub_text">
-                위 주문 내용을 확인 하였으며, 회원 본인은 개인정보 이용 및 제공 및 결제에 동의합니다.
+        </div>
+        <div class="row justify-content-center">
+            <div style="text-align: center; margin-top:45px; font-size:30px;">
+                <span>결제가 완료되었습니다. 감사합니다!</span>
             </div>
         </div>
-
-        <!-- 견적함상세페이지 전송 -->
         <div class="row justify-content-center">
-            <button class="order_info_button1" style="padding-bottom:25px;">
-                취소
-            </button>
-            
-            <!-- 결제 실행 -->
+            <div style="text-align: center; margin-top:15px; font-size:14px;">
+                <span>주문일 : {{ this.$dateFormat(Date()) }}</span>
+            </div>
+            <div style="text-align: center; margin-top:15px; font-size:14px;  font-weight: bold;">
+                <span>주문번호 : {{this.order_code}}</span>
+            </div>
+        </div>
+        <div class="row justify-content-center">
             <button class="order_info_button2" style="padding-bottom:25px;" @click="makeOrder();">
-                결제하기
+                메인으로
             </button>
+        </div>  
+        <div class="row justify-content-center" >
+            <div style="width:600px; background-color: #f5f5f5; height:160px; margin-top:50px;">
+                <div class="row justify-content-between" style="margin-bottom:10px;">
+                    <div style="width:200px; padding-left: 30px; padding-top:15px;">총 금액</div>
+                    <div style="width:400px; padding-top:15px;">{{this.order_info.order_total_price}}원</div>
+                </div>
+                <div class="row justify-content-between" style="margin-bottom:10px;">
+                    <div style="width:200px; padding-left: 30px; padding-top:15px;">할인 금액</div>
+                    <div style="width:400px; padding-top:15px;">{{this.order_info.order_sale_price}}원</div>
+                </div>
+                <div class="row justify-content-between" style="margin-bottom:10px;">
+                    <div style="width:200px; padding-left: 30px; padding-top:15px;">최종 금액</div>
+                    <div style="width:400px; padding-top:15px;">{{this.order_info.order_price}}원</div>
+                </div>
+                
+            </div>
         </div>  
     </div>    
           
@@ -143,137 +74,89 @@
   
   <script>
   export default {
-    name: "SearchComponent",
     data() {
       return {
-        // 구매자정보
-        user: {},
-        phoneNumber:'',
-        //주문 상품
         boxItemlist:[],
         order_info:
-          {
-            "order_total_price": 0,
-            "order_sale_price":0,
-            "order_price":0,
-          }
-        ,
-        // 카카오결제여부
-        isKakaoActive:false,
-        isBil:false,
-        
+        {
+        "order_total_price": 0,
+        "order_sale_price":0,
+        "order_price":0,
+        },
+        order_code: null
       };
     },
     async created(){
       await this.getBoxItemList();
-      await this.toggleKakaoActive();
-      this.makeOrderInfo();
+      await this.makeOrderInfo();
+      await this.makeOrder(); 
     },
     methods: {
-      async getBoxItemList(){
+       async getBoxItemList(){
         try{
-          this.user = await this.$verifiedUser();
-          if (this.user == null){
-            alert("로그인 상태가 아닙니다!");
-            this.$router.push({
-              name: "userlogin",
-              query: { savedUrl: true },
-            });
-          }
           let requestBody = {
             "access_token": this.$getAccessToken(),
-            "order_id": this.$route.params.boxId
+            "order_id": this.$route.query.box_id
           }
+          console.log(requestBody);
           const result = await this.$api("http://localhost:9090/order/orderdata", requestBody,"POST");
-          
-          if (result.status != 200 || result.boxItemList == null){
-            alert("견적함 정보를 불러올 수 없습니다!");  
-            this.$router.push({
-              name: "MyBoxList",
-            });
-          }
-          else if (result.boxItemList.length == 0){
-            alert("견적함 정보를 불러올 수 없습니다!");  
-            this.$router.push({
-              name: "MyBoxList",
-            });
-          }
+          console.log(result);
+
           this.boxItemList = result.boxItemList; 
+          if (result.status != 200){
+            alert("견적함 정보를 불러올 수 없습니다. 견적함 리스트로 이동합니다.");  
+            this.$router.push({path: "/mypage/boxlist"});
+          }
         } catch(err){
           alert("견적함 정보를 불러올 수 없습니다!");
-          this.$router.push({
-              name: "MyBoxList",
-              query: { savedUrl: true },
-          });
+          this.$router.push({path: "/mypage/boxlist"});
         }
       },
-      makeOrderInfo(){
+      async makeOrderInfo(){
         for(let i = 0; i < this.boxItemList.length; i++){
           this.order_info.order_total_price += this.boxItemList[i].box_item_total_price;
         }
+
         for(let i = 0; i < this.boxItemList.length; i++){
           this.order_info.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
         }
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
+
+        this.order_info.order_sale_price = this.$numberFormat(this.order_info.order_sale_price);
+        this.order_info.order_total_price = this.$numberFormat(this.order_info.order_total_price);
+        this.order_info.order_price = this.$numberFormat(this.order_info.order_price);
       },
       async makeOrder(){
         try{
-          if (!this.isHpFormat(this.phoneNumber)){
-            alert("전화번호는 필수로 입력해야 합니다.");
-            return;
-          }
-          if (!this.isKakaoActive){
-            alert("결제수단을 선택해야 합니다.");
-            return;
-          }
-          let responseBody = {
-            "cid": "TC0ONETIME",
-            "partner_order_id": "unused",
-            "partner_user_id": "unused",
-            "item_name": `${this.boxItemList[0].item_name} 등 ${this.boxItemList.length}건`,
-            "quantity": this.boxItemList.length,
-            "total_amount": this.order_info.order_price,
-            "tax_free_amount": this.order_info.order_price,
-            // 나중에 바꾸기
-            "approval_url": `http://localhost:8080/orderend?box_id=${this.$route.params.boxId}&isBill=${this.isBil}`,
-            "fail_url": "http://localhost:8080/mypage/boxlist",
-            "cancel_url": "http://localhost:8080/mypage/boxlist"
-          }
-          
-          const result = await this.$api("/order/kakaopay", responseBody, "POST");
-          console.log(result);
-          if (result.status == 200){
-            window.location.href=result.data.next_redirect_pc_url;
-          }
-          else{
-            alert("kakaoPay가 응답하지 않습니다.")
-            this.$router.push({
-              name: "MyBoxList",
-              query: { savedUrl: true },
-            });
-          }
+            let requestBody = {
+                access_token: this.$getAccessToken(),
+                box_id: this.$route.query.box_id,
+                order_info_pay_type: "kakao",
+                order_info_price: this.order_info.order_price,
+                order_info_total_price: this.order_info.order_total_price,
+                order_info_sale_price: this.order_info.order_sale_price,
+                order_info_cash_receipt: this.$route.query.isBill
+            };
+            const result = await this.$api("http://localhost:9090/order/makeorder", requestBody, "POST");
+            console.log(result);
+            if (result.status == 200){
+                alert("주문 완료하였습니다.");
+                this.order_code = result.order_code.toUpperCase();
+            }
+            else if (result.status == 300){
+                alert("이미 완료된 주문 페이지입니다. 메인 페이지로 이동합니다.");
+                this.$router.push({path: "/"});
+            }
+            else {
+                alert("에러로 결제가 완료되지 못했습니다. 견적함 리스트로 이동합니다.")
+                this.$router.push({path: "/mypage/boxlist"});
+            }
+        } catch(err){
+            console.error(err);
+            alert("예기치 못한 에러가 발생했습니다. 메인 페이지로 이동합니다.")
+            this.$router.push({path: "/"});
         }
-        catch(err){
-          console.error(err);
-          this.$router.push({
-              name: "MyBoxList",
-              query: { savedUrl: true },
-          });
-        }
-        
       },
-      toggleKakaoActive(){
-        this.isKakaoActive = !this.isKakaoActive;
-      },
-      toggleBil(){
-        this.isBil = !this.isBil;
-      },
-      isHpFormat(hp){	
-        if(hp == ""){		return true;	}	
-        const phoneRule = /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/;	
-        return phoneRule.test(hp);
-      }
-      
     },
   };
   </script>
