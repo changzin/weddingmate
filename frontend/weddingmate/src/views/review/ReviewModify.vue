@@ -127,6 +127,21 @@ export default {
     },
   },
 
+  //  async beforeRouteEnter(to, from, next) {
+  //   next(async vm => {
+  //     const userInfo = await vm.$verifiedUser();
+  //     if (userInfo) {
+  //       next();
+  //     } else {
+  //       alert("리뷰 수정을 위하여 로그인하세요");
+  //       vm.$router.push({
+  //         name: "userlogin",
+  //         query: { savedUrl: true }
+  //       });
+  //     }
+  //   });
+  // },
+
   async created() {
     await this.fetchProductListData();
   },

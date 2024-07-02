@@ -62,11 +62,15 @@
 
               <!-- 웨딩홀 -->
               <div
+                v-if="isVisibleItemType('hall')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('hall'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -282,11 +286,15 @@
 
               <!-- 드레스 옵션 -->
               <div
+                v-if="isVisibleItemType('dress')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('dress'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -514,11 +522,15 @@
 
               <!-- 스튜디오 옵션 -->
               <div
+                v-if="isVisibleItemType('studio')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('studio'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -790,11 +802,15 @@
 
               <!-- 메이크업 옵션 -->
               <div
+                v-if="isVisibleItemType('makeup')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('makeup'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -1014,11 +1030,15 @@
 
               <!-- 스드메 -->
               <div
+                v-if="isVisibleItemType('sdm_package')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('sdm_package'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -1177,11 +1197,15 @@
 
               <!-- 예복 -->
               <div
+                v-if="isVisibleItemType('giving_dress')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('giving_dress'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -1408,11 +1432,15 @@
 
               <!-- 예물 -->
               <div
+                v-if="isVisibleItemType('giving_item')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('giving_item'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -1633,11 +1661,15 @@
 
               <!-- 가전 -->
               <div
+                v-if="isVisibleItemType('giving_mechine')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('giving_mechine'),
                 ]"
-              >
+              > -->
                 <div
                   class="box-div collapse"
                   :class="{ show: allOptionsSelected }"
@@ -1705,11 +1737,15 @@
 
               <!-- 혼수 패키지 -->
               <div
+                v-if="isVisibleItemType('giving_package')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('giving_package'),
                 ]"
-              >
+              > -->
                 <div
                   class="box-div collapse"
                   :class="{ show: allOptionsSelected }"
@@ -1778,11 +1814,15 @@
 
               <!-- 본식스냅 -->
               <div
+                v-if="isVisibleItemType('snap')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('snap'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -1998,11 +2038,15 @@
 
               <!-- 영상 -->
               <div
+                v-if="isVisibleItemType('video')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('video'),
                 ]"
-              >
+              > -->
                 <div
                   class="box-div collapse"
                   :class="{ show: allOptionsSelected }"
@@ -2071,11 +2115,15 @@
 
               <!-- 부케 -->
               <div
+                v-if="isVisibleItemType('flower')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('flower'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -2234,11 +2282,15 @@
 
               <!-- 연주 -->
               <div
+                v-if="isVisibleItemType('music')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('music'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -2454,11 +2506,15 @@
 
               <!-- 사회자 -->
               <div
+                v-if="isVisibleItemType('mc')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('mc'),
                 ]"
-              >
+              > -->
                 <div
                   class="box-div collapse"
                   :class="{ show: allOptionsSelected }"
@@ -2527,11 +2583,15 @@
 
               <!-- 웨딩슈즈 -->
               <div
+                v-if="isVisibleItemType('shoes')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('shoes'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -2690,11 +2750,15 @@
 
               <!-- 답례품 -->
               <div
+                v-if="isVisibleItemType('gift')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('gift'),
                 ]"
-              >
+              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
@@ -2916,11 +2980,15 @@
 
               <!-- 청첩장 -->
               <div
+                v-if="isVisibleItemType('letter')"
+                class="productdetail_main_content_selectoption_div"
+              >
+                <!-- <div
                 :class="[
                   'productdetail_main_content_selectoption_div',
                   getClass('letter'),
                 ]"
-              >
+              > -->
                 <div
                   class="box-div collapse"
                   :class="{ show: allOptionsSelected }"
@@ -3045,13 +3113,6 @@
               <i class="fas fa-pen"></i> 리뷰작성
             </button>
           </div>
-
-          <!-- <button
-            class="reviewlist_review-card"
-            v-for="review in reviewList"
-            :key="review.id"
-            @click="goToReviewDetail(review.review_id)"
-          > -->
 
           <div class="productdetail_review-cards justify-content-start">
             <div
@@ -3267,6 +3328,7 @@ export default {
       currentRating: 0,
 
       reviewList: {},
+      qnaList: {},
     };
   },
 
@@ -3293,10 +3355,6 @@ export default {
     await this.fetchData();
     this.setOptionsFromProductDetails();
   },
-
-  // mounted() {
-  //   this.fetchOptions();
-  // },
 
   computed: {
     // 가격 계산
@@ -3351,55 +3409,24 @@ export default {
     async fetchData() {
       try {
         // 해당 페이지 item + itemDetail 데이터 가져오기
-        const response = await this.$api(`/product/detail/${this.item_id}`);
-        const productDetail = response.data;
-
-        if (productDetail) {
-          this.productDetail = productDetail.item;
-          this.productDetailItemDetail = productDetail.itemDetails;
-          // console.log("productDetail.item_name : ", this.productDetail.item_name);
-          console.log(
-            "productDetailItemDetail: ",
-            JSON.parse(JSON.stringify(this.productDetailItemDetail))
-          );
-          // console.log("productDetail.item_name:", JSON.parse(JSON.stringify(productDetail.map((product) => product.item_name))));
-        } else {
-          console.error("ProductDetail.vue fetchData : No product data");
-        }
-
-        // 리뷰 데이터 가져오기
-        const result = await this.$api(
-          `/review/itemdetail/${this.item_id}`,
+        const totalResult = await this.$api(
+          `/product/totalproductdetail/${this.item_id}`,
           { access_token: "temp-token" },
           "POST"
         );
 
-        if (result.status == 200) {
-          this.reviewList = result.reviewList;
-          // console.log("this.reviewList : ", this.reviewList);
-        }
+        const totalproductdetailData = totalResult.data;
 
-        // QnA 데이터 가져오기
-        const QnAResult = await this.$api(`/qna/itemdetail/${this.item_id}`);
-        if (QnAResult.status == 200) {
-          this.qnaList = QnAResult.qnaList;
-          // console.log(this.qnaList);
-        }
-
-        // Box 데이터 가져오기
-
-        const BoxResult = await this.$api(
-          "/product/boxlist",
-          { access_token: "temp-token" },
-          "POST"
-        );
-        this.BoxResultData = BoxResult.data || [];
-
-        if (this.BoxResultData) {
+        if (totalproductdetailData) {
+          this.productDetail = totalproductdetailData.item;
           console.log(
-            "BoxResultData111: ",
-            JSON.parse(JSON.stringify(this.BoxResultData))
+            "productDetail.item_name : ",
+            this.productDetail.item_name
           );
+          this.productDetailItemDetail = totalproductdetailData.itemDetails;
+          this.reviewList = totalproductdetailData.reviewList;
+          this.qnaList = totalproductdetailData.qnaList;
+          this.BoxResultData = totalproductdetailData.data || [];
         } else {
           console.log("fail");
         }
@@ -3426,77 +3453,81 @@ export default {
     },
 
     // 타입별로 보여줄 DOM 설정
-    getClass(type) {
-      // 웨딩홀
-      if (type === "hall") {
-        return this.itemType === "hall" ? "visible" : "collapse";
-      }
-      // 드레스
-      else if (type === "dress") {
-        return this.itemType === "dress" ? "visible" : "collapse";
-      }
-      // 스튜디오
-      else if (type === "studio") {
-        return this.itemType === "studio" ? "visible" : "collapse";
-      }
-      // 메이크업
-      else if (type === "makeup") {
-        return this.itemType === "makeup" ? "visible" : "collapse";
-      }
-      // 스드메
-      else if (type === "sdm_package") {
-        return this.itemType === "sdm_package" ? "visible" : "collapse";
-      }
-      // 예복
-      else if (type === "giving_dress") {
-        return this.itemType === "giving_dress" ? "visible" : "collapse";
-      }
-      // 예복
-      else if (type === "giving_item") {
-        return this.itemType === "giving_item" ? "visible" : "collapse";
-      }
-      // 가전
-      else if (type === "giving_mechine") {
-        return this.itemType === "giving_mechine" ? "visible" : "collapse";
-      }
-      // 혼수 패키지
-      else if (type === "giving_package") {
-        return this.itemType === "giving_package" ? "visible" : "collapse";
-      }
-      // 본식스냅
-      else if (type === "snap") {
-        return this.itemType === "snap" ? "visible" : "collapse";
-      }
-      // 영상
-      else if (type === "video") {
-        return this.itemType === "video" ? "visible" : "collapse";
-      }
-      // 부케
-      else if (type === "flower") {
-        return this.itemType === "flower" ? "visible" : "collapse";
-      }
-      // 연주
-      else if (type === "music") {
-        return this.itemType === "music" ? "visible" : "collapse";
-      }
-      // 사회자
-      else if (type === "mc") {
-        return this.itemType === "mc" ? "visible" : "collapse";
-      }
-      // 웨딩슈즈
-      else if (type === "shoes") {
-        return this.itemType === "shoes" ? "visible" : "collapse";
-      }
-      // 답례품
-      else if (type === "gift") {
-        return this.itemType === "gift" ? "visible" : "collapse";
-      }
-      // 청첩장
-      else if (type === "letter") {
-        return this.itemType === "letter" ? "visible" : "collapse";
-      }
+    // getClass(type) {
+    //   // 웨딩홀
+    //   if (type === "hall") {
+    //     return this.itemType === "hall" ? "visible" : "collapse";
+    //   }
+    //   // 드레스
+    //   else if (type === "dress") {
+    //     return this.itemType === "dress" ? "visible" : "collapse";
+    //   }
+    //   // 스튜디오
+    //   else if (type === "studio") {
+    //     return this.itemType === "studio" ? "visible" : "collapse";
+    //   }
+    //   // 메이크업
+    //   else if (type === "makeup") {
+    //     return this.itemType === "makeup" ? "visible" : "collapse";
+    //   }
+    //   // 스드메
+    //   else if (type === "sdm_package") {
+    //     return this.itemType === "sdm_package" ? "visible" : "collapse";
+    //   }
+    //   // 예복
+    //   else if (type === "giving_dress") {
+    //     return this.itemType === "giving_dress" ? "visible" : "collapse";
+    //   }
+    //   // 예복
+    //   else if (type === "giving_item") {
+    //     return this.itemType === "giving_item" ? "visible" : "collapse";
+    //   }
+    //   // 가전
+    //   else if (type === "giving_mechine") {
+    //     return this.itemType === "giving_mechine" ? "visible" : "collapse";
+    //   }
+    //   // 혼수 패키지
+    //   else if (type === "giving_package") {
+    //     return this.itemType === "giving_package" ? "visible" : "collapse";
+    //   }
+    //   // 본식스냅
+    //   else if (type === "snap") {
+    //     return this.itemType === "snap" ? "visible" : "collapse";
+    //   }
+    //   // 영상
+    //   else if (type === "video") {
+    //     return this.itemType === "video" ? "visible" : "collapse";
+    //   }
+    //   // 부케
+    //   else if (type === "flower") {
+    //     return this.itemType === "flower" ? "visible" : "collapse";
+    //   }
+    //   // 연주
+    //   else if (type === "music") {
+    //     return this.itemType === "music" ? "visible" : "collapse";
+    //   }
+    //   // 사회자
+    //   else if (type === "mc") {
+    //     return this.itemType === "mc" ? "visible" : "collapse";
+    //   }
+    //   // 웨딩슈즈
+    //   else if (type === "shoes") {
+    //     return this.itemType === "shoes" ? "visible" : "collapse";
+    //   }
+    //   // 답례품
+    //   else if (type === "gift") {
+    //     return this.itemType === "gift" ? "visible" : "collapse";
+    //   }
+    //   // 청첩장
+    //   else if (type === "letter") {
+    //     return this.itemType === "letter" ? "visible" : "collapse";
+    //   }
 
-      return "collapse";
+    //   return "collapse";
+    // },
+
+    isVisibleItemType(type) {
+      return this.itemType === type;
     },
 
     // 옵션 관련
@@ -4349,6 +4380,15 @@ export default {
     },
 
     async saveBoxName() {
+      const userInfo = await this.$verifiedUser();
+      if (!userInfo) {
+        alert("로그인이 필요합니다");
+        this.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true },
+        });
+      }
+
       if (this.newBoxName.trim() !== "") {
         this.BoxResultData.push({ box_name: this.newBoxName });
 
@@ -4630,7 +4670,17 @@ export default {
 
     // 물건 담기 버튼 눌렀을 때
     async insertItemIntoBox() {
-      if (!this.$dateFormat(this.dateRange.start) && this.showCustomOptions) {
+      const userInfo = await this.$verifiedUser();
+      if (!userInfo) {
+        alert("로그인이 필요합니다");
+        this.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true },
+        });
+      } else if (
+        !this.$dateFormat(this.dateRange.start) &&
+        this.showCustomOptions
+      ) {
         alert("캘린더 날짜를 선택해주세요");
       } else if (!this.selectedBoxId) {
         alert("견적함 박스를 선택해주세요");
