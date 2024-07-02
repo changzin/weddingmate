@@ -88,7 +88,7 @@
                     await signInWithEmailAndPassword(auth, this.email, this.password);
 
                     // 서버 쪽에서 계정이 있는지 또 확인하고, 성공하면 DB에 저장된 accessToken을 가져온다.
-                    const result = await this.$api(`/user/login`, {email: this.email, password: this.password}, "POST");                    
+                    const result = await this.$api(`/user/login`, {email: this.email, password: this.password, loginType: 'local'}, "POST");                    
                     
                     if (result.status == 200){                        
                         // 쿠키에 accessToken 저장하고 로그인 유지 시엔 LocalStoreage(vuex)에도 저장
