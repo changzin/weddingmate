@@ -1,8 +1,7 @@
 <template>
     <div class="fix-width">
+      <!-- 헤더 -->
       <MateHeader />
-     
-  
       <!-- 본문 -->
       <div class="container0">
         <div class="container-top">
