@@ -14,14 +14,16 @@
             </div>
           </div>
         </div>
-        <div class="container-middle">
+        <div class="container-middle" v-for="item in itemDetails" :key="item" >
           <div class="container-middle-category_title">
-            <div class="title-font"></div>
+            <div class="title-font">
+             {{item.item_detail_type }}
+            </div>
             <div>
               <hr class="title" />
             </div>
           </div>
-          <table v-for="item in itemNames" :key="item.item_name">
+          <table>
             <colgroup>
               <col />
               <col />
@@ -41,23 +43,33 @@
                     <div class="content-table_col1-name">
                       <!-- 제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목 -->
                       {{ item.item_name }}
+                      
 
                     </div>
                     <div class="content-table_col1-option">
                       <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
+                       
+                        {{ item.item_detail_local }}
+                        {{ item.item_detail_ioc}}
+                        {{ item.item_detail_size }}
+                        {{ item.item_detail_color }}
+                        {{ item.item_detail_makeup }}
+                        {{ item.item_detail_heel_height }}
+                        {{ item.item_detail_flower_life }}
+                        {{ item.item_detail_quality }}
+                        {{ item.item_detail_kind }}
                       </div>
                     </div>
-                    <div class="content-table_col1-option">
+                    <!-- <div class="content-table_col1-option">
                       <div>
                         옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
                       </div>
-                    </div>
-                    <div class="content-table_col1-option">
+                    </div> -->
+                    <!-- <div class="content-table_col1-option">
                       <div>
                         옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </td>
@@ -240,12 +252,13 @@
         isVisible: false,
         ismaintain: false,
         // 본문
+        
         page: 1,
         maxPage: 0,
         boxid:"",
-        itemType:[],
+        iType:[],
         categories: [],
-        itemNames:[],
+        itemDetails:[],
       itemTnImage: null,
       itemTnImageExt: null,
       itemMainImage: null,
@@ -256,8 +269,12 @@
     },
     mounted(){
       this.showBoxDetail();
-      this.fetchItmeCategory();
-      this.fetchItemName();
+      this.fetchItemCategory();
+      this.fetchItem();
+      this.optionKorean();
+      this.func()
+    },
+    computed:{
     },
 
     methods: {
@@ -269,8 +286,8 @@
         this.isVisible = false;
       },
       // 본문
-      //견적함 상세 정보 요청
-
+      //상품 옵션 가져오기 
+  
 
       async showBoxDetail(){
         this.page = Number(this.$route.query.page);
@@ -290,33 +307,154 @@
         
         //아이템 내에 넣어주기
       },
-      async fetchItmeCategory(){
+      async fetchItemCategory(){
          //아이템 카테고리 가져오기 
         const category = await this.$api(`/mybox/category`);
         console.log(category);
         const iType = category.itemType.map((item_type)=> item_type);
         console.log(iType);
-        this.categories = iType;
-        console.log(this.categories);
         
 
       } ,     
-      async fetchItemName(){
+      async fetchItem(){
           const response = await this.$api(`/mybox/name`)
           console.log(response);
           const iName = response.box_itemName.map((item_name)=> item_name);
           //아이템 이름을 담고 있는 배열 iName 
           console.log(iName);
-          this.itemNames = iName;
-          console.log(this.itemNames);
-          }
+          this.itemDetails = iName;
+          console.log(this.itemDetails);
+          },
+       async optionKorean(){
+           let resultString = "";
+           
+            for ( let item in this.itemDetails ){
+              if (item == 'item_detail_kind'){
+              continue
+            }
+              let keyKorenName = this.func(item);
+              let keyValue = this.itemDetails;
+              
+              resultString += keyKorenName +  " : " + keyValue;
+              console.log(this.func)
+            }
+           return resultString;
+       },
+       func(item){
+        if (item == 'item_detail_color'){
+          return "색상";
+        }else if(item == 'item_detail_size') { 
+           return "사이즈"
+        }else if(item == 'item_deatil_quantity'){
+          return "재고"
+        }else if(item == 'item_detail_local'){
+          return "지역"
+        }else if(item == 'item_deatil_ioc'){
+          return "야외-실내"
+        }else if(item == 'item_detail_makeup'){
+          return "메이크업"
+        }else if(item == 'item_detail_heel_height'){
+          return "힐 높이"
+        }else if(item == 'item_detail_flower_life'){
+          return "부케 생,조화"
+        }else if(item == 'item_detail_quality'){
+          return "퀄리티"
+        }else if(item == 'item_detail_kind'){
+          return "종류"
+        }
+       }
+       
+      //   //반환 값을 받을 변수 
+      //   for ( let key in item ){
+      //     let keyKorenaName = func(key);
+      //     //key 의 값을 한글로 변화해줄 함수 
+      //     let  keyValue = item['key'];
+          
+      //     resultString  = resultString + keyKorenaName + " : " + keyValue + " / "
+      //   }
+      //   return resultString;
+      //  },
       },
+     
 
       //한 유저에 대한 여러개의 박스상세를 볼 수 있어야함 
       async showUserbox(){
         await this.$router.push({path: '/mypage/boxlist/boxname'})
 
       },
+      
+    isVisibleItemType(type) {
+      // 웨딩홀
+      if (type === "hall") {
+        return this.itemDetails === "hall" ? "visible" : "collapse";
+      }
+      // 드레스
+      else if (type === "dress") {
+        return this.itemDetails === "dress" ? "visible" : "collapse";
+      }
+      // 스튜디오
+      else if (type === "studio") {
+        return this.itemDetails === "studio" ? "visible" : "collapse";
+      }
+      // 메이크업
+      else if (type === "makeup") {
+        return this.itemDetails === "makeup" ? "visible" : "collapse";
+      }
+      // 스드메
+      else if (type === "sdm_package") {
+        return this.itemDetails === "sdm_package" ? "visible" : "collapse";
+      }
+      // 예복
+      else if (type === "giving_dress") {
+        return this.itemDetails === "giving_dress" ? "visible" : "collapse";
+      }
+      // 예복
+      else if (type === "giving_item") {
+        return this.itemDetails === "giving_item" ? "visible" : "collapse";
+      }
+      // 가전
+      else if (type === "giving_mechine") {
+        return this.itemDetails === "giving_mechine" ? "visible" : "collapse";
+      }
+      // 혼수 패키지
+      else if (type === "giving_package") {
+        return this.itemDetails === "giving_package" ? "visible" : "collapse";
+      }
+      // 본식스냅
+      else if (type === "snap") {
+        return this.itemDetails === "snap" ? "visible" : "collapse";
+      }
+      // 영상
+      else if (type === "video") {
+        return this.itemDetails === "video" ? "visible" : "collapse";
+      }
+      // 부케
+      else if (type === "flower") {
+        return this.itemDetails === "flower" ? "visible" : "collapse";
+      }
+      // 연주
+      else if (type === "music") {
+        return this.itemDetails === "music" ? "visible" : "collapse";
+      }
+      // 사회자
+      else if (type === "mc") {
+        return this.itemDetails === "mc" ? "visible" : "collapse";
+      }
+      // 웨딩슈즈
+      else if (type === "shoes") {
+        return this.itemDetails === "shoes" ? "visible" : "collapse";
+      }
+      // 답례품
+      else if (type === "gift") {
+        return this.itemDetails === "gift" ? "visible" : "collapse";
+      }
+      // 청첩장
+      else if (type === "letter") {
+        return this.itemDetails === "letter" ? "visible" : "collapse";
+      }
+
+      return this.itemDetails === type;
+    },
 
     }
   </script>
