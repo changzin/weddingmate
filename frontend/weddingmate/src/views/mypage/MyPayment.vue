@@ -17,29 +17,30 @@
                 <div class="font-bar">청구서</div>
             </div>
             <hr class="bar">
-            <div v-for="(payment, index) in paymentList" :key="index" class="container-middle-content">
-
-                <div>{{ this.$dayFormat(payment.order_info_end_date) }}</div>
-                <div @click="getPaymentList()">{{payment.box_name}}</div>
-                <div>{{this.$numberFormat(payment.order_info_total_price)}}</div>
-                <div><a href="#">영수증</a></div>
-            </div>
-            <hr class="text">
+            <div v-for="(payment, index) in paymentList" :key="index">
+              <div  class="container-middle-content">
+                  <div>{{ this.$dayFormat(payment.order_info_end_date) }}</div>
+                  <div>{{payment.box_name}}</div>
+                  <div>{{this.$numberFormat(payment.order_info_total_price)}}</div>
+                  <div><a href="#">영수증</a></div>
+              </div>
+              <hr class="text">
+          </div>
         </div>
             <div class="mypage-bottom">
-                <div class="nav-page">
-                    <div>&lt;&lt;</div>
-                    <div>&lt;</div>
-                    <div>1</div>
-                    <div style="color: pink;">2</div>
-                    <div>3</div>
-                    <div>&gt;</div>
-                    <div>&gt;&gt;</div>
-                </div>
-                <button class="mypage-back">
-                  <a href="/mypage">
+              <div class="nav-page justify-content-center">
+              <a :class="{ notVisible: page == 1 }" @click="prevBlock()"><div>&lt;&lt;</div></a>
+              <a :class="{ notVisible: page == 1 }" @click="prevPage()"><div>&lt;</div></a>
+              <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"><div>{{ page - 2 }}</div></a>
+              <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"><div>{{ page - 1 }}</div></a>
+              <a><div style="color: pink">{{ page }}</div></a>
+              <a :class="{ notVisible: page + 1 > maxPage }" @click="goToPage(page + 1)"><div>{{ page + 1 }}</div></a>
+              <a :class="{ notVisible: page + 2 > maxPage }" @click="goToPage(page + 2)"><div>{{ page + 2 }}</div></a>
+              <a :class="{ notVisible: page == maxPage }" @click="nextPage()"><div>&gt;</div></a>
+              <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"><div>&gt;&gt;</div></a>
+            </div>
+            <button class="mypage-back" @click="this.$router.push({path: '/mypage/'})">
                     마이페이지로
-                  </a>
                 </button>
             </div>
           </div>
@@ -74,7 +75,11 @@
     name: "SearchComponent",
     data() {
       return {
-        paymentList: []
+        paymentList: [],
+
+        //페이지
+        page : 1,
+        maxpage: null,      
       };
     },
     mounted(){
@@ -82,19 +87,68 @@
     },
     methods: {
 
-      async getPaymentList(){
+      async getPaymentList() {
+      try{       
+        // URL에 파라미터를 추가한다.
+        await this.$router.push({path: '/mypage/payment', query:{page: this.page} });
+      
+
+        // 견적함 리스트를 가져오기 전에 파라미터 갈무리
+        this.page = Number(this.$route.query.page);
+        this.page = (!this.page) ? 1 : this.page;
+
         const requestBody = {
-          access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734"
-        };
-        try{
-          const response = await this.$api("/mypage/payment", requestBody, "post");
-          this.paymentList = response.paymentList;
+            access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734"
+          }
 
-        }catch(error){
-          console.log(error);
+        // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
+        const response = await this.$api(`/mypage/payment?page=${this.page}`, requestBody, "post");      
+        this.paymentList = response.paymentList;
+        this.maxPage = response.maxPage;
+        console.log(response);
 
-        }
+      }catch(error){
+        console.log(error);
+
       }
+    },
+       // 페이지 네이션
+    async nextPage() {
+      if (!this.isLastPage) {
+        this.page++;
+        await this.getPaymentList();
+      }
+    },
+
+    async prevPage() {
+      if (!this.isFirstPage) {
+        this.page--;
+        await this.getPaymentList();
+      }
+    },
+
+    async goToPage(targetPage) {
+      if (targetPage >= 1 && targetPage <= this.maxPage) {
+        this.page = targetPage;
+        await this.getPaymentList();
+      }
+    },
+
+    async prevBlock() {
+      let targetPage = this.page > 5 ? this.page - 5 : 1;
+      await this.goToPage(targetPage);
+    },
+
+    async nextBlock() {
+      let targetPage = this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
+      await this.goToPage(targetPage);
+    },
+
+    updatePageStatus() {
+      this.isFirstPage = this.page === 1;
+      this.isLastPage = this.page === this.maxPage;
+    },
+
     }
   }
   </script>
@@ -320,35 +374,42 @@ margin: 0px;
 
 /* bottom */
 div.mypage-bottom{
-display: grid;
-place-items: center;
-margin-left: 350px;
-margin-right: 320px;
-margin-top: 100px;
-width: 1280px; /* 고정된 너비 */  
-/* border: 1px solid yellow; */
+    display: grid;         
+    place-items: center;
+    margin-left: 350px;
+    margin-right: 320px;
+    margin-top: 100px;
+    width: 1280px; /* 고정된 너비 */  
+    /* border: 1px solid yellow; */
 }
+
 div.nav-page{
-display: grid;
-place-items: center;
-grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
-margin-bottom: 30px;
-color: #888888;
-/* border: 1px solid pink; */
+    display: grid;
+    place-items: center;
+    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px 25px 25px;
+    margin-bottom: 30px;
+    color: #888888;
+    /* border: 1px solid pink; */
 }
 
 button.mypage-back{
-background-color: #888888;
-color:white;
-font-weight: bold;
-border: none;
-width: 120px;
-height: 40px;
+    background-color: #888888;
+    color:white;
+    font-weight: bold;
+    border: none;
+    width: 120px;
+    height: 40px;
 }
-
+.nav-page a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
+}
 .mypage-back a {
     text-decoration: none; /* remove underline */
     color: inherit; /* inherit color from parent */
 }
+.notVisible{
+        visibility: hidden;
+      }
   </style>
   

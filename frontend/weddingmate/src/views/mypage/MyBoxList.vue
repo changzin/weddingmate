@@ -37,11 +37,11 @@
                   </div>
     
     <div class="container-sort">
-      <div class="sort" style="cursor: pointer;">최근 수정순</div>
+      <div class="sort" style="cursor: pointer;" @click="sort('current')">최근 수정순</div>
       <div>｜</div>
-      <div class="sort" style="cursor: pointer;" >가격 높은순</div>
+      <div class="sort" style="cursor: pointer; " @click="sort('price')" >가격 높은순</div>
       <div>｜</div>
-      <div class="sort" style="cursor: pointer;">상품 많은순</div>
+      <div class="sort" style="cursor: pointer;" @click="sort('quantity')">상품 많은순</div>
     </div>
  
                 
@@ -55,22 +55,23 @@
         </div>              
 
     
+
     <div class="mypage-bottom">
-        <div class="nav-page">
-          <div>&lt;&lt;</div>
-            <div>&lt;</div>
-            <div>1</div>
-            <div style="color: pink;">2</div>
-            <div>3</div>
-            <div>&gt;</div>
-            <div>&gt;&gt;</div>
-        </div>
-        <button class="mypage-back">
-          <a href="/mypage">
+      <div class="nav-page justify-content-center">
+        <a :class="{ notVisible: page == 1 }" @click="prevBlock()"><div>&lt;&lt;</div></a>
+        <a :class="{ notVisible: page == 1 }" @click="prevPage()"><div>&lt;</div></a>
+        <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"><div>{{ page - 2 }}</div></a>
+        <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"><div>{{ page - 1 }}</div></a>
+        <a><div style="color: pink">{{ page }}</div></a>
+        <a :class="{ notVisible: page + 1 > maxPage }" @click="goToPage(page + 1)"><div>{{ page + 1 }}</div></a>
+        <a :class="{ notVisible: page + 2 > maxPage }" @click="goToPage(page + 2)"><div>{{ page + 2 }}</div></a>
+        <a :class="{ notVisible: page == maxPage }" @click="nextPage()"><div>&gt;</div></a>
+        <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"><div>&gt;&gt;</div></a>
+      </div>
+      <button class="mypage-back" @click="this.$router.push({path: '/mypage/'})">
             마이페이지로
-          </a>
         </button>
-    </div>
+    </div>    
 </div>
     
     <!-- 푸터 -->
@@ -110,6 +111,11 @@ export default {
       isEditing: false, // 입력 상태를 추적하는 상태
       newBoxName: "", // 새로운 견적함 이름을 저장하는 상태
 
+      //페이지
+      page : 1,
+      maxpage: null,
+      mode : null
+
     };
   },
   mounted() {
@@ -118,26 +124,49 @@ export default {
 
   methods: {
     async getBoxList() {
-      const requestBody = {
-          access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734"
-        }
-      try{
-        const response = await this.$api("/mypage/boxlist",requestBody, "post");
-        this.boxList = response.boxList;       
+      try{       
+        // URL에 파라미터를 추가한다.
+        await this.$router.push({path: '/mypage/boxlist', query:{page: this.page} });
+      
 
+        // 견적함 리스트를 가져오기 전에 파라미터 갈무리
+        this.page = Number(this.$route.query.page);
+        this.page = (!this.page) ? 1 : this.page;
+        this.mode = (!this.mode) ? 'current' : this.mode;
+
+        const requestBody = {
+            access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734",
+            mode : this.mode
+          }
+
+        // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
+        const response = await this.$api(`http://localhost:9090/mypage/boxlist?page=${this.page}`, requestBody, "post");      
+        this.boxList = response.boxList;
+        this.maxPage = response.maxPage;
 
       }catch(error){
         console.log(error);
 
       }
     },
-    addBox() {
-      console.log("a");
-    },
-    sortBox(){
-      console.log("b");
-    },
 
+    async sort(mode) {
+      try{
+        this.mode = mode;
+
+        const requestBody = {
+            access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734",
+            mode : this.mode
+          }
+        // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
+       const response = await this.$api(`http://localhost:9090/mypage/boxlist?page=${this.page}`, requestBody, "post");      
+        this.boxList = response.boxList;
+        this.maxPage = response.maxPage;
+
+      } catch(error){
+        console.log("정렬 실패");
+      }
+    },
 
    // 견적함
    startEditing() {
@@ -160,17 +189,56 @@ export default {
           console.log(response);
 
           if (response.status === 200) {
+            if (this.boxList.length == 15){
+              this.page += 1;
+            }
           await this.getBoxList();
-      }
+          }
         
-
         } catch (error) {
           console.log(error);
         }
       }
       this.newBoxName = "";
       this.isEditing = false;
-    }
+    },
+
+    // 페이지 네이션
+    async nextPage() {
+      if (!this.isLastPage) {
+        this.page++;
+        await this.getBoxList();
+      }
+    },
+
+    async prevPage() {
+      if (!this.isFirstPage) {
+        this.page--;
+        await this.getBoxList();
+      }
+    },
+
+    async goToPage(targetPage) {
+      if (targetPage >= 1 && targetPage <= this.maxPage) {
+        this.page = targetPage;
+        await this.getBoxList();
+      }
+    },
+
+    async prevBlock() {
+      let targetPage = this.page > 5 ? this.page - 5 : 1;
+      await this.goToPage(targetPage);
+    },
+
+    async nextBlock() {
+      let targetPage = this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
+      await this.goToPage(targetPage);
+    },
+
+    updatePageStatus() {
+      this.isFirstPage = this.page === 1;
+      this.isLastPage = this.page === this.maxPage;
+    },
 
   },
 };
@@ -373,18 +441,16 @@ export default {
     /* border: 1px solid green; */
 }
 .container-middle{          
-    margin-left: var(--container-margin-left);
-    margin-right: var(--container-margin-right);
-    margin-bottom: 50px;
-    margin-top:10px;
-    display: grid;
-    align-items: start;
-    width: var(--container-width);
-    /* border: 1px solid red; */
-
-    grid-template-columns: auto auto auto;
-    justify-content:space-between;
-    grid-row-gap: 30px;
+  margin-left: var(--container-margin-left);
+  margin-right: var(--container-margin-right);
+  margin-bottom: 50px;
+  margin-top: 10px;
+  display: grid;
+  align-items: start;
+  width: var(--container-width);
+  /* border: 1px solid red; */
+  grid-template-columns: 1fr 1fr 1fr; /* 각 열의 너비를 동일하게 설정 */
+  gap: 34px; /* 요소 간의 간격을 설정 */
 }
 .container-sort{
   margin-left: var(--container-margin-left);
@@ -397,19 +463,6 @@ export default {
     align-items: center; 
     gap: 10px; /* 요소 간의 간격 */
     /* border: 1px solid green; */
-}
-
-.container-box_list{          
-    display: grid;
-    grid-template-columns: auto auto auto;
-    justify-content:space-between;
-    grid-row-gap: 30px;
-    width: var(--container-width); 
-    margin-top: 20px; 
-    box-sizing: border-box;
-    color:#888888;
-    /* border: 1px solid blue; */
-
 }
 
 .container-box{
@@ -534,7 +587,7 @@ div.mypage-bottom{
 div.nav-page{
     display: grid;
     place-items: center;
-    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px 25px 25px;
     margin-bottom: 30px;
     color: #888888;
     /* border: 1px solid pink; */
@@ -548,8 +601,15 @@ button.mypage-back{
     width: 120px;
     height: 40px;
 }
+.nav-page a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
+}
 .mypage-back a {
     text-decoration: none; /* remove underline */
     color: inherit; /* inherit color from parent */
 }
+.notVisible{
+        visibility: hidden;
+      }
 </style>

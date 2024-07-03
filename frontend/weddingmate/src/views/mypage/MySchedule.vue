@@ -83,7 +83,9 @@
         </div>
       </div>
       <div class="mypage-bottom">
-        <button class="mypage-back">마이페이지로</button>
+        <button class="mypage-back" @click="this.$router.push({path: '/mypage/'})">
+          마이페이지로
+        </button>
       </div>
     </div>
     <!-- 푸터 -->
@@ -596,7 +598,7 @@ div.mypage-bottom {
   place-items: center;
   margin-left: 350px;
   margin-right: 320px;
-  margin-top: 100px;
+  margin-top: 200px;
   width: 1280px; /* 고정된 너비 */
   /* border: 1px solid yellow; */
 }

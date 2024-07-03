@@ -31,10 +31,8 @@
             <div>&gt;</div>
             <div>&gt;&gt;</div>
             </div>
-            <button class="mypage-back">
-              <a href="/mypage">
+            <button class="mypage-back" @click="this.$router.push({path: '/mypage/'})">
                 마이페이지로
-              </a>
             </button> 
         </div>
      </div>

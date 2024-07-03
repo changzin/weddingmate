@@ -7,14 +7,27 @@ exports.paymentList = async(req, res) =>{
     try{
 
         const user_id = req.body.user_id;
+        let page = req.query.page;
+        let count = [];
         let result = [];
+        let query ="";
         let responseBody= {};
-        let query = "SELECT order_info_end_date, box_name, order_info_total_price FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE box.user_id = ? ORDER BY order_info_id LIMIT 15 ";
 
-        result = await db(query, [user_id]);
+        page = !page ? 0 : Number(page) -1;
+
+        query = "SELECT order_info_end_date, box_name, order_info_total_price FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE box.user_id = ? ORDER BY order_info_id LIMIT 15 OFFSET ?;"       
+        result = await db(query, [user_id, page * 15]);
+
+        query = "SELECT COUNT(*) AS COUNT FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE user_id = ?;";
+        count = await db(query,[user_id]);
+        console.log(count);
+
+        count = count[0]["COUNT"];
+
         responseBody ={
             status: 200,
-            paymentList : result
+            paymentList : result,
+            maxPage : Math.ceil(count/15)
         }
 
         res.json(responseBody);
@@ -182,7 +195,31 @@ exports.reviewDel = async (req, res) => {
     }
   };
 
-// qna
+
+
+// exports.qnaList = async (req, res) => {
+//     try{
+//         const user_id = req.body.user_id;
+//         let result = [];
+//         let responseBody = {};
+//         query ="SELECT qna_date, qna_title FROM qna WHERE user_id = ? "
+//         result = await db(query, [user_id]);
+
+//         responseBody = {
+//             status: 200,
+//             qnaList : result
+//         }
+//         res.json(responseBody);
+//     } catch(error){
+//         responseBody = {
+//             status: 400,
+//             message: "qna를 불러올 수 없습니다"
+//         }
+//         res.json(responseBody);
+        
+//     }
+// };
+
 
 exports.qnaList = async (req, res) => {
     try{
@@ -207,30 +244,65 @@ exports.qnaList = async (req, res) => {
     }
 }
 
+
+
 // 견적함
 
-exports.boxList = async(req, res) =>{
-    try{
+exports.boxList = async (req, res) => {
+    try {
         const user_id = req.body.user_id;
+        let page = req.query.page;
+        let mode = req.body.mode;
         let responseBody = {};
         let result = [];
-        const query = "SELECT box.box_id, box_name, box_date, box_quantity, box_item_total_price FROM box JOIN box_item WHERE user_id = ? LIMIT 15;";
-        result = await db(query,[user_id]);
+        let count = [];
+
+        page = !page ? 0 : Number(page) - 1;
+
+        mode = !mode ? "current" : mode;
+
+        let orderBy;
+        if (mode === "current") {
+            orderBy = "box_date";
+        } else if (mode === "price") {
+            orderBy = "box_item_total_price";
+        } else if (mode === "quantity") {
+            orderBy = "box_quantity";
+        }
+
+        // 동적으로 쿼리를 작성합니다.
+        let query = `SELECT box.box_id, box_name, box_date, box_quantity, box_item_total_price 
+                     FROM box 
+                     JOIN box_item 
+                     WHERE user_id = ? 
+                     ORDER BY ${orderBy} DESC 
+                     LIMIT 15 OFFSET ?;`;
+
+        result = await db(query, [user_id, page * 15]);
+
+        query = "SELECT COUNT(*) AS COUNT FROM box WHERE user_id = ? ";
+        count = await db(query, [user_id]);
+        console.log(count);
+
+        count = count[0]["COUNT"];
 
         responseBody = {
             status: 200,
-            boxList : result
-        }
+            boxList: result,
+            maxPage: Math.ceil(count / 15),
+            mode
+        };
         res.json(responseBody);
 
-    } catch(error){
+    } catch (error) {
         responseBody = {
             status: 400,
-            message : "견적함 목록을 불러올 수 없습니다"
-        }
-        res.json(responseBody);        
+            message: "견적함 목록을 불러올 수 없습니다"
+        };
+        res.json(responseBody);
     }
 }
+
 
 exports.boxAdd = async(req, res) =>{
     try{

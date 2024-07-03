@@ -12,7 +12,7 @@
         <div class="container-middle-profile">
             <div class="content-profile">
                 <div class="font-nickname"><span>{{ user }}</span>님</div>
-                <button class="profile">정보수정</button>
+                <button class="profile" @click="this.$router.push({path: '/mypage/edit'})">정보수정</button>
             </div>
         </div>
         <div class="container-middle-mymenu">
