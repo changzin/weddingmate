@@ -207,9 +207,6 @@ export default {
             qna_content: this.form.content,
             qna_title: this.form.title,
             qna_visibility: this.form.visibilityType,
-            // qna_image_path: this.form.image,
-
-
              qna_image: this.itemTnImage,
             qna_image_ext: this.itemTnImageExt,
             upload_type: "qna",
