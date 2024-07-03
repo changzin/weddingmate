@@ -197,30 +197,6 @@ exports.reviewDel = async (req, res) => {
 
 
 
-// exports.qnaList = async (req, res) => {
-//     try{
-//         const user_id = req.body.user_id;
-//         let result = [];
-//         let responseBody = {};
-//         query ="SELECT qna_date, qna_title FROM qna WHERE user_id = ? "
-//         result = await db(query, [user_id]);
-
-//         responseBody = {
-//             status: 200,
-//             qnaList : result
-//         }
-//         res.json(responseBody);
-//     } catch(error){
-//         responseBody = {
-//             status: 400,
-//             message: "qna를 불러올 수 없습니다"
-//         }
-//         res.json(responseBody);
-        
-//     }
-// };
-
-
 exports.qnaList = async (req, res) => {
     try{
         const user_id = req.body.user_id;
@@ -242,7 +218,9 @@ exports.qnaList = async (req, res) => {
         res.json(responseBody);
         
     }
-}
+};
+
+
 
 
 
