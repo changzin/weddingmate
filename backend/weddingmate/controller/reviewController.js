@@ -269,8 +269,8 @@ exports.wholeReview = async (req, res) => {
 
     const countQuery = `
           SELECT COUNT(*) AS totalCount 
-          FROM qna 
-          WHERE qna.item_id=?
+          FROM review 
+          WHERE review.item_id=?
         `;
     const countResult = await db(countQuery, [item_id]);
     const totalCount = countResult[0].totalCount;

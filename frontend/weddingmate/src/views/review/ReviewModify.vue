@@ -158,7 +158,7 @@ export default {
         // 데이터 가져오기
 
         const result = await this.$api(
-          `http://localhost:9090/review/getselectedreviewdetail?review_id=${this.review_id}`
+          `/review/getselectedreviewdetail?review_id=${this.review_id}`
         );
 
         this.ReviewResult = result.data[0];
@@ -214,7 +214,6 @@ export default {
             access_token: this.$getAccessToken(),
             review_id: this.review_id,
             review_content: this.form.content,
-            // review_image_path: this.form.image,
             review_star: this.currentRating / 2,
             review_image_change: this.review_image_change,
             review_image: this.itemTnImage,
