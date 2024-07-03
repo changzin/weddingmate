@@ -201,9 +201,10 @@ const routes = [
     component: MyBoxList
   },
   {
-    path: '/mypage/boxlist/boxname',
+    path: '/mypage/boxlist/:boxId',
     name: "mybox",
-    component: MyBox
+    component: MyBox,
+    // props: route => ({ box_id: route.query.box_id })
   },
   {
     path: '/mypage/QnA',
