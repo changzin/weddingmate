@@ -50,7 +50,7 @@ exports.myBoxItemName = async(req,res)=>{
     try{
         const user_id = req.body.user_id;
         // const query = "SELECT DISTINCT i.item_name FROM item AS i INNER JOIN item_detail AS ide ON i.item_id = ide.item_id INNER JOIN box_item AS bi ON ide.item_detail_id = bi.item_detail_id"
-        const query = "SELECT DISTINCT b.user_id, bi.box_id, ide.*, i.item_name,i.item_price,bi.box_item_total_price FROM item_detail AS  ide INNER JOIN box_item AS bi  ON ide.item_detail_id = bi.item_detail_id INNER JOIN item AS i ON ide.item_id = i.item_id INNER JOIN box AS b ON bi.box_id = b.box_id";
+        const query = "SELECT  bi.box_item_id,b.user_id, bi.box_id, ide.*, i.item_name,i.item_price,bi.box_item_total_price FROM item_detail AS  ide INNER JOIN box_item AS bi  ON ide.item_detail_id = bi.item_detail_id INNER JOIN item AS i ON ide.item_id = i.item_id INNER JOIN box AS b ON bi.box_id = b.box_id";
         box_name = await db(query);
 
         console.log(box_name);
@@ -70,11 +70,23 @@ exports.myBoxItemName = async(req,res)=>{
         }
 }
 
-exports.myBoxItemOption = async(req,res)=>{
+exports.myBoxItemDelete = async(req,res)=>{
     try{
+        const boxItemId = req.body.box_item_id
+        const query = "DELETE FROM box_item WHERE box_item_id = ?";
+        const itemDel = await db(query,[boxItemId])
 
-
-    }catch{
+        const affectedRows = itemDel.affectedRows;
+        if(affectedRows == 1){ 
+            const responseBody ={
+                status : 200,
+                boxItem_id : itemDel
+            }
+            res.json(responseBody);
+        }else{
+            throw new Error("선택된 상품을 지울 수 없습니다.")
+        }
+    }catch(err){
         console.error(err);
             responseBody = {
                 status : 400,

@@ -1,7 +1,9 @@
 <template>
+  <div>
+  <MateHeader />
     <div class="fix-width">
       <!-- 헤더 -->
-      <MateHeader />
+      
       <!-- 본문 -->
       <div class="container0">
         <div class="container-top">
@@ -17,7 +19,7 @@
         <div class="container-middle" v-for="item in itemDetails" :key="item" >
           <div class="container-middle-category_title">
             <div class="title-font">
-             {{item.item_detail_type }}
+             {{getClass(item.item_detail_type) }}
             </div>
             <div>
               <hr class="title" />
@@ -43,143 +45,23 @@
                     <div class="content-table_col1-name">
                       <!-- 제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목 -->
                       {{ item.item_name }}
-                      
-
                     </div>
                     <div class="content-table_col1-option">
                       <div>
-                       
-                        {{ item.item_detail_local }}
-                        {{ item.item_detail_ioc}}
-                        {{ item.item_detail_size }}
-                        {{ item.item_detail_color }}
-                        {{ item.item_detail_makeup }}
-                        {{ item.item_detail_heel_height }}
-                        {{ item.item_detail_flower_life }}
-                        {{ item.item_detail_quality }}
-                        {{ item.item_detail_kind }}
+                        {{ optionKorean(item) }}
                       </div>
                     </div>
-                    <!-- <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div> -->
-                    <!-- <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div> -->
+                    
                   </div>
                 </div>
               </td>
-              <td>999,999,999,999,999</td>
-              <td><button class="boxdelete">삭제</button></td>
+              <td>{{$numberFormat(item.item_price)}}</td>
+              <!-- <td>999,999,999,999,999</td> -->
+              <td><button class="boxdelete" @click="DelItem(item.box_item_id)">삭제</button></td>
             </tr>
-            <!-- <tr>
-              <td>
-                <div class="container-table_col1">
-                  <input type="checkbox" />
-                  <img class="bookmark" src="http://localhost:8080/icon/icon.png" />
-                  <div class="content-table_col1">
-                     <div class="content-table_col1-name">
-                      제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목
-                    </div> 
-                    <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div>
-                    <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>999,999,999</td>
-              <td><button class="boxdelete">삭제</button></td>
-            </tr> -->
+           
           </table>
-          <!-- <div class="container-middle-category_title">
-            <div class="title-font">예물</div>
-            <div>
-              <hr class="title" />
-            </div>
-          </div> -->
-          <!-- <table>
-            <colgroup>
-              <col />
-              <col />
-              <col />
-            </colgroup>
-            <tr class="tr1">
-              <td>상품/옵션 정보</td>
-              <td>금액</td>
-              <td>변경</td>
-            </tr>
-            <tr>
-              <td>
-                <div class="container-table_col1">
-                  <input type="checkbox" />
-                  <img class="bookmark" src="http://localhost:8080/icon/icon.png" />
-                  <div class="content-table_col1">
-                    <div class="content-table_col1-name">
-                      제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목
-                    </div>
-                    <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>999,999,999,999,999</td>
-              <td><button class="boxdelete">삭제</button></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="container-table_col1">
-                  <input type="checkbox" />
-                  <img class="bookmark" src="http://localhost:8080/icon/icon.png" />
-                  <div class="content-table_col1">
-                    <div class="content-table_col1-name">
-                      제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목
-                    </div>
-                    <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div>
-                    <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div>
-                    <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div>
-                    <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div>
-                    <div class="content-table_col1-option">
-                      <div>
-                        옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션옵션
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>999,999,999</td>
-              <td><button class="boxdelete">삭제</button></td>
-            </tr>
-          </table> -->
+         
         </div>
         <div class="container_boxbutton2">
           <button class="boxallselect">전체 선택</button>
@@ -189,6 +71,7 @@
           <div class="paycontent">
             <div class="sellitle">판매가격</div>
             <div class="sellcost"><span>999,999,999,999</span>원</div>
+            <!-- <div class="sellcost"><span>선택된 체크리스트 금액 합계</span>원</div> -->
           </div>
           <div><img class="icon" src="http://localhost:8080/icon/icon.png" /></div>
           <div class="paycontent">
@@ -202,7 +85,8 @@
           </div>
         </div>
         <div class="container_boxbutton3">
-          <button class="order">주문 하기</button>
+          <!-- <button class="order" >주문 하기</button> -->
+          <button class="order" @click="$router.push({path:`/orderinfo/${boxid}`})">주문 하기</button>
         </div>
         <div class="mypage-bottom">
           <div class="nav-page">
@@ -218,28 +102,10 @@
         </div>
       </div> 
       <!-- 푸터 -->
-      <footer class="common__footer">
-        <div class="common__footer-content">
-          <nav class="common__footer-nav">
-            <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-            <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-            <a href="#">제휴문의</a> |
-            <a href="#">광고문의</a>
-          </nav>
-          <div class="common__footer-details">
-            <p style="margin-bottom: 0px">
-              (주)웨딩메이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-              02-123-1234 팩스: 02-111-2222
-            </p>
-  
-            <p>
-              해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-              민원담당자에게 있습니다. 민원담당자: 강문정
-            </p>
-          </div>
-        </div>
-      </footer>
+      
     </div>
+    <MateFooter />
+  </div>
   </template>
   
   
@@ -252,13 +118,15 @@
         isVisible: false,
         ismaintain: false,
         // 본문
-        
+        itemList:[],
         page: 1,
         maxPage: 0,
         boxid:"",
         iType:[],
         categories: [],
         itemDetails:[],
+        selectItem:[],
+        box_item_id:{},
       itemTnImage: null,
       itemTnImageExt: null,
       itemMainImage: null,
@@ -273,10 +141,23 @@
       this.fetchItem();
       this.optionKorean();
       this.func()
+      this.DelItem()
+      // this.goOrderInfo();
     },
     computed:{
     },
-
+    watch : {
+      itemList:{
+        handler(newList){
+          //체크된 아이템을 필터링하고 item_id를 추출하여 배열에 저장
+          const checkeditem = newList.filter(item => item.checked);
+          const checkeditems = checkeditem.map(item => item.item_id);
+          this.selectItem = checkeditems;
+          console.log(this.selectItem);
+        },
+        deep: true
+      }
+    },
     methods: {
       // 헤더
       showCategories() {
@@ -287,7 +168,7 @@
       },
       // 본문
       //상품 옵션 가져오기 
-  
+      
 
       async showBoxDetail(){
         this.page = Number(this.$route.query.page);
@@ -295,18 +176,42 @@
         this.boxid = this.$route.query.boxid;
         this.userid = this.$route.userid;
         const requestBody = {
-          
-          access_token: "80060f2c-e894-472c-930b-9495e149e13c"
+          access_token: "2c595eca-d4e3-4085-a6c7-331333eb22f0"
         }
         console.log(requestBody);
         //백 인덱스로 보내줌 
         const result = await this.$api("/mybox",requestBody,"POST")
-       console.log(result);
-       
-        
-        
-        //아이템 내에 넣어주기
+        console.log(result);
+        // if(result.status === 200 ){
+        //   this.itemList = result.itemList.map(item => {
+        //      return {
+        //       ...item,
+        //       checked: false,
+        //       clicked: false, 
+        //      }
+        //   })
+        // }  
       },
+      async DelItem(box_item_id){
+      const requestBody = {
+        access_token: "2c595eca-d4e3-4085-a6c7-331333eb22f0",
+        box_item_id: box_item_id
+      }
+      console.log(requestBody);
+      try{
+        const resId = await this.$api("/mybox/del",requestBody,"POST");
+        console.log(resId);
+
+        if(resId.status === 200){
+          await this.fetchItem();
+          this.$router.go();
+        }
+      }catch(error){
+        console.error(error);
+      }
+    },
+      
+
       async fetchItemCategory(){
          //아이템 카테고리 가져오기 
         const category = await this.$api(`/mybox/category`);
@@ -325,19 +230,29 @@
           this.itemDetails = iName;
           console.log(this.itemDetails);
           },
-       async optionKorean(){
+       optionKorean(item){
            let resultString = "";
-           
-            for ( let item in this.itemDetails ){
-              if (item == 'item_detail_kind'){
+           console.log(item)
+
+            
+
+            for ( let key in item ){
+              if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_detail_type' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id'){
               continue
+              // }else if(key == 'box_detail_type'){     
+              }
+              if(!item[key]){
+                continue
+              }
+              let keyKorenName = this.func(key);
+              if (!keyKorenName){
+                console.log("conversion error : " + key)
+              }
+              resultString += keyKorenName +  " : " + item[key] + "    ";
             }
-              let keyKorenName = this.func(item);
-              let keyValue = this.itemDetails;
-              
-              resultString += keyKorenName +  " : " + keyValue;
-              console.log(this.func)
-            }
+            //아이템 카테고리에 맞게 속성을 넣어주겠금한다. 
+            
+            console.log(resultString);
            return resultString;
        },
        func(item){
@@ -345,11 +260,11 @@
           return "색상";
         }else if(item == 'item_detail_size') { 
            return "사이즈"
-        }else if(item == 'item_deatil_quantity'){
+        }else if(item == 'item_detail_quantity'){
           return "재고"
         }else if(item == 'item_detail_local'){
           return "지역"
-        }else if(item == 'item_deatil_ioc'){
+        }else if(item == 'item_detail_loc'){
           return "야외-실내"
         }else if(item == 'item_detail_makeup'){
           return "메이크업"
@@ -361,8 +276,12 @@
           return "퀄리티"
         }else if(item == 'item_detail_kind'){
           return "종류"
+        }else if(item == 'item_detail_ticket'){
+          return "식권인원"
         }
-       }
+
+    
+
        
       //   //반환 값을 받을 변수 
       //   for ( let key in item ){
@@ -375,7 +294,7 @@
       //   return resultString;
       //  },
       },
-     
+      
 
       //한 유저에 대한 여러개의 박스상세를 볼 수 있어야함 
       async showUserbox(){
@@ -383,80 +302,84 @@
 
       },
       
-    isVisibleItemType(type) {
+    getClass(item) {
       // 웨딩홀
-      if (type === "hall") {
-        return this.itemDetails === "hall" ? "visible" : "collapse";
+      if (item === "hall") {
+        return "웨딩홀"
       }
       // 드레스
-      else if (type === "dress") {
-        return this.itemDetails === "dress" ? "visible" : "collapse";
+      else if (item === "dress") {
+        return "드레스"
       }
       // 스튜디오
-      else if (type === "studio") {
-        return this.itemDetails === "studio" ? "visible" : "collapse";
+      else if (item === "studio") {
+        return "스튜디오";
       }
       // 메이크업
-      else if (type === "makeup") {
-        return this.itemDetails === "makeup" ? "visible" : "collapse";
+      else if (item === "makeup") {
+        return "메이크업";
       }
       // 스드메
-      else if (type === "sdm_package") {
-        return this.itemDetails === "sdm_package" ? "visible" : "collapse";
+      else if (item === "sdm_package") {
+        return "스드메";
       }
       // 예복
-      else if (type === "giving_dress") {
-        return this.itemDetails === "giving_dress" ? "visible" : "collapse";
+      else if (item === "giving_dress") {
+        return "예복";
       }
       // 예복
-      else if (type === "giving_item") {
-        return this.itemDetails === "giving_item" ? "visible" : "collapse";
+      else if (item === "giving_item") {
+        return "예물";
       }
       // 가전
-      else if (type === "giving_mechine") {
-        return this.itemDetails === "giving_mechine" ? "visible" : "collapse";
+      else if (item === "giving_mechine") {
+        return "가전";
       }
       // 혼수 패키지
-      else if (type === "giving_package") {
-        return this.itemDetails === "giving_package" ? "visible" : "collapse";
+      else if (item === "giving_package") {
+        return  "혼수패키지";
       }
       // 본식스냅
-      else if (type === "snap") {
-        return this.itemDetails === "snap" ? "visible" : "collapse";
+      else if (item === "snap") {
+        return "본식스냅";
       }
       // 영상
-      else if (type === "video") {
-        return this.itemDetails === "video" ? "visible" : "collapse";
+      else if (item === "video") {
+        return "영상";
       }
       // 부케
-      else if (type === "flower") {
-        return this.itemDetails === "flower" ? "visible" : "collapse";
+      else if (item === "flower") {
+        return "부케";
       }
       // 연주
-      else if (type === "music") {
-        return this.itemDetails === "music" ? "visible" : "collapse";
+      else if (item === "music") {
+        return "연주"
       }
       // 사회자
-      else if (type === "mc") {
-        return this.itemDetails === "mc" ? "visible" : "collapse";
+      else if (item === "mc") {
+        return "사회자"
       }
       // 웨딩슈즈
-      else if (type === "shoes") {
-        return this.itemDetails === "shoes" ? "visible" : "collapse";
+      else if (item === "shoes") {
+        return "웨딩슈즈"
       }
       // 답례품
-      else if (type === "gift") {
-        return this.itemDetails === "gift" ? "visible" : "collapse";
+      else if (item === "gift") {
+        return "답례품"
       }
       // 청첩장
-      else if (type === "letter") {
-        return this.itemDetails === "letter" ? "visible" : "collapse";
+      else if (item === "letter") {
+        return "청첩장"
       }
-
-      return this.itemDetails === type;
     },
 
-    }
+    //주문하기 버튼 선택된 아이템을 주문하고 박스에 아이템이 없으면 버튼을 잠가줘야함
+    //먼저 체크리스트에 대한 작업을 해줘야한다.
+      // async goOrderInfo(){
+      //   await this.$router.push({path:`/orderinfo/:boxid`})
+      // }
+      }
+  }
   </script>
   
   
