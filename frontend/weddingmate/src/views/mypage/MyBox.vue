@@ -55,7 +55,7 @@
                   </div>
                 </div>
               </td>
-              <td>{{$numberFormat(item.item_price)}}</td>
+              <td>{{$numberFormat(item.box_item_total_price)}}</td>
               <!-- <td>999,999,999,999,999</td> -->
               <td><button class="boxdelete" @click="DelItem(item.box_item_id)">삭제</button></td>
             </tr>
@@ -70,23 +70,23 @@
         <div class="container-pay">
           <div class="paycontent">
             <div class="sellitle">판매가격</div>
-            <div class="sellcost"><span>999,999,999,999</span>원</div>
+            <div class="sellcost"><span>{{ this.$numberFormat(order_info.order_total_price) }}</span>원</div>
             <!-- <div class="sellcost"><span>선택된 체크리스트 금액 합계</span>원</div> -->
           </div>
           <div><img class="icon" src="http://localhost:8080/icon/icon.png" /></div>
           <div class="paycontent">
-            <div class="sellitle">배송비</div>
-            <div class="sellcost"><span>100,000,0</span>원</div>
+            <div class="sellitle">할인금액</div>
+            <div class="sellcost"><span>{{ this.$numberFormat(order_info.order_sale_price) }}</span>원</div>
           </div>
           <div><img class="icon" src="http://localhost:8080/icon/icon.png" /></div>
           <div class="paycontent">
             <div class="sellitle">합계</div>
-            <div class="sellcost"><span>999,999,999,999</span>원</div>
+            <div class="sellcost"><span>{{ this.$numberFormat(order_info.order_price) }}</span>원</div>
           </div>
         </div>
         <div class="container_boxbutton3">
           <!-- <button class="order" >주문 하기</button> -->
-          <button class="order" @click="$router.push({path:`/orderinfo/${boxid}`})">주문 하기</button>
+          <button class="order" @click="$router.push({path:`/orderinfo/${boxId}`})">주문 하기</button>
         </div>
         <div class="mypage-bottom">
           <div class="nav-page">
@@ -111,7 +111,6 @@
   
   <script>
   export default {
-    name: "SearchComponent",
     data() {
       return {
         // 헤더
@@ -121,7 +120,7 @@
         itemList:[],
         page: 1,
         maxPage: 0,
-        boxid:"",
+        boxId:{},
         iType:[],
         categories: [],
         itemDetails:[],
@@ -133,15 +132,16 @@
       itemMainImageExt: null,
       itemDetailImage: null,
       itemDetailImageExt: null,
+      order_info:
+          {
+            "order_total_price": 0,
+            "order_sale_price":0,
+            "order_price":0,
+          }
       };
     },
     mounted(){
-      this.showBoxDetail();
-      this.fetchItemCategory();
       this.fetchItem();
-      this.optionKorean();
-      this.func()
-      this.DelItem()
       // this.goOrderInfo();
     },
     computed:{
@@ -170,28 +170,7 @@
       //상품 옵션 가져오기 
       
 
-      async showBoxDetail(){
-        this.page = Number(this.$route.query.page);
-        this.page = (!this.page) ? 1 : this.page;
-        this.boxid = this.$route.query.boxid;
-        this.userid = this.$route.userid;
-        const requestBody = {
-          access_token: "2c595eca-d4e3-4085-a6c7-331333eb22f0"
-        }
-        console.log(requestBody);
-        //백 인덱스로 보내줌 
-        const result = await this.$api("/mybox",requestBody,"POST")
-        console.log(result);
-        // if(result.status === 200 ){
-        //   this.itemList = result.itemList.map(item => {
-        //      return {
-        //       ...item,
-        //       checked: false,
-        //       clicked: false, 
-        //      }
-        //   })
-        // }  
-      },
+
       async DelItem(box_item_id){
       const requestBody = {
         access_token: "2c595eca-d4e3-4085-a6c7-331333eb22f0",
@@ -210,25 +189,21 @@
         console.error(error);
       }
     },
-      
-
-      async fetchItemCategory(){
-         //아이템 카테고리 가져오기 
-        const category = await this.$api(`/mybox/category`);
-        console.log(category);
-        const iType = category.itemType.map((item_type)=> item_type);
-        console.log(iType);
-        
-
-      } ,     
+         
       async fetchItem(){
-          const response = await this.$api(`/mybox/name`)
+        this.boxId = this.$route.params.boxId
+          const responseBody  ={
+            access_token : "80060f2c-e894-472c-930b-9495e149e13c",
+            boxId:this.boxId
+          }
+          const response = await this.$api(`/mybox/name`,responseBody,"POST")
           console.log(response);
           const iName = response.box_itemName.map((item_name)=> item_name);
           //아이템 이름을 담고 있는 배열 iName 
           console.log(iName);
           this.itemDetails = iName;
           console.log(this.itemDetails);
+          this.makeOrderInfo();
           },
        optionKorean(item){
            let resultString = "";
@@ -278,6 +253,8 @@
           return "종류"
         }else if(item == 'item_detail_ticket'){
           return "식권인원"
+        }else if(item == 'item_discount_rate'){
+          return "할인율"
         }
 
     
@@ -372,6 +349,17 @@
         return "청첩장"
       }
     },
+    makeOrderInfo(){
+        for(let i = 0; i < this.itemDetails.length; i++){
+          this.order_info.order_total_price += this.itemDetails[i].box_item_total_price;
+        }
+
+        for(let i = 0; i < this.itemDetails.length; i++){
+          this.order_info.order_sale_price += Math.ceil((this.itemDetails[i].box_item_total_price * (this.itemDetails[i].item_discount_rate/100)));
+          console.log(this.itemDetails[i].box_item_total_price , this.itemDetails[i].item_discount_rate);
+        }
+        this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
+      },
 
     //주문하기 버튼 선택된 아이템을 주문하고 박스에 아이템이 없으면 버튼을 잠가줘야함
     //먼저 체크리스트에 대한 작업을 해줘야한다.
