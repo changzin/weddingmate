@@ -59,7 +59,9 @@
                 </button>
             </div>
         </div>
+        
     </div>
+    <MateFooter />
 </template>
 
 <script>
@@ -168,6 +170,9 @@
                         }
                         this.$router.push({path: '/'});
                     }
+                    else{
+                        alert("동일한 이메일의 계정이 존재합니다. 다른 이메일을 사용해 주세요");
+                    }
                 }
             },
             async googleLogin(){
@@ -205,8 +210,13 @@
                             this.$router.go(-1);
                         }
                         this.$router.push({path: '/'});
-                        this.$router.push({path: '/'});
                     }
+                    else{
+                        alert("동일한 이메일의 계정이 존재합니다. 다른 이메일을 사용해 주세요");
+                    }
+                  }
+                  else{
+                    alert("구글 이메일을 불러오지 못했습니다. 다시 시도해 주세요.")
                   }
               }
               catch(err){

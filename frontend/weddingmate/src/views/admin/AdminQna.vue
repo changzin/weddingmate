@@ -156,25 +156,31 @@ export default {
   methods: {
     // 멤버 정보 받아오기
     async getQnaList(){
-      // URL에 파라미터를 추가한다.
-      await this.$router.push({path: '/admin/qna', query:{page: this.page, hasAnswer: this.hasAnswer, mode: this.prevMode, keyword: this.prevKeyword} });
+      try{
+        // URL에 파라미터를 추가한다.
+        await this.$router.push({path: '/admin/qna', query:{page: this.page, hasAnswer: this.hasAnswer, mode: this.prevMode, keyword: this.prevKeyword} });
 
-      // 멤버 정보를 가져오기 전에 파라미터 갈무리
-      this.page = Number(this.$route.query.page);
-      this.hasAnswer = this.$route.query.hasAnswer;
-      this.prevMode = this.$route.query.mode;
-      this.prevKeyword = this.$route.query.keyword
-      this.page = (!this.page) ? 1 : this.page;
-      this.hasAnswer = (this.hasAnswer == 'T') ? this.hasAnswer : 'F';
-      this.mode = (!this.mode) ? 'all' : this.mode;
-      this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
+        // 멤버 정보를 가져오기 전에 파라미터 갈무리
+        this.page = Number(this.$route.query.page);
+        this.hasAnswer = this.$route.query.hasAnswer;
+        this.prevMode = this.$route.query.mode;
+        this.prevKeyword = this.$route.query.keyword
+        this.page = (!this.page) ? 1 : this.page;
+        this.hasAnswer = (this.hasAnswer == 'T') ? this.hasAnswer : 'F';
+        this.mode = (!this.mode) ? 'all' : this.mode;
+        this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
 
-      console.log(this.page, this.hasAnswer, this.mode, this.prevKeyword);
-      // memberList 정보 다시 가저오고, maxPage를 맞추어준다.
-      const result = await this.$api(`http://localhost:9090/qna/adminlist?page=${this.page}&hasAnswer=${this.hasAnswer}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
-      this.qnaList = result.qnaList;
-      this.maxPage = result.maxPage;
-      console.log("qnaList", this.qnaList);
+        console.log(this.page, this.hasAnswer, this.mode, this.prevKeyword);
+        // memberList 정보 다시 가저오고, maxPage를 맞추어준다.
+        const result = await this.$api(`http://localhost:9090/qna/adminlist?page=${this.page}&hasAnswer=${this.hasAnswer}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
+        this.qnaList = result.qnaList;
+        this.maxPage = result.maxPage;
+        console.log("qnaList", this.qnaList);
+      }
+      catch(err){
+        console.error(err);
+        alert("서버 문제로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+      }
     },
     // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
     async gethasAnswerMemberList(){

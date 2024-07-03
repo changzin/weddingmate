@@ -125,7 +125,7 @@ exports.info = async(req, res)=>{
         let result = 0;
         let responseBody = {};
         // accessToken으로 유저 정보를 가져옴
-        query = "SELECT user_id, user_email, user_password, user_nickname, user_name, user_email, user_addr1, user_addr2 FROM user WHERE user_access_token = ?";
+        query = "SELECT user_type, user_id, user_email, user_password, user_nickname, user_name, user_email, user_addr1, user_addr2 FROM user WHERE user_access_token = ?";
         result = await db(query, [accessToken]);
         const user = result[0];
 
@@ -282,5 +282,31 @@ exports.emailIsVerified = async(req, res)=>{
             message: err.message
         };
         res.json(responseBody);
+    }
+}
+
+exports.edit = async(req, res)=>{
+    try{
+        let query = "UPDATE USER SET user_name=?, user_nickname=?, user_addr1=?, user_addr2=? WHERE user_id=?";
+        let result = await db(query, [req.body.user_name, req.body.user_nickname, req.body.user_addr1, req.body.user_addr2, req.body.user_id]);
+        console.log(req.body);
+        console.log(result);
+
+        if (result.affectedRows != 1){
+            throw new Error("user_id와 일치하는 회원이 없습니다");
+        }
+        let responseBody = {
+            status: 200,
+            message: "회원 정보 수정 완료."
+        }
+        res.json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: "사용자 정보를 수정할 수 없습니다."
+        };
+        res.json(responseBody);           
     }
 }

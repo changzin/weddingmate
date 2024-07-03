@@ -12,18 +12,18 @@
         <div class="" id="navbarNav">
           <ul class="navbar-nav flex-row" v-if="this.$getAccessToken()">
             <li class="nav-item" id="common__header-login-padding">
-              <a @click="this.$logoutUser(); this.$router.push({path: '/'});">로그아웃</a>
+              <button @click="this.$logoutUser(); this.$router.push({path: '/'});" style="border: none; background-color:#f8fafc;">로그아웃</button>
             </li>
             <li class="nav-item">
-              <a @click="this.$router.push({path: '/mypage'});">마이페이지</a>
+              <button @click="this.$router.push({path: '/mypage'});" style="border: none; background-color:#f8fafc;">마이페이지</button>
             </li>
           </ul>
           <ul class="navbar-nav flex-row" v-if="!this.$getAccessToken()">
             <li class="nav-item" id="common__header-login-padding">
-              <a @click="this.$router.push({path: '/userlogin'})">로그인</a>
+              <button @click="this.$router.push({path: '/userlogin'})" style="border: none; background-color:#f8fafc;">로그인</button>
             </li>
             <li class="nav-item">
-              <a @click="this.$router.push({path: '/terms'})">회원가입</a>
+              <button @click="this.$router.push({path: '/terms'})" style="border: none; background-color:#f8fafc;">회원가입</button>
             </li>
           </ul>
         </div>

@@ -37,8 +37,7 @@ import MyPayment from '@/views/mypage/MyPayment.vue'
 import MainPage from '../views/main/MainPage.vue'
 import test from '../views/mypage/test.vue'
 import OrderEnd from '../views/order_info/OrderEnd.vue'
-
-
+import MyPageEdit from '../views/nouser/MyPageEdit.vue'
 
 const routes = [
   {
@@ -235,6 +234,11 @@ const routes = [
     path: '/orderend',
     name: 'orderend',
     component: OrderEnd,
+  },
+  {
+    path: '/mypage/edit',
+    name: 'MyPageEdit',
+    component: MyPageEdit
   }
   
 ]

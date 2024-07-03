@@ -6,7 +6,7 @@
         </div>
         <div class="row justify-content-center">
             <div class="sign_up_small_header_text">회원 정보 입력</div>
-            <div class="sign_up_small_header_text_detail">필수 입력</div>
+            <div class="sign_up_small_header_text_detail"></div>
         </div>
         <div>
             <div class="row justify-content-center">
@@ -14,14 +14,12 @@
                     <div class="sign_up_left_text">이메일</div>
                 </div>
                 <div class="col sign_up_middle">
-                    <input class="sign_up_input" type="text" placeholder="이메일을 입력하세요" v-model="userEmail" v-if="userType=='local'">
-                    <input class="sign_up_input" type="text" placeholder="이메일을 입력하세요" v-model="userEmail" v-if="userType!='local'" disabled>
+                    <input class="sign_up_input" type="text" placeholder="이메일을 입력하세요" v-model="user.user_email" disabled>
                 </div>
                 <div class="col sign_up_right">
-                    <button class="sign_up_little_button" @click="emailDuplicateCheck()">중복확인</button>
                 </div>
             </div>
-            <div class="row justify-content-center sign_up_emptycol" v-if="userType=='local'">
+            <div class="row justify-content-center sign_up_emptycol" v-if="user.user_type=='local'">
                 <div class="col sign_up_left"></div>
                 <div class="col sign_up_middle">
                     <div class="sign_up_little_text sign_up_red" v-if="!userEmailVerify">올바르지 않은 이메일입니다.</div>
@@ -29,7 +27,7 @@
                 <div class="col sign_up_right"></div>
             </div>
 
-            <div class="row justify-content-center" v-if="userType=='local'">
+            <div class="row justify-content-center" v-if="user.user_type=='local'">
                 <div class="col sign_up_left">
                     <div class="sign_up_left_text">비밀번호</div>
                 </div>
@@ -39,7 +37,7 @@
                 <div class="col sign_up_right">
                 </div>
             </div>
-            <div class="row sign_up_emptycol justify-content-center" v-if="userType=='local'">
+            <div class="row sign_up_emptycol justify-content-center" v-if="user.user_type=='local'">
                 <div class="col sign_up_left"></div>
                 <div class="col sign_up_middle">
                     <div class="sign_up_little_text sign_up_red" v-if="!userPasswordVerify">올바르지 않은 비밀번호입니다.</div>
@@ -47,7 +45,7 @@
                 <div class="col sign_up_right"></div>
             </div>
         
-            <div class="row justify-content-center" v-if="userType=='local'">
+            <div class="row justify-content-center" v-if="user.user_type=='local'">
                 <div class="col sign_up_left">
                     <div class="sign_up_left_text">비밀번호 확인</div>
                 </div>
@@ -69,7 +67,7 @@
                     <div class="sign_up_left_text">이름</div>
                 </div>
                 <div class="col sign_up_middle">
-                    <input class="sign_up_input" type="text" placeholder="이름을 입력하세요" v-model="userName">
+                    <input class="sign_up_input" type="text" placeholder="이름을 입력하세요" v-model="user.user_name">
                 </div>
                 <div class="col sign_up_right">
                 </div>
@@ -87,7 +85,7 @@
                     <div class="sign_up_left_text">닉네임</div>
                 </div>
                 <div class="col sign_up_middle">
-                    <input class="sign_up_input" type="text" placeholder="닉네임을 입력하세요" v-model="userNickname">
+                    <input class="sign_up_input" type="text" placeholder="닉네임을 입력하세요" v-model="user.user_nickname">
                 </div>
                 <div class="col sign_up_right">
                 </div>
@@ -104,7 +102,7 @@
 
             <div class="row justify-content-center">
                 <div class="sign_up_small_header_text">개인 정보 입력</div>
-                <div class="sign_up_small_header_text_detail2">선택 입력</div>
+                <div class="sign_up_small_header_text_detail2"></div>
             </div>
 
             <div class="row justify-content-center">
@@ -112,7 +110,7 @@
                     <div class="sign_up_left_text">주소</div>
                 </div>
                 <div class="col sign_up_middle">
-                    <input class="sign_up_input" type="text" v-model="userAddr1" placeholder="오른쪽 버튼으로 주소를 검색하세요" disabled>
+                    <input class="sign_up_input" type="text" v-model="user.user_addr1" placeholder="오른쪽 버튼으로 주소를 검색하세요" disabled>
                 </div>
                 <div class="col sign_up_right">
                     <button class="sign_up_little_button" @click="zipload();">검색</button>
@@ -127,7 +125,7 @@
                     <div class="sign_up_left_text">상세 주소</div>
                 </div>
                 <div class="col sign_up_middle">
-                    <input class="sign_up_input" type="text" placeholder="상세 주소를 입력하세요" v-model="userAddr2">
+                    <input class="sign_up_input" type="text" placeholder="상세 주소를 입력하세요" v-model="user.user_addr2">
                 </div>
                 <div class="col sign_up_right">
                 </div>
@@ -143,9 +141,8 @@
             <div class="row justify-content-center" style="margin-bottom:200px;">
                 <div class="d-flex justify-content-center">
                     <button class="sign_up_button">취소</button>
-                    <button class="sign_up_button_last" @click="signUp();">
-                        <span v-if="userType=='local'">인증 요청</span>
-                        <span v-if="userType!='local'">회원가입</span>
+                    <button class="sign_up_button_last" @click="editUser();">
+                        정보 수정
                     </button>
                 </div>
             </div>
@@ -155,76 +152,50 @@
 </template>
 
 <script>
-import { firebaseApp } from "../../util/firebase";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 export default{
     data(){
         return {
-            userType: "",
-            userEmail: "",
-            userPassword: "",
-            userPassword2: "",
-            userName: "",
-            userNickname: "",
-            userAddr1: "",
-            userAddr2: "",
+            user: {},
             userEmailVerify: true,
             userPasswordVerify: true,
             userNameVerify: true,
             userNicknameVerify: true,
             userEmailDuplicateCheck: false,
-            user: {}
         }
     },
     mounted(){
-      this.userType = this.$route.query.type;  
-      if (this.userType != "local"){
-        this.userEmail = this.$route.query.email;  
-      }
     },
     async created(){
         this.user = await this.$verifiedUser();
-        if (this.user){
-            alert("로그인 상태입니다. 메인 페이지로 이동합니다.")
+        console.log(this.user);
+        if (!this.user){
+            alert("로그인 상태가 아닙니다. 메인 페이지로 이동합니다.")
             this.$router.push({path: '/'});   
         }
     },
     methods:{
         // 회원가입 정보 검증
         verifyUser(){
-            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
             if (this.userType == 'local'){
-                if (this.userEmail == "" || !emailRegex.test(this.userEmail) || this.userEmail.length > 100){
-                    this.userEmailVerify = false;
-                }
-                else{
-                    this.userEmailVerify = true;
-                }
-                if (this.userPassword != this.userPassword2 || this.userPassword == "" || this.userPassword.length < 8 || this.userPassword.length > 30){
-                    this.userPasswordVerify = false;
-                }
-                else{
-                    this.userPasswordVerify = true;
-                }
-                if (this.userName == "" || this.userName.length < 2 || this.userName.length > 12){
+                if (this.user.user_name == "" || this.user.user_name.length < 2 || this.user.user_name.length > 12){
                     this.userNameVerify = false;
                 }
                 else{
                     this.userNameVerify = true;
                 }
-                if (this.userNickname == "" || this.userNickname.length < 2 || this.userNickname.length > 12){
+                if (this.user.user_nickname == "" || this.user.user_nickname.length < 2 || this.user.user_nickname.length > 12){
                     this.userNicknameVerify = false;
                 }
                 else{
                     this.userNicknameVerify = true;
                 }
-                return this.userEmailVerify && this.userPasswordVerify && this.userNameVerify && this.userNicknameVerify && this.userEmailDuplicateCheck;
+                return this.userEmailVerify && this.userPasswordVerify && this.userNameVerify && this.userNicknameVerify
             }
             else{
-                if (this.userName == "" || this.userName.length < 2 || this.userName.length > 12){
+                if (this.user.user_name == "" || this.user.user_name.length < 2 || this.user.user_name.length > 12){
                     this.userNameVerify = false;
                 }
-                if (this.userNickname == "" || this.userNickname.length < 2 || this.userNickname.length > 12){
+                if (this.user.user_nickname == "" || this.user.user_nickname.length < 2 || this.user.user_nickname.length > 12){
                     this.userNicknameVerify = false;
                 }    
                 return this.userNameVerify && this.userNicknameVerify;
@@ -258,75 +229,37 @@ export default{
                             extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                         }
                     }
-                    this.userAddr1 = addr + ' ' + extraAddr;
+                    this.user.user_addr1 = addr + ' ' + extraAddr;
                     this.zipinput = true;
                 }
             }).open();
         },
-        async signUp(){
+        async editUser(){
             try{
                 if (this.verifyUser()){
                     const requestBody = {
-                        user_email: this.userEmail,
-                        user_password: this.userPassword,
-                        user_name: this.userName,
-                        user_nickname: this.userNickname,
-                        user_type: this.userType,
-                        user_addr1: this.userAddr1,
-                        user_addr2: this.userAddr2,
+                        access_token: this.$getAccessToken(),
+                        user_name: this.user.user_name,
+                        user_nickname: this.user.user_nickname,
+                        user_addr1: this.user.user_addr1,
+                        user_addr2: this.user.user_addr2,
                     }
-                    const result = await this.$api("http://localhost:9090/user/signup", requestBody, "POST");
-                    if (result.status == 200 && this.userType == 'local'){
-                        const auth = getAuth(firebaseApp);
-                        createUserWithEmailAndPassword(auth, this.userEmail, this.userPassword)
-                            .then((userCredential) => {
-                                const user = userCredential.user;
-                                console.log(user);
-                                this.$router.push({path: '/emailcheck'});
-                            })
-                            .catch((error) => {
-                                console.error(error);
-                                alert("firebase 오류입니다. 처음부터 다시 시도해 주십시오.");
-                            });
-                    }
-                    else if(result.status == 200 && this.userType != 'local'){
-                        alert("회원가입 성공");
-                        this.$router.push({path:'/'});
+                    const result = await this.$api("http://localhost:9090/user/edit", requestBody, "POST");
+                    if(result.status == 200){
+                        alert("정보 수정 성공");
+                        this.$router.push({path:'/mypage'});
                     }
                     else{
-                        alert("회원가입을 진행할 수 없습니다. 다시 시도해주세요");
+                        alert("회원 정보를 수정할 수 없습니다. 다시 시도해주세요");
                     }
                 }
             }
             catch(err){
                 console.error(err);
-                alert("회원가입을 진행할 수 없습니다. 메인 화면으로 이동합니다.");
+                alert("회원 정보를 수정할 수 없습니다. 메인 화면으로 이동합니다.");
                 this.$router.push({path:'/'});
             }
         },
-        async emailDuplicateCheck(){
-            try{
-                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
-                if (this.userEmail == "" || !emailRegex.test(this.userEmail)){
-                    alert("잘못된 로그인 양식입니다.");
-                    return;
-                }
-                const result = await this.$api("http://localhost:9090/user/emailverify", {user_email: this.userEmail}, "POST");
-                if (result.status == 200){
-                    this.userEmailDuplicateCheck = true;
-                    alert("중복 처리 완료했습니다!");
-                }
-                else{
-                    this.userEmailDuplicateCheck = false;
-                    alert("이미 중복된 이메일이 존재합니다.");
-                }
-            }
-            catch(err){
-                console.error(err);
-                alert("예기치 못한 오류가 발생하였습니다.");
-            }
-            
-        }
     }
 }
 </script>

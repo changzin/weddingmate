@@ -1,8 +1,6 @@
 <template>
   <div>
     <MateHeader />
-  
-    
       <!-- 본문  -->
       
       <div class="container main_container">
@@ -20,127 +18,11 @@
                     {{ star.item_name }}
               </div>
             </div>
-            <!-- <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
-              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div> -->
-            <!-- <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
-              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div> -->
-            <!-- <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
-              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div> -->
-            <!-- <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
-              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div> -->
-            <!-- <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
-              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
-                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div> -->
-            <!-- <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
-              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div> -->
+            
         </div>
         </div>
-        <!-- <div class="main_best_studio_text">
-            베스트 스튜디오
-        </div> -->
-        <!-- <div class="row justify-content-center">
-            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
-              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
-                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
-                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box" @click="$router.push({path: '/productdetail'})">
-              <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
-                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
-                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
-                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-            <div class="main_card_box2" @click="$router.push({path: '/productdetail'})">
-                <img src="https://via.placeholder.com/325x325" alt="beststudioimage1" class="img-fluid">
-                <div class="main_card_title">
-                    아아 이것은 제목이란 것이다..fdsgfdgfgdfgfdg2줄까지 가능 ㄹㅇㅎㄹㅇㅎㅇㅀㅇㄹ 
-                </div>
-            </div>
-        </div> -->
-
     </div>
-      <!-- 푸터 -->
-      <footer class="common__footer">
-        <div class="common__footer-content">
-          <nav class="common__footer-nav">
-            <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-            <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-            <a href="#">제휴문의</a> |
-            <a href="#">광고문의</a>
-          </nav>
-          <div class="common__footer-details">
-            <p style="margin-bottom: 0px">
-              (주)웨딩메이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-              02-123-1234 팩스: 02-111-2222
-            </p>
-  
-            <p>
-              해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-              민원담당자에게 있습니다. 민원담당자: 강문정
-            </p>
-          </div>
-        </div>
-      </footer>
+    <MateFooter />
     </div>
   </template>
   
@@ -179,22 +61,20 @@
       // 본문
       // 베스트 상품 가져오기 
 
-        async showBestItem(){
-            const requestBody = {}
-            console.log(requestBody);
-            await this.$api("/bestItem",requestBody,"GET")
-            this.$router.push({path: "/"});
+      async showBestItem(){
+        try{
+          const requestBody = {}
+          console.log(requestBody);
+          await this.$api("/bestItem",requestBody,"GET")
 
-            //전송한 아이템 가져오기 
-            const result = await this.$api(`http://localhost:9090/bestItem`)
-            this.best_item = result.best_item;
-            // this.image = result.image;
-          console.log("bestitem",this.best_item);
-          }
-
-
-      //클릭 시 아이템 디테일의 스튜디오 카테고리를 보여주기 
-      
+          //전송한 아이템 가져오기 
+          const result = await this.$api(`http://localhost:9090/bestItem`)
+          this.best_item = result.best_item;
+        }
+        catch(err){
+          console.error(err);
+        }
+      }
     }
   }
   </script>

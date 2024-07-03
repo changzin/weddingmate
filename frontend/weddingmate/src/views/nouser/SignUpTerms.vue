@@ -65,6 +65,7 @@
             </div>
         </div>
     </div>
+    <MateFooter />
 </template>
 
 <script>

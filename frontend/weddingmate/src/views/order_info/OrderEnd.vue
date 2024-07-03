@@ -71,7 +71,7 @@
       </footer>
     </div>
   </template>
-  
+  <MateFooter />
   <script>
   export default {
     data() {

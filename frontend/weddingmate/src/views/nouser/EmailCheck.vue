@@ -16,9 +16,8 @@
                 <div class="sign_up_header_text" style="font-size: 16px; margin-bottom: 100px;">이메일 링크를 클릭해주세요!</div>
             </div>
         </div>
-        
     </div>
-    
+    <MateFooter />
 </template>
 
 <script>

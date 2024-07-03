@@ -158,24 +158,29 @@ export default {
   methods: {
     // 멤버 정보 받아오기
     async getMemberList(){
-      // URL에 파라미터를 추가한다.
-      await this.$router.push({path: '/admin/memberlist', query:{page: this.page, block: this.block, mode: this.prevMode, keyword: this.prevKeyword} });
+      try{
+        // URL에 파라미터를 추가한다.
+        await this.$router.push({path: '/admin/memberlist', query:{page: this.page, block: this.block, mode: this.prevMode, keyword: this.prevKeyword} });
 
-      // 멤버 정보를 가져오기 전에 파라미터 갈무리
-      this.page = Number(this.$route.query.page);
-      this.block = this.$route.query.block;
-      this.prevMode = this.$route.query.mode;
-      this.prevKeyword = this.$route.query.keyword
-      this.page = (!this.page) ? 1 : this.page;
-      this.block = (this.block == 'T') ? this.block : 'F';
-      this.mode = (!this.mode) ? 'all' : this.mode;
-      this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
+        // 멤버 정보를 가져오기 전에 파라미터 갈무리
+        this.page = Number(this.$route.query.page);
+        this.block = this.$route.query.block;
+        this.prevMode = this.$route.query.mode;
+        this.prevKeyword = this.$route.query.keyword
+        this.page = (!this.page) ? 1 : this.page;
+        this.block = (this.block == 'T') ? this.block : 'F';
+        this.mode = (!this.mode) ? 'all' : this.mode;
+        this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
 
-      console.log(this.page, this.block, this.mode, this.prevKeyword);
-      // memberList 정보 다시 가저오고, maxPage를 맞추어준다.
-      const result = await this.$api(`http://localhost:9090/user/list?page=${this.page}&block=${this.block}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
-      this.memberList = result.memberList;
-      this.maxPage = result.maxPage;
+        // memberList 정보 다시 가저오고, maxPage를 맞추어준다.
+        const result = await this.$api(`http://localhost:9090/user/list?page=${this.page}&block=${this.block}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
+        this.memberList = result.memberList;
+        this.maxPage = result.maxPage;
+      }
+      catch(err){
+        console.error(err);
+        alert("멤버 정보를 불러올 수 없습니다!");
+      }
     },
     // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
     async getBlockMemberList(){
@@ -231,24 +236,36 @@ export default {
     },
     // 유저 차단 
     async blockUser(member, user_id){
-      const accessToken = this.$getAccessToken();
-      const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user_id, access_token: accessToken}, "POST");
-      if (result.status == 200){
-        member.user_block = "T";
-      }
-      else{
-        console.log("error");
+      try{
+        const accessToken = this.$getAccessToken();
+        const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user_id, access_token: accessToken}, "POST");
+        if (result.status == 200){
+          member.user_block = "T";
+        }
+        else{
+          alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+        }
+      } 
+      catch(err){
+        console.error(err);
+        alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
       }
     },
     // 유저 차단 해제
     async unblockUser(member, user_id){
-      const accessToken = this.$getAccessToken();
-      const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user_id, access_token: accessToken}, "POST");
-      if (result.status == 200){
-        member.user_block = "F";
+      try{
+        const accessToken = this.$getAccessToken();
+        const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user_id, access_token: accessToken}, "POST");
+        if (result.status == 200){
+          member.user_block = "F";
+        }
+        else{
+          alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+        }
       }
-      else{
-        console.log("error");
+      catch(err){
+        console.error(err);
+        alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
       }
     },
   }

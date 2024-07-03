@@ -149,28 +149,33 @@ export default {
   },
   mounted(){      
       this.getReviewList();
-      
   },
   methods: {
     // 멤버 정보 받아오기
     async getReviewList(){
-      // URL에 파라미터를 추가한다.
-      await this.$router.push({path: '/admin/review', query:{page: this.page, reported: this.reported, mode: this.prevMode, keyword: this.prevKeyword} });
+      try{
+        // URL에 파라미터를 추가한다.
+        await this.$router.push({path: '/admin/review', query:{page: this.page, reported: this.reported, mode: this.prevMode, keyword: this.prevKeyword} });
 
-      // 멤버 정보를 가져오기 전에 파라미터 갈무리
-      this.page = Number(this.$route.query.page);
-      this.reported = this.$route.query.reported;
-      this.prevMode = this.$route.query.mode;
-      this.prevKeyword = this.$route.query.keyword
-      this.page = (!this.page) ? 1 : this.page;
-      this.reported = (this.reported == 'T') ? this.reported : 'F';
-      this.mode = (!this.mode) ? 'all' : this.mode;
-      this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
+        // 멤버 정보를 가져오기 전에 파라미터 갈무리
+        this.page = Number(this.$route.query.page);
+        this.reported = this.$route.query.reported;
+        this.prevMode = this.$route.query.mode;
+        this.prevKeyword = this.$route.query.keyword
+        this.page = (!this.page) ? 1 : this.page;
+        this.reported = (this.reported == 'T') ? this.reported : 'F';
+        this.mode = (!this.mode) ? 'all' : this.mode;
+        this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
 
-      // reviewList 정보 다시 가저오고, maxPage를 맞추어준다.
-      const result = await this.$api(`http://localhost:9090/review/adminlist?page=${this.page}&reported=${this.reported}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
-      this.reviewList = result.reviewList;
-      this.maxPage = result.maxPage;
+        // reviewList 정보 다시 가저오고, maxPage를 맞추어준다.
+        const result = await this.$api(`http://localhost:9090/review/adminlist?page=${this.page}&reported=${this.reported}&mode=${this.mode}&keyword=${this.prevKeyword}`);      
+        this.reviewList = result.reviewList;
+        this.maxPage = result.maxPage;
+      }
+      catch(err){
+        console.error(err);
+        alert("서버 문제로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+      }
     },
     // 차단 회원 불러오기(현재 리스트에서 필터만 하면 간단함)
     async getReportedReviewList(){
@@ -225,11 +230,17 @@ export default {
       this.getReviewList();
     },
     async deleteReview(review_id){
-      const accessToken = this.$getAccessToken();
-      console.log("accessToken", accessToken);
-      await this.$api(`http://localhost:9090/review/admindelete`, {review_id: review_id, access_token: accessToken}, "POST");
-      this.page = 1;
-      await this.getReviewList();
+      try{
+        const accessToken = this.$getAccessToken();
+        console.log("accessToken", accessToken);
+        await this.$api(`http://localhost:9090/review/admindelete`, {review_id: review_id, access_token: accessToken}, "POST");
+        this.page = 1;
+        await this.getReviewList();
+      }
+      catch(err){
+        console.error(err);
+        alert("서버 문제로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+      }
     },
     makeStar(num){
       let star = "";

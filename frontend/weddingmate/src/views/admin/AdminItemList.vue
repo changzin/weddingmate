@@ -157,23 +157,29 @@ export default {
   methods: {
     // 멤버 정보 받아오기
     async getItemList(){
-      // URL에 파라미터를 추가한다.
-      await this.$router.push({path: `/admin/itemlist`, query:{page: this.page, keyword: this.prevKeyword, itemType: this.prevItemType }});
+      try{
+        // URL에 파라미터를 추가한다.
+        await this.$router.push({path: `/admin/itemlist`, query:{page: this.page, keyword: this.prevKeyword, itemType: this.prevItemType }});
 
-      // 멤버 정보를 가져오기 전에 파라미터 갈무리
-      this.page = Number(this.$route.query.page);
-      this.prevItemType = this.$route.query.itemType;
-      this.prevKeyword = this.$route.query.keyword
+        // 멤버 정보를 가져오기 전에 파라미터 갈무리
+        this.page = Number(this.$route.query.page);
+        this.prevItemType = this.$route.query.itemType;
+        this.prevKeyword = this.$route.query.keyword
 
-      this.page = (!this.page) ? 1 : this.page;
-      this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
-      this.prevItemType = (!this.prevItemType) ? "all" : this.prevItemType;
-      this.itemType = this.prevItemType;
+        this.page = (!this.page) ? 1 : this.page;
+        this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
+        this.prevItemType = (!this.prevItemType) ? "all" : this.prevItemType;
+        this.itemType = this.prevItemType;
 
-      // reviewList 정보 다시 가저오고, maxPage를 맞추어준다.
-      const result = await this.$api(`/product/list/${this.prevItemType}?page=${this.page}&keyword=${this.prevKeyword}`);      
-      this.itemList = result.data;
-      this.maxPage = result.maxPage;
+        // reviewList 정보 다시 가저오고, maxPage를 맞추어준다.
+        const result = await this.$api(`/product/list/${this.prevItemType}?page=${this.page}&keyword=${this.prevKeyword}`);      
+        this.itemList = result.data;
+        this.maxPage = result.maxPage;
+      }
+      catch(err){
+        console.error(err);
+        alert("서버 문제로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+      }
     },
     async search(){
       this.prevKeyword = this.keyword;
