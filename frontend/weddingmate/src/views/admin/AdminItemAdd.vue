@@ -314,10 +314,8 @@ export default {
       itemDetailImageExt: null,
     }
   },
-  mounted(){      
-      
-  },
   methods: {
+    // 상품의 1옵션은 삭제가 불가하기 때문에, lock을 을 걸어서 주는 모습이다.
     changeItemType(){
       this.itemDetailList = [];
       if (!(this.itemType=='giving_mechine' || this.itemType=='giving_package' || this.itemType=='video' || this.itemType == 'mc' || this.itemType=='letter')){
@@ -334,11 +332,13 @@ export default {
           item_detail_flower_life: '',
           item_detail_quality: '',
           item_detail_kind: '',
+          // 삭제가 불가능한 첫 옵션 lock 설정
           item_detail_lock: true
         }
       );
       }
     },
+    // 추가적인 옵션을 생성할 때 실행되는 함수이다.
     addDetailList(){
       this.itemDetailList.push(
         {
@@ -356,103 +356,124 @@ export default {
         }
       );
     },
+    // 옵션 삭제 (인덱스)
     async deleteItemDetail(index){
       await this.itemDetailList.splice(index, 1);
     },
     async createItem(){
-
-      const requestBody = {
-        access_token: this.$getAccessToken(),
-        item_type: this.itemType,
-        item_name: this.itemName,
-        item_factory_name: this.itemFactoryName,
-        item_price: this.itemPrice,
-        item_discount_rate: this.itemDiscountRate,
-        item_detail_list: this.itemDetailList,
-        item_tn_image: this.itemTnImage,
-        item_tn_image_ext: this.itemTnImageExt,
-        item_detail_image: this.itemDetailImage,
-        item_detail_image_ext: this.itemDetailImageExt,
-        item_main_image: this.itemMainImage,
-        item_main_image_ext: this.itemMainImageExt
+      try{
+        const requestBody = {
+          access_token: this.$getAccessToken(),
+          item_type: this.itemType,
+          item_name: this.itemName,
+          item_factory_name: this.itemFactoryName,
+          item_price: this.itemPrice,
+          item_discount_rate: this.itemDiscountRate,
+          item_detail_list: this.itemDetailList,
+          item_tn_image: this.itemTnImage,
+          item_tn_image_ext: this.itemTnImageExt,
+          item_detail_image: this.itemDetailImage,
+          item_detail_image_ext: this.itemDetailImageExt,
+          item_main_image: this.itemMainImage,
+          item_main_image_ext: this.itemMainImageExt
+        }
+        const result = await this.$api("/product/add", requestBody, "POST");
+        if (result.status == 200){
+          alert("상품을 정상적으로 등록하였습니다.");
+        }
+        else{
+          alert("에러로 상품을 등록하지 못했습니다.");
+        }
+        this.$router.push({path: "/admin/itemlist"});
       }
-      const result = await this.$api("/product/add", requestBody, "POST");
-      if (result.status == 200){
-        alert("상품을 정상적으로 등록하였습니다.");
+      catch(err){
+        console.error(err);
       }
-      else{
-        alert("에러로 상품을 등록하지 못했습니다.");
-      }
-      this.$router.push({path: "/admin/itemlist"});
     },
     async changeTnImage(file){
-      this.itemTnImage = file;
-      const files = event.target?.files
-      if (files.length > 0){
-        const file = files[0];
+      try{
+        this.itemTnImage = file;
+        const files = event.target?.files
+        if (files.length > 0){
+          const file = files[0];
 
-        // 확장자 추출하는 부분이요
-        const filename = files[0].name;
-        var _lastDot = filename.lastIndexOf('.');
-        this.itemTnImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+          // 확장자 추출하는 부분이요
+          const filename = files[0].name;
+          var _lastDot = filename.lastIndexOf('.');
+          this.itemTnImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
 
-        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
-        const reader = new FileReader() 
-  
-        reader.onload = (e) => {
-          this.itemTnImage = e.target.result 
-        } 
-        // ref previewImage 값 변경
-        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
-        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
-        this.itemTnImage = await reader.readAsDataURL(file);
+          // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+          const reader = new FileReader() 
+    
+          reader.onload = (e) => {
+            this.itemTnImage = e.target.result 
+          } 
+          // ref previewImage 값 변경
+          // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+          // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+          this.itemTnImage = await reader.readAsDataURL(file);
+        }
       }
+      catch(err){
+        console.error(err);
+      }
+      
     },
     async changeDetailImage(file){
-      this.itemDetailImage = file;
-      const files = event.target?.files
-      if (files.length > 0){
-        const file = files[0];
+      try{
+        this.itemDetailImage = file;
+        const files = event.target?.files
+        if (files.length > 0){
+          const file = files[0];
 
-        // 확장자 추출하는 부분이요
-        const filename = files[0].name;
-        var _lastDot = filename.lastIndexOf('.');
-        this.itemDetailImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+          // 확장자 추출하는 부분이요
+          const filename = files[0].name;
+          var _lastDot = filename.lastIndexOf('.');
+          this.itemDetailImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
 
-        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
-        const reader = new FileReader() 
-  
-        reader.onload = (e) => {
-          this.itemDetailImage = e.target.result 
-        } 
-        // ref previewImage 값 변경
-        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
-        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
-        this.itemDetailImage = await reader.readAsDataURL(file);
+          // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+          const reader = new FileReader() 
+    
+          reader.onload = (e) => {
+            this.itemDetailImage = e.target.result 
+          } 
+          // ref previewImage 값 변경
+          // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+          // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+          this.itemDetailImage = await reader.readAsDataURL(file);
+        }
+      }
+      catch(err){
+        console.error(err);
       }
     },
     async changeMainImage(file){
-      this.itemMainImage = file;
-      const files = event.target?.files
-      if (files.length > 0){
-        const file = files[0];
+      try{
+        this.itemMainImage = file;
+        const files = event.target?.files
+        if (files.length > 0){
+          const file = files[0];
 
-        // 확장자 추출하는 부분이요
-        const filename = files[0].name;
-        var _lastDot = filename.lastIndexOf('.');
-        this.itemMainImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+          // 확장자 추출하는 부분이요
+          const filename = files[0].name;
+          var _lastDot = filename.lastIndexOf('.');
+          this.itemMainImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
 
-        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
-        const reader = new FileReader() 
-  
-        reader.onload = (e) => {
-          this.itemMainImage = e.target.result 
-        } 
-        // ref previewImage 값 변경
-        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
-        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
-        this.itemMainImage = await reader.readAsDataURL(file);
-      }   
+          // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+          const reader = new FileReader() 
+    
+          reader.onload = (e) => {
+            this.itemMainImage = e.target.result 
+          } 
+          // ref previewImage 값 변경
+          // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+          // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+          this.itemMainImage = await reader.readAsDataURL(file);
+        }
+      }
+      catch(err){
+        console.error(err);
+      }
     }
   }
 }

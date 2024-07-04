@@ -99,7 +99,6 @@ exports.kakaoPay = async(req, res) =>{
                     "Content-Type": 'application/json'
                 }
             });
-        console.log(result.data);
         responseBody = {
             status: 200,
             data: result.data
@@ -114,4 +113,120 @@ exports.kakaoPay = async(req, res) =>{
         };
         res.json(responseBody);
     }    
+}
+
+exports.analysis = async (req, res) =>{
+    try{
+        let responseBody = {};
+        let result = "";
+        let query = "";
+
+        // 쿼리문에 들어갈 현재 날짜. 연과 월을 따로 구했다.
+        const date = new Date();
+        const year = date.getFullYear(); 
+        const month = ((date.getMonth()+1 < 10) ? "0" : "") + (date.getMonth() + 1);
+        
+
+        // 현재 달의 날짜별 판매 정보 불러오기
+        query = "SELECT DATE_FORMAT(order_info_end_date, '%Y-%m-%d') AS date, COUNT(*) AS daily_pay_amount, SUM(order_info_price) AS daily_profit FROM order_info WHERE order_info_end_date LIKE ? GROUP BY DATE_FORMAT(order_info_end_date, '%Y-%m-%d') ORDER BY DATE_FORMAT(order_info_end_date, '%Y-%m-%d')";
+        result = await db(query, [`${year}-${month}%`]);
+
+        // 그래프를 띄우기 위한 정보 가공
+        let dayTableData = [
+            ['날짜', '판매량', '판매액']
+        ];
+        let dayLineData = [
+            ['날짜', '판매액']
+        ];
+        for(let i in result){
+            dayTableData.push([result[i]['date'], result[i]['daily_pay_amount'], result[i]['daily_profit']]);
+            dayLineData.push([result[i]['date'], result[i]['daily_profit']]);
+
+        }
+
+        // 올해의 월별 판매 정보 불러오기
+        query = "SELECT DATE_FORMAT(order_info_end_date, '%Y-%m') AS date, COUNT(*) AS monthly_pay_amount, SUM(order_info_price) AS monthly_profit FROM order_info WHERE order_info_end_date like ? GROUP BY DATE_FORMAT(order_info_end_date, '%Y-%m') ORDER BY DATE_FORMAT(order_info_end_date, '%Y-%m')";
+        result = await db(query, [`${year}%`]);
+
+        // 그래프를 띄우기 위한 정보 가공
+        let monthTableData = [
+            ['날짜', '판매량', '판매액']
+        ];
+        let monthLineData = [
+            ['날짜', '판매액']
+        ];
+        for(let i in result){
+            monthTableData.push([result[i]['date'], result[i]['monthly_pay_amount'], result[i]['monthly_profit']]);
+            monthLineData.push([result[i]['date'], result[i]['monthly_profit']]);
+        }
+
+        // 최근 10년 간의 판매 정보 불러오기
+        query = "SELECT DATE_FORMAT(order_info_end_date, '%Y') AS date, COUNT(*) AS yearly_pay_amount, SUM(order_info_price) AS yearly_profit FROM order_info WHERE YEAR(order_info_end_date) > ? GROUP BY DATE_FORMAT(order_info_end_date, '%Y') ORDER BY DATE_FORMAT(order_info_end_date, '%Y')";
+        result = await db(query, [year-10]);
+
+        // 그래프를 띄우기 위한 정보 가공
+        let yearTableData = [
+            ['날짜', '판매량', '판매액']
+        ];
+        let yearLineData = [
+            ['날짜', '판매액']
+        ]
+        for(let i in result){
+            yearTableData.push([result[i]['date'], result[i]['yearly_pay_amount'], result[i]['yearly_profit']]);
+            yearLineData.push([result[i]['date'], result[i]['yearly_profit']])
+        }
+
+        // 전체 상품 정보 가져오기
+        query = "SELECT SUM(box_item.box_item_total_price) AS total_sale_price, SUM(box_item.box_item_quantity) AS total_sale_amount,item.item_name, item.item_factory_name, item.item_price, item.item_star_rating, item.item_review_count FROM box_item, box, item_detail, item where box.box_id = box_item.box_id AND box_item.item_detail_id=item_detail.item_detail_id AND item_detail.item_id = item.item_id AND box.box_ordered='T' GROUP BY item.item_id ORDER BY total_sale_price";
+        result = await db(query);
+
+        // 그래프를 띄우기 위한 정보 가공
+        let itemTableData = [
+            ['상품명', '회사', '판매 금액', '판매 수량', '가격', '별점', '리뷰 수']
+        ];
+        for(let i in result){
+            itemTableData.push([result[i]['item_name'], result[i]['item_factory_name'], result[i]['total_sale_price'], result[i]['total_sale_amount'], result[i]['item_price'], result[i]['item_star_rating'], result[i]['item_review_count']]);
+        }
+
+        query = "SELECT item_detail.item_detail_type, SUM(box_item.box_item_total_price) AS total_sale_price, SUM(box_item.box_item_quantity) AS total_sale_amount, SUM(item.item_review_count) AS review_count FROM box_item, box, item_detail, item where box.box_id = box_item.box_id AND box_item.item_detail_id=item_detail.item_detail_id AND item_detail.item_id = item.item_id AND box.box_ordered='T' GROUP BY item_detail.item_detail_type ORDER BY total_sale_price DESC";
+        result = await db(query);
+
+        // 상품 카테고리별 정보 불러오기
+        let categoryPiePriceData = [
+            ['상품 종류', '판매 금액']
+        ];
+        let categoryPieAmountData = [
+            ['상품 종류', '판매 수량']
+        ];
+        let categoryPieReviewData = [
+            ['상품 종류', '판매 수량']
+        ];
+        for(let i in result){
+            categoryPiePriceData.push([result[i]['item_detail_type'], result[i]['total_sale_price']]);
+            categoryPieAmountData.push([result[i]['item_detail_type'], result[i]['total_sale_amount']]);
+            categoryPieReviewData.push([result[i]['item_detail_type'], result[i]['review_count']]);
+        }
+
+        res.json({
+            status: 200,
+            day_table_data: dayTableData,
+            month_table_data: monthTableData,
+            year_table_data: yearTableData,
+            day_line_data: dayLineData,
+            month_line_data: monthLineData,
+            year_line_data: yearLineData,
+            item_table_data: itemTableData,
+            category_pie_price_data: categoryPiePriceData,
+            category_pie_amount_data: categoryPieAmountData,
+            category_pie_review_data: categoryPieReviewData
+        })
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status : 400,
+            message : "오류로 인해 데이터에 접근할 수 없습니다."
+        };
+        res.json(responseBody);
+    }
 }

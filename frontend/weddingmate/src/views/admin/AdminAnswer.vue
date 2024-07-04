@@ -92,7 +92,7 @@
                     </div>
                     <div class="admin_answer_row_large">
                     <label class="admin_answer_label">이미지</label>
-                    <a><div class="admin_answer_image"><img src="" alt="" height="300" width="300"></div></a>
+                    <a><div class="admin_answer_image"><img :src="this.$imageFileFormat(qna.qna_image_path)" alt="qna_image" height="300" width="300"></div></a>
                     </div>
                     <div class="admin_answer_row_large">
 
@@ -146,55 +146,72 @@ export default{
   },
   methods: {
     async getQna(){
-      const qnaId = this.$route.params.qnaid;
-      this.accessToken = this.$getAccessToken();
+      try{
+        const qnaId = this.$route.params.qnaid;
+        this.accessToken = this.$getAccessToken();
 
-      const result = await this.$api("/qna/admindetail", {access_token: this.accessToken, qna_id: qnaId}, "POST");
-      if (result.status == 200 && result.qna_id){
-        this.qna = result;
-        if (result.answer_id){
+        const result = await this.$api("/qna/admindetail", {access_token: this.accessToken, qna_id: qnaId}, "POST");
+        if (result.status == 200 && result.qna_id){
+          this.qna = result;
+          if (result.answer_id){
 
-          // 답변이 있다면, 수정 버튼을 눌러야 수정할 수 있도록 만든다.
-          this.canUpdate = false;
+            // 답변이 있다면, 수정 버튼을 눌러야 수정할 수 있도록 만든다.
+            this.canUpdate = false;
 
-          this.answerId = result.answer_id;
-          this.answerContent = result.answer_content;
-          this.answerDate = result.answer_date;
-          this.answerAdminId = result.admin_id;
+            this.answerId = result.answer_id;
+            this.answerContent = result.answer_content;
+            this.answerDate = result.answer_date;
+            this.answerAdminId = result.admin_id;
+          }
+        }
+        else{
+          // 에러 발생
+          console.log("error!");
         }
       }
-      else{
-        // 에러 발생
-        console.log("error!");
+      catch(err){
+        console.error(err);
+        alert("QnA를 불러올 수 없습니다.")
       }
-      
     },
     async addAnswer(){
-      const result = await this.$api("/answer/add", {access_token: this.accessToken, qna_id: this.qna.qna_id, answer_content: this.answerContent}, "POST");
-      if (result.status == 200){
-          this.answerId = result.answer_id;
-          this.answerContent = result.answer_content;
-          this.answerDate = result.answer_date;
-          this.answerAdminId = result.admin_id;        
+      try{
+        const result = await this.$api("/answer/add", {access_token: this.accessToken, qna_id: this.qna.qna_id, answer_content: this.answerContent}, "POST");
+        if (result.status == 200){
+            this.answerId = result.answer_id;
+            this.answerContent = result.answer_content;
+            this.answerDate = result.answer_date;
+            this.answerAdminId = result.admin_id;        
+        }
+        else{
+          // 에러 발생
+          alert("답변을 추가할 수 없습니다. 다시 시도해주세요.")
+        }
       }
-      else{
-        // 에러 발생
-        console.log("error!");
+      catch(err){
+        console.error(err);
+        alert("예기치 못한 에러로 답변을 추가할 수 없습니다.")
       }
     },
     async updateAnswer(){
-      const result = await this.$api("/answer/update", {access_token: this.accessToken, answer_id: this.answerId, answer_content: this.answerContent}, "POST");
-      if (result.status == 200){
-          this.answerId = result.answer_id;
-          this.answerContent = result.answer_content;
-          this.answerDate = result.answer_date;
-          this.answerAdminId = result.admin_id;        
+      try{
+        const result = await this.$api("/answer/update", {access_token: this.accessToken, answer_id: this.answerId, answer_content: this.answerContent}, "POST");
+        if (result.status == 200){
+            this.answerId = result.answer_id;
+            this.answerContent = result.answer_content;
+            this.answerDate = result.answer_date;
+            this.answerAdminId = result.admin_id;        
 
-          this.canUpdate = false;
+            this.canUpdate = false;
+        }
+        else{
+          // 에러 발생
+          alert("답변을 수정할 수 없습니다. 다시 시도해주세요.")
+        }
       }
-      else{
-        // 에러 발생
-        console.log("error!");
+      catch(err){
+        console.error(err);
+        alert("예기치 못한 에러로 답변을 수정할 수 없습니다.")
       }
     }
   }

@@ -375,120 +375,146 @@ methods: {
   },
   // 옵션 삭제를 눌렀을 때, 배열의 인덱스를 받아 배열의 인덱스를 삭제한다.
   async deleteItemDetail(index){
-    this.itemDetailDeletedList.push(this.itemDetailList[index]['item_detail_id']);
-    this.itemDetailList.splice(index, 1);
+    try{
+      this.itemDetailDeletedList.push(this.itemDetailList[index]['item_detail_id']);
+      this.itemDetailList.splice(index, 1);
+    }
+    catch(err){
+      console.error(err);
+    }
   },
   async updateItem(){
-    const requestBody = {
-      access_token: this.$getAccessToken(),
-      item_id: this.itemId,
-      item_name: this.itemName,
-      item_factory_name: this.itemFactoryName,
-      item_price: this.itemPrice,
-      item_discount_rate: this.itemDiscountRate,
-      item_detail_list: this.itemDetailList,
+    try{
+      const requestBody = {
+        access_token: this.$getAccessToken(),
+        item_id: this.itemId,
+        item_name: this.itemName,
+        item_factory_name: this.itemFactoryName,
+        item_price: this.itemPrice,
+        item_discount_rate: this.itemDiscountRate,
+        item_detail_list: this.itemDetailList,
 
-      item_tn_image: this.itemTnImage,
-      item_tn_image_ext: this.itemTnImageExt,
-      item_detail_image: this.itemDetailImage,
-      item_detail_image_ext: this.itemDetailImageExt,
-      item_main_image: this.itemMainImage,
-      item_main_image_ext: this.itemMainImageExt,
+        item_tn_image: this.itemTnImage,
+        item_tn_image_ext: this.itemTnImageExt,
+        item_detail_image: this.itemDetailImage,
+        item_detail_image_ext: this.itemDetailImageExt,
+        item_main_image: this.itemMainImage,
+        item_main_image_ext: this.itemMainImageExt,
 
-      item_main_image_change: this.itemMainImageChange,
-      item_tn_image_change: this.itemTnImageChange,
-      item_detail_image_change: this.itemDetailImageChange,
+        item_main_image_change: this.itemMainImageChange,
+        item_tn_image_change: this.itemTnImageChange,
+        item_detail_image_change: this.itemDetailImageChange,
 
-      item_detail_deleted_list: this.itemDetailDeletedList,
+        item_detail_deleted_list: this.itemDetailDeletedList,
 
-      prev_item_main_image_path: this.prevItemMainImagePath,
-      prev_item_detail_image_path: this.prevItemDetailImagePath,
-      prev_item_tn_image_path: this.prevItemTnImagePath
+        prev_item_main_image_path: this.prevItemMainImagePath,
+        prev_item_detail_image_path: this.prevItemDetailImagePath,
+        prev_item_tn_image_path: this.prevItemTnImagePath
+      }
+      const result = await this.$api("/product/update", requestBody, "POST");
+      if (result.status == 200){
+        alert("상품 수정 완료했습니다.")
+      }
+      else{
+        alert("상품 수정 실패했습니다.")
+      }
+      this.$router.push({path: "/admin/itemlist"});
     }
-    const result = await this.$api("/product/update", requestBody, "POST");
-    if (result.status == 200){
-      alert("상품 수정 완료했습니다.")
+    catch(err){
+      console.error(err);
+      alert("예기치 못한 문제로 상품 수정을 할 수 없습니다. 다시 시도해 주세요.")
     }
-    else{
-      alert("상품 수정 실패했습니다..")
-    }
-    this.$router.push({path: "/admin/itemlist"});
   },
   /**
    * 
    * 파일이 바뀌는 예시
    */
   async changeTnImage(file){
-    this.itemTnImageChange = true;
-    this.itemTnImage = file;
-    const files = event.target?.files
-    if (files.length > 0){
-      const file = files[0];
+    try{
+      this.itemTnImageChange = true;
+      this.itemTnImage = file;
+      const files = event.target?.files
+      if (files.length > 0){
+        const file = files[0];
 
-      // 확장자 추출하는 부분이요
-      const filename = files[0].name;
-      var _lastDot = filename.lastIndexOf('.');
-      this.itemTnImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        var _lastDot = filename.lastIndexOf('.');
+        this.itemTnImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
 
-      // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
-      const reader = new FileReader() 
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader() 
 
-      reader.onload = (e) => {
-        this.itemTnImage = e.target.result 
-      } 
-      // ref previewImage 값 변경
-      // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
-      // & base64 인코딩된 스트링 데이터가 result 속성에 담김
-      this.itemTnImage = await reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          this.itemTnImage = e.target.result 
+        } 
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemTnImage = await reader.readAsDataURL(file);
+      }
+    }
+    catch(err){
+      console.error(err);
     }
   },
   async changeDetailImage(file){
-    this.itemDetailImageChange = true;
-    this.itemDetailImage = file;
-    const files = event.target?.files
-    if (files.length > 0){
-      const file = files[0];
+    try{
+      this.itemDetailImageChange = true;
+      this.itemDetailImage = file;
+      const files = event.target?.files
+      if (files.length > 0){
+        const file = files[0];
 
-      // 확장자 추출하는 부분이요
-      const filename = files[0].name;
-      var _lastDot = filename.lastIndexOf('.');
-      this.itemDetailImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        var _lastDot = filename.lastIndexOf('.');
+        this.itemDetailImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
 
-      // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
-      const reader = new FileReader() 
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader() 
 
-      reader.onload = (e) => {
-        this.itemDetailImage = e.target.result 
-      } 
-      // ref previewImage 값 변경
-      // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
-      // & base64 인코딩된 스트링 데이터가 result 속성에 담김
-      this.itemDetailImage = await reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          this.itemDetailImage = e.target.result 
+        } 
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemDetailImage = await reader.readAsDataURL(file);
+      }
+    }
+    catch(err){
+      console.error(err);
     }
   },
   async changeMainImage(file){
-    this.itemMainImageChange = true;
-    this.itemMainImage = file;
-    const files = event.target?.files
-    if (files.length > 0){
-      const file = files[0];
+    try{
+      this.itemMainImageChange = true;
+      this.itemMainImage = file;
+      const files = event.target?.files
+      if (files.length > 0){
+        const file = files[0];
 
-      // 확장자 추출하는 부분이요
-      const filename = files[0].name;
-      var _lastDot = filename.lastIndexOf('.');
-      this.itemMainImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
+        // 확장자 추출하는 부분이요
+        const filename = files[0].name;
+        var _lastDot = filename.lastIndexOf('.');
+        this.itemMainImageExt = filename.substring(_lastDot, filename.length).toLowerCase();
 
-      // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
-      const reader = new FileReader() 
+        // FileReader 객체 : 웹 애플리케이션이 데이터를 읽고, 저장하게 해줌
+        const reader = new FileReader() 
 
-      reader.onload = (e) => {
-        this.itemMainImage = e.target.result 
-      } 
-      // ref previewImage 값 변경
-      // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
-      // & base64 인코딩된 스트링 데이터가 result 속성에 담김
-      this.itemMainImage = await reader.readAsDataURL(file);
-    }   
+        reader.onload = (e) => {
+          this.itemMainImage = e.target.result 
+        } 
+        // ref previewImage 값 변경
+        // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
+        // & base64 인코딩된 스트링 데이터가 result 속성에 담김
+        this.itemMainImage = await reader.readAsDataURL(file);
+      }   
+    }
+    catch(err){
+      console.error(err);
+    }
   },
   async deleteItem(itemId){
     try{

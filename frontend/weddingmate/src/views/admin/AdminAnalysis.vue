@@ -67,13 +67,235 @@
             <div class="sidbar_header d-flex justify-content-center">
                 <div class="sidbar_header_title">판매 현황</div>
             </div>
+            <div class="d-flex justify-content-start">
+                <div style="margin-top: 50px; margin-left: 50px; font-size:23px; font-weight:bold;">품목별 판매 추이</div>
+                <div style="margin-top: 50px; margin-left: 420px; font-size:23px; font-weight:bold;">총 상품별 판매 정보</div>
+            </div>
+            <div class="d-flex justify-content-start">
+              <select @change="changePie(mode)" v-model="mode" style="margin-top:30px; margin-left:450px; width:150px; height:50px;" class="form-select">
+                <option value="price" selected>매출</option>
+                <option value="amount" @click="changePie(2)">판매량</option>
+                <option value="review" @click="changePie(3)">리뷰 갯수</option>
+              </select>
+            </div>
+            <div class="d-flex justyify-content-center">
+              <GChart
+                  type="PieChart"
+                  :data="pieChartData"
+                  :options="PieChartOptions"
+                />
+                <GChart
+                  type="Table"
+                  :data="itemTableData"
+                  :options="itemTableDataOptions"
+                  style="margin-top:-50px; margin-left: 650px; position: absolute"
+                />
+            </div>
+            <div class="d-flex justify-content-start">
+                <div style="margin-top: 50px; margin-left: 50px; font-size:23px; font-weight:bold;">이번 달 매출 분석</div>
+            </div>
+            <div class="d-flex justify-content-start">
+                <div style="margin-top: 25px; margin-left: 50px; font-size:20px; ">총 판매금액 : {{ this.$numberFormat(dayTotalPrice) }}  , 일평균 판매금액 : {{ this.$numberFormat(dayAveragePrice) }}</div>
+            </div>
+            <div
+             class="d-flex justyify-content-center">
+              <GChart
+                  type="LineChart"
+                  :data="dayLineData"
+                  :options="lineChartOptions"
+                />
+                <GChart
+                  type="Table"
+                  :data="dayTableData"
+                  :options="tableChartOptions"
+                  style="padding-top:60px; margin-left: 50px;"
+                />
+            </div>
+            <div class="d-flex justify-content-start">
+                <div style="margin-top: 50px; margin-left: 50px; font-size:23px; font-weight:bold;">올해 매출 분석</div>
+            </div>
+            <div class="d-flex justify-content-start">
+                <div style="margin-top: 25px; margin-left: 50px; font-size:20px; ">총 판매금액 : {{ this.$numberFormat(monthTotalPrice) }}  , 월평균 판매금액 : {{ this.$numberFormat(monthAveragePrice) }}</div>
+            </div>
+            <div class="d-flex justyify-content-center">
+              <GChart
+                  type="LineChart"
+                  :data="monthLineData"
+                  :options="lineChartOptions"
+                />
+                <GChart
+                  type="Table"
+                  :data="monthTableData"
+                  :options="tableChartOptions"
+                  style="padding-top:60px; margin-left: 50px;"
+                />
+            </div>
+            <div class="d-flex justify-content-start">
+                <div style="margin-top: 50px; margin-left: 50px; font-size:23px; font-weight:bold;">최근 10년간 매출 분석</div>
+            </div>
+            <div class="d-flex justify-content-start">
+                <div style="margin-top: 25px; margin-left: 50px; font-size:20px; ">총 판매금액 : {{ this.$numberFormat(yearTotalPrice) }}  , 연평균 판매금액 : {{ this.$numberFormat(yearAveragePrice) }}</div>
+            </div>
+            <div class="d-flex justyify-content-center">
+              <GChart
+                  type="LineChart"
+                  :data="yearLineData"
+                  :options="lineChartOptions"
+                />
+                <GChart
+                  type="Table"
+                  :data="yearTableData"
+                  :options="tableChartOptions"
+                  style="padding-top:60px; margin-left: 50px;"
+                />
+            </div>
         </div>
       </div>
     </div>
   </div>
     </div>
 </template>
+<script>
+import { GChart } from 'vue-google-charts'
 
+export default {
+  components: {
+    GChart
+  },
+  data () {
+    return {
+      mode: "price",
+      dayTotalPrice: 0,
+      monthTotalPrice: 0,
+      yearTotalPrice: 0,
+      dayAveragePrice: 0,
+      monthAveragePrice: 0,
+      yearAveragePrice: 0,
+      
+      dayLineData: [
+        ['날짜', '판매량'],
+        ['YYYY-MM-DD', 0],
+      ],
+      dayTableData: [
+        ['날짜', '판매량', '판매 금액'],
+        ['YYYY-MM-DD', 0, 0],
+      ],
+      monthLineData: [
+        ['날짜', '판매량'],
+        ['YYYY-MM', 0],
+      ],
+      monthTableData: [
+        ['날짜', '판매량', '판매 금액'],
+        ['YYYY-MM', 0, 0],
+      ],
+      yearLineData: [
+        ['날짜', '판매량'],
+        ['YYYY', 0],
+      ],
+      yearTableData: [
+        ['날짜', '판매량', '판매 금액'],
+        ['#', 0, 0],
+      ],
+      itemTableData:[
+        ['상품명', '회사', '판매 금액', '판매 수량', '가격', '별점', '리뷰 수'],
+        ['#', '#', '#', '#', 0, 0, 0],
+      ],
+      pieChartData:[
+        ['카테고리', '금액']
+      ],
+      categoryPiePriceData: [],
+      categoryPieAmountData: [],
+      categoryPieReviewData: [],
+      lineChartOptions: {
+        width:730,
+        height:400
+      },
+      tableChartOptions: {
+        width:500,
+        height:300
+      },
+      itemTableDataOptions: {
+        width:650,
+        height:400
+      },
+      PieChartOptions:{
+        width:600,
+        height:400
+      }
+    }
+  },
+  async created(){
+    await this.getAnalysisData();
+  },
+  methods: {
+    async getAnalysisData(){
+      try{
+        const requestBody = {
+          "access_token": this.$getAccessToken()
+        }
+        const result = await this.$api("/order/analysis", requestBody, "POST");
+        if (result.status == 200){
+          this.dayLineData = result.day_line_data;
+          this.dayTableData = result.day_table_data;
+          this.monthLineData = result.month_line_data;
+          this.monthTableData = result.month_table_data;
+          this.yearLineData = result.year_line_data;
+          this.yearTableData = result.year_table_data;
+          this.itemTableData = result.item_table_data;
+          this.categoryPiePriceData = result.category_pie_price_data;
+          this.categoryPieAmountData = result.category_pie_amount_data;
+          this.categoryPieReviewData = result.category_pie_review_data;
+          this.pieChartData = this.categoryPiePriceData;
+          for(let i in this.dayLineData){
+            if (i==0){
+              continue;
+            }
+            this.dayTotalPrice += Number(this.dayLineData[i][1]);  
+          }
+          for(let i in this.dayLineData){
+            if (i==0){
+              continue;
+            }
+            this.monthTotalPrice += this.monthLineData[i][1];  
+          }
+          for(let i in this.dayLineData){
+            if (i==0){
+              continue;
+            }
+            this.yearTotalPrice += this.yearLineData[i][1];  
+          }
+          this.dayAveragePrice = Math.ceil(this.dayTotalPrice / 30);
+          this.monthAveragePrice = Math.ceil(this.monthTotalPrice / 12);
+          this.yearAveragePrice = Math.ceil(this.yearTotalPrice / 10);
+        }
+        else{
+          alert("분석 정보를 불러오는 데 실패하였습니다. 다시 시도하세요.");
+          console.log(result.message);
+        }
+      }
+      catch(err){
+        console.error(err);
+        alert("분석 정보를 불러오는 데 실패하였습니다. 다시 시도하세요.");
+      }
+    },
+    changePie(mode){
+      console.log(mode);
+      if (mode == "price"){
+        this.pieChartData = this.categoryPiePriceData;
+      }
+      if (mode == "amount"){
+        this.pieChartData = this.categoryPieAmountData;
+      }
+      if (mode == "review"){
+        this.pieChartData = this.categoryPieReviewData;
+      }
+      console.log(this.pieChartData);
+    }
+
+  }
+  
+}
+</script>
 <style scoped>
 .sidbar_content_body{
   min-height: 100vh;
