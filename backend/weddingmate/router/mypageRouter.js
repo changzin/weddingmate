@@ -1,5 +1,5 @@
 const express = require('express');
-const {bookmarkList, bookmarkDeleteC, bookmarkDel, paymentList, reviewList, reviewDel, qnaList, boxList, boxAdd} = require('../controller/mypageController');
+const {bookmarkList, bookmarkDeleteC, bookmarkDel, paymentList, reviewList, reviewDel, qnaList, boxList, boxAdd,receiptList} = require('../controller/mypageController');
 const {loginCheck} = require('../middleware/login');
 const router = express.Router();
 
@@ -13,5 +13,7 @@ router.post('/review/del', reviewDel);
 router.post('/qnalist',loginCheck, qnaList);
 router.post('/boxlist',loginCheck, boxList);
 router.post('/boxlist/add',loginCheck, boxAdd);
+//건용 추가 
+router.post('/payment/recepit',loginCheck,receiptList)
 
 module.exports = router;

@@ -34,6 +34,7 @@ import MyBox from '../views/mypage/MyBox.vue'
 import MyQnA from '../views/mypage/MyQnA'
 import MyReview from '@/views/mypage/MyReview.vue'
 import MyPayment from '@/views/mypage/MyPayment.vue'
+import MyReceipt from '../views/mypage/MyReceipt.vue'
 import MainPage from '../views/main/MainPage.vue'
 import test from '../views/mypage/test.vue'
 import OrderEnd from '../views/order_info/OrderEnd.vue'
@@ -220,6 +221,12 @@ const routes = [
     path: '/mypage/payment',
     name: "mypayment",
     component: MyPayment
+  },
+  {
+    path: '/mypage/payment/receipt',
+    name: "myreceipt",
+    component: MyReceipt,
+    // props: route => ({ orderinfo_id: route.query.orderinfo_id })
   },
   {
     path: '/test',
