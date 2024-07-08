@@ -145,6 +145,7 @@ exports.uploadUpdate = async(req, res, next)=>{
         let {review_image, qna_image, item_tn_image, item_detail_image, item_main_image, review_image_ext, qna_image_ext, item_tn_image_ext, item_main_image_ext, item_detail_image_ext} = req.body;
         let {review_image_change, qna_image_change, item_main_image_change, item_tn_image_change, item_detail_image_change} = req.body;
         let {prev_review_image_path, prev_qna_image_path, prev_item_main_image_path, prev_item_tn_image_path, prev_item_detail_image_path} = req.body;
+
         
 
         let insertFileList = [];
@@ -172,8 +173,8 @@ exports.uploadUpdate = async(req, res, next)=>{
                 writeFile(insertFileList, res);
 
                 // 이전 이미지가 존재할 경우 지운다.
-                if (prev_review_image_path){
-                    deleteFile(prev_review_image_path, res);
+                if (req.body.prev_review_image_path){
+                    deleteFile(req.body.prev_review_image_path, res);
                 }
             }
             else{

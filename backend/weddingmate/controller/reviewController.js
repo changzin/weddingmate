@@ -384,7 +384,6 @@ exports.updateSelectedReviewDetail = async (req, res) => {
     const review_image_path = req.body.review_image_path;
     const review_star = req.body.review_star;
 
-    console.log("review_image_path : ", review_image_path);
 
     // SQL Update Query
     const updateQuery = `

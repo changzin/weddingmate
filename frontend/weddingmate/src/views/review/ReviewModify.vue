@@ -175,7 +175,7 @@ export default {
         this.rating = this.currentRating;
         // form 객체 업데이트
         this.form.content = this.ReviewResult.review_content;
-        this.form.image = this.ReviewResult.qna_image_path;
+        this.form.image = this.ReviewResult.review_image_path;
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
@@ -208,6 +208,7 @@ export default {
       }
 
       try {
+        console.log("this.ReviewResult.review_image_path : ", this.ReviewResult.review_image_path);
         const result = await this.$api(
           "/review/updateselectedreviewdetail",
           {
@@ -218,6 +219,7 @@ export default {
             review_image_change: this.review_image_change,
             review_image: this.itemTnImage,
             review_image_ext: this.itemTnImageExt,
+            prev_review_image_path: this.ReviewResult.review_image_path,
             upload_type: "review",
           },
           "POST"
@@ -253,7 +255,22 @@ export default {
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
+
+    async deleteFileImage() {
+
+    },
+
+
     async handleFileChange(file) {
+
+      await this.deleteFileImage();
+
+   
+
+
+
+
+
       this.review_image_change = true;
       this.itemTnImage = file;
       const files = event.target?.files;
