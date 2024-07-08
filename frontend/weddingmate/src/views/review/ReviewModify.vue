@@ -132,20 +132,20 @@ export default {
     },
   },
 
-  //  async beforeRouteEnter(to, from, next) {
-  //   next(async vm => {
-  //     const userInfo = await vm.$verifiedUser();
-  //     if (userInfo) {
-  //       next();
-  //     } else {
-  //       alert("리뷰 수정을 위하여 로그인하세요");
-  //       vm.$router.push({
-  //         name: "userlogin",
-  //         query: { savedUrl: true }
-  //       });
-  //     }
-  //   });
-  // },
+   async beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      const userInfo = await vm.$verifiedUser();
+      if (userInfo) {
+        next();
+      } else {
+        alert("리뷰 수정을 위하여 로그인하세요");
+        vm.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true }
+        });
+      }
+    });
+  },
 
   async created() {
     await this.fetchProductListData();
@@ -157,8 +157,11 @@ export default {
       try {
         // 데이터 가져오기
 
-        const result = await this.$api(
-          `/review/getselectedreviewdetail?review_id=${this.review_id}`
+       const result = await this.$api(
+          `/review/getselectedreviewdetail?review_id=${this.review_id}`,
+          // { access_token: "temp-token" },
+          { access_token: this.$getAccessToken() },
+          "POST"
         );
 
         this.ReviewResult = result.data[0];
@@ -256,21 +259,7 @@ export default {
       this.$refs.fileInput.click();
     },
 
-    async deleteFileImage() {
-
-    },
-
-
     async handleFileChange(file) {
-
-      await this.deleteFileImage();
-
-   
-
-
-
-
-
       this.review_image_change = true;
       this.itemTnImage = file;
       const files = event.target?.files;

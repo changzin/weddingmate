@@ -25,7 +25,10 @@
             class="search-input"
             v-model="searchTitle"
           />
-          <i class="fas fa-search search-icon" @click="fetchProductListData"></i>
+          <i
+            class="fas fa-search search-icon"
+            @click="fetchProductListData"
+          ></i>
         </div>
       </div>
 
@@ -171,7 +174,7 @@ export default {
     async fetchProductListData() {
       try {
         const response = await this.$api(
-          `/product/list/${this.itemType}?page=${this.page}&keyword=${this.searchTitle}`,
+          `/product/list/${this.itemType}?page=${this.page}&keyword=${this.searchTitle}`
         );
 
         const productData = response.data;
@@ -197,20 +200,17 @@ export default {
     },
 
     async clickSearch() {
-      console.log("this.searchTitle : ", this.searchTitle);
       try {
         const response = await this.$api(
-          `/product/list/${this.itemType}?page=${this.page}&keyword=${this.searchTitle}`,
+          `/product/list/${this.itemType}?page=${this.page}&keyword=${this.searchTitle}`
         );
 
-         const productData = response.data;
+        const productData = response.data;
         const maxPage = response.maxPage;
 
         if (productData) {
           this.productList = productData;
           this.maxPage = maxPage;
-
-          console.log("Max page:", this.maxPage);
         } else {
           console.error(
             "ProductDetailList.vue fetchProductListData : No product data"

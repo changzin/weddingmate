@@ -5,13 +5,53 @@
 
     <!-- 본문 -->
     <div class="qnadetail_container">
-      <!-- Q&A 상세보기 + 아이콘 -->
+      <!-- 신고 팝업창 -->
+      <div v-if="isVisibleReport" class="report-overlay">
+        <div class="report-popup">
+          <!-- <div v-if="isVisibleReport" class="report-popup"> -->
+
+          <div class="report-popup_header">
+            <div></div>
+            <div>신고 팝업창</div>
+            <i
+              class="fas fa-times popupCloseButton"
+              @click="collapseReportPopup"
+            ></i>
+          </div>
+          <div class="report-popup_content">
+            <div class="report-popup_content_header">신고사유 :</div>
+            <textarea
+              class="report-popup_content_input"
+              v-model="reportContent"
+            ></textarea>
+            <div class="report-popup_content_footer">
+              <div class="report-popup_content_ok" @click="ToReport">전송</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 리뷰 상세보기 + 아이콘 -->
       <div class="qnadetail_header">
         <div></div>
         <h2 class="qnadetail_header_text">리뷰 상세보기</h2>
-        <div class="qnadetail_header_icon" v-if="isVisibleEditTrash">
-          <i class="fas fa-edit" type="button" @click="gotoQnAModify"></i>
-          <i class="fas fa-trash" type="button" @click="deleteQnA"></i>
+        <div class="qnadetail_header_icon">
+          <!-- <i class="fas fa-edit" type="button" @click="gotoQnAModify"></i>
+          <i class="fas fa-trash" type="button" @click="deleteQnA"></i> -->
+          <i
+            class="fas fa-bullhorn"
+            @click.stop="reviewToReport()"
+            v-if="!is_current_user"
+          ></i>
+          <i
+            class="fas fa-edit"
+            @click.stop="gotoReviewModify()"
+            v-if="is_current_user"
+          ></i>
+          <i
+            class="fas fa-trash"
+            v-if="is_current_user"
+            @click.stop="deleteReview()"
+          ></i>
         </div>
       </div>
       <!-- 별점 -->
@@ -84,6 +124,7 @@ export default {
   data() {
     return {
       isVisibleEditTrash: false,
+      is_current_user: false,
 
       // 본문
       form: {
@@ -94,6 +135,11 @@ export default {
       currentRating: 0,
 
       ReviewResult: {},
+
+      // 신고팝업
+      isVisibleReport: false,
+      reportContent: "",
+      currentReviweIndex: 0,
     };
   },
   props: {
@@ -114,12 +160,16 @@ export default {
   methods: {
     async fetchProductListData() {
       try {
-        console.log("this.reiview_id  : ", this.review_id);
-
-        //  qna 데이터 가져오기
+        //  review 데이터 가져오기
         const result = await this.$api(
-          `http://localhost:9090/review/getselectedreviewdetail?review_id=${this.review_id}`
+          `http://localhost:9090/review/getselectedreviewdetail?review_id=${this.review_id}`,
+          // { access_token: "temp-token" },
+          { access_token: this.$getAccessToken() },
+          "POST"
         );
+        if (!result.data[0]) {
+          return false;
+        }
 
         this.ReviewResult = result.data[0];
         if (this.ReviewResult) {
@@ -134,6 +184,12 @@ export default {
           // form 객체 업데이트
           this.form.content = this.ReviewResult.review_content;
           this.form.image = this.ReviewResult.review_image_path;
+          this.is_current_user = this.ReviewResult.is_current_user;
+
+          console.log(
+            "this.ReviewResult.is_current_user : ",
+            this.ReviewResult.is_current_user
+          );
         } else {
           console.log("fail");
         }
@@ -185,6 +241,87 @@ export default {
       const file = event.target.files[0];
       if (file) {
         this.form.image = file.name;
+      }
+    },
+
+    gotoReviewModify() {
+      this.$router.push({
+        name: "reviewmodify",
+        query: { review_id: this.review_id },
+      });
+    },
+
+    async deleteReview() {
+      try {
+        const reviewResult = await this.$api(
+          `/review/delete`,
+          {
+            access_token: this.$getAccessToken(),
+            review_id: this.review_id,
+            prev_review_image_path: this.ReviewResult.review_image_path,
+            upload_type: "review",
+          },
+          "POST"
+        );
+
+        if (reviewResult.status == 200) {
+          alert("성공적으로 삭제되었습니다")
+        }
+        else if (reviewResult.status <= 400){
+          alert("삭제에 실패되었습니다")
+        }
+      } catch (error) {
+        console.error(
+          "ReviewList.vue fetchData Error fetching product data:",
+          error
+        );
+      }
+    },
+
+    // 리뷰 신고
+    async reviewToReport() {
+      const userInfo = await this.$verifiedUser();
+      if (!userInfo) {
+        alert("로그인이 필요한 서비스입니다");
+        this.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true },
+        });
+
+        return;
+      }
+      this.isVisibleReport = true;
+      this.currentReviweIndex = this.review_id;
+    },
+
+    collapseReportPopup() {
+      this.isVisibleReport = false;
+    },
+
+    async ToReport() {
+      if (this.reportContent == "") {
+        alert("신고내용을 입력해주세요");
+      }
+
+      try {
+        const result = await this.$api(
+          "/review/reviewreport",
+          {
+            access_token: this.$getAccessToken(),
+            review_id: this.currentReviweIndex,
+            report_content: this.reportContent,
+          },
+          "POST"
+        );
+        if (result.status == 200) {
+          alert("신고 완료");
+          this.isVisibleReport = false;
+        }
+      } catch (error) {
+        console.error(
+          "ProductDetail.vue fetchData Error fetching product data:",
+          error
+        );
       }
     },
   },
@@ -263,7 +400,7 @@ export default {
 
 .qnadetail_header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   font-size: 30px;
   margin-bottom: 30px;
@@ -445,8 +582,6 @@ export default {
   height: 300px;
 }
 
-
-
 .productdetail_qna-status {
   display: inline-block;
   padding: 5px 10px;
@@ -477,5 +612,85 @@ export default {
 
 .productdetail_qna-section_status-nickname-div {
   text-align: left;
+}
+
+/* 신고 */
+.report-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px); /* 블러 효과 추가 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* 배경을 덮도록 z-index 설정 */
+}
+
+.report-popup {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  border-radius: 12px;
+
+  padding: 20px;
+  /* visibility: collapse; */
+  flex-direction: column;
+}
+
+.report-popup_header {
+  display: flex;
+  align-items: center; /* Vertically centers the content */
+  height: 50px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.popupCloseButton {
+  cursor: pointer;
+}
+
+.report-popup_content {
+  width: 100%;
+  flex-grow: 1; /* This makes the content take up the remaining space */
+  display: flex;
+  flex-direction: column;
+}
+.report-popup_content_header {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.report-popup_content_input {
+  width: 100%;
+  flex-grow: 1;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.report-popup_content_footer {
+  display: flex;
+  justify-content: center; /* 버튼을 가운데 정렬 */
+}
+
+.report-popup_content_ok {
+  margin-top: 10px;
+  border: 1px solid black;
+  border-radius: 12px;
+  display: flex;
+  width: 70px;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
 }
 </style>

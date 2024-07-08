@@ -263,6 +263,7 @@ exports.Bookmark = async (req, res) => {
 
 exports.totalProductDetail = async (req, res) => {
   try {
+    console.log("totalProductDetail. user_id : ", req.body.user_id);
     const user_id = req.body.user_id;
     const itemId = req.params.itemId;
 

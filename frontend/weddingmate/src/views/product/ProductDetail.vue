@@ -3482,78 +3482,7 @@ export default {
     },
 
     // 타입별로 보여줄 DOM 설정
-    // getClass(type) {
-    //   // 웨딩홀
-    //   if (type === "hall") {
-    //     return this.itemType === "hall" ? "visible" : "collapse";
-    //   }
-    //   // 드레스
-    //   else if (type === "dress") {
-    //     return this.itemType === "dress" ? "visible" : "collapse";
-    //   }
-    //   // 스튜디오
-    //   else if (type === "studio") {
-    //     return this.itemType === "studio" ? "visible" : "collapse";
-    //   }
-    //   // 메이크업
-    //   else if (type === "makeup") {
-    //     return this.itemType === "makeup" ? "visible" : "collapse";
-    //   }
-    //   // 스드메
-    //   else if (type === "sdm_package") {
-    //     return this.itemType === "sdm_package" ? "visible" : "collapse";
-    //   }
-    //   // 예복
-    //   else if (type === "giving_dress") {
-    //     return this.itemType === "giving_dress" ? "visible" : "collapse";
-    //   }
-    //   // 예복
-    //   else if (type === "giving_item") {
-    //     return this.itemType === "giving_item" ? "visible" : "collapse";
-    //   }
-    //   // 가전
-    //   else if (type === "giving_mechine") {
-    //     return this.itemType === "giving_mechine" ? "visible" : "collapse";
-    //   }
-    //   // 혼수 패키지
-    //   else if (type === "giving_package") {
-    //     return this.itemType === "giving_package" ? "visible" : "collapse";
-    //   }
-    //   // 본식스냅
-    //   else if (type === "snap") {
-    //     return this.itemType === "snap" ? "visible" : "collapse";
-    //   }
-    //   // 영상
-    //   else if (type === "video") {
-    //     return this.itemType === "video" ? "visible" : "collapse";
-    //   }
-    //   // 부케
-    //   else if (type === "flower") {
-    //     return this.itemType === "flower" ? "visible" : "collapse";
-    //   }
-    //   // 연주
-    //   else if (type === "music") {
-    //     return this.itemType === "music" ? "visible" : "collapse";
-    //   }
-    //   // 사회자
-    //   else if (type === "mc") {
-    //     return this.itemType === "mc" ? "visible" : "collapse";
-    //   }
-    //   // 웨딩슈즈
-    //   else if (type === "shoes") {
-    //     return this.itemType === "shoes" ? "visible" : "collapse";
-    //   }
-    //   // 답례품
-    //   else if (type === "gift") {
-    //     return this.itemType === "gift" ? "visible" : "collapse";
-    //   }
-    //   // 청첩장
-    //   else if (type === "letter") {
-    //     return this.itemType === "letter" ? "visible" : "collapse";
-    //   }
-
-    //   return "collapse";
-    // },
+   
 
     isVisibleItemType(type) {
       return this.itemType === type;

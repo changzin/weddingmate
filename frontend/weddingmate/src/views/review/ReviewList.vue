@@ -218,13 +218,9 @@ export default {
   methods: {
     async fetchProductListData() {
       try {
-        //     const BoxResult = await this.$api(
-        //   "/product/boxlist",
-        //   { access_token: this.$getAccessToken() },
-        //   "POST"
-        // );
         const reviewResult = await this.$api(
           `/review/wholereview/${this.item_id}?page=${this.page}`,
+          // { access_token: "temp-token" },
           { access_token: this.$getAccessToken() },
           "POST"
         );
@@ -232,12 +228,7 @@ export default {
         if (reviewResult.status == 200) {
           this.reviewList = reviewResult.reviewList;
           this.maxPage = reviewResult.maxPage;
-          console.log("maxPage : ", this.maxPage);
           this.updatePageStatus();
-          console.log(
-            "this.reviewList: ",
-            JSON.parse(JSON.stringify(this.reviewList))
-          );
         }
       } catch (error) {
         console.error(
@@ -300,9 +291,19 @@ export default {
     },
 
     // 리뷰 신고
-    async reviewToReport(review_id) {
+    async reviewToReport() {
+      const userInfo = await this.$verifiedUser();
+      if (!userInfo) {
+        alert("로그인이 필요한 서비스입니다");
+        this.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true },
+        });
+
+        return;
+      }
       this.isVisibleReport = true;
-      this.currentReviweIndex = review_id;
+      this.currentReviweIndex = this.review_id;
     },
 
     collapseReportPopup() {

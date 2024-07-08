@@ -138,6 +138,7 @@ exports.adminReviewDelete = async (req, res) => {
 // 리뷰 삭제 요청
 exports.userReviewDelete = async (req, res) => {
   try {
+    console.log("userReviewDelete req.body.user_id: ", req.body.user_id);
     const review_id = req.body.review_id;
     // 미들웨어에서 검증해준 user_id 사용
     const user_id = req.body.user_id;
@@ -304,11 +305,7 @@ exports.wholeReview = async (req, res) => {
   }
 };
 
-//   access_token: "temp-token",
-//   item_id: this.item_id,
-//   review_content: this.form.content,
-//   review_title: this.form.title,
-//   review_image_path: this.form.image,
+
 
 exports.insertReview = async (req, res) => {
   try {
@@ -351,14 +348,22 @@ exports.insertReview = async (req, res) => {
 
 exports.getSelectedReviewDetail = async (req, res) => {
   try {
+    const user_id = req.body.user_id; // 현재 사용자의 user_id
     const review_id = req.query.review_id;
 
-    console.log("qnareview_id : ", review_id);
+    console.log("review_id : ", review_id);
 
     const query = `
-            SELECT * FROM review where review_id = ?;
-        `;
-    const result = await db(query, [review_id]);
+      SELECT review.review_id, review.review_content, review.review_star, review.review_image_path, review.review_reported, user.user_id, user.user_nickname, review.review_date, 
+        CASE 
+          WHEN review.user_id = ? THEN 1 
+          ELSE 0 
+        END AS is_current_user
+      FROM review 
+      JOIN user ON review.user_id = user.user_id 
+      WHERE review.review_id = ?;
+    `;
+    const result = await db(query, [user_id, review_id]);
 
     const responseBody = {
       status: 200,

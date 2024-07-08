@@ -17,7 +17,7 @@ router.post('/insertreview', loginCheck, upload, insertReview);
 
 
 router.post('/wholereview/:item_id',loginFilter ,wholeReview);
-router.get('/getselectedreviewdetail', getSelectedReviewDetail); 
+router.post('/getselectedreviewdetail', loginFilter, getSelectedReviewDetail); 
 router.post('/updateselectedreviewdetail', loginCheck, uploadUpdate, updateSelectedReviewDetail); 
 
 

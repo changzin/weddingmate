@@ -149,20 +149,20 @@ export default {
     await this.fetchProductListData();
   },
 
-  // async beforeRouteEnter(to, from, next) {
-  //   next(async vm => {
-  //     const userInfo = await vm.$verifiedUser();
-  //     if (userInfo) {
-  //       next();
-  //     } else {
-  //       alert("QnA 작성을 위하여 로그인하세요");
-  //       vm.$router.push({
-  //         name: "userlogin",
-  //         query: { savedUrl: true }
-  //       });
-  //     }
-  //   });
-  // },
+  async beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      const userInfo = await vm.$verifiedUser();
+      if (userInfo) {
+        next();
+      } else {
+        alert("QnA 작성을 위하여 로그인하세요");
+        vm.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true }
+        });
+      }
+    });
+  },
   
 
   methods: {
