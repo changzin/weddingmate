@@ -193,8 +193,8 @@ exports.uploadUpdate = async(req, res, next)=>{
                 writeFile(insertFileList, res);
 
                 // 이전 이미지가 존재할 경우 지운다.
-                if (prev_qna_image_path){
-                    deleteFile(prev_qna_image_path, res);
+                if (req.body.prev_qna_image_path){
+                    deleteFile(req.body.prev_qna_image_path, res);
                 }
             }
             else{

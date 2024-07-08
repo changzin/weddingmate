@@ -248,6 +248,7 @@ export default {
             qna_image_change: this.qna_image_change,
             qna_image: this.itemTnImage,
             qna_image_ext: this.itemTnImageExt,
+            prev_qna_image_path: this.QnAResult.qna_image_path,
             upload_type: "qna",
           },
           "POST"
