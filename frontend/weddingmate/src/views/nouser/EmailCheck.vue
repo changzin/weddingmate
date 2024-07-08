@@ -1,5 +1,5 @@
 <template>
-    <MateHeader :user="this.$verifiedUser()"/>
+    <MateHeader/>
     <div class="container sign_up_container" style="margin-top: 200px;">
         <div class="row justify-content-center">
             <div class="sign_up_header_text">이메일 전송 완료</div>

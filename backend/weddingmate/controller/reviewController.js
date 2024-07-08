@@ -19,7 +19,7 @@ exports.adminReviewList = async (req, res) => {
     if (mode === "all") {
       if (reported == "T") {
         query =
-          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND (review.review_content LIKE ? OR user.user_nickname LIKE ?) ORDER BY review.review_date LIMIT 9 OFFSET ? ";
+          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND (review.review_content LIKE ? OR user.user_nickname LIKE ?) ORDER BY review.review_date DESC LIMIT 9 OFFSET ? ";
         result = await db(query, [reported, keyword, keyword, page * 9]);
         query =
           "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND (review.review_content LIKE ? OR user.user_nickname LIKE ?)";
@@ -27,7 +27,7 @@ exports.adminReviewList = async (req, res) => {
         count = count[0]["count"];
       } else {
         query =
-          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND (review.review_content LIKE ? OR user.user_nickname LIKE ?) ORDER BY review.review_date LIMIT 9 OFFSET ? ";
+          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND (review.review_content LIKE ? OR user.user_nickname LIKE ?) ORDER BY review.review_date DESC LIMIT 9 OFFSET ? ";
         result = await db(query, [keyword, keyword, page * 9]);
         query =
           "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id AND (review.review_content LIKE ? OR user.user_nickname LIKE ?)";
@@ -37,7 +37,7 @@ exports.adminReviewList = async (req, res) => {
     } else if (mode === "content") {
       if (reported == "T") {
         query =
-          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND review.review_content LIKE ? ORDER BY review.review_date LIMIT 9 OFFSET ? ";
+          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND review.review_content LIKE ? ORDER BY review.review_date DESC LIMIT 9 OFFSET ? ";
         result = await db(query, [reported, keyword, page * 9]);
         query =
           "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND review.review_content LIKE ?";
@@ -45,7 +45,7 @@ exports.adminReviewList = async (req, res) => {
         count = count[0]["count"];
       } else {
         query =
-          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_content LIKE ? ORDER BY review.review_date LIMIT 9 OFFSET ? ";
+          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_content LIKE ? ORDER BY review.review_date DESC LIMIT 9 OFFSET ? ";
         result = await db(query, [keyword, page * 9]);
         query =
           "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id AND review.review_content LIKE ?";
@@ -55,7 +55,7 @@ exports.adminReviewList = async (req, res) => {
     } else if (mode === "nickname") {
       if (reported == "T") {
         query =
-          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND user.user_nickname LIKE ? ORDER BY review.review_date LIMIT 9 OFFSET ? ";
+          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND user.user_nickname LIKE ? ORDER BY review.review_date DESC LIMIT 9 OFFSET ? ";
         result = await db(query, [reported, keyword, page * 9]);
         query =
           "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? AND user.user_nickname LIKE ?";
@@ -63,7 +63,7 @@ exports.adminReviewList = async (req, res) => {
         count = count[0]["count"];
       } else {
         query =
-          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND user.user_nickname LIKE ? ORDER BY review.review_date LIMIT 9 OFFSET ? ";
+          "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND user.user_nickname LIKE ? ORDER BY review.review_date DESC LIMIT 9 OFFSET ? ";
         result = await db(query, [keyword, page * 9]);
         query =
           "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id AND user.user_nickname LIKE ?";
@@ -72,7 +72,7 @@ exports.adminReviewList = async (req, res) => {
       }
     } else if (reported == "T") {
       query =
-        "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? ORDER BY review.review_date LIMIT 9 OFFSET ? ";
+        "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=? ORDER BY review.review_date DESC LIMIT 9 OFFSET ? ";
       result = await db(query, [reported, page * 10]);
       query =
         "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id AND review.review_reported=?";
@@ -80,7 +80,7 @@ exports.adminReviewList = async (req, res) => {
       count = count[0]["count"];
     } else {
       query =
-        "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id ORDER BY review.review_date LIMIT 9 OFFSET ? ";
+        "SELECT review.review_id, review.review_star, review.review_image_path, review.review_reported, review.review_content, user.user_nickname, review.review_date FROM review, user WHERE review.user_id = user.user_id ORDER BY review.review_date DESC LIMIT 9 OFFSET ? ";
       result = await db(query, [page * 10]);
       query =
         "SELECT count(*) AS count FROM review, user WHERE review.user_id = user.user_id ";

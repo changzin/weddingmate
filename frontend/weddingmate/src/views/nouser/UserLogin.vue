@@ -19,7 +19,7 @@
                 <input class="login_input" type="text" placeholder="이메일을 입력하세요" v-model="email">
             </div>
             <div class="d-flex justify-content-center mb-4">
-                <input class="login_input" type="text" placeholder="비밀번호를 입력하세요" v-model="password">
+                <input class="login_input" type="password" placeholder="비밀번호를 입력하세요" v-model="password">
             </div>
             <div class="d-flex justify-content-center">
                 <div class="login_box">
@@ -47,7 +47,7 @@
         <div class="row justify-content-center">
             <div style="width:250px; margin-bottom:15px;">
                 <button id="custom-login-btn" @click="kakaoLogin" style="border:none; padding:0px;">
-                    <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="222">
+                    <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="215">
                 </button>
             </div>
         </div>
@@ -99,10 +99,15 @@
                         // 쿠키에 accessToken 저장하고 로그인 유지 시엔 LocalStoreage(vuex)에도 저장
                         this.$cookies.set("weddingCookie", result.accessToken);
                         if (this.autoLogin){
-                            await this.$store.commit("user", {accessToken: result.accessToken})
+                            await this.$store.commit("user", {accessToken: result.accessToken});
                         }
                         if (result.type=="local"){
-                            this.$router.push({path: '/'});
+                            if (this.$route.query.savedUrl){
+                                this.$router.go(-1);    
+                            }
+                            else{
+                                this.$router.push({path: '/'});
+                            }
                         }
                         else if (result.type=="admin"){
                             this.$router.push({path: '/admin/itemlist'});
@@ -168,7 +173,9 @@
                         if (this.$route.query.savedUrl){
                             this.$router.go(-1);
                         }
-                        this.$router.push({path: '/'});
+                        else{
+                            this.$router.push({path: '/'});
+                        }
                     }
                     else{
                         alert("동일한 이메일의 계정이 존재합니다. 다른 이메일을 사용해 주세요");
@@ -209,7 +216,9 @@
                         if (this.$route.query.savedUrl){
                             this.$router.go(-1);
                         }
-                        this.$router.push({path: '/'});
+                        else{
+                            this.$router.push({path: '/'});
+                        }
                     }
                     else{
                         alert("동일한 이메일의 계정이 존재합니다. 다른 이메일을 사용해 주세요");

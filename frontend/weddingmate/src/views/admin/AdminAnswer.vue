@@ -22,11 +22,11 @@
       </svg>
       
       <div class="d-flex flex-column sidbar_container">
-        <div class="sidebar_header_box d-flex justify-content-center">
-            <div class="sidebar_header_box_text">로고 들어갈 자리</div>
+        <div class="sidebar_header_box_text" style="margin-bottom:15px;">
+              <img src="/icon/weddingmate_logo.png" width="260">
         </div>
         <div class="sidebar_header_box d-flex justify-content-between" style="padding: 0px 20px;">
-            <div class="sidebar_header_box_text" style="margin-top:4px;">로그인한 관리자 이름</div>
+            <div class="sidebar_header_box_text" style="margin-top:4px;">{{adminNick}}</div>
             <button class="sidebar_header_box_text" style="height:30px; border:none; color: black" @click="this.$logoutUser(); this.$router.push({path:'/'});">로그아웃</button>
         </div>
         <ul class="nav nav-pills flex-column mb-auto">
@@ -90,7 +90,7 @@
                         v-model="qna.qna_content"
                     ></textarea>
                     </div>
-                    <div class="admin_answer_row_large">
+                    <div class="admin_answer_row_large" v-if="qna.qna_image_path">
                     <label class="admin_answer_label">이미지</label>
                     <a><div class="admin_answer_image"><img :src="this.$imageFileFormat(qna.qna_image_path)" alt="qna_image" height="300" width="300"></div></a>
                     </div>
@@ -137,14 +137,32 @@ export default{
       answerId: "",
       qna: {},
       accessToken: "",
-      canUpdate: true
+      canUpdate: true,
+      adminNick: "null"
     }
   },
   mounted(){
     this.getQna();
-    
+    this.getAdminInfo();
   },
   methods: {
+    async getAdminInfo(){
+      try{
+        const result = await this.$verifiedAdmin();
+        if (result.status == 200){
+          this.adminNick = result.admin_nickname;
+        }
+        else{
+          alert("관리자 로그인 상태가 아닙니다.")
+        }
+      }
+      catch(err){
+        console.error(err);
+        alert("관리자 로그인 상태가 아닙니다.")
+        this.$logoutUser();
+        this.$router.push({name: 'mainPage'})
+      }
+    },
     async getQna(){
       try{
         const qnaId = this.$route.params.qnaid;
@@ -182,6 +200,7 @@ export default{
             this.answerContent = result.answer_content;
             this.answerDate = result.answer_date;
             this.answerAdminId = result.admin_id;        
+            this.canUpdate = false;
         }
         else{
           // 에러 발생
@@ -550,7 +569,6 @@ export default{
     .admin_answer_image{
         width: 300px;
         height: 300px;
-        background-color: #007BFF;
     }
     .admin_answer_qna_title{
         font-size:14px;

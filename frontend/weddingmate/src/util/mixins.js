@@ -7,14 +7,28 @@ axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 export default{
     methods: {
         async $api(url, data = {}, method = "GET"){
-            return (await axios({
+            console.log(url, data, method);
+            const result = (await axios({
                 method: method,
                 url,
                 data: data
-            }).catch(e=>{
+            })
+            .catch(e=>{
                 console.log(url);
                 console.error(e);
             })).data;
+
+            console.log(result);
+            return result;
+            // return (await axios({
+            //     method: method,
+            //     url,
+            //     data: data
+            // })
+            // .catch(e=>{
+            //     console.log(url);
+            //     console.error(e);
+            // })).data;
         },
         
         // 유저의 쿠킷값과 로컬 스토리지 값을 확인해서 User 정보를 끌어오는 함수
@@ -27,6 +41,34 @@ export default{
                 accessToken = (accessToken1) ? accessToken1 : accessToken;
                 if (accessToken){
                     const result = await this.$api("http://localhost:9090/user/info", {accessToken: accessToken}, "POST");
+                    if (result.status == 200){
+                        console.log(200);
+                        return result;
+                    }
+                    else{
+                        console.log(400);
+                        return null;
+                    }
+                }
+                else{
+                    return null;
+                }
+            }
+            catch(err){
+                console.log(err);
+                return null;
+            }
+        },
+
+        async $verifiedAdmin(){
+            try{
+                const accessToken1 = this.$cookies.get("weddingCookie");
+                const accessToken2 = this.$store.state.user;
+
+                let accessToken = (accessToken2) ? accessToken2 : null;
+                accessToken = (accessToken1) ? accessToken1 : accessToken;
+                if (accessToken){
+                    const result = await this.$api("http://localhost:9090/user/admininfo", {accessToken: accessToken}, "POST");
                     if (result.status == 200){
                         console.log(200);
                         return result;

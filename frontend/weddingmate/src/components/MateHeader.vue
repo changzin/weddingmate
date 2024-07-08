@@ -117,7 +117,6 @@ export default {
       isLogined: false
     };
   },
-  props: ['user'],
   methods: {
     showCategories() {
       this.isVisible = true;
