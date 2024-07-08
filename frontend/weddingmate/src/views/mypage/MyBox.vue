@@ -5,14 +5,21 @@
       <!-- 헤더 -->
       
       <!-- 본문 -->
-      <div class="container0">
+      <div class="container0" >
         <div class="container-top">
-          <div class="container-top-content">
-            <div class="content-boxname">더미견적함1</div>
+          <div class="container-top-content" >
+            <div class="content-boxname" v-if="!editingBoxName">{{ box.box_name }}</div>
+            <textarea class="content-boxname2" v-if="editingBoxName" v-model="box.box_name"></textarea>
+         
             <hr class="column" />
             <div class="container-top-button">
-              <button class="boxname_edit">수정</button>
-              <button class="boxdelete">삭제</button>
+              <!-- 버튼 클릭시 수정 DB 업데이트 -->
+              <!-- 수정 버튼 클릭 시 견적함이름이 인풋으로 변환 -> 이름 수정 -> 다시 수정 누르면 백단으로 이름 송신 -->
+              <button class="boxname_edit" @click="editBoxName" v-if="!editingBoxName">수정</button>
+              <button type="submit" class="boxname_edit2" @click="updateBoxName(box.box_name)" v-if="editingBoxName">저장
+            
+              </button>
+              <button class="boxdelete" @click="deleteBox(item.boxId)">삭제</button>
             </div>
           </div>
         </div>
@@ -63,10 +70,7 @@
           </table>
          
         </div>
-        <div class="container_boxbutton2">
-          <button class="boxallselect">전체 선택</button>
-          <button class="boxdeleteall">선택 상품 삭제</button>
-        </div>
+       
         <div class="container-pay">
           <div class="paycontent">
             <div class="sellitle">판매가격</div>
@@ -98,7 +102,7 @@
             <div>&gt;</div>
             <div>&gt;&gt;</div>
           </div>
-          <button class="mypage-back">마이페이지로</button>
+          <button class="mypage-back" @click="$router.push({path:`/mypage`})">마이페이지로</button>
         </div>
       </div> 
       <!-- 푸터 -->
@@ -111,6 +115,7 @@
   
   <script>
   export default {
+
     data() {
       return {
         // 헤더
@@ -124,8 +129,14 @@
         iType:[],
         categories: [],
         itemDetails:[],
-        selectItem:[],
         box_item_id:{},
+        box_name : {},
+        box : {},
+        //박스 이름 수정 여부 
+        editableBoxName:'',
+        editingBoxName: false,
+        //박스 이름 수정 모달창
+        updateBoxModal: false,
       itemTnImage: null,
       itemTnImageExt: null,
       itemMainImage: null,
@@ -140,23 +151,11 @@
           }
       };
     },
+    computed:{
+    },
     mounted(){
       this.fetchItem();
       // this.goOrderInfo();
-    },
-    computed:{
-    },
-    watch : {
-      itemList:{
-        handler(newList){
-          //체크된 아이템을 필터링하고 item_id를 추출하여 배열에 저장
-          const checkeditem = newList.filter(item => item.checked);
-          const checkeditems = checkeditem.map(item => item.item_id);
-          this.selectItem = checkeditems;
-          console.log(this.selectItem);
-        },
-        deep: true
-      }
     },
     methods: {
       // 헤더
@@ -173,7 +172,7 @@
 
       async DelItem(box_item_id){
       const requestBody = {
-        access_token: "2c595eca-d4e3-4085-a6c7-331333eb22f0",
+        access_token: this.$getAccessToken(),
         box_item_id: box_item_id
       }
       console.log(requestBody);
@@ -189,30 +188,82 @@
         console.error(error);
       }
     },
+    async deleteBox(boxId){
+     const requestBody = {
+        access_token: this.$getAccessToken(),
+        boxId:this.boxId
+      }
+      
+      console.log(requestBody)
+      console.log(boxId);
+      try{
+        const delectbox = await this.$api("/mybox/delectbox",requestBody,"POST")
+        console.log(delectbox);
+        if(delectbox.status === 200){
+          await this.fetchItem();
+          this.$router.go();
+        }
+      }catch(error){
+        console.log(error);
+      }
+
+    },
+
+
+    async updateBoxName(box_name){
+      const requestBody = {
+        box_name : box_name,
+        boxId:this.boxId
+      }
+      console.log(box_name);
+      const update = await this.$api("/mybox/update",requestBody,"POST")
+      // this.box_name = update.boxNameUpdate;
+      
+      try{
+        if(update.status === 200){
+          await this.fetchItem();
+          this.$router.go();
+        }
+        // if(editingBoxName == true){
+          
+        // }
+      }catch(error){
+        console.error(error);
+      }
+    },
+      editBoxName(){
+        //저장버튼 생성
+        this.editableBoxName = this.box_name;
+        this.editingBoxName = true; 
+      },
+      saveBoxName(){
+        this.box_name = this.editableBoxName
+        this.editingBoxName = false;
+      },
          
       async fetchItem(){
         this.boxId = this.$route.params.boxId
           const responseBody  ={
-            access_token : "80060f2c-e894-472c-930b-9495e149e13c",
+            access_token : this.$getAccessToken(),
             boxId:this.boxId
           }
           const response = await this.$api(`/mybox/name`,responseBody,"POST")
           console.log(response);
           const iName = response.box_itemName.map((item_name)=> item_name);
-          //아이템 이름을 담고 있는 배열 iName 
+          //아이템 이름을 담고 있는 배열 iName
           console.log(iName);
           this.itemDetails = iName;
           console.log(this.itemDetails);
+          this.box = response.box_itemObj;
+          console.log(this.box);
           this.makeOrderInfo();
           },
        optionKorean(item){
            let resultString = "";
            console.log(item)
 
-            
-
             for ( let key in item ){
-              if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_detail_type' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id'){
+              if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_detail_type' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name'){
               continue
               // }else if(key == 'box_detail_type'){     
               }
@@ -271,14 +322,7 @@
       //   return resultString;
       //  },
       },
-      
-
-      //한 유저에 대한 여러개의 박스상세를 볼 수 있어야함 
-      async showUserbox(){
-        await this.$router.push({path: '/mypage/boxlist/boxname'})
-
-      },
-      
+    
     getClass(item) {
       // 웨딩홀
       if (item === "hall") {
@@ -361,11 +405,6 @@
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
       },
 
-    //주문하기 버튼 선택된 아이템을 주문하고 박스에 아이템이 없으면 버튼을 잠가줘야함
-    //먼저 체크리스트에 대한 작업을 해줘야한다.
-      // async goOrderInfo(){
-      //   await this.$router.push({path:`/orderinfo/:boxid`})
-      // }
       }
   }
   </script>
@@ -478,6 +517,14 @@ font-weight: bold;
 color:#555555;
 /* border: 1px solid red; */
 }
+.content-boxname2{
+display: grid;
+justify-items: center;
+font-size: 24px;
+font-weight: bold;
+color:#555555;
+/* border: 1px solid red; */
+}
 
 .container-middle{
 margin-left: var(--container-margin-left);
@@ -507,6 +554,7 @@ box-sizing: border-box;
 display: flex;
 flex-direction: column;
 text-align: left;
+margin-right:20px ;
 /* border: 1px solid red;             */
 }
 .content-table_col1-name{
@@ -597,6 +645,15 @@ height: 30px;
 font-weight: bold;
 }
 button.boxname_edit{
+background-color: var(--color-pink);
+color:white;
+border: none;
+border-radius: 12px;
+width: 100px;
+height: 30px;
+font-weight: bold;
+}
+button.boxname_edit2{
 background-color: var(--color-pink);
 color:white;
 border: none;
@@ -710,5 +767,16 @@ border: none;
 width: 120px;
 height: 40px;
 }
+/* 수정 모달 창 */
+.black-bg {
+  width: 100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  position: fixed; padding: 20px;
+}
+.white-bg {
+  width: 100%; background: white;
+  border-radius: 8px;
+  padding: 20px;
+} 
   </style>
   
