@@ -13,6 +13,7 @@ exports.orderData = async (req,res)=>{
         let result = "";
         let responseBody = {};
 
+        
         let query = "SELECT item.item_name, item_detail.item_detail_type, box_item.box_item_quantity, item.item_discount_rate, item.item_price, box_item.box_item_total_price from box, box_item, item_detail, item WHERE box.box_id=box_item.box_id AND box_item.item_detail_id=item_detail.item_detail_id AND item_detail.item_id=item.item_id AND box_item.box_id=? AND box.user_id=?";
 
         result = await db(query, [orderId, userId]);
@@ -199,14 +200,18 @@ exports.analysis = async (req, res) =>{
             ['상품 종류', '판매 수량']
         ];
         let categoryPieReviewData = [
-            ['상품 종류', '판매 수량']
+            ['상품 종류', '리뷰 갯수']
         ];
         for(let i in result){
             categoryPiePriceData.push([result[i]['item_detail_type'], result[i]['total_sale_price']]);
             categoryPieAmountData.push([result[i]['item_detail_type'], result[i]['total_sale_amount']]);
             categoryPieReviewData.push([result[i]['item_detail_type'], result[i]['review_count']]);
         }
-
+        query = "SELECT item_detail.item_detail_type, count(*) AS review_count FROM review, item_detail, item where item_detail.item_id = item.item_id AND review.item_id=item.item_id GROUP BY item_detail.item_detail_type";
+        result = await db(query);
+        for(let i in result){
+            categoryPieReviewData.push([result[i]['item_detail_type'], result[i]['review_count']]);
+        }
         res.json({
             status: 200,
             day_table_data: dayTableData,

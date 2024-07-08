@@ -22,11 +22,11 @@
       </svg>
       
       <div class="d-flex flex-column sidbar_container">
-        <div class="sidebar_header_box d-flex justify-content-center">
-            <div class="sidebar_header_box_text">로고 들어갈 자리</div>
+        <div class="sidebar_header_box_text" style="margin-bottom:15px;">
+              <img src="/icon/weddingmate_logo.png" width="260">
         </div>
         <div class="sidebar_header_box d-flex justify-content-between" style="padding: 0px 20px;">
-            <div class="sidebar_header_box_text" style="margin-top:4px;">로그인한 관리자 이름</div>
+          <div class="sidebar_header_box_text" style="margin-top:4px;">{{adminNick}}</div>
             <button class="sidebar_header_box_text" style="height:30px; border:none; color: black" @click="this.$logoutUser(); this.$router.push({path:'/'});">로그아웃</button>
         </div>
         <ul class="nav nav-pills flex-column mb-auto">
@@ -88,7 +88,7 @@
                         {{review.user_nickname}}
                       </div>
                       <div class="admin_review_card-icons">
-                        <a @click="deleteReview(review.review_id)"><i class="fas fa-trash"></i></a>
+                        <a @click="deleteReview(review)"><i class="fas fa-trash"></i></a>
                       </div>
                     </div>
                     <div class="admin_review_review-section_title-div">
@@ -99,6 +99,13 @@
                       src="https://via.placeholder.com/300x200"
                       class="admin_review_card-img-top"
                       alt="Review Image"
+                      v-if="!review.review_image_path"
+                    />
+                    <img
+                      :src="this.$imageFileFormat(review.review_image_path)"
+                      class="admin_review_card-img-top"
+                      alt="Review Image"
+                      v-if="review.review_image_path"
                     />
                     <div class="admin_review_card-body">
                       <p class="admin_review_card-text">
@@ -144,13 +151,32 @@ export default {
       prevKeyword: "",
       mode: "all",
       prevMode: "all",
-      reported: 'F'
+      reported: 'F',
+      adminNick: "null"
     }
   },
   mounted(){      
-      this.getReviewList();
+    this.getAdminInfo();
+    this.getReviewList();
   },
   methods: {
+    async getAdminInfo(){
+      try{
+        const result = await this.$verifiedAdmin();
+        if (result.status == 200){
+          this.adminNick = result.admin_nickname;
+        }
+        else{
+          alert("관리자 로그인 상태가 아닙니다.")
+        }
+      }
+      catch(err){
+        console.error(err);
+        alert("관리자 로그인 상태가 아닙니다.")
+        this.$logoutUser();
+        this.$router.push({name: 'mainPage'})
+      }
+    },
     // 멤버 정보 받아오기
     async getReviewList(){
       try{
@@ -229,11 +255,16 @@ export default {
       this.page = targetPage;
       this.getReviewList();
     },
-    async deleteReview(review_id){
+    async deleteReview(review){
       try{
         const accessToken = this.$getAccessToken();
-        console.log("accessToken", accessToken);
-        await this.$api(`http://localhost:9090/review/admindelete`, {review_id: review_id, access_token: accessToken}, "POST");
+        const requestBody = {
+          review_id: review.review_id, 
+          access_token: accessToken,
+          prev_review_image_path: review.review_image_path,
+          upload_type: "review"
+        }
+        await this.$api(`http://localhost:9090/review/admindelete`, requestBody, "POST");
         this.page = 1;
         await this.getReviewList();
       }

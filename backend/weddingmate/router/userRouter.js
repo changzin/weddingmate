@@ -1,5 +1,5 @@
 const express = require('express');
-const {userList, userBlock, userUnblock} = require('../controller/adminController');
+const {userList, userBlock, userUnblock, adminInfo} = require('../controller/adminController');
 const {login, info, signUp, emailVerify, emailIsVerified, edit} = require('../controller/userController');
 const { adminLoginCheck, loginCheck } = require('../middleware/login');
 
@@ -15,4 +15,6 @@ router.post('/signup', signUp);
 router.post('/emailverify', emailVerify);
 router.post('/emailisverified', emailIsVerified);
 router.post('/edit', loginCheck, edit);
+
+router.post('/admininfo', adminInfo);
 module.exports = router;

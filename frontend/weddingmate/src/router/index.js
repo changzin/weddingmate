@@ -120,7 +120,7 @@ const routes = [
     props: route => ({ item_id: route.query.item_id })
   },
   {
-    path: '/eviewdetail',
+    path: '/reviewdetail',
     name: 'reviewdetail',
     component: ReviewDetail,
     props: route => ({ review_id: route.query.review_id })

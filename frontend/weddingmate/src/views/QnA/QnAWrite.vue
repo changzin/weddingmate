@@ -16,10 +16,9 @@
             required
           >
             <option value="" disabled>선택하세요</option>
-            <option value="상품">상품</option>
-            <option value="배송">배송</option>
-            <option value="반품/취소">반품/취소</option>
-            <option value="기타">기타</option>
+            <option value="item">상품문의</option>
+            <option value="cancel">반품/취소</option>
+            <option value="etc">기타</option>
           </select>
           <label class="qnawrite_label qnawrite_label_margin">공개 유형</label>
           <select

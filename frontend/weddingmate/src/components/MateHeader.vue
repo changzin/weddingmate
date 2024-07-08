@@ -147,7 +147,6 @@ export default {
       headerLogo: require("@/components/headerImage/headerlogo.png"),
     };
   },
-  props: ["user"],
   methods: {
     showCategories() {
       this.isVisible = true;

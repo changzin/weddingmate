@@ -27,41 +27,6 @@
                 <div class="col sign_up_right"></div>
             </div>
 
-            <div class="row justify-content-center" v-if="user.user_type=='local'">
-                <div class="col sign_up_left">
-                    <div class="sign_up_left_text">비밀번호</div>
-                </div>
-                <div class="col sign_up_middle">
-                    <input class="sign_up_input" type="password" placeholder="비밀번호를 입력하세요 (8자리 이상)" v-model="userPassword">
-                </div>
-                <div class="col sign_up_right">
-                </div>
-            </div>
-            <div class="row sign_up_emptycol justify-content-center" v-if="user.user_type=='local'">
-                <div class="col sign_up_left"></div>
-                <div class="col sign_up_middle">
-                    <div class="sign_up_little_text sign_up_red" v-if="!userPasswordVerify">올바르지 않은 비밀번호입니다.</div>
-                </div>
-                <div class="col sign_up_right"></div>
-            </div>
-        
-            <div class="row justify-content-center" v-if="user.user_type=='local'">
-                <div class="col sign_up_left">
-                    <div class="sign_up_left_text">비밀번호 확인</div>
-                </div>
-                <div class="col sign_up_middle">
-                    <input class="sign_up_input" type="password" placeholder="비밀번호를 다시 입력하세요" v-model="userPassword2">
-                </div>
-                <div class="col sign_up_right">
-                </div>
-            </div>
-            <div class="row sign_up_emptycol justify-content-center">
-                <div class="col sign_up_left"></div>
-                <div class="col sign_up_middle">
-                </div>
-                <div class="col sign_up_right"></div>
-            </div>
-
             <div class="row justify-content-center">
                 <div class="col sign_up_left">
                     <div class="sign_up_left_text">이름</div>

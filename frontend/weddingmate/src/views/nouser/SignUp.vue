@@ -1,5 +1,5 @@
 <template>
-    <MateHeader />
+    <MateHeader/>
     <div class="container sign_up_container" style="margin-top: 200px;">
         <div class="row justify-content-center">
             <div class="sign_up_header_text">회원 정보를 입력해주세요</div>

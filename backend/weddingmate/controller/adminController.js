@@ -1,5 +1,37 @@
 const db = require('../util/db');
 
+// 현재 로그인한 admin 정보 받아오기
+exports.adminInfo = async (req, res)=>{
+    try{
+        const accessToken = req.body.accessToken;
+        let count = 0;
+        let result = 0;
+        let responseBody = {};
+        // accessToken으로 유저 정보를 가져옴
+        query = "SELECT admin_nickname FROM admin WHERE admin_access_token = ?";
+        result = await db(query, [accessToken]);
+        const admin = result[0];
+
+        // 유저가 있다면 유저 정보를 보내고, 없다면 에러 발생
+        if (admin){
+            responseBody = admin;
+            responseBody.status = 200;
+            res.json(responseBody);
+        }
+        else{
+            throw new Error("쿠키가 만료되었습니다.");
+        }
+        count = result.length;
+    } catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: err.message
+        };
+        res.json(responseBody);         
+    }
+}
+
 // 회원 리스트를 10개씩 받아오는 컨트롤러
 exports.userList = async (req, res)=>{
     try{

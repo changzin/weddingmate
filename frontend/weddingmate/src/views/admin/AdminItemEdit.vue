@@ -24,11 +24,11 @@ this.itemTnImage<template>
     </svg>
 
     <div class="d-flex flex-column sidbar_container">
-      <div class="sidebar_header_box d-flex justify-content-center">
-          <div class="sidebar_header_box_text">로고 들어갈 자리</div>
+      <div class="sidebar_header_box_text" style="margin-bottom:15px;">
+              <img src="/icon/weddingmate_logo.png" width="260">
       </div>
       <div class="sidebar_header_box d-flex justify-content-between" style="padding: 0px 20px;">
-          <div class="sidebar_header_box_text" style="margin-top:4px;">로그인한 관리자 이름</div>
+        <div class="sidebar_header_box_text" style="margin-top:4px;">{{adminNick}}</div>
           <button class="sidebar_header_box_text" style="height:30px; border:none; color: black" @click="this.$logoutUser(); this.$router.push({path:'/'});">로그아웃</button>
       </div>
       <ul class="nav nav-pills flex-column mb-auto">
@@ -320,12 +320,32 @@ data() {
 
     // 삭제한 옵션의 DB 식별자 (item_detail_id)를 보내주는 함수
     itemDetailDeletedList: [],
+
+    adminNick: "null"
   }
 },
 mounted(){      
   this.getItemDetail();
+  this.getAdminInfo();
 },
 methods: {
+  async getAdminInfo(){
+      try{
+        const result = await this.$verifiedAdmin();
+        if (result.status == 200){
+          this.adminNick = result.admin_nickname;
+        }
+        else{
+          alert("관리자 로그인 상태가 아닙니다.")
+        }
+      }
+      catch(err){
+        console.error(err);
+        alert("관리자 로그인 상태가 아닙니다.")
+        this.$logoutUser();
+        this.$router.push({name: 'mainPage'})
+      }
+    },
   // 초기에 아이템 세부사항을 받아오는 함수
   async getItemDetail(){
     try{
