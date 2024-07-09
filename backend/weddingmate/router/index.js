@@ -28,5 +28,4 @@ router.use("/image", imageRouter);
 router.use('/mypage', mypageRouter);
 router.use('/mybox', myboxRouter);
 
-router.use("/", mainRouter);
 module.exports = router;

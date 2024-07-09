@@ -14,14 +14,12 @@ exports.orderData = async (req,res)=>{
         let responseBody = {};
 
         
-        let query = "SELECT item.item_name, item_detail.item_detail_type, box_item.box_item_quantity, item.item_discount_rate, item.item_price, box_item.box_item_total_price from box, box_item, item_detail, item WHERE box.box_id=box_item.box_id AND box_item.item_detail_id=item_detail.item_detail_id AND item_detail.item_id=item.item_id AND box_item.box_id=? AND box.user_id=?";
-        
+        let query = "SELECT item.item_name, item_detail.item_detail_type, box_item.box_item_quantity, item.item_discount_rate, item.item_price, box_item.box_item_total_price, item_detail.item_detail_quantity from box, box_item, item_detail, item WHERE box.box_id=box_item.box_id AND box_item.item_detail_id=item_detail.item_detail_id AND item_detail.item_id=item.item_id AND box_item.box_id=? AND box.user_id=? AND box.box_ordered='F'";
+        console.log(req.body);
         result = await db(query, [orderId, userId]);
-        console.log("result", result);
         if(result.length == 0){
             throw new Error("견적함을 찾을 수 없습니다");
         }
-
         responseBody = {
             status: 200,
             boxItemList: result
@@ -40,6 +38,7 @@ exports.orderData = async (req,res)=>{
 
 exports.makeOrder = async (req, res)=>{
     try{
+        let userId = req.body.user_id;
         const box_id = req.body.box_id;
         const order_info_pay_type = req.body.order_info_pay_type;
         const order_info_price = req.body.order_info_price;
@@ -52,6 +51,7 @@ exports.makeOrder = async (req, res)=>{
         let result = "";
         let query = "";
 
+        // box 중 이미 order_info가 있는 box가 있다면, 이미 결제된 견적함이라는 것.
         query = `SELECT COUNT(*) AS count FROM order_info WHERE box_id=?`;
         result = await db(query, [box_id]);
         if (result[0].count){
@@ -62,9 +62,37 @@ exports.makeOrder = async (req, res)=>{
             res.json(responseBody);
             return;
         }
-        query = "INSERT INTO order_info(box_id, order_info_name, order_info_pay_type, order_info_price, order_info_total_price, order_info_sale_price, order_info_cash_receipt) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
+        // 만약 재고가 있는 상품이라면 item_detail_quantity를 box_item_quantity를 빼주는 방식으로 업데이트한다 
+        // (주문한 수량만큼 재고를 뺀다.)
+        query = "SELECT item_detail.item_detail_id, item_detail.item_detail_type, box_item.box_item_quantity, item_detail.item_detail_quantity from box, box_item, item_detail WHERE box.box_id=box_item.box_id AND box_item.item_detail_id=item_detail.item_detail_id AND box_item.box_id=? AND box.user_id=? AND box.box_ordered='F'";
+        result = await db(query, [box_id, userId]);
+        if(result.length == 0){
+            throw new Error("견적함을 찾을 수 없습니다");
+        }
+        // 재고를 업데이트 하기 전, 재고가 충분히 있는지 먼저 계산한다.
+        for(let i in result){
+            if (result[i]['item_detail_type'] == 'dress' || result[i]['item_detail_type'] == 'giving_dress' || result[i]['item_detail_type'] == 'shoes'){
+                if (result[i]['item_detail_quantity'] < result[i]['box_item_quantity']){
+                    throw new Error("수량이 초과되었습니다");
+                }
+            }
+        }
+        // 재고 업데이트 쿼리문 실행
+        for(let i in result){
+            if (result[i]['item_detail_type'] == 'dress' || result[i]['item_detail_type'] == 'giving_dress' || result[i]['item_detail_type'] == 'shoes'){
+                query = 'UPDATE item_detail SET item_detail_quantity=? WHERE item_detail_id=?';
+                let result2 = await db(query, [result[i]['item_detail_quantity'] - result[i]['box_item_quantity'], result[i]['item_detail_id']]);
+                if (result2.affectedRows != 1){
+                    throw new Error("재고 업데이트에 실패하였습니다.");
+                }
+            }
+        }
+
+        // order_info에 insert 실행
+        query = "INSERT INTO order_info(box_id, order_info_name, order_info_pay_type, order_info_price, order_info_total_price, order_info_sale_price, order_info_cash_receipt) VALUES(?, ?, ?, ?, ?, ?, ?)";
         result = await db(query, [box_id, order_info_name, order_info_pay_type, order_info_price, order_info_total_price, order_info_sale_price, (order_info_cash_receipt) ? 'T' : 'F']);
+
 
         if (result.affectedRows == 1){
             responseBody = {
@@ -90,7 +118,6 @@ exports.makeOrder = async (req, res)=>{
 exports.kakaoPay = async(req, res) =>{
     try{
         let responseBody = {};
-
         const result = await axios({
                 method: "POST",
                 url: "https://open-api.kakaopay.com/online/v1/payment/ready",
@@ -126,7 +153,6 @@ exports.analysis = async (req, res) =>{
         const date = new Date();
         const year = date.getFullYear(); 
         const month = ((date.getMonth()+1 < 10) ? "0" : "") + (date.getMonth() + 1);
-        
 
         // 현재 달의 날짜별 판매 정보 불러오기
         query = "SELECT DATE_FORMAT(order_info_end_date, '%Y-%m-%d') AS date, COUNT(*) AS daily_pay_amount, SUM(order_info_price) AS daily_profit FROM order_info WHERE order_info_end_date LIKE ? GROUP BY DATE_FORMAT(order_info_end_date, '%Y-%m-%d') ORDER BY DATE_FORMAT(order_info_end_date, '%Y-%m-%d')";
@@ -142,7 +168,6 @@ exports.analysis = async (req, res) =>{
         for(let i in result){
             dayTableData.push([result[i]['date'], result[i]['daily_pay_amount'], result[i]['daily_profit']]);
             dayLineData.push([result[i]['date'], result[i]['daily_profit']]);
-
         }
 
         // 올해의 월별 판매 정보 불러오기
@@ -205,7 +230,6 @@ exports.analysis = async (req, res) =>{
         for(let i in result){
             categoryPiePriceData.push([result[i]['item_detail_type'], result[i]['total_sale_price']]);
             categoryPieAmountData.push([result[i]['item_detail_type'], result[i]['total_sale_amount']]);
-            categoryPieReviewData.push([result[i]['item_detail_type'], result[i]['review_count']]);
         }
         query = "SELECT item_detail.item_detail_type, count(*) AS review_count FROM review, item_detail, item where item_detail.item_id = item.item_id AND review.item_id=item.item_id GROUP BY item_detail.item_detail_type";
         result = await db(query);

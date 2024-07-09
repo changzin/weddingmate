@@ -169,7 +169,7 @@ export default {
           checkedbookmarkIds: this.result
         };
 
-        const response = await this.$api("/mypage/bookmarklist/delchekced", requestBody, "post");
+        const response = await this.$api("/mypage/bookmarklist/delchecked", requestBody, "post");
         alert(response.message);
         
         if (response.status === 200) {

@@ -32,15 +32,15 @@
             <div style="width:600px; background-color: #f5f5f5; height:160px; margin-top:50px;">
                 <div class="row justify-content-between" style="margin-bottom:10px;">
                     <div style="width:200px; padding-left: 30px; padding-top:15px;">총 금액</div>
-                    <div style="width:400px; padding-top:15px;">{{this.order_info.order_total_price}}원</div>
+                    <div style="width:400px; padding-top:15px;">{{this.show_order_total_price}}원</div>
                 </div>
                 <div class="row justify-content-between" style="margin-bottom:10px;">
                     <div style="width:200px; padding-left: 30px; padding-top:15px;">할인 금액</div>
-                    <div style="width:400px; padding-top:15px;">{{this.order_info.order_sale_price}}원</div>
+                    <div style="width:400px; padding-top:15px;">{{this.show_order_sale_price}}원</div>
                 </div>
                 <div class="row justify-content-between" style="margin-bottom:10px;">
                     <div style="width:200px; padding-left: 30px; padding-top:15px;">최종 금액</div>
-                    <div style="width:400px; padding-top:15px;">{{this.order_info.order_price}}원</div>
+                    <div style="width:400px; padding-top:15px;">{{this.show_order_price}}원</div>
                 </div>
                 
             </div>
@@ -77,18 +77,17 @@
     data() {
       return {
         boxItemlist:[],
-        order_info:
-        {
-        "order_total_price": 0,
-        "order_sale_price":0,
-        "order_price":0,
-        },
+        order_total_price: 0,
+        order_sale_price:0,
+        order_price:0,
+        show_order_total_price: 0,
+        show_order_sale_price:0,
+        show_order_price:0,
         order_code: null
       };
     },
     async created(){
       await this.getBoxItemList();
-      await this.makeOrderInfo();
       await this.makeOrder(); 
     },
     methods: {
@@ -98,33 +97,33 @@
             "access_token": this.$getAccessToken(),
             "order_id": this.$route.query.box_id
           }
-          console.log(requestBody);
           const result = await this.$api("http://localhost:9090/order/orderdata", requestBody,"POST");
-          console.log(result);
 
           this.boxItemList = result.boxItemList; 
           if (result.status != 200){
             alert("견적함 정보를 불러올 수 없습니다. 견적함 리스트로 이동합니다.");  
             this.$router.push({path: "/mypage/boxlist"});
           }
+
+          this.makeOrderInfo();
         } catch(err){
           alert("견적함 정보를 불러올 수 없습니다!");
           this.$router.push({path: "/mypage/boxlist"});
         }
       },
-      async makeOrderInfo(){
+      makeOrderInfo(){
         for(let i = 0; i < this.boxItemList.length; i++){
-          this.order_info.order_total_price += this.boxItemList[i].box_item_total_price;
+          this.order_total_price += this.boxItemList[i].box_item_total_price;
         }
 
         for(let i = 0; i < this.boxItemList.length; i++){
-          this.order_info.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
+          this.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
         }
-        this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
+        this.order_price = this.order_total_price - this.order_sale_price;
 
-        this.order_info.order_sale_price = this.$numberFormat(this.order_info.order_sale_price);
-        this.order_info.order_total_price = this.$numberFormat(this.order_info.order_total_price);
-        this.order_info.order_price = this.$numberFormat(this.order_info.order_price);
+        this.show_order_sale_price = this.$numberFormat(this.order_sale_price);
+        this.show_order_total_price = this.$numberFormat(this.order_total_price);
+        this.show_order_price = this.$numberFormat(this.order_price);
       },
       async makeOrder(){
         try{
@@ -132,9 +131,9 @@
                 access_token: this.$getAccessToken(),
                 box_id: this.$route.query.box_id,
                 order_info_pay_type: "kakao",
-                order_info_price: this.order_info.order_price,
-                order_info_total_price: this.order_info.order_total_price,
-                order_info_sale_price: this.order_info.order_sale_price,
+                order_info_price: this.order_price,
+                order_info_total_price: this.order_total_price,
+                order_info_sale_price: this.order_sale_price,
                 order_info_cash_receipt: this.$route.query.isBill
             };
             const result = await this.$api("http://localhost:9090/order/makeorder", requestBody, "POST");

@@ -55,7 +55,7 @@
       <!-- 로고 -->
       <div class="text-center">
         <a class="navbar-brand" href="#">
-          <img :src="headerLogo" alt="Logo" />
+          <img src="/headerlogo.png" alt="Logo" />
         </a>
       </div>
     </header>
@@ -80,7 +80,7 @@
             <section class="productdetail_main-image-section">
               <img
                 class="img-fluid w-100 mateHeaderImage"
-                :src="headerImage"
+                src="/headerImage.png"
                 alt="Main Image"
               />
             </section>
@@ -142,9 +142,6 @@ export default {
     return {
       isVisible: false,
       ismaintain: false,
-      isLogined: false,
-      headerImage: require("@/components/headerImage/headerImage.png"),
-      headerLogo: require("@/components/headerImage/headerlogo.png"),
     };
   },
   methods: {
