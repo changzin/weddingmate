@@ -3263,6 +3263,7 @@
                 </td>
                 <td class="productdetail_qna-section_status-nickname-div">
                   {{ maskNickname(qna.user_nickname) }}
+                   <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
                 </td>
                 <td>{{ this.$dateFormat(qna.qna_date) }}</td>
               </tr>
