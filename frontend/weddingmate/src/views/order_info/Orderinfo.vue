@@ -58,15 +58,15 @@
                     <tbody>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">총 상품가격</td>
-                            <td class="order_info_second_row">{{ order_info.order_total_price }}원</td>                  
+                            <td class="order_info_second_row">{{ this.$numberFormat(order_info.order_total_price) }}원</td>                  
                         </tr>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">할인 가격</td>
-                            <td class="order_info_second_row">{{ order_info.order_sale_price }}원</td>                           
+                            <td class="order_info_second_row">{{ this.$numberFormat(order_info.order_sale_price) }}원</td>                           
                         </tr>
                         <tr>
                             <td class="order_info_first_row order_info_td_child">총 결제가격</td>
-                            <td class="order_info_second_row">{{ order_info.order_price }}원</td>
+                            <td class="order_info_second_row">{{ this.$numberFormat(order_info.order_price) }}원</td>
                         </tr>
                     </tbody>
                 </table>

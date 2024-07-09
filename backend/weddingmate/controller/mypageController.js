@@ -19,7 +19,6 @@ exports.paymentList = async(req, res) =>{
 
         query = "SELECT COUNT(*) AS COUNT FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE user_id = ?;";
         count = await db(query,[user_id]);
-        console.log(count);
 
         count = count[0]["COUNT"];
 
@@ -42,20 +41,18 @@ exports.paymentList = async(req, res) =>{
 //결제 영수증 건용 추가 
 exports.receiptList = async(req, res)=>{
     try{
-        const user_id = req.body.user_id
         const box_id = req.body.box_id
         const order_info_id = req.body.order_info_id
-        let query = ''
-
-        query = 'SELECT i.item_factory_name,o.box_id,o.order_info_end_date,o.order_info_price FROM	order_info AS o, item AS i WHERE  o.box_id = ?,o.order_info_id = ?,o.user_id = ?'
-        receipt = (query,[box_id,order_info_id,user_id])
+        
+        query = 'SELECT box_id,order_info_end_date,order_info_price FROM order_info  WHERE  box_id = ? AND order_info_id = ? ;' ;
+        receipt = await db(query,[box_id,order_info_id])
         console.log(receipt)
 
-        responseBody ={
+        const responseBody ={
             status : 200,
             receiptList : receipt
         }
-        console.log(responseBody)
+        res.json(responseBody);
     }catch(error){
         console.error(err);
         responseBody = {
@@ -76,7 +73,31 @@ exports.bookmarkList = async(req, res) =>{
         let responseBody = {};
 
         page = !page ? 0 :Number(page) - 1;
-        query = "SELECT bookmark.bookmark_id, item.item_name, item.item_price, item.item_tn_image_path FROM item JOIN bookmark ON item.item_id = bookmark.item_id WHERE bookmark.user_id = ? ORDER BY bookmark.bookmark_id LIMIT 10 OFFSET ?";
+        query = 
+            `SELECT 
+                bookmark.bookmark_id, 
+                bookmark.item_id, 
+                item.item_name, 
+                item.item_price, 
+                item.item_tn_image_path, 
+                item_detail.item_detail_type 
+            FROM 
+                bookmark
+            JOIN 
+                item ON bookmark.item_id = item.item_id 
+            JOIN 
+                item_detail ON item.item_id = item_detail.item_id
+            WHERE 
+                bookmark.user_id = 2 
+            GROUP BY 
+                bookmark.bookmark_id, 
+                bookmark.item_id, 
+                item.item_name, 
+                item.item_price, 
+                item.item_tn_image_path, 
+                item_detail.item_detail_type
+            ORDER BY 
+            bookmark.bookmark_id;`
         result = await db(query, [user_id, (page * 10)]);
 
         query ="SELECT COUNT (*) AS COUNT FROM bookmark WHERE user_id = ?";
@@ -177,11 +198,10 @@ exports.reviewList = async(req, res) =>{
          query =`SELECT item.item_name ,review_id, review_star, review_content 
                     FROM review 
                     JOIN item ON review.item_id = item.item_id
-                    JOIN item_detail ON item.item_id = item_detail.item_id
                     WHERE user_id = ? LIMIT 10 OFFSET ?`
 
         result = await db(query, [user_id,(page * 10)]);
-
+        console.log(result);
         query = "SELECT COUNT(*) AS COUNT FROM review WHERE user_id = ?"
         count = await db(query,[user_id]);
         count=count[0]["COUNT"];
@@ -244,7 +264,7 @@ exports.qnaList = async (req, res) => {
         let responseBody = {};
 
         page = !page ? 0 :Number(page) - 1;
-        query ="SELECT qna_date, qna_title FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
+        query ="SELECT qna_date, qna_title, qna_id FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
         result = await db(query, [user_id, (page * 15) ]);
 
         query ="SELECT COUNT (*) AS COUNT FROM qna WHERE user_id = ?";
@@ -294,18 +314,25 @@ exports.boxList = async (req, res) => {
         }
 
         // 동적으로 쿼리를 작성합니다.
-        let query = `SELECT box.box_id, box_name, box_date, box_quantity, box_item_total_price 
-                     FROM box 
-                     JOIN box_item 
-                     WHERE user_id = ? 
-                     ORDER BY ${orderBy} DESC 
-                     LIMIT 15 OFFSET ?;`;
+        let query = `SELECT box.box_id, box_name, box_date, box_quantity, SUM(box_item_total_price) AS box_item_total_price
+                        FROM box 
+                        LEFT JOIN box_item ON box.box_id = box_item.box_id
+                        WHERE user_id = ? AND box_ordered = 'F' 
+                        GROUP BY box.box_id, box_name, box_date, box_quantity
+                        ORDER BY ${orderBy} DESC                      
+                        LIMIT 15 OFFSET ?`;
 
         result = await db(query, [user_id, page * 15]);
 
-        query = "SELECT COUNT(*) AS COUNT FROM box WHERE user_id = ? ";
+        query = `SELECT COUNT(*) AS COUNT
+                    FROM (
+                        SELECT box.box_id
+                        FROM box 
+                        JOIN box_item ON box.box_id = box_item.box_id
+                        WHERE user_id = 2 AND box_ordered = 'F'
+                        GROUP BY box.box_id, box_name, box_date, box_quantity
+                    ) AS grouped_result`;
         count = await db(query, [user_id]);
-        console.log(count);
 
         count = count[0]["COUNT"];
 

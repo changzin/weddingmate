@@ -18,7 +18,7 @@
                 <div v-for="(qna, index) in qnaList" :key="index">
                   <div class="container-middle-content">
                     <div>{{this.$dayFormat(qna.qna_date)}}</div>
-                    <div style ="cursor: pointer;" @click="goToQna">{{ qna.qna_title }}</div>
+                    <div style ="cursor: pointer;" @click="goToQna(qna)">{{ qna.qna_title }}</div>
                   </div>
                   <div><hr class="text"></div>
                 </div>
@@ -120,9 +120,11 @@
       }   
     },
 
-    goToQna(){
-      this.$router.push({ name: "qnamodify", query: { qna_id: this.qna_id } });
-      console.log("라우터 수정 요망")
+    goToQna(qna){
+      this.$router.push({
+        name: "qnadetail",
+        query: { qna_id: qna.qna_id },
+      });
     },
 
       // 페이지 네이션

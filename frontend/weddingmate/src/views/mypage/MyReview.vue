@@ -45,7 +45,7 @@
                               <div class="star-icon"></div>
                             </label>
                             <div class="edit">
-                                <div style="cursor: pointer;" @click="gotoReviewModify()"><i class="fas fa-edit"></i></div>
+                                <div style="cursor: pointer;" @click="gotoReviewModify(review)"><i class="fas fa-edit"></i></div>
                                 <div style="cursor: pointer;" @click="delReview(review)"><i class="fas fa-trash"></i></div>
                             </div>
                           </div>
@@ -156,6 +156,8 @@
           this.reviewList = response.reviewList;  
           this.maxPage = response.maxPage;
           this.updatePageStatus();
+          console.log("리뷰리스트", this.reviewList);
+          console.log("리뷰아이디", this.reviewList[0]["review_id"]);
           } 
         }catch(error){
           alert("리뷰를 불러올 수 없습니다.")
@@ -163,9 +165,11 @@
         }
       },
 
-    gotoReviewModify() {
-      this.$router.push({ name: "qnamodify", query: { qna_id: this.qna_id } });
-      console.log("라우터 수정 요망")
+    gotoReviewModify(review) {
+      this.$router.push({
+        name: "reviewmodify",
+        query: { review_id: review.review_id},
+      });
     },
 
       async delReview(review){
@@ -173,7 +177,7 @@
           const requestBody = {
           reviewId : review.review_id
           };
-          const response = await this.$api("/mypage/review/del", requestBody, "post");
+          const response = await this.$api("/payment/mypage/review/del", requestBody, "post");
           alert("리뷰가 삭제되었습니다.");
 
           if (response.status === 200) {
