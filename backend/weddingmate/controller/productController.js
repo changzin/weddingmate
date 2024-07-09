@@ -195,7 +195,55 @@ exports.InsertItemIntoBox = async (req, res) => {
     const box_item_schedule_start = req.body.box_item_schedule_start;
     const box_item_schedule_end = req.body.box_item_schedule_end;
 
-    // Box 데이터 생성
+
+    
+    const searchSamRecodequery = `
+              select box_item_id 
+              from box_item 
+              where box_id = ? and item_detail_id = ?
+            `;
+    const searchSameRecodResult = await db(searchSamRecodequery, [
+      box_id,
+      item_detail_id,
+    ]);
+
+
+
+    // 만약에 박스에 기존 아이템이 담겨져 있을 경우 중복으로 담지 않고 기존 아이템을 업데이트를 해준다
+    if (searchSameRecodResult.length > 0) {
+
+      console.log(
+        " searchSameRecodResult[0].box_item_id : ",
+        searchSameRecodResult[0].box_item_id
+      );
+
+      
+      const updateboxItemquery = `
+        UPDATE box_item 
+        SET 
+          box_item_quantity = ?,
+          box_item_schedule_start = ?,
+          box_item_schedule_end = ?
+        WHERE box_item_id = ?
+            `;
+      const updateboxItemResult = await db(updateboxItemquery, [
+        box_item_quantity,
+        box_item_schedule_start,
+        box_item_schedule_end,
+        searchSameRecodResult[0].box_item_id,
+      ]);
+      // 데이터 보낼 준비
+      const responseBody = {
+        status: 200,
+        message: "ProductController.js의 productList 데이터 성공",
+        data: updateboxItemResult,
+      };
+      // 데이터 보내기
+      return res.json(responseBody);
+    }
+
+    // 만약에 박스에 기존 아이템이 담겨져있지 않은 경우 중복으로 담지 않고 기존 아이템을 업데이트를 해준다
+
     const query = `
               INSERT INTO box_item (box_id, item_detail_id, box_item_quantity,box_item_total_price, box_item_schedule_start, box_item_schedule_end)
         VALUES (?, ?, ?, ?, ?, ?);
@@ -260,7 +308,6 @@ exports.Bookmark = async (req, res) => {
   }
 };
 
-
 exports.totalProductDetail = async (req, res) => {
   try {
     console.log("totalProductDetail. user_id : ", req.body.user_id);
@@ -284,11 +331,8 @@ exports.totalProductDetail = async (req, res) => {
     const itemDetailQuery = `SELECT * FROM item_detail WHERE item_id = ?`;
     const itemDetailResult = await db(itemDetailQuery, [itemId]);
 
-
-
     // 리뷰
-    const reviewQuery =
-  `SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date,
+    const reviewQuery = `SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date,
      CASE 
       WHEN review.user_id = ? THEN 1 
       ELSE 0 
@@ -302,8 +346,6 @@ exports.totalProductDetail = async (req, res) => {
     let reviewResult = [];
     reviewResult = await db(reviewQuery, [user_id, itemId]);
 
-
-
     // QnA
     const qnaQuery =
       "SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date FROM qna, user WHERE qna.user_id=user.user_id AND qna.item_id=? ORDER BY qna.qna_id LIMIT 5";
@@ -311,17 +353,11 @@ exports.totalProductDetail = async (req, res) => {
     let qnaResult = [];
     qnaResult = await db(qnaQuery, [itemId]);
 
-
-
-
     // 견적함
     const boxQuery = `
     SELECT * FROM box where user_id = ?;
   `;
-const boxResult = await db(boxQuery, [user_id]);
-
-
-
+    const boxResult = await db(boxQuery, [user_id]);
 
     const responseBody = {
       status: 200,
@@ -346,10 +382,6 @@ const boxResult = await db(boxQuery, [user_id]);
   }
 };
 
-
-
-
-
 // exports.totalProductDetail = async (req, res) => {
 //   try {
 //     const user_id = req.body.user_id;
@@ -362,21 +394,21 @@ const boxResult = await db(boxQuery, [user_id]);
 //     const itemDetailQuery = `SELECT * FROM item_detail WHERE item_id = ?`;
 //     const reviewQuery = `
 //       SELECT review.review_id, review.review_star, review.review_image_path, review.review_content, user.user_nickname, review.review_date,
-//         CASE 
-//           WHEN review.user_id = ? THEN 1 
-//           ELSE 0 
+//         CASE
+//           WHEN review.user_id = ? THEN 1
+//           ELSE 0
 //         END AS is_current_user
 //       FROM review
-//       JOIN user ON review.user_id = user.user_id 
-//       WHERE item_id = ? 
-//       ORDER BY review.review_date 
+//       JOIN user ON review.user_id = user.user_id
+//       WHERE item_id = ?
+//       ORDER BY review.review_date
 //       LIMIT 6`;
 //     const qnaQuery = `
-//       SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date 
-//       FROM qna 
-//       JOIN user ON qna.user_id = user.user_id 
-//       WHERE qna.item_id = ? 
-//       ORDER BY qna.qna_date 
+//       SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date
+//       FROM qna
+//       JOIN user ON qna.user_id = user.user_id
+//       WHERE qna.item_id = ?
+//       ORDER BY qna.qna_date
 //       LIMIT 5`;
 //     const boxQuery = `SELECT * FROM box WHERE user_id = ?`;
 
