@@ -195,6 +195,8 @@ exports.InsertItemIntoBox = async (req, res) => {
     const box_item_schedule_start = req.body.box_item_schedule_start;
     const box_item_schedule_end = req.body.box_item_schedule_end;
 
+
+    
     const searchSamRecodequery = `
               select box_item_id 
               from box_item 
@@ -205,13 +207,17 @@ exports.InsertItemIntoBox = async (req, res) => {
       item_detail_id,
     ]);
 
-    console.log(
-      " searchSameRecodResult[0].box_item_id : ",
-      searchSameRecodResult[0].box_item_id
-    );
+
 
     // 만약에 박스에 기존 아이템이 담겨져 있을 경우 중복으로 담지 않고 기존 아이템을 업데이트를 해준다
     if (searchSameRecodResult.length > 0) {
+
+      console.log(
+        " searchSameRecodResult[0].box_item_id : ",
+        searchSameRecodResult[0].box_item_id
+      );
+
+      
       const updateboxItemquery = `
         UPDATE box_item 
         SET 
@@ -236,7 +242,8 @@ exports.InsertItemIntoBox = async (req, res) => {
       return res.json(responseBody);
     }
 
-    // 만약에 박스에 기존 아이템이 담겨져있지 않은 경우 insert 해준다
+    // 만약에 박스에 기존 아이템이 담겨져있지 않은 경우 중복으로 담지 않고 기존 아이템을 업데이트를 해준다
+
     const query = `
               INSERT INTO box_item (box_id, item_detail_id, box_item_quantity,box_item_total_price, box_item_schedule_start, box_item_schedule_end)
         VALUES (?, ?, ?, ?, ?, ?);
