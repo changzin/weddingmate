@@ -10,7 +10,6 @@ import ReviewModify from '../views/review/ReviewModify.vue'
 import ReviewWrite from '../views/review/ReviewWrite.vue'
 import ReviewDetail from '../views/review/ReviewDetail.vue'
 import Orderinfo from '../views/order_info/Orderinfo.vue'
-
 import UserLogin from '../views/nouser/UserLogin.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
@@ -205,6 +204,7 @@ const routes = [
     path: '/mypage/boxlist/:boxId',
     name: "mybox",
     component: MyBox,
+    props: true
     // props: route => ({ box_id: route.query.box_id })
   },
   {

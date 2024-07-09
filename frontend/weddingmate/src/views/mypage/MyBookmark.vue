@@ -15,12 +15,15 @@
     <div class="container-middle">
       <div v-for="(bookmark, index) in bookmarkList" :key="index" class="container-content">
         <input type="checkbox" v-model="bookmark.checked">
-        <div><img class="bookmark_img" :src="$imageFileFormat(bookmark.item_tn_image_path)"></div>
+        <div @click="goToBookmark(bookmark)" style="cursor: pointer;"><img class="bookmark_img" :src="$imageFileFormat(bookmark.item_tn_image_path)"></div>
         <div class="container-name_cost">
           <div>{{ bookmark.item_name }}</div>
           <div class="font-cost">{{ bookmark.item_price }}</div>
         </div>
+        <div>
         <img class="delete-x" src="icon/deleteX.png" style ="cursor: pointer;" @click=" DelBookmark(bookmark)">
+        
+        </div>
       </div>
     </div>
     <div class="mypage-bottom">
@@ -138,6 +141,12 @@ export default {
       console.error(error);
 
     }      
+    },
+    goToBookmark(bookmark) {
+      this.$router.push({
+        name: "productdetail",
+        query: { itemType: bookmark.item_detail_type, item_id: bookmark.item_id},
+      });
     },
 
     async DelBookmark(bookmark){
