@@ -18,27 +18,27 @@
         <div class="container-middle-mymenu">
             <div class="content-mymenu_list">
                 <div class="content-mymenu">
-                  <img class="icon" src="http://localhost:8080/icon/icon.png">
+                  <img class="icon" src="/icon/star-solid.svg">
                   <div class="font-menu">찜</div>
                 </div>
                 <div class="content-mymenu">
-                    <img class="icon" src="http://localhost:8080/icon/icon.png">
+                    <img class="icon" src="/icon/folder-solid.svg">
                     <div class="font-menu">견적함</div>
                 </div>
                 <div class="content-mymenu">
-                  <img class="icon" src="http://localhost:8080/icon/icon.png">
+                  <img class="icon" src="/icon/calendar-regular.svg">
                   <div class="font-menu">스케쥴</div>
                 </div>
                 <div class="content-mymenu">
-                  <img class="icon" src="http://localhost:8080/icon/icon.png">
+                  <img class="icon" src="/icon/pencil-solid.svg">
                   <div class="font-menu">나의리뷰</div>
                 </div>
                 <div class="content-mymenu">
-                  <img class="icon" src="http://localhost:8080/icon/icon.png">
+                  <img class="icon" src="/icon/message-regular.svg">
                   <div class="font-menu">나의QnA</div>
                 </div>
                 <div class="content-mymenu">
-                  <img class="icon" src="http://localhost:8080/icon/icon.png">
+                  <img class="icon" src="/icon/credit-card-regular.svg">
                   <div class="font-menu">결제내역</div>
                 </div>   
             </div>
@@ -332,12 +332,8 @@ export default {
     font-weight: bold;
     /* border: 1px solid red; */
 }
-.content-mymenu a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none; /* remove underline */
-    color: inherit; /* inherit color from parent */
+.content-mymenu .icon {
+    margin-bottom: 15px; /* 예시로 이미지 아래쪽에 10px의 마진을 줍니다 */
 }
 
 /* hr */
@@ -361,7 +357,7 @@ button.profile{
 /* img */
 
 img.icon{
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
 }
 </style>
