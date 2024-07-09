@@ -24,7 +24,7 @@
                             거래일시
                         </div>
                         <div class="col receipt_date">
-                            
+                            {{ receipt.order_info_end_date }}
                         </div>
                     </div>
                     <div class="row">
@@ -40,12 +40,12 @@
                             합계
                         </div>
                         <div class="col receipt_total">
-                            530,000원
+                           {{ receipt.order_price}}
                         </div>
                     </div>
                       <div class="row">
                         <div class="col-4 receipt_category1">
-                            회사명
+                            제조사명
                         </div>
                         <div class="col receipt_company">
                             WeddingMate
@@ -103,39 +103,37 @@
     computed:{
     },
     mounted(){
-     
+        this.getReceiptList();
     },
     methods: {
         // 헤더
         async getReceiptList(){
             try{
                 // URL 파라미터 추가 
-                await this.$router.push({path:'/mypage/payment/receipt',query:{box_id : this.box_id,order_info_id : this.order_info_id} })
-                const responseBody = {
-                   access_token:"2c595eca-d4e3-4085-a6c7-331333eb22f0",
+                const requestBody = {
                    box_id : this.box_id,
                    order_info_id : this.order_info_id
                 }
-                const response = await this.$api(`/mypage/payment/recepit?box_id=${this.box_id}`,responseBody,"POST")
-                console.log(response);
-                this.receipt = response.receipt;
+                const response = await this.$api(`mypage/payment/receipt`,requestBody,"POST")
+                console.log("왜 안되는데",response);
+                this.receipt = response.receiptList;
                 console.log(this.receipt)
-            }catch(error){
+                }catch(error){
                 console.log(error);
                 }
 
             },
-        makeOrderInfo(){
-        for(let i = 0; i < this.receipt.length; i++){
-          this.order_info.order_total_price += this.receipt[i].box_item_total_price;
-        }
+    //     makeOrderInfo(){
+    //     for(let i = 0; i < this.receipt.length; i++){
+    //       this.order_info.order_total_price += this.receipt[i].box_item_total_price;
+    //     }
 
-        for(let i = 0; i < this.receipt.length; i++){
-          this.order_info.order_sale_price += Math.ceil((this.receipt[i].box_item_total_price * (this.receipt[i].item_discount_rate/100)));
-          console.log(this.receipt[i].box_item_total_price , this.receipt[i].item_discount_rate);
-        }
-        this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
-      },
+    //     for(let i = 0; i < this.receipt.length; i++){
+    //       this.order_info.order_sale_price += Math.ceil((this.receipt[i].box_item_total_price * (this.receipt[i].item_discount_rate/100)));
+    //       console.log(this.receipt[i].box_item_total_price , this.receipt[i].item_discount_rate);
+    //     }
+    //     this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
+    //   },
         }
     }
     </script>

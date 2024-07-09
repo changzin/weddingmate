@@ -22,7 +22,7 @@
                   <div>{{ this.$dayFormat(payment.order_info_end_date) }}</div>
                   <div>{{payment.box_name}}</div>
                   <div>{{this.$numberFormat(payment.order_info_total_price)}}</div>
-                  <div><a href="#">영수증</a></div>
+                  <div><button @click="$router.push({path:'/mypage/payment/receipt'})">영수증</button></div>
               </div>
               <hr class="text">
           </div>

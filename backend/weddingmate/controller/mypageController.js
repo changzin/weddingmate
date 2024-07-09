@@ -41,19 +41,18 @@ exports.paymentList = async(req, res) =>{
 //결제 영수증 건용 추가 
 exports.receiptList = async(req, res)=>{
     try{
-        const user_id = req.body.user_id
         const box_id = req.body.box_id
         const order_info_id = req.body.order_info_id
-        let query = ''
+        
+        query = 'SELECT box_id,order_info_end_date,order_info_price FROM order_info  WHERE  box_id = ? AND order_info_id = ? ;' ;
+        receipt = await db(query,[box_id,order_info_id])
+        console.log(receipt)
 
-        query = 'SELECT i.item_factory_name,o.box_id,o.order_info_end_date,o.order_info_price FROM	order_info AS o, item AS i WHERE  o.box_id = ?,o.order_info_id = ?,o.user_id = ?'
-        receipt = (query,[box_id,order_info_id,user_id])
-
-        responseBody ={
+        const responseBody ={
             status : 200,
             receiptList : receipt
         }
-        console.log(responseBody)
+        res.json(responseBody);
     }catch(error){
         console.error(err);
         responseBody = {
