@@ -52,8 +52,10 @@
           <label class="qnadetail_answer_label">이미지</label>
           <a :href="form.image">
             <div class="qnadetail_answer_image">
-              <img :src="this.$imageFileFormat(QnAResult.qna_image_path)" 
-              class="qnadetail_answer_image_src"/>
+              <img
+                :src="this.$imageFileFormat(QnAResult.qna_image_path)"
+                class="qnadetail_answer_image_src"
+              />
             </div>
           </a>
         </div>
@@ -167,6 +169,22 @@ export default {
           }
 
           this.user_nickname = result.user_nickname.user_nickname;
+
+          const aswerResult = await this.$api(
+            "/answer/getanswer",
+            { qna_id: this.qna_id },
+            "POST"
+          );
+          if (aswerResult.data.answer_content) {
+            this.AnswerContent = aswerResult.data.answer_content;
+            console.log(
+              "aswerResult: ",
+              JSON.parse(JSON.stringify(this.AnswerContent))
+            );
+          }
+          else {
+            console.log("답변자 답글 안닮");
+          }
         } else {
           console.log("fail");
         }
@@ -175,7 +193,7 @@ export default {
       }
     },
 
-     maskNickname(nickname) {
+    maskNickname(nickname) {
       if (nickname.length <= 4) {
         return nickname;
       }
