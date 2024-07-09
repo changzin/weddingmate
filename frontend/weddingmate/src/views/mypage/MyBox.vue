@@ -46,7 +46,7 @@
             <tr>
               <td>
                 <div class="container-table_col1">
-                  <input type="checkbox" />
+                  <!-- <input type="checkbox" /> -->
                   <img class="bookmark" src="http://localhost:8080/icon/icon.png" />
                   <div class="content-table_col1">
                     <div class="content-table_col1-name">
@@ -93,15 +93,6 @@
           <button class="order" @click="$router.push({path:`/orderinfo/${boxId}`})">주문 하기</button>
         </div>
         <div class="mypage-bottom">
-          <div class="nav-page">
-            <div>&lt;&lt;</div>
-            <div>&lt;</div>
-            <div>1</div>
-            <div style="color: pink;">2</div>
-            <div>3</div>
-            <div>&gt;</div>
-            <div>&gt;&gt;</div>
-          </div>
           <button class="mypage-back" @click="$router.push({path:`/mypage`})">마이페이지로</button>
         </div>
       </div> 
@@ -165,11 +156,8 @@
       hideCategories() {
         this.isVisible = false;
       },
-      // 본문
-      //상품 옵션 가져오기 
       
-
-
+      //개별 상품 제거 
       async DelItem(box_item_id){
       const requestBody = {
         access_token: this.$getAccessToken(),
@@ -188,12 +176,12 @@
         console.error(error);
       }
     },
+    //견적함 지우기
     async deleteBox(boxId){
      const requestBody = {
         access_token: this.$getAccessToken(),
         boxId:this.boxId
       }
-      
       console.log(requestBody)
       console.log(boxId);
       try{
@@ -206,7 +194,6 @@
       }catch(error){
         console.log(error);
       }
-
     },
 
 
@@ -240,8 +227,9 @@
         this.box_name = this.editableBoxName
         this.editingBoxName = false;
       },
-         
+         //견적함 상세 정보 가져오기 
       async fetchItem(){
+        try{
         this.boxId = this.$route.params.boxId
           const responseBody  ={
             access_token : this.$getAccessToken(),
@@ -251,17 +239,34 @@
           console.log(response);
           const iName = response.box_itemName.map((item_name)=> item_name);
           //아이템 이름을 담고 있는 배열 iName
-          console.log(iName);
           this.itemDetails = iName;
           console.log(this.itemDetails);
           this.box = response.box_itemObj;
           console.log(this.box);
           this.makeOrderInfo();
-          },
+          
+          }catch(err){
+            console.error(err)
+          }
+        },
+        categorieDistinct(item){
+          for(let key in item){
+            if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name'){
+              continue
+            }
+            let objectCategoryDeDupl = this.itemDetails.reduce((item, now) =>{
+              if(!item.some(cate => cate.item_detail_type === cate.item_detail_type)){
+                item.push(now);
+                return item;
+              }
+              console.log(objectCategoryDeDupl)
+            })
+          }
+        },
+          //아이템 카테고리 ":" 옵션화  
        optionKorean(item){
            let resultString = "";
            console.log(item)
-
             for ( let key in item ){
               if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_detail_type' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name'){
               continue
@@ -281,6 +286,7 @@
             console.log(resultString);
            return resultString;
        },
+       //아이템 옵션 한글화
        func(item){
         if (item == 'item_detail_color'){
           return "색상";
@@ -306,23 +312,9 @@
           return "식권인원"
         }else if(item == 'item_discount_rate'){
           return "할인율"
-        }
-
-    
-
-       
-      //   //반환 값을 받을 변수 
-      //   for ( let key in item ){
-      //     let keyKorenaName = func(key);
-      //     //key 의 값을 한글로 변화해줄 함수 
-      //     let  keyValue = item['key'];
-          
-      //     resultString  = resultString + keyKorenaName + " : " + keyValue + " / "
-      //   }
-      //   return resultString;
-      //  },
+        }   
       },
-    
+    //아이템 카테고리 한글화 
     getClass(item) {
       // 웨딩홀
       if (item === "hall") {
@@ -393,6 +385,7 @@
         return "청첩장"
       }
     },
+    //아이템 가격 계산
     makeOrderInfo(){
         for(let i = 0; i < this.itemDetails.length; i++){
           this.order_info.order_total_price += this.itemDetails[i].box_item_total_price;
@@ -404,7 +397,6 @@
         }
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
       },
-
       }
   }
   </script>
@@ -554,7 +546,7 @@ box-sizing: border-box;
 display: flex;
 flex-direction: column;
 text-align: left;
-margin-right:20px ;
+margin-left:120px ;
 /* border: 1px solid red;             */
 }
 .content-table_col1-name{
