@@ -76,10 +76,11 @@
     data() {
       return {
         paymentList: [],
+        user: "",
 
         //페이지
         page : 1,
-        maxpage: null,      
+        maxPage: null,      
       };
     },
     mounted(){
@@ -88,31 +89,40 @@
     methods: {
 
       async getPaymentList() {
-      try{       
-        // URL에 파라미터를 추가한다.
-        await this.$router.push({path: '/mypage/payment', query:{page: this.page} });
-      
+        try{       
+          this.user = await this.$verifiedUser();
+          if(! this.user) {
+            alert("로그인이 필요합니다");
+            this.$router.push({
+              name: "userlogin",
+              query: { savedUrl: true },
+            });
+          } else{
+          // URL에 파라미터를 추가한다.
+          await this.$router.push({path: '/mypage/payment', query:{page: this.page} });
+        
+          // 견적함 리스트를 가져오기 전에 파라미터 갈무리
+          this.page = Number(this.$route.query.page);
+          this.page = (!this.page) ? 1 : this.page;
 
-        // 견적함 리스트를 가져오기 전에 파라미터 갈무리
-        this.page = Number(this.$route.query.page);
-        this.page = (!this.page) ? 1 : this.page;
+          const requestBody = {
+              access_token: this.$getAccessToken()
+            }
 
-        const requestBody = {
-            access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734"
-          }
+          // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
+          const response = await this.$api(`/mypage/payment?page=${this.page}`, requestBody, "post");      
+          this.paymentList = response.paymentList;
+          this.maxPage = response.maxPage;
 
-        // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
-        const response = await this.$api(`/mypage/payment?page=${this.page}`, requestBody, "post");      
-        this.paymentList = response.paymentList;
-        this.maxPage = response.maxPage;
-        console.log(response);
-
-      }catch(error){
-        console.log(error);
-
-      }
+          console.log(response);
+        }
+        }catch(error){
+          alert("결제내역을 불러올 수 없습니다")
+          console.log(error);
+        }
     },
-       // 페이지 네이션
+
+    // 페이지 네이션
     async nextPage() {
       if (!this.isLastPage) {
         this.page++;

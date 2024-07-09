@@ -105,6 +105,7 @@ export default {
   data() {
     return {
       boxList: [],
+      user: "",
 
       //견적함
       selectedIndex: null,
@@ -125,37 +126,50 @@ export default {
   methods: {
     async getBoxList() {
       try{       
-        // URL에 파라미터를 추가한다.
-        await this.$router.push({path: '/mypage/boxlist', query:{page: this.page} });
-      
+        this.user = await this.$verifiedUser();
+        if(!this.user) {
+          alert("로그인이 필요합니다");
+          this.$router.push({
+            name: "userlogin",
+            query: { savedUrl: true },
+          });
+        } else {
+          // URL에 파라미터를 추가한다.
+          await this.$router.push({path: '/mypage/boxlist', query:{page: this.page} });
+        
 
-        // 견적함 리스트를 가져오기 전에 파라미터 갈무리
-        this.page = Number(this.$route.query.page);
-        this.page = (!this.page) ? 1 : this.page;
-        this.mode = (!this.mode) ? 'current' : this.mode;
+          // 견적함 리스트를 가져오기 전에 파라미터 갈무리
+          this.page = Number(this.$route.query.page);
+          this.page = (!this.page) ? 1 : this.page;
+          this.mode = (!this.mode) ? 'current' : this.mode;
 
-        const requestBody = {
-            access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734",
-            mode : this.mode
+          const requestBody = {
+              access_token: this.$getAccessToken(),
+              mode : this.mode
+            }
+
+          // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
+          const response = await this.$api(`http://localhost:9090/mypage/boxlist?page=${this.page}`, requestBody, "post");      
+          if (response.status == 200){
+            this.boxList = response.boxList;
+            this.maxPage = response.maxPage;
           }
-
-        // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
-        const response = await this.$api(`http://localhost:9090/mypage/boxlist?page=${this.page}`, requestBody, "post");      
-        this.boxList = response.boxList;
-        this.maxPage = response.maxPage;
-
-      }catch(error){
+          else{
+            alert("견적함 정보를 불러올 수 없습니다.");
+          }
+        }
+      } catch(error){
         console.log(error);
-
+        alert("페이지 정보 로드  실패");
       }
-    },
+      },
 
     async sort(mode) {
       try{
         this.mode = mode;
 
         const requestBody = {
-            access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734",
+            access_token: this.$getAccessToken(),
             mode : this.mode
           }
         // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
@@ -178,21 +192,18 @@ export default {
 
 
     async boxAdd() {
-
+      
       if (this.newBoxName.trim() !== "") {
         try {
           const requestBody = {
-            access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734",
+            access_token: this.$getAccessToken(),
             boxName : this.newBoxName
           }
           const response = await this.$api("/mypage/boxlist/add", requestBody, "post");
           console.log(response);
 
           if (response.status === 200) {
-            if (this.boxList.length == 15){
-              this.page += 1;
-            }
-          await this.getBoxList();
+            await this.getBoxList();
           }
         
         } catch (error) {

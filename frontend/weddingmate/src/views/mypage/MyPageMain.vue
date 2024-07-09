@@ -92,25 +92,40 @@ export default {
 
     };
   },
-    mounted(){
-     this.getUserName();
+    created(){
+      this.getUserName();
   },
 
 
   methods: {
     // 본문
 
-    async getUserName(){
+  // 본문
+
+  async getUserName(){
+    try{
       const user = await this.$verifiedUser();
       console.log("user",user);
       this.user =  user.user_nickname;
       // console.log("this", this.user);
       // console.log("just user", user);
+      if(!this. user){
+        alert("로그인이 필요합니다");
+        this.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true },
+        });
+      }
+    } catch(err){
+      console.error(err);
+      alert("잘못된 요청입니다")
     }
 
+    
     //페이지   
   },
-};
+}
+}
 </script>
 
 <style scoped>

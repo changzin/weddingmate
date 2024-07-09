@@ -24,19 +24,19 @@
       </div>
     </div>
     <div class="mypage-bottom">
-        <div class="nav-page">
-          <div>&lt;&lt;</div>
-            <div>&lt;</div>
-            <div>1</div>
-            <div style="color: pink;">2</div>
-            <div>3</div>
-            <div>&gt;</div>
-            <div>&gt;&gt;</div>
-        </div>
-        <button class="mypage-back">
-          <a href="/mypage">
+      <div class="nav-page justify-content-center">
+              <a :class="{ notVisible: page == 1 }" @click="prevBlock()"><div>&lt;&lt;</div></a>
+              <a :class="{ notVisible: page == 1 }" @click="prevPage()"><div>&lt;</div></a>
+              <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"><div>{{ page - 2 }}</div></a>
+              <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"><div>{{ page - 1 }}</div></a>
+              <a><div style="color: pink">{{ page }}</div></a>
+              <a :class="{ notVisible: page + 1 > maxPage }" @click="goToPage(page + 1)"><div>{{ page + 1 }}</div></a>
+              <a :class="{ notVisible: page + 2 > maxPage }" @click="goToPage(page + 2)"><div>{{ page + 2 }}</div></a>
+              <a :class="{ notVisible: page == maxPage }" @click="nextPage()"><div>&gt;</div></a>
+              <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"><div>&gt;&gt;</div></a>
+            </div>
+      <button class="mypage-back" @click="this.$router.push({path: '/mypage/'})">
             마이페이지로
-          </a>
         </button>
     </div>
 </div>
@@ -77,11 +77,20 @@ export default {
       selectAllChecked: false,
       selectedItems: [], // 각 아이템의 선택 여부를 저장할 배열   
       result: [],
+      user: "",
+      
+
+       //페이지
+      page : 1,
+      maxPage: 1, 
+      isFirstPage: false,
+      isLastPage: false,
 
     };
   },
   mounted(){  
      this.getBookmarkList();
+    
   },
   watch: {
     bookmarkList: {
@@ -90,72 +99,89 @@ export default {
         const checkedbookmark = newList.filter(bookmark => bookmark.checked);
         const checkedbookmarkIds = checkedbookmark.map(bookmark => bookmark.bookmark_id);
         this.result = checkedbookmarkIds;
-        console.log( checkedbookmarkIds);
-        console.log(this.result);
       },
       deep: true // 객체 내부의 속성까지 감시
     }
   },
   methods: {
     async getBookmarkList() {
-      const requestBody = {
-        access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734",
-      };
-      try {
-        const response = await this.$api("/mypage/bookmarklist", requestBody, "post");
-        if (response.status === 200) {
-          this.bookmarkList = response.bookmarkList.map(item => {
-            return {
-              ...item,
-              checked: false, // 각 아이템의 초기 체크 상태를 false로 설정
-              clicked: false
-            };
+      try{       
+        this.user = await this.$verifiedUser();
+        if(!this.user){
+          alert("로그인이 필요합니다");
+          this.$router.push({
+            name: "userlogin",
+            query: { savedUrl: true },
           });
+      } else{
+      // URL에 파라미터를 추가한다.
+      await this.$router.push({path: '/mypage/bookmark', query:{page: this.page} });
+    
+      // 북마크 리스트를 가져오기 전에 파라미터 갈무리
+      this.page = Number(this.$route.query.page);
+      this.page = (!this.page) ? 1 : this.page;
+
+      const requestBody = {
+          access_token: this.$getAccessToken()
         }
-      } catch (error) {
-        console.error("Error fetching bookmark list:", error);
-      }
+
+      // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
+      const response = await this.$api(`/mypage/bookmarklist?page=${this.page}`, requestBody, "post");      
+      this.bookmarkList = response.bookmarkList;
+      this.maxPage = response.maxPage;
+      this.updatePageStatus();
+
+      console.log(this.bookmarkList);
+    } 
+    }catch(error){
+      alert("북마크를 불러올 수 없습니다");
+      console.error(error);
+
+    }      
     },
 
     async DelBookmark(bookmark){
-      const requestBody = {
-        bookmark_id: bookmark.bookmark_id
-      }
       try{
-        const response = await this.$api("/mypage/bookmarklist/del", requestBody, "post");
-        console.log(response);
-        alert("북마크가 삭제되었습니다.");
-        console.log("결과", response);
+        const requestBody = {
+        bookmark_id: bookmark.bookmark_id
+        }
 
+        const response = await this.$api("/mypage/bookmarklist/del", requestBody, "post");
+        alert("북마크가 삭제되었습니다.");
+ 
         if (response.status === 200) {
-          await this.getBookmarkList();
           this.$router.go();
+          await this.getBookmarkList();
       }
         
       }catch(error){
-        console.error("Error deleting bookmark list:", error);
+        alert("북마크를 삭제할 수 없습니다")
+        console.error(error);
 
       }
     },
 
  
-
     async DelCBookmarkList() {
-      // 체크된 북마크 ID를 서버에 전송
-      const requestBody = {
-        checkedbookmarkIds: this.result
-      };
       try {
+        // 체크된 북마크 ID를 서버에 전송
+        const requestBody = {
+          checkedbookmarkIds: this.result
+        };
+
         const response = await this.$api("/mypage/bookmarklist/delchekced", requestBody, "post");
         alert(response.message);
         
         if (response.status === 200) {
-          await this.getBookmarkList();
           this.$router.go();
-      }
-      
+          await this.getBookmarkList();
+
+          console.log(this.bookmarkList);
+        }
+                      
       } catch (error) {
-        console.error("Error deleting bookmark list:", error);
+        alert("체크한 북마크를 삭제할 수 없습니다");
+        console.error(error);
       }
     },
     toggleAllSelection(event) {
@@ -163,6 +189,43 @@ export default {
       this.bookmarkList.forEach(item => {
         item.checked = isChecked;
       });
+    },
+
+    // 페이지 네이션
+    async nextPage() {
+      if (!this.isLastPage) {
+        this.page++;
+        await this.getBookmarkList();
+      }
+    },
+
+    async prevPage() {
+      if (!this.isFirstPage) {
+        this.page--;
+        await this.getBookmarkList();
+      }
+    },
+
+    async goToPage(targetPage) {
+      if (targetPage >= 1 && targetPage <= this.maxPage) {
+        this.page = targetPage;
+        await this.getBookmarkList();
+      }
+    },
+
+    async prevBlock() {
+      let targetPage = this.page > 5 ? this.page - 5 : 1;
+      await this.goToPage(targetPage);
+    },
+
+    async nextBlock() {
+      let targetPage = this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
+      await this.goToPage(targetPage);
+    },
+
+    updatePageStatus() {
+      this.isFirstPage = this.page === 1;
+      this.isLastPage = this.page === this.maxPage;
     },
   }
 };
@@ -368,7 +431,7 @@ export default {
 }
 .container-content{
     display: grid;
-    grid-template-columns: 30px 140px 1030px 250px;
+    grid-template-columns: 30px 200px 1020px 250px;
     justify-items: start;
     align-items: start;
     width: 1280px; /* 고정된 너비 */    
@@ -411,8 +474,8 @@ hr.text{
 /* img */
 
 img.bookmark_img{
-    width: 120px;
-    height: 120px;
+    width: 180px;
+    height: 180px;
     border: 1px solid #333333;
 }
 img.delete-x{
@@ -423,9 +486,8 @@ img.delete-x{
 }
 
 /* bottom */
-
-.mypage-bottom{
-    display: grid;
+div.mypage-bottom{
+    display: grid;         
     place-items: center;
     margin-left: 350px;
     margin-right: 320px;
@@ -433,10 +495,11 @@ img.delete-x{
     width: 1280px; /* 고정된 너비 */  
     /* border: 1px solid yellow; */
 }
-.nav-page{
+
+div.nav-page{
     display: grid;
     place-items: center;
-    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px 25px 25px;
     margin-bottom: 30px;
     color: #888888;
     /* border: 1px solid pink; */
@@ -450,8 +513,15 @@ button.mypage-back{
     width: 120px;
     height: 40px;
 }
+.nav-page a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
+}
 .mypage-back a {
     text-decoration: none; /* remove underline */
     color: inherit; /* inherit color from parent */
 }
+.notVisible{
+        visibility: hidden;
+      }
 </style>

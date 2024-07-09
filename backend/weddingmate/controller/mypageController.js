@@ -1,8 +1,6 @@
 const { response } = require('express');
 const db = require('../util/db');
 
-
-
 // 결제내역
 exports.paymentList = async(req, res) =>{
     try{
@@ -71,34 +69,35 @@ exports.receiptList = async(req, res)=>{
 // 북마크
 exports.bookmarkList = async(req, res) =>{
     try{
-
         const user_id = req.body.user_id;
         let page = req.query.page;
-
-        page = (!page) ? 0 : page-1;
-
+        let count = [];
         let result = [];
-        let query = " SELECT bookmark.bookmark_id, item.item_name, item.item_price, item.item_tn_image_path FROM item JOIN bookmark ON item.item_id = bookmark.item_id WHERE bookmark.user_id = ? ORDER BY bookmark.bookmark_id LIMIT 10 OFFSET ?"; // 10개만 가져온다 시작점에서(어디가 시작인지 몰라서 ?)
-   
-        let responseBody ={};
+        let responseBody = {};
 
-        result = await db(query, [user_id, page * 10] );
-      
+        page = !page ? 0 :Number(page) - 1;
+        query = "SELECT bookmark.bookmark_id, item.item_name, item.item_price, item.item_tn_image_path FROM item JOIN bookmark ON item.item_id = bookmark.item_id WHERE bookmark.user_id = ? ORDER BY bookmark.bookmark_id LIMIT 10 OFFSET ?";
+        result = await db(query, [user_id, (page * 10)]);
+
+        query ="SELECT COUNT (*) AS COUNT FROM bookmark WHERE user_id = ?";
+        count = await db(query, [user_id]);
+        count = count[0]["COUNT"];
+
         responseBody = {
             status: 200,
-            bookmarkList: result, 
-        };
-        res.json(responseBody);
-    }catch(err) {
-        console.error(err);
-        responseBody = {
-            status : 400,
-            mesage: "잘못된 페이지 요청입니다"
+            bookmarkList : result,
+            maxPage : Math.ceil(count / 10)
         }
         res.json(responseBody);
-    
+    } catch(error){
+        responseBody = {
+            status: 400,
+            message: "북마크를 불러올 수 없습니다"
+        }
+        res.json(responseBody);
+        
     }
-}
+};
 
 exports.bookmarkDel = async(req, res) =>{
   try{
@@ -138,9 +137,9 @@ exports.bookmarkDeleteC = async (req, res) => {
           throw new Error("삭제할 북마크를 선택해주세요.");
       }
 
-      const query = 'DELETE FROM bookmark WHERE bookmark_id IN (?)'; // IN 절을 사용하여 여러 개의 bookmark_id를 한 번에 처리
+      let query = 'DELETE FROM bookmark WHERE bookmark_id IN (?)'; // IN 절을 사용하여 여러 개의 bookmark_id를 한 번에 처리
 
-      const result = await db(query, [bookmarkIds]);
+      let result = await db(query, [bookmarkIds]);
 
       const affectedRows = result.affectedRows;
 
@@ -148,6 +147,7 @@ exports.bookmarkDeleteC = async (req, res) => {
           res.status(200).json({
               status: 200,
               message: `${affectedRows}개의 북마크가 삭제되었습니다.`
+
           });
       } else {
           throw new Error("선택된 북마크를 삭제할 수 없습니다.");
@@ -163,23 +163,33 @@ exports.bookmarkDeleteC = async (req, res) => {
 };
 
 // 리뷰
-
 exports.reviewList = async(req, res) =>{
     try{
         const user_id = req.body.user_id;
-
+        let page = req.query.page;
+        let count = [];
+        let query ="";
         let result =[];
         let responseBody ={};
-        let query =`SELECT item.item_name ,review_id, review_star, review_content 
+
+        page = !page ? 0 : Number(page) - 1;
+
+         query =`SELECT item.item_name ,review_id, review_star, review_content 
                     FROM review 
                     JOIN item ON review.item_id = item.item_id
                     JOIN item_detail ON item.item_id = item_detail.item_id
-                    WHERE user_id = ?;`
+                    WHERE user_id = ? LIMIT 10 OFFSET ?`
 
-        result = await db(query, [user_id]);
+        result = await db(query, [user_id,(page * 10)]);
+
+        query = "SELECT COUNT(*) AS COUNT FROM review WHERE user_id = ?"
+        count = await db(query,[user_id]);
+        count=count[0]["COUNT"];
+
         responseBody = {
             status: 200,
-            reviewList: result
+            reviewList: result,
+            maxPage : Math.ceil(count / 10)
         }
         res.json(responseBody);
 
@@ -228,14 +238,23 @@ exports.reviewDel = async (req, res) => {
 exports.qnaList = async (req, res) => {
     try{
         const user_id = req.body.user_id;
+        let page = req.query.page;
+        let count = [];
         let result = [];
         let responseBody = {};
-        query ="SELECT qna_date, qna_title FROM qna WHERE user_id = ? "
-        result = await db(query, [user_id]);
+
+        page = !page ? 0 :Number(page) - 1;
+        query ="SELECT qna_date, qna_title FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
+        result = await db(query, [user_id, (page * 15) ]);
+
+        query ="SELECT COUNT (*) AS COUNT FROM qna WHERE user_id = ?";
+        count = await db(query, [user_id]);
+        count = count[0]["COUNT"];
 
         responseBody = {
             status: 200,
-            qnaList : result
+            qnaList : result,
+            maxPage : Math.ceil(count / 15)
         }
         res.json(responseBody);
     } catch(error){
@@ -247,8 +266,6 @@ exports.qnaList = async (req, res) => {
         
     }
 };
-
-
 
 
 
@@ -309,7 +326,6 @@ exports.boxList = async (req, res) => {
     }
 }
 
-
 exports.boxAdd = async(req, res) =>{
     try{
         const boxName = req.body.boxName;
@@ -333,4 +349,3 @@ exports.boxAdd = async(req, res) =>{
 
     }
 }
-
