@@ -1,6 +1,7 @@
 <template>
 <div>
         <MateHeader />
+        <i class="fas fa-edit"></i>
         <EventCalendar />
         <MateFooter />
 </div>

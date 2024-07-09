@@ -46,7 +46,7 @@
  
                 
     <div class="container-middle">                      
-            <div v-for="(box, index) in boxList" :key="index" class="container-box">
+            <div v-for="(box, index) in boxList" :key="index" class="container-box" @click="goToBox(box)">
                 <div class="box-name">{{ box.box_name }}</div>
                 <div class="box-count">담긴 상품 {{box.box_quantity}}개(최근 수정 {{ this.$dayFormat(box.box_date)}})</div>
                 <div><hr class="box-hr"></div>
@@ -55,7 +55,6 @@
         </div>              
 
     
-
     <div class="mypage-bottom">
       <div class="nav-page justify-content-center">
         <a :class="{ notVisible: page == 1 }" @click="prevBlock()"><div>&lt;&lt;</div></a>
@@ -135,7 +134,7 @@ export default {
           });
         } else {
           // URL에 파라미터를 추가한다.
-          await this.$router.push({path: '/mypage/boxlist', query:{page: this.page} });
+          await this.$router.push({path:'/mypage/boxlist', query:{page: this.page} });
         
 
           // 견적함 리스트를 가져오기 전에 파라미터 갈무리
@@ -149,11 +148,12 @@ export default {
             }
 
           // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
-          const response = await this.$api(`http://localhost:9090/mypage/boxlist?page=${this.page}`, requestBody, "post");      
+          const response = await this.$api(`mypage/boxlist?page=${this.page}`, requestBody, "post");      
           if (response.status == 200){
             this.boxList = response.boxList;
             this.maxPage = response.maxPage;
-          }
+            console.log("맥스페이지",this.maxPage);
+          } 
           else{
             alert("견적함 정보를 불러올 수 없습니다.");
           }
@@ -162,7 +162,14 @@ export default {
         console.log(error);
         alert("페이지 정보 로드  실패");
       }
-      },
+    },
+    goToBox(box) {
+      this.$router.push({
+      name: 'mybox',
+      params: { boxId: box.box_id }
+    });
+  },
+ 
 
     async sort(mode) {
       try{
@@ -173,7 +180,7 @@ export default {
             mode : this.mode
           }
         // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
-       const response = await this.$api(`http://localhost:9090/mypage/boxlist?page=${this.page}`, requestBody, "post");      
+       const response = await this.$api(`/mypage/boxlist?page=${this.page}`, requestBody, "post");      
         this.boxList = response.boxList;
         this.maxPage = response.maxPage;
 
