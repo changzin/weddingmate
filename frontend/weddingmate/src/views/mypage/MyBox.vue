@@ -26,7 +26,7 @@
         <div class="container-middle" v-for="item in itemDetails" :key="item" >
           <div class="container-middle-category_title">
             <div class="title-font">
-             {{getClass(item.item_detail_type) }}
+             {{ getClass(item.item_detail_type) }}
             </div>
             <div>
               <hr class="title" />
@@ -239,7 +239,15 @@
           console.log(response);
           const iName = response.box_itemName.map((item_name)=> item_name);
           //아이템 이름을 담고 있는 배열 iName
-          this.itemDetails = iName;
+          this.itemDetails = iName.reduce((item_name, now)=>{
+            if(!item_name.some (obj => obj.item_detail_id === now.item_detail_id)){
+              item_name.push(now);
+            }
+            return item_name;
+          },[])
+          
+
+          // 각 아이템들을 하나의 카테고리에 합치기 
           console.log(this.itemDetails);
           this.box = response.box_itemObj;
           console.log(this.box);
@@ -249,20 +257,14 @@
             console.error(err)
           }
         },
-        categorieDistinct(item){
-          for(let key in item){
-            if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name'){
-              continue
-            }
-            let objectCategoryDeDupl = this.itemDetails.reduce((item, now) =>{
-              if(!item.some(cate => cate.item_detail_type === cate.item_detail_type)){
-                item.push(now);
-                return item;
-              }
-              console.log(objectCategoryDeDupl)
-            })
-          }
-        },
+        // categorieInItem(item){
+        //   for(let key in item){
+        //     if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name'){
+        //       continue
+        //     }
+            
+        //   }
+        // },
           //아이템 카테고리 ":" 옵션화  
        optionKorean(item){
            let resultString = "";
@@ -315,7 +317,7 @@
         }   
       },
     //아이템 카테고리 한글화 
-    getClass(item) {
+    getClass(item) {    
       // 웨딩홀
       if (item === "hall") {
         return "웨딩홀"

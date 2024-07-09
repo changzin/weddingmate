@@ -173,7 +173,7 @@
           const requestBody = {
           reviewId : review.review_id
           };
-          const response = await this.$api("/mypage/review/del", requestBody, "post");
+          const response = await this.$api("/payment/mypage/review/del", requestBody, "post");
           alert("리뷰가 삭제되었습니다.");
 
           if (response.status === 200) {
