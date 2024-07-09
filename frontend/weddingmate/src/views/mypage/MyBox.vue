@@ -173,7 +173,7 @@
 
       async DelItem(box_item_id){
       const requestBody = {
-        access_token: "2c595eca-d4e3-4085-a6c7-331333eb22f0",
+        access_token: this.$getAccessToken(),
         box_item_id: box_item_id
       }
       console.log(requestBody);
@@ -193,7 +193,7 @@
       async fetchItem(){
         this.boxId = this.$route.params.boxId
           const responseBody  ={
-            access_token : "80060f2c-e894-472c-930b-9495e149e13c",
+            access_token : this.$getAccessToken(),
             boxId:this.boxId
           }
           const response = await this.$api(`/mybox/name`,responseBody,"POST")

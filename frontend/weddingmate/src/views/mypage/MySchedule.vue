@@ -118,7 +118,7 @@ export default {
       if (userInfo) {
         next();
       } else {
-        alert("스케쥴 확인을 위하여 로그인하세요");
+        alert("로그인이 필요합니다");
         vm.$router.push({
           name: "userlogin",
           query: { savedUrl: true }
@@ -140,7 +140,7 @@ export default {
         // 데이터 가져오기
         const result = await this.$api(
           "/schedule/list",
-          { access_token: "temp-token" },
+          { access_token: this.$getAccessToken() },
           "POST"
         );
         this.ScheduleResult = result.scheduleList;
@@ -183,7 +183,7 @@ export default {
         const result = await this.$api(
           "/schedule/insertschedule",
           {
-            access_token: "temp-token",
+            access_token: this.$getAccessToken(),
             schedule_title: this.schedule_title,
             schedule_start: formattedStartDate,
             schedule_end: formattedEndDate,
@@ -207,7 +207,7 @@ export default {
     async deleteSchedule(schedule_id) {
        const result = await this.$api(
         "/schedule/deleteschedule",
-        { access_token: "temp-token", schedule_id: schedule_id },
+        { access_token: this.$getAccessToken(), schedule_id: schedule_id },
         "POST"
       );
 

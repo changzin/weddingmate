@@ -207,7 +207,7 @@ const routes = [
     // props: route => ({ box_id: route.query.box_id })
   },
   {
-    path: '/mypage/QnA',
+    path: '/mypage/qna',
     name: "myqna",
     component: MyQnA
   },

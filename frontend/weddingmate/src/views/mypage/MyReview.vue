@@ -11,7 +11,7 @@
     <div class="container-middle">
       <div v-for="review in reviewList" :key="review.review_id" class="container-content">
             <div class="container-content-top">
-                <img class="bookmark" src="{{ review.item_tn_image_path }}">
+                <img class="reivew" src="{{ review.item_tn_image_path }}">
                 <div class="container-name_option">
                     <div class="font-option">{{ review.item_name }}</div>
                 </div>
@@ -45,7 +45,7 @@
                               <div class="star-icon"></div>
                             </label>
                             <div class="edit">
-                                <i class="fas fa-edit"></i>
+                                <div style="cursor: pointer;" @click="gotoReviewModify()"><i class="fas fa-edit"></i></div>
                                 <div style="cursor: pointer;" @click="delReview(review)"><i class="fas fa-trash"></i></div>
                             </div>
                           </div>
@@ -66,14 +66,16 @@
     </div>  
 </div>
 <div class="mypage-bottom">
-    <div class="nav-page">
-      <div>&lt;&lt;</div>
-        <div>&lt;</div>
-        <div>1</div>
-        <div style="color: pink;">2</div>
-        <div>3</div>
-        <div>&gt;</div>
-        <div>&gt;&gt;</div>
+  <div class="nav-page justify-content-center">
+      <a :class="{ notVisible: page == 1 }" @click="prevBlock()"><div>&lt;&lt;</div></a>
+      <a :class="{ notVisible: page == 1 }" @click="prevPage()"><div>&lt;</div></a>
+      <a :class="{ notVisible: page - 2 < 1 }" @click="goToPage(page - 2)"><div>{{ page - 2 }}</div></a>
+      <a :class="{ notVisible: page - 1 < 1 }" @click="goToPage(page - 1)"><div>{{ page - 1 }}</div></a>
+      <a><div style="color: pink">{{ page }}</div></a>
+      <a :class="{ notVisible: page + 1 > maxPage }" @click="goToPage(page + 1)"><div>{{ page + 1 }}</div></a>
+      <a :class="{ notVisible: page + 2 > maxPage }" @click="goToPage(page + 2)"><div>{{ page + 2 }}</div></a>
+      <a :class="{ notVisible: page == maxPage }" @click="nextPage()"><div>&gt;</div></a>
+      <a :class="{ notVisible: page == maxPage }" @click="nextBlock()"><div>&gt;&gt;</div></a>
     </div>
     <button class="mypage-back" @click="this.$router.push({path: '/mypage/'})">
           마이페이지로
@@ -113,7 +115,14 @@
       return {
         reviewList : [],
         rating: 3,
-        currentRating: null
+        currentRating: null,
+        user: "",
+
+       //페이지
+      page : 1,
+      maxPage: 1, 
+      isFirstPage: false,
+      isLastPage: false,
 
       };
     },
@@ -122,38 +131,100 @@
     },
     methods: {
       async getReviewList(){
-        const requestBody = {
-          access_token: "25b8d0e3-50f3-4f39-8d7a-fd4c123f6734"
-        };
         try{
-          const response = await this.$api("/mypage/review", requestBody, "post");
-          this.reviewList = response.reviewList
-          console.log("결과", this.reviewList);       
-        }catch(error){
-          console.log(error);
+          this.user = await this.$verifiedUser();
+          if(! this.user) {
+            alert("로그인이 필요합니다");
+            this.$router.push({
+              name: "userlogin",
+              query: { savedUrl: true },
+            });
+          } else {
+          // URL에 파라미터를 추가한다
+          await this.$router.push({path : '/mypage/review', query : {page: this.page}});
 
+          // 리뷰 리스트를 가져오기 전에파라미터 갈무리
+          this.page = Number(this.$route.query.page);
+          this.page = (!this.page) ? 1: this.page;
+
+          const requestBody = {
+          access_token: this.$getAccessToken()
+          };
+
+          // 리뷰 리스트를 다시 가져오고 maxPage를 맞춰준다.
+          const response = await this.$api(`/mypage/review?page=${this.page}`, requestBody, "post");
+          this.reviewList = response.reviewList;  
+          this.maxPage = response.maxPage;
+          this.updatePageStatus();
+          } 
+        }catch(error){
+          alert("리뷰를 불러올 수 없습니다.")
+          console.log(error);
         }
       },
 
+    gotoReviewModify() {
+      this.$router.push({ name: "qnamodify", query: { qna_id: this.qna_id } });
+      console.log("라우터 수정 요망")
+    },
+
       async delReview(review){
-        const requestBody = {
-          reviewId : review.review_id
-        };
         try{
+          const requestBody = {
+          reviewId : review.review_id
+          };
           const response = await this.$api("/mypage/review/del", requestBody, "post");
           alert("리뷰가 삭제되었습니다.");
-          console.log("리스폰스",response);
-          console.log("리뷰리스트", this.reviewList);
 
           if (response.status === 200) {
-          await this.getReviewList();
-          this.$router.go();
-      }
+            if (this.reviewList.length == 1){
+              this.$router.go();
+            }
+            await this.getReviewList();
+          }   
 
         }catch(error){
+          alert("리뷰를 삭제할 수 없습니다");
           console.log(error);
         }
+      },
+
+    // 페이지 네이션
+    async nextPage() {
+      if (!this.isLastPage) {
+        this.page++;
+        await this.getReviewList();
       }
+    },
+
+    async prevPage() {
+      if (!this.isFirstPage) {
+        this.page--;
+        await this.getReviewList();
+      }
+    },
+
+    async goToPage(targetPage) {
+      if (targetPage >= 1 && targetPage <= this.maxPage) {
+        this.page = targetPage;
+        await this.getReviewList();
+      }
+    },
+
+    async prevBlock() {
+      let targetPage = this.page > 5 ? this.page - 5 : 1;
+      await this.goToPage(targetPage);
+    },
+
+    async nextBlock() {
+      let targetPage = this.page + 5 <= this.maxPage ? this.page + 5 : this.maxPage;
+      await this.goToPage(targetPage);
+    },
+
+    updatePageStatus() {
+      this.isFirstPage = this.page === 1;
+      this.isLastPage = this.page === this.maxPage;
+    },
     },
   };
   </script>
@@ -415,7 +486,7 @@ hr.content{
 
 /* img */
 
-img.bookmark{
+img.reivew{
     width: 60px;
     height: 60px;
     border: 1px solid #333333;
@@ -467,9 +538,8 @@ img.bookmark{
 }
 
 /* bottom */
-
-.mypage-bottom{
-    display: grid;
+div.mypage-bottom{
+    display: grid;         
     place-items: center;
     margin-left: 350px;
     margin-right: 320px;
@@ -477,10 +547,11 @@ img.bookmark{
     width: 1280px; /* 고정된 너비 */  
     /* border: 1px solid yellow; */
 }
-.nav-page{
+
+div.nav-page{
     display: grid;
     place-items: center;
-    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px;
+    grid-template-columns: 25px 25px 25px 25px 25px 25px 25px 25px 25px;
     margin-bottom: 30px;
     color: #888888;
     /* border: 1px solid pink; */
@@ -494,9 +565,16 @@ button.mypage-back{
     width: 120px;
     height: 40px;
 }
+.nav-page a {
+    text-decoration: none; /* remove underline */
+    color: inherit; /* inherit color from parent */
+}
 .mypage-back a {
     text-decoration: none; /* remove underline */
     color: inherit; /* inherit color from parent */
 }
+.notVisible{
+        visibility: hidden;
+      }
   </style>
   
