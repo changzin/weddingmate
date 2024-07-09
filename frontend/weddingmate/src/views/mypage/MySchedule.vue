@@ -133,9 +133,6 @@ export default {
 
   methods: {
     async fetchScheduleListData() {
-     
-
-
       try {
         // 데이터 가져오기
         const result = await this.$api(
@@ -144,8 +141,15 @@ export default {
           "POST"
         );
         this.ScheduleResult = result.scheduleList;
-        this.calendar_id = this.ScheduleResult[0].calendar_id;
-        console.log("calendar_id, : ", this.calendar_id);
+        this.calendar_id = result.calendar_id;
+        console.log("calendar_id : ", this.calendar_id);
+
+        if (this.ScheduleResult.length <= 0) {
+          alert("등록된 스케쥴이 없습니다 스케쥴을 등록해주세요")
+        }
+
+
+
         if (this.ScheduleResult) {
           console.log(
             "ScheduleResult: ",

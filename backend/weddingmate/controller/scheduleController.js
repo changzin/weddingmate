@@ -5,17 +5,31 @@ exports.scheduleList = async (req, res) =>{
     try{
         const user_id = req.body.user_id;
 
+        // 캘린더 아이디 가져오기
+        let calendar_id_query = "SELECT calendar_id FROM calendar  WHERE user_id = ?;";
+        calendar_id_query_result = await db(calendar_id_query, [user_id]);
+        if(!calendar_id_query_result) {
+          responseBody = {
+            status: 201,
+            message: "등록된 캘린더가 없습니다"
+        };
+        res.json(responseBody);
+        }
+        const calendar_id = calendar_id_query_result[0].calendar_id
+
+        
+        console.log("calendar_id_query_result[0].calendar_id: ", user_id);
+
+        // 캘린더에 등록된 스케쥴 가져오기
         let result = [];
-        let query = "SELECT schedule_id, schedule_start, schedule_end, schedule_title, calendar_id FROM schedule WHERE calendar_id = (SELECT calendar_id FROM calendar WHERE user_id = ?)";
-
-
+        let query = "SELECT schedule_id, schedule_start, schedule_end, schedule_title FROM schedule WHERE calendar_id = ?";
         let responseBody = {};
-
-        result = await db(query, [user_id]);
-
+        
+        result = await db(query, [calendar_id]);
         responseBody = {
             status: 200,
-            scheduleList: result
+            scheduleList: result,
+            calendar_id: calendar_id
         };
         res.json(responseBody);
     }
