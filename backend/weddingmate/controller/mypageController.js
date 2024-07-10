@@ -45,7 +45,7 @@ exports.paymentList = async(req, res) =>{
 //결제 영수증 건용 추가 
 exports.receiptList = async(req, res)=>{
     try{
-
+        console.log(req.body);
 
         const user_id = req.body.user_id;
         const box_id = req.body.box_id
@@ -58,32 +58,21 @@ exports.receiptList = async(req, res)=>{
         orderName = await db(orderquery,[orderId])
         console.log(orderName)
 
-
         query = `SELECT 
-            b.box_id,
             b.box_name,
             o.order_info_name,
             o.order_info_id,
             o.order_info_end_date,
             o.order_info_price,
-            b.user_id,
-            i.item_name
+            b.user_id
         FROM
             order_info AS o
-                INNER JOIN
-            box AS b ON o.order_info_id = b.box_id
-                INNER JOIN
-            box_item AS bi ON b.box_id = bi.box_item_id
-                INNER JOIN
-            item_detail AS ide ON bi.item_detail_id = ide.item_detail_id
-                INNER JOIN
-            item AS i ON ide.item_id = i.item_id
+                JOIN
+            box AS b ON o.box_id = b.box_id
         WHERE
             b.user_id = ? AND o.order_info_id = ?`;
-        receipt = await db(query,[user_id,orderId])
-        console.log(receipt)
 
-        
+        receipt = await db(query,[user_id,orderId])
         const responseBody ={
             status : 200,
             receiptList : receipt[0],
