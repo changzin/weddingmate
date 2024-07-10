@@ -9,9 +9,10 @@
         <hr class="title">
     </div>
     <div class="container-middle">
+      <div :class="reviewList.length === 0 ? 'no_data' : 'invisible'">등록된 리뷰가 없습니다</div>
       <div v-for="review in reviewList" :key="review.review_id" class="container-content">
             <div class="container-content-top">
-                <img class="reivew" src="{{ review.item_tn_image_path }}">
+                <img class="reivew" :src="$imageFileFormat(review.item_tn_image_path)">
                 <div class="container-name_option">
                     <div class="font-option">{{ review.item_name }}</div>
                 </div>
@@ -139,9 +140,8 @@
               name: "userlogin",
               query: { savedUrl: true },
             });
-          } else {
+          } else  {
           // URL에 파라미터를 추가한다
-          await this.$router.push({path : '/mypage/review', query : {page: this.page}});
 
           // 리뷰 리스트를 가져오기 전에파라미터 갈무리
           this.page = Number(this.$route.query.page);
@@ -156,8 +156,7 @@
           this.reviewList = response.reviewList;  
           this.maxPage = response.maxPage;
           this.updatePageStatus();
-          console.log("리뷰리스트", this.reviewList);
-          console.log("리뷰아이디", this.reviewList[0]["review_id"]);
+          console.log(this.reviewList)
           } 
         }catch(error){
           alert("리뷰를 불러올 수 없습니다.")
@@ -173,11 +172,13 @@
     },
 
       async delReview(review){
+        console.log("리뷰",review);
+        console.log("리뷰아이디",review.review_id);
         try{
           const requestBody = {
           reviewId : review.review_id
           };
-          const response = await this.$api("/payment/mypage/review/del", requestBody, "post");
+          const response = await this.$api("/mypage/review/del", requestBody, "post");
           alert("리뷰가 삭제되었습니다.");
 
           if (response.status === 200) {
@@ -403,6 +404,17 @@
 }
 
 /* div */
+.no_data{
+  text-align: center;
+  font-size: 30px;
+  color:#d3d3d3;
+  padding: 200px;
+  /* border: 1px solid red; */
+}
+.invisible{
+  display: none;
+}
+
 .container0{
     min-width: var(--container-width)
 }
@@ -493,7 +505,6 @@ hr.content{
 img.reivew{
     width: 60px;
     height: 60px;
-    border: 1px solid #333333;
 }
 
 /* 별점 */

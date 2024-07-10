@@ -17,6 +17,7 @@
                 <div class="font-bar">청구서</div>
             </div>
             <hr class="bar">
+            <div :class="paymentList.length == 0 ? 'no_data' : 'invisible'">결제 내역이 없습니다</div>
             <div v-for="(payment, index) in paymentList" :key="index">
               <div  class="container-middle-content">
                   <div>{{ this.$dayFormat(payment.order_info_end_date) }}</div>
@@ -315,6 +316,16 @@ font-weight: bold;
 }
 
 /* div */
+.no_data{
+  text-align: center;
+  font-size: 30px;
+  color:#d3d3d3;
+  padding: 200px;
+
+}
+.invisible{
+  display: none;
+}
 
 .container0{
 min-width: 1280px;

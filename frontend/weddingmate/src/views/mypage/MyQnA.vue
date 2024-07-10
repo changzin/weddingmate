@@ -15,6 +15,7 @@
               <div>제목</div>
               </div>
               <hr class="bar">
+              <div :class="qnaList.length == 0 ? 'no_data' : 'invisible'">등록된 QnA가 없습니다</div>
                 <div v-for="(qna, index) in qnaList" :key="index">
                   <div class="container-middle-content">
                     <div>{{this.$dayFormat(qna.qna_date)}}</div>
@@ -81,7 +82,7 @@
    
       };
     },
-    mounted(){
+    created(){
       this.getQnaList()
     },
     methods: {
@@ -318,6 +319,16 @@ font-weight: bold;
 }
 
 /* div */
+.no_data{
+  text-align: center;
+  font-size: 30px;
+  color:#d3d3d3;
+  padding: 200px;
+  /* border: 1px solid red; */
+}
+.invisible{
+  display: none;
+}
 
 .container0{
 min-width: var(--container-width);

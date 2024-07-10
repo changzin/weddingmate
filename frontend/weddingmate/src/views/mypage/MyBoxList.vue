@@ -43,16 +43,15 @@
       <div>｜</div>
       <div class="sort" style="cursor: pointer;" @click="sort('quantity')">상품 많은순</div>
     </div>
- 
-                
-    <div class="container-middle">                      
-            <div v-for="(box, index) in boxList" :key="index" class="container-box" @click="goToBox(box)">
-                <div class="box-name">{{ box.box_name }}</div>
-                <div class="box-count">담긴 상품 {{box.box_quantity}}개(최근 수정 {{ this.$dayFormat(box.box_date)}})</div>
-                <div><hr class="box-hr"></div>
-                <div class="box-cost">합계 금액 : {{this.$numberFormat(box.box_item_total_price)}}원</div>
-            </div>
-        </div>              
+    <div :class="boxList.length == 0 ? 'no_data' : 'invisible'">생성된 견적함이 없습니다</div>   
+    <div class="container-middle">                   
+      <div v-for="(box, index) in boxList" :key="index" class="container-box" @click="goToBox(box)">
+          <div class="box-name">{{ box.box_name }}</div>
+          <div class="box-count">담긴 상품 {{box.box_quantity}}개(최근 수정 {{ this.$dayFormat(box.box_date)}})</div>
+          <div><hr class="box-hr"></div>
+          <div class="box-cost">합계 금액 : {{this.$numberFormat(box.box_item_total_price)}}원</div>
+      </div>
+      </div>              
 
     
     <div class="mypage-bottom">
@@ -113,7 +112,7 @@ export default {
 
       //페이지
       page : 1,
-      maxpage: null,
+      maxPage: null,
       mode : null
 
     };
@@ -152,6 +151,7 @@ export default {
           if (response.status == 200){
             this.boxList = response.boxList;
             this.maxPage = response.maxPage;
+            console.log("페이지", this.page);
             console.log("맥스페이지",this.maxPage);
           } 
           else{
@@ -436,6 +436,16 @@ export default {
 
 .container0{
     min-width: var(--container-width);      
+}
+.no_data{
+  text-align: center;
+  font-size: 30px;
+  color:#d3d3d3;
+  padding: 200px;
+  /* border: 1px solid red; */
+}
+.invisible{
+  display: none;
 }
 .container-top{          
     margin-left: var(--container-margin-left);

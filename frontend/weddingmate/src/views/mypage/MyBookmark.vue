@@ -13,6 +13,7 @@
           <div class="font-delete" style ="cursor: pointer;" @click="DelCBookmarkList()" >선택 상품 삭제</div>
         </div>        
     <div class="container-middle">
+      <div :class="bookmarkList.length == 0 ? 'no_data' : 'invisible'">찜한 상품이 없습니다</div>
       <div v-for="(bookmark, index) in bookmarkList" :key="index" class="container-content">
         <input type="checkbox" v-model="bookmark.checked">
         <div @click="goToBookmark(bookmark)" style="cursor: pointer;"><img class="bookmark_img" :src="$imageFileFormat(bookmark.item_tn_image_path)"></div>
@@ -400,6 +401,17 @@ export default {
 }
 
 /* div */
+.invisible{
+  display: none;
+}
+
+.no_data{
+  text-align: center;
+  font-size: 30px;
+  color:#d3d3d3;
+  padding: 200px;
+
+}
 .container0{
     min-width: var(--container-width)
 }
@@ -485,7 +497,7 @@ hr.text{
 img.bookmark_img{
     width: 180px;
     height: 180px;
-    border: 1px solid #333333;
+    /* border: 1px solid #333333; */
 }
 img.delete-x{
     weight: 20px;

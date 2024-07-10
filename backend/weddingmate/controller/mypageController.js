@@ -79,25 +79,21 @@ exports.bookmarkList = async(req, res) =>{
                 bookmark.item_id, 
                 item.item_name, 
                 item.item_price, 
-                item.item_tn_image_path, 
-                item_detail.item_detail_type 
+                item.item_tn_image_path
             FROM 
                 bookmark
             JOIN 
                 item ON bookmark.item_id = item.item_id 
-            JOIN 
-                item_detail ON item.item_id = item_detail.item_id
             WHERE 
-                bookmark.user_id = 2 
+                bookmark.user_id = 1
             GROUP BY 
                 bookmark.bookmark_id, 
                 bookmark.item_id, 
-                item.item_name, 
-                item.item_price, 
-                item.item_tn_image_path, 
-                item_detail.item_detail_type
+                item.item_name,  
+                item.item_price,  
+                item.item_tn_image_path
             ORDER BY 
-            bookmark.bookmark_id;`
+            bookmark.bookmark_id`;
         result = await db(query, [user_id, (page * 10)]);
 
         query ="SELECT COUNT (*) AS COUNT FROM bookmark WHERE user_id = ?";
@@ -195,7 +191,7 @@ exports.reviewList = async(req, res) =>{
 
         page = !page ? 0 : Number(page) - 1;
 
-         query =`SELECT item.item_name ,review_id, review_star, review_content 
+         query =`SELECT item.item_name, item.item_tn_image_path, review_id, review_star, review_content 
                     FROM review 
                     JOIN item ON review.item_id = item.item_id
                     WHERE user_id = ? LIMIT 10 OFFSET ?`

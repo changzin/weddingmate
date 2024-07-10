@@ -17,27 +17,27 @@
         </div>
         <div class="container-middle-mymenu">
             <div class="content-mymenu_list">
-                <div class="content-mymenu">
+                <div class="content-mymenu" style="cursor: pointer;" @click="this.$router.push({path:'/mypage/bookmark'})">
                   <img class="icon" src="/icon/star-solid.svg">
                   <div class="font-menu">찜</div>
                 </div>
-                <div class="content-mymenu">
-                    <img class="icon" src="/icon/folder-solid.svg">
+                <div class="content-mymenu" style="cursor: pointer;" @click="this.$router.push({path:'/mypage/boxlist'})">
+                    <img class="icon" src="/icon/folder-solid.svg" >
                     <div class="font-menu">견적함</div>
                 </div>
-                <div class="content-mymenu">
+                <div class="content-mymenu" style="cursor: pointer;" @click="this.$router.push({path:'/mypage/schedule'})"  >
                   <img class="icon" src="/icon/calendar-regular.svg">
                   <div class="font-menu">스케쥴</div>
                 </div>
-                <div class="content-mymenu">
+                <div class="content-mymenu" style="cursor: pointer;" @click="this.$router.push({path:'/mypage/review'})">
                   <img class="icon" src="/icon/pencil-solid.svg">
                   <div class="font-menu">나의리뷰</div>
                 </div>
-                <div class="content-mymenu">
+                <div class="content-mymenu" style="cursor: pointer;" @click="this.$router.push({path:'/mypage/qna'})">
                   <img class="icon" src="/icon/message-regular.svg">
                   <div class="font-menu">나의QnA</div>
                 </div>
-                <div class="content-mymenu">
+                <div class="content-mymenu" style="cursor: pointer;" @click="this.$router.push({path:'/mypage/payment'})">
                   <img class="icon" src="/icon/credit-card-regular.svg">
                   <div class="font-menu">결제내역</div>
                 </div>   
@@ -106,7 +106,11 @@ export default {
       }
     } catch(err){
       console.error(err);
-      alert("잘못된 요청입니다")
+      alert("잘못된 요청입니다");
+      this.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true },
+        });
     }
 
     

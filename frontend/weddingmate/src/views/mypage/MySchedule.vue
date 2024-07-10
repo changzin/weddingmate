@@ -65,7 +65,7 @@
           </div>
         </div>
         <div class="container-middle-schedule">
-          <div class="content-schedule-title">일정 상세보기</div>
+          <div class="content-schedule-title">일정 목록</div>
           <div
             class="content-schedule-text"
             v-for="(schedule, index) in ScheduleResult"
