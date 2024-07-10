@@ -9,6 +9,7 @@
             <div class="row justify-content-center">
                 <div class="receipt_title">
                     구매 영수증
+                    <hr class="receipt_hr">
                 </div>
                 <div class="receipt_box">
                     <div class="row">
@@ -16,7 +17,7 @@
                             주문번호
                         </div>
                         <div class="col receipt_number">
-                            111111111111111111111111111111123456
+                            {{ order_code }}
                         </div>
                     </div>
                     <div class="row">
@@ -24,15 +25,15 @@
                             거래일시
                         </div>
                         <div class="col receipt_date">
-                            {{ receipt.order_info_end_date }}
+                            {{ $dateFormat(receipt.order_info_end_date) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 receipt_category2">
-                            상품명
+                            견적함명
                         </div>
                         <div class="col receipt_item_name">
-                            에센셜 스페셜 제너럴리스트 퓨티풀 울트라 드레스, XXL, 1개
+                            {{ receipt.box_name }}
                         </div>
                     </div>
                     <div class="row">
@@ -40,7 +41,7 @@
                             합계
                         </div>
                         <div class="col receipt_total">
-                           {{ receipt.order_price}}
+                           {{ receipt.order_info_price}}
                         </div>
                     </div>
                       <div class="row">
@@ -54,14 +55,13 @@
                     <hr class="receipt_hr">
                     <div>
                         <div class="receipt_body1">
-                            ﹒구매 영수증은 세금계산서 등 세무상 증빙서류로 활용할 수 없으며, 거래내역 및 거래금액을
-                        </div>
-                        <div class="receipt_body2">
-                            확인 하는 용도로만 사용 가능합니다. 
+                            <p>﹒구매 영수증은 세금계산서 등 세무상 증빙서류로 활용할 수 없으며, 거래내역 및 거래금액을
+                                 확인 하는 용도로만 사용 가능합니다. 
+                            </p>
                         </div>
                 </div>
-                <button class="receipt_botten">
-                    닫기
+                <button type="submit" class="receipt_botten" @click="this.$router.go(-1);">
+                    돌아가기
                 </button>
             </div>
         </div>
@@ -88,9 +88,11 @@
     // },
     data() {
         return {
+        boxItemList : [],
         receipt:{},
         box_id : {},
-        order_info_id:{},
+        
+        // order_info_id:{},
         order_info:
         {
         "order_total_price": 0,
@@ -100,10 +102,21 @@
         order_code: null
         };
     },
+    async created(){
+       
+        // await this.makeOrder();
+    },
+    // props: {
+    //     order_info_id: {
+    //     type: String,
+    //     required: true,
+    //     }
+    // },
     computed:{
     },
     mounted(){
         this.getReceiptList();
+        //  this.makeOrder();
     },
     methods: {
         // 헤더
@@ -111,41 +124,67 @@
             try{
                 // URL 파라미터 추가 
                 const requestBody = {
-                   box_id : this.box_id,
-                   order_info_id : this.order_info_id
+                    access_token: this.$getAccessToken(),
+                    orderId : this.$route.params.orderId,
+                    box_id :this.box_id
                 }
                 const response = await this.$api(`mypage/payment/receipt`,requestBody,"POST")
                 console.log("왜 안되는데",response);
                 this.receipt = response.receiptList;
                 console.log(this.receipt)
+                //주문번호 받아오기 
+                this.order_code = this.receipt.order_info_name.toUpperCase();
+                console.log(this.order_code);
+
+                // const order_obj = response.order_code
+                // console.log(order_obj);
+                // const order_code = order_obj.order_info_name;
+                // console.log(order_code)
+                // const ordercode = JSON.stringify(this.orderCode);
+                // console.log(ordercode);
+                // for(let order in this.order_code){
+                //    const order_code =this.order_code[order];
+                //    console.log(order_code) 
+                // }
+                // console.log(order_code)
+                // const order_code = orderCode[0].toUpperCase();
+                // console.log(order_code);
+                // for(order_name in response.order_code){
+                //     this.order_code = order_info_name[order_code];
+                // }
+
                 }catch(error){
                 console.log(error);
                 }
 
             },
-    //     makeOrderInfo(){
-    //     for(let i = 0; i < this.receipt.length; i++){
-    //       this.order_info.order_total_price += this.receipt[i].box_item_total_price;
-    //     }
+    makeOrderInfo(){
+        for(let i = 0; i < this.boxItemList.length; i++){
+          this.order_total_price += this.boxItemList[i].box_item_total_price;
+        }
 
-    //     for(let i = 0; i < this.receipt.length; i++){
-    //       this.order_info.order_sale_price += Math.ceil((this.receipt[i].box_item_total_price * (this.receipt[i].item_discount_rate/100)));
-    //       console.log(this.receipt[i].box_item_total_price , this.receipt[i].item_discount_rate);
-    //     }
-    //     this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
-    //   },
+        for(let i = 0; i < this.boxItemList.length; i++){
+          this.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
+        }
+        // this.order_price = this.order_total_price - this.order_sale_price;
+
+        this.show_order_sale_price = this.$numberFormat(this.order_sale_price);
+        this.show_order_total_price = this.$numberFormat(this.order_total_price);
+        // this.show_order_price = this.$numberFormat(this.order_price);
+      },
         }
     }
     </script>
     <style scoped>
      .receipt_container{
-        background-color: #f5f5f5;
-        width: 992px;
+        margin-top: 30px;
+        /* background-color: #f5f5f5; */
+        width: 952px;
         min-height: 896px;
     }
     .receipt_title{
         margin-top: 48px;
-        margin-bottom: 47px;
+        margin-bottom: 20px;
         text-align: center;
         font-size: 30px;
         font: bold;
@@ -162,20 +201,23 @@
     .receipt_box{
         background-color: #FFFFFF ;
         margin-top: 0px;
-        margin-left: 17px;
+        margin-left: 0px;
         width: 959px;
         min-height: 742px;
+        padding: 0px;
     }
     .receipt_category1{
         font-size: 24px;
         margin-top: 44px;
-        margin-left: 27px;
+        margin-left: 30px;
+        padding-left:20px;
         color: #888888;
     }
     .receipt_category2{
         font-size: 24px;
         margin-left: 27px;
         margin-top: 61px;
+        padding-left:20px;
         color: #888888;
     }
     .receipt_number{
@@ -211,7 +253,7 @@
         text-align: end;
         margin-top: 61px;
         margin-right: 28px;
-        color: #888888;
+        /* color: #888888; */
         font-size: 24px
     }
     .receipt_total{
@@ -234,26 +276,26 @@
         margin-left: 62px;
         width: 820px;
         font-size: 20px;
-        color: #888888;
+        /* color: #88888; */
     }
     .receipt_body2{
         margin-top: 2px;
         margin-left: 80px;
         width: 820px;
         font-size: 20px;
-        color: #888888;
+        /* color: #888888; */
     }
     .receipt_botten{
         border: none;
         border-radius: 12px;
         margin-top: 70px;
-        margin-left: 27px;
+        margin-left: 400px;
         margin-bottom: 23px;
-        width: 904px;
-        height: 97px;
+        width: 200px;
+        height: 60px;
         background-color: #F6C9CA;
         color: #FFFFFF;
-        font-size: 30px;
+        font-size: 20px;
         font-weight:bold;
     }
     

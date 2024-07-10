@@ -22,7 +22,7 @@
                   <div>{{ this.$dayFormat(payment.order_info_end_date) }}</div>
                   <div>{{payment.box_name}}</div>
                   <div>{{this.$numberFormat(payment.order_info_total_price)}}</div>
-                  <div><button @click="$router.push({path:'/mypage/payment/receipt'})">영수증</button></div>
+                  <div><div @click="goToReceipt(index)" class="receipt">영수증</div></div>
               </div>
               <hr class="text">
           </div>
@@ -80,7 +80,9 @@
 
         //페이지
         page : 1,
-        maxPage: null,      
+        maxPage: null,    
+        orderId:this.$route.params.orderId,
+        orders: [] 
       };
     },
     mounted(){
@@ -106,7 +108,8 @@
           this.page = (!this.page) ? 1 : this.page;
 
           const requestBody = {
-              access_token: this.$getAccessToken()
+              access_token: this.$getAccessToken(),
+              orderId : this.orderId,
             }
 
           // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
@@ -158,7 +161,17 @@
       this.isFirstPage = this.page === 1;
       this.isLastPage = this.page === this.maxPage;
     },
-
+    goToReceipt(orderId){
+      try{
+        // this.orderId = $route.params.orderId;
+        // this.$router.push( this.orderId   })
+        this.$router.push({ name: 'myreceipt', 
+                          params: {orderId:this.paymentList[orderId].order_info_id}   })
+      }catch(err){
+        console.log(err);
+        alert("영수증이 없습니다.")
+      }
+    }
     }
   }
   </script>
@@ -421,5 +434,9 @@ button.mypage-back{
 .notVisible{
         visibility: hidden;
       }
+.receipt{
+  cursor:pointer
+}
+
   </style>
   

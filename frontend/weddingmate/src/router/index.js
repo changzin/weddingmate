@@ -201,7 +201,7 @@ const routes = [
     component: MyBoxList
   },
   {
-    path: '/mypage/boxlist/:boxId',
+    path: '/mypage/boxlist/box/:boxId',
     name: "mybox",
     component: MyBox,
     props: true
@@ -223,10 +223,9 @@ const routes = [
     component: MyPayment
   },
   {
-    path: '/mypage/payment/receipt',
+    path: '/mypage/payment/receipt/:orderId',
     name: "myreceipt",
     component: MyReceipt,
-    // props: route => ({ orderinfo_id: route.query.orderinfo_id })
   },
   {
     path: '/test',

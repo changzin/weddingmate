@@ -14,6 +14,6 @@ router.post('/qnalist',loginCheck, qnaList);
 router.post('/boxlist',loginCheck, boxList);
 router.post('/boxlist/add',loginCheck, boxAdd);
 //건용 추가 
-router.post('/payment/receipt',receiptList)
+router.post('/payment/receipt',loginCheck,receiptList)
 
 module.exports = router;
