@@ -399,10 +399,14 @@ export default {
 .qnadetail_button {
   padding: 10px 25px;
   font-size: 16px;
-  border: 1px solid #ddd;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
   background-color: #fff;
   cursor: pointer;
+  color: #555555;
+  padding: 10px 30px;
+
+
 }
 
 .qnadetail_button.qnadetail_cancel {
@@ -412,16 +416,17 @@ export default {
 }
 
 .qnadetail_button.qnadetail_submit {
-  background-color: #f7cac9;
-  color: #555555;
-  font-size: 24px;
-  padding: 20px 50px;
 }
 
 .qnadetail_actions {
   text-align: center;
   margin-top: 50px;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  
 }
+
 
 .qnadetail_label_margin {
   margin-left: 60px;

@@ -348,7 +348,7 @@ exports.totalProductDetail = async (req, res) => {
 
     // QnA
     const qnaQuery =
-      "SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, user.user_nickname, qna_date FROM qna, user WHERE qna.user_id=user.user_id AND qna.item_id=? ORDER BY qna.qna_id LIMIT 5";
+      "SELECT qna.qna_id, qna.qna_type, qna.qna_has_answer, qna.qna_title, qna.qna_visibility, user.user_nickname, qna_date FROM qna, user WHERE qna.user_id=user.user_id AND qna.item_id=? ORDER BY qna.qna_id LIMIT 5";
 
     let qnaResult = [];
     qnaResult = await db(qnaQuery, [itemId]);
