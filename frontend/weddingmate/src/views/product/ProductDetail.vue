@@ -76,11 +76,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form>
@@ -289,22 +300,27 @@
                 v-if="isVisibleItemType('dress')"
                 class="productdetail_main_content_selectoption_div"
               >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('dress'),
-                ]"
-              > -->
                 <div style="margin-top: 30px">
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
 
                 <div class="productdetail_main_content_maximum_quantity_div">
@@ -536,11 +552,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form @submit.prevent>
@@ -816,11 +843,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form @submit.prevent>
@@ -1044,11 +1082,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form>
@@ -1211,11 +1260,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
 
                 <div class="productdetail_main_content_maximum_quantity_div">
@@ -1446,11 +1506,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
 
                 <div class="productdetail_main_content_maximum_quantity_div">
@@ -1828,11 +1899,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form @submit.prevent>
@@ -2129,11 +2211,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form>
@@ -2296,11 +2389,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form @submit.prevent>
@@ -2597,11 +2701,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
                 <div class="productdetail_main_selectoption-div">옵션 선택</div>
                 <form>
@@ -2764,11 +2879,22 @@
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    {{ productDetail.item_price }}원
+                    <span
+                      v-if="
+                        productDetail.item_price !== undefined &&
+                        productDetail.item_price !== null
+                      "
+                    >
+                      {{ productDetail.item_price.toLocaleString() }}원
+                    </span>
                   </div>
                 </div>
                 <div class="productdetail_main_content_discount_price_div">
-                  {{ finally_price }}원
+                  <span
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    {{ finally_price.toLocaleString() }}원
+                  </span>
                 </div>
 
                 <div class="productdetail_main_content_maximum_quantity_div">
@@ -3259,11 +3385,11 @@
                   </div>
                   <div>
                     {{ qna.qna_title }}
+                  <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
                   </div>
                 </td>
                 <td class="productdetail_qna-section_status-nickname-div">
                   {{ maskNickname(qna.user_nickname) }}
-                   <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
                 </td>
                 <td>{{ this.$dateFormat(qna.qna_date) }}</td>
               </tr>
@@ -3352,14 +3478,16 @@ export default {
 
       reviewList: {},
       qnaList: {},
+
+      itemType: "",
     };
   },
 
   props: {
-    itemType: {
-      type: String,
-      required: true,
-    },
+    // itemType: {
+    //   type: String,
+    //   required: true,
+    // },
     item_id: {
       type: String,
       required: true,
@@ -3381,18 +3509,6 @@ export default {
 
   computed: {
     // 가격 계산
-    totalPrice() {
-      return this.finally_price * this.quantity;
-    },
-    formattedTotalPrice() {
-      return this.totalPrice.toLocaleString();
-    },
-    allOptionsSelected() {
-      return (
-        this.selectedOptions.length === this.optionGroups.length &&
-        this.selectedOptions.every((option) => option !== "")
-      );
-    },
     finally_price() {
       if (
         this.productDetail.item_price &&
@@ -3405,6 +3521,22 @@ export default {
         );
       }
       return 0;
+    },
+    totalPrice() {
+      return this.finally_price * this.quantity;
+    },
+    formattedTotalPrice() {
+      return this.totalPrice.toLocaleString();
+    },
+
+
+
+
+    allOptionsSelected() {
+      return (
+        this.selectedOptions.length === this.optionGroups.length &&
+        this.selectedOptions.every((option) => option !== "")
+      );
     },
 
     // item 총 재고
@@ -3449,6 +3581,7 @@ export default {
             this.productDetail.item_name
           );
           this.productDetailItemDetail = totalproductdetailData.itemDetails;
+          this.itemType = this.productDetailItemDetail[0].item_detail_type;
           this.reviewList = totalproductdetailData.reviewList;
           this.qnaList = totalproductdetailData.qnaList;
           this.BoxResultData = totalproductdetailData.data || [];
@@ -3483,7 +3616,6 @@ export default {
     },
 
     // 타입별로 보여줄 DOM 설정
-   
 
     isVisibleItemType(type) {
       return this.itemType === type;

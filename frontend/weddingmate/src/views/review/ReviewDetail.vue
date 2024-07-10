@@ -105,8 +105,19 @@
 
         <!-- 버튼 -->
         <div class="qnadetail_actions">
-          <button type="submit" class="qnadetail_button qnadetail_submit">
-            돌아가기
+          <button
+            type="button"
+            class="qnadetail_button qnadetail_submit"
+            @click="clickToProductDetail"
+          >
+            상품페이지로
+          </button>
+           <button
+            type="button"
+            class="qnadetail_button qnadetail_submit"
+            @click="clickToReviewList"
+          >
+            리뷰리스트로
           </button>
         </div>
       </form>
@@ -140,6 +151,8 @@ export default {
       isVisibleReport: false,
       reportContent: "",
       currentReviweIndex: 0,
+
+      item_id: "",
     };
   },
   props: {
@@ -214,10 +227,22 @@ export default {
       }
     },
 
-    // 확인 버튼 클릭 시 동작
-    handleSubmit() {
-      this.$router.go(-1);
+    // 상품페이지로 이동
+    clickToProductDetail() {
+      this.$router.push({
+        name: "productdetail",
+        query: { item_id: this.ReviewResult.item_id },
+      });
     },
+
+    // 리뷰리스트로 이동
+    clickToReviewList() {
+      this.$router.push({
+        name: "reviewlist",
+        query: { item_id: this.ReviewResult.item_id },
+      });
+    },
+
 
     // 취소 버튼 클릭 시 동작
     handleCancel() {
@@ -265,10 +290,9 @@ export default {
         );
 
         if (reviewResult.status == 200) {
-          alert("성공적으로 삭제되었습니다")
-        }
-        else if (reviewResult.status <= 400){
-          alert("삭제에 실패되었습니다")
+          alert("성공적으로 삭제되었습니다");
+        } else if (reviewResult.status <= 400) {
+          alert("삭제에 실패되었습니다");
         }
       } catch (error) {
         console.error(
@@ -496,10 +520,14 @@ export default {
 .qnadetail_button {
   padding: 10px 25px;
   font-size: 16px;
-  border: 1px solid #ddd;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
   background-color: #fff;
   cursor: pointer;
+  color: #555555;
+  padding: 10px 30px;
+
+
 }
 
 .qnadetail_button.qnadetail_cancel {
@@ -509,15 +537,15 @@ export default {
 }
 
 .qnadetail_button.qnadetail_submit {
-  background-color: #f7cac9;
-  color: #555555;
-  font-size: 24px;
-  padding: 20px 50px;
 }
 
 .qnadetail_actions {
   text-align: center;
   margin-top: 50px;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  
 }
 
 .qnadetail_label_margin {

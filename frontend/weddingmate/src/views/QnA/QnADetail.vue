@@ -70,8 +70,19 @@
 
         <!-- 버튼 -->
         <div class="qnadetail_actions">
-          <button type="submit" class="qnadetail_button qnadetail_submit">
-            돌아가기
+         <button
+            type="button"
+            class="qnadetail_button qnadetail_submit"
+            @click="clickToProductDetail"
+          >
+            상품페이지로
+          </button>
+           <button
+            type="button"
+            class="qnadetail_button qnadetail_submit"
+            @click="clickToqnaList"
+          >
+            QnA리스트로
           </button>
         </div>
       </form>
@@ -223,18 +234,28 @@ export default {
 
     // 확인 버튼 클릭 시 동작
     handleSubmit() {
-      if (
-        !this.form.title ||
-        !this.form.content ||
-        !this.form.inquiryType ||
-        !this.form.visibilityType
-      ) {
-        alert("모든 필드를 입력하세요.");
-        return;
-      }
-
       this.$router.go(-1);
     },
+
+     clickToProductDetail() {
+      console.log("this.QnAResult.item_id : ", this.QnAResult.item_id);
+      this.$router.push({
+        name: "productdetail",
+        query: { item_id: this.QnAResult.item_id },
+      });
+    },
+
+    clickToqnaList() {
+      console.log("this.QnAResult.item_id : ", this.QnAResult.item_id);
+
+      this.$router.push({
+        name: "qnAlist",
+        query: { item_id: this.QnAResult.item_id },
+      });
+    },
+
+
+
 
     // 취소 버튼 클릭 시 동작
     handleCancel() {
