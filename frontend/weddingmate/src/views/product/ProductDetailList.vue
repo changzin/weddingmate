@@ -54,6 +54,7 @@
                 >
                   <div class="letter-title-flex_title">
                     {{ product.item_name }}
+                    {{ product.item_price }}
                   </div>
                   <div class="letter-title-flex-dummy"></div>
                   <div class="letter-title-flex_per">
@@ -83,8 +84,58 @@
                 alt="Review Image"
               />
               <div class="reviewlist_card-body">
+                <!-- 이름 -->
                 <div class="reviewlist_review-section_title-div">
                   {{ product.item_name }}
+                </div>
+                <!-- 가격 -->
+                <div
+                  v-if="
+                    product.item_discount_rate !== undefined &&
+                    product.item_discount_rate !== null &&
+                    product.item_price !== undefined &&
+                    product.item_price !== null
+                  "
+                >
+                  <span class="productdetail_main_content_discount_div">
+                    {{ product.item_discount_rate }}%
+                  </span>
+                  <span class="productdetail_main_content_origin_price_div">
+                    {{ product.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+                <div
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  <span class="productdetail_main_content_discount_price_div">
+                    {{ finally_price(product).toLocaleString() }}원
+                  </span>
+                </div>
+                <!-- 별점 -->
+                <div class="qnawrite_row">
+                  <div class="rating">
+                    <label
+                      v-for="n in 10"
+                      :key="n"
+                      class="rating__label"
+                      :class="{
+                        half: n <= product.item_star_rating * 2,
+                        filled: n <= product.item_star_rating * 2,
+                        half_position: n % 2 !== 0,
+                        filled_position: n % 2 === 0,
+                      }"
+                    >
+                      <input
+                        type="radio"
+                        :id="'star' + n"
+                        class="rating__input"
+                        name="rating"
+                        :value="n"
+                        v-model="rating"
+                      />
+                      <div class="star-icon"></div>
+                    </label>
+                  </div>
                 </div>
               </div>
             </button>
@@ -153,9 +204,17 @@ export default {
       isFirstPage: false,
       isLastPage: false,
       maxPage: 0,
+
+
+        // 별점
+      rating: 0,
+      currentRating: 0,
     };
   },
 
+  computed: {
+    // 가격 계산
+  },
   async created() {
     await this.fetchProductListData();
   },
@@ -171,6 +230,16 @@ export default {
   },
 
   methods: {
+    finally_price(product) {
+      if (product.item_price && product.item_discount_rate) {
+        return (
+          product.item_price -
+          product.item_price * (product.item_discount_rate / 100)
+        );
+      }
+      return product.item_price;
+    },
+
     async fetchProductListData() {
       try {
         const response = await this.$api(
@@ -377,6 +446,24 @@ export default {
   height: 40px;
 }
 
+/* 가격 */
+
+.productdetail_main_content_discount_div {
+  color: #ff481e;
+  display: inline;
+}
+
+.productdetail_main_content_origin_price_div {
+  color: #888888;
+  display: inline-block;
+  text-decoration: line-through;
+}
+
+.productdetail_main_content_discount_price_div {
+  font-size: 18px;
+  font-weight: bold;
+}
+
 /* 상품들 */
 
 .reviewlist_container {
@@ -492,6 +579,7 @@ export default {
 
 .reviewlist_card-body {
   padding: 10px;
+  text-align: left;
 }
 
 .reviewlist_card-rating {
@@ -503,8 +591,14 @@ export default {
   font-size: 16px;
   font-weight: bold;
   text-align: left;
-  margin-bottom: 10px;
+
   width: 100%;
+}
+
+.reviewlist_review-section_sub-div {
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .letter-title-flex {
@@ -534,4 +628,46 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
+
+/* 별점 */
+.rating {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.rating__input {
+  display: none;
+}
+
+.rating__label {
+  width: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.rating__label .star-icon {
+  width: 12px;
+  height: 24px;
+  display: block;
+  position: relative;
+  left: 0;
+  background-image: url("/src/views/review/star/emptyStar.svg");
+  background-repeat: no-repeat;
+}
+
+.rating__label.half .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.filled .star-icon {
+  background-image: url("/src/views/review/star/filledStar.svg");
+}
+
+.rating__label.half_position .star-icon {
+  background-position: left;
+}
+.rating__label.filled_position .star-icon {
+  background-position: right;
+}
+
 </style>
