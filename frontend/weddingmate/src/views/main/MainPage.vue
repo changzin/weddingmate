@@ -37,7 +37,7 @@
         // 본문
         best_item:[],
         image:[],
-
+        item_id :[],
       };
     },
     computed:{
@@ -70,11 +70,19 @@
           //전송한 아이템 가져오기 
           const result = await this.$api(`http://localhost:9090/bestItem`)
           this.best_item = result.best_item;
+          // console.log(this.best_item.item_id)
+          //item ID 받아오기   
+          const itemId = this.best_item.map(item => item.item_id);
+          console.log(itemId)
         }
         catch(err){
           console.error(err);
         }
-      }
+      },
+      // async goToBestItem(){
+        
+      // }
+
     }
   }
   </script>
