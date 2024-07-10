@@ -41,7 +41,7 @@
                             합계
                         </div>
                         <div class="col receipt_total">
-                           {{ receipt.order_info_price}}
+                           {{ $numberFormat(receipt.order_info_price)}}
                         </div>
                     </div>
                       <div class="row">
@@ -184,7 +184,7 @@
     }
     .receipt_title{
         margin-top: 48px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         text-align: center;
         font-size: 30px;
         font: bold;
@@ -207,16 +207,16 @@
         padding: 0px;
     }
     .receipt_category1{
-        font-size: 24px;
-        margin-top: 44px;
+        font-size: 20px;
+        margin-top: 40px;
         margin-left: 30px;
         padding-left:20px;
         color: #888888;
     }
     .receipt_category2{
-        font-size: 24px;
+        font-size: 20px;
         margin-left: 27px;
-        margin-top: 61px;
+        margin-top: 40px;
         padding-left:20px;
         color: #888888;
     }
@@ -237,21 +237,21 @@
     }
     .receipt_item_name{
         text-align: end;
-        margin-top: 61px;
+        margin-top: 40px;
         margin-right: 28px;
         color: #888888;
         font-size: 24px
     }
     .receipt_total{
         text-align: end;
-        margin-top: 61px;
+        margin-top: 40px;
         margin-right: 28px;
         color: #888888;
         font-size: 24px
     }
     .receipt_total{
         text-align: end;
-        margin-top: 61px;
+        margin-top: 40px;
         margin-right: 28px;
         /* color: #888888; */
         font-size: 24px
@@ -259,23 +259,23 @@
     .receipt_total{
         font-weight: bold;
         text-align: end;
-        margin-top: 61px;
+        margin-top: px;
         margin-right: 28px;
         color: #FF481E;
         font-size: 24px;
     }
     .receipt_company{
         text-align: end;
-        margin-top: 44px;
+        margin-top: 40px;
         margin-right: 28px;
         font-size: 24px;
         color: #FF481E;
     }
     .receipt_body1{
-        margin-top: 32px;
-        margin-left: 62px;
+        margin-top: 12px;
+        margin-left: 32px;
         width: 820px;
-        font-size: 20px;
+        font-size: 14px;
         /* color: #88888; */
     }
     .receipt_body2{
