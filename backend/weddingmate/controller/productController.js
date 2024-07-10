@@ -28,8 +28,9 @@ exports.productList = async (req, res) => {
 
       // 현재 페이지에 따른 item 데이터 가져오기
       const query = `
-          SELECT item.item_id, item.item_name, item.item_discount_rate, item.item_tn_image_path
+          SELECT DISTINCT item.*, item_detail.item_detail_type
           FROM item 
+          JOIN item_detail ON item.item_id = item_detail.item_id 
           WHERE item.item_name LIKE ? 
           LIMIT ? OFFSET ?
         `;
@@ -47,7 +48,7 @@ exports.productList = async (req, res) => {
 
       // 현재 페이지에 따른 item 데이터 가져오기
       const query = `
-          SELECT DISTINCT item.item_id, item.item_name, item.item_discount_rate, item.item_tn_image_path 
+          SELECT DISTINCT item.*, item_detail.item_detail_type
           FROM item 
           JOIN item_detail ON item.item_id = item_detail.item_id 
           WHERE item_detail.item_detail_type = ? AND item.item_name LIKE ? 

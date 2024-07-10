@@ -113,6 +113,30 @@
                       
                       </div>
                     </button>
+                    <table class="admin_member_qna-table" style="font-size:12px;">
+                    <thead>
+                      <tr style="height:50px;">
+                        <th style="text-align: center;">종류</th>
+                        <th style="text-align: center;">상품이름</th>
+                        <th style="text-align: center;" >업체명</th>
+                        <th style="text-align: center;">가격</th>
+                        <th style="text-align: center;">할인율</th>
+                        <th style="text-align: center;">별점 평균</th>
+                        <th style="text-align: center;">리뷰 갯수</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(item, index) in itemList" :key="index" @click="this.$router.push({name: 'adminitemedit', params: {itemId: item.item_id}})" style="height:50px; cursor: pointer;">
+                        <td style="width:100px; text-align: center;">{{this.getClass(item.item_detail_type)}}</td>
+                        <td style="width:400px; text-align: center;">{{item.item_name}}</td>
+                        <td style="width:150px; text-align: center;">{{item.item_factory_name}}</td>
+                        <td style="width:150px; text-align: center;">{{this.$numberFormat(item.item_price)}}</td>
+                        <td style="width:100px; text-align: center;">{{item.item_discount_rate}}%</td>
+                        <td style="width:50px; text-align: center;">{{item.item_star_rating}}</td>
+                        <td style="width:50px; text-align: center;">{{item.item_review_count}}</td>
+                      </tr>                 
+                    </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -237,6 +261,76 @@ export default {
     async goToPage(targetPage){
       this.page = targetPage;
       this.getItemList();
+    },
+    getClass(item) {    
+      // 웨딩홀
+      if (item === "hall") {
+        return "웨딩홀"
+      }
+      // 드레스
+      else if (item === "dress") {
+        return "드레스"
+      }
+      // 스튜디오
+      else if (item === "studio") {
+        return "스튜디오";
+      }
+      // 메이크업
+      else if (item === "makeup") {
+        return "메이크업";
+      }
+      // 스드메
+      else if (item === "sdm_package") {
+        return "스드메";
+      }
+      // 예복
+      else if (item === "giving_dress") {
+        return "예복";
+      }
+      // 예복
+      else if (item === "giving_item") {
+        return "예물";
+      }
+      // 가전
+      else if (item === "giving_mechine") {
+        return "가전";
+      }
+      // 혼수 패키지
+      else if (item === "giving_package") {
+        return  "혼수패키지";
+      }
+      // 본식스냅
+      else if (item === "snap") {
+        return "본식스냅";
+      }
+      // 영상
+      else if (item === "video") {
+        return "영상";
+      }
+      // 부케
+      else if (item === "flower") {
+        return "부케";
+      }
+      // 연주
+      else if (item === "music") {
+        return "연주"
+      }
+      // 사회자
+      else if (item === "mc") {
+        return "사회자"
+      }
+      // 웨딩슈즈
+      else if (item === "shoes") {
+        return "웨딩슈즈"
+      }
+      // 답례품
+      else if (item === "gift") {
+        return "답례품"
+      }
+      // 청첩장
+      else if (item === "letter") {
+        return "청첩장"
+      }
     },
   }
 }
@@ -675,5 +769,11 @@ div.mypage-bottom{
   max-width: 1280px;
   margin: 0 auto;
   margin-top: 30px;
+}
+
+.admin_member_qna-table th,
+.admin_member_qna-table td {
+  border: 1px solid #e0e0e0;
+  padding: 10px;
 }
 </style>

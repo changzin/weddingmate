@@ -122,7 +122,7 @@ exports.bookmarkList = async(req, res) =>{
             JOIN 
                 item ON bookmark.item_id = item.item_id 
             WHERE 
-                bookmark.user_id = 1
+                bookmark.user_id = ?
             GROUP BY 
                 bookmark.bookmark_id, 
                 bookmark.item_id, 
@@ -130,9 +130,10 @@ exports.bookmarkList = async(req, res) =>{
                 item.item_price,  
                 item.item_tn_image_path
             ORDER BY 
-            bookmark.bookmark_id`;
+            bookmark.bookmark_id
+            LIMIT 10 OFFSET ?;`
         result = await db(query, [user_id, (page * 10)]);
-
+        console.log(result);
         query ="SELECT COUNT (*) AS COUNT FROM bookmark WHERE user_id = ?";
         count = await db(query, [user_id]);
         count = count[0]["COUNT"];

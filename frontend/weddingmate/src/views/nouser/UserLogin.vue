@@ -21,23 +21,33 @@
             <div class="d-flex justify-content-center mb-4">
                 <input class="login_input" type="password" placeholder="비밀번호를 입력하세요" v-model="password">
             </div>
-            <div class="d-flex justify-content-center">
+            <!-- <div class="d-flex justify-content-center">
                 <div class="login_box">
                     <div class="d-flex justify-content-start">
                         
-                        <input id="auto_login" type="checkbox" class="login_checkbox" v-model="autoLogin">
-                        <label for="auto_login" class="login_label">자동로그인</label>                            
+                        
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="d-flex justify-content-center mb-5">
-                <button class="login_input_button login_button_text" @click="login()">login</button>
+                <button class="login_input_button login_button_text" @click="login()">로그인</button>
             </div>
         </div>
         <div class="row d-flex justify-content-center">
             <div class="login_box">
-                <div class="d-flex justify-content-center">
-                    <a class="col login_col_text" @click="this.$router.push({path: '/terms'})">회원가입</a>
+                    
+                <div class="d-flex justify-content-between">
+                    <div style="display: flex;">
+                        <div :class="{
+                            check_icon_checked: this.autoLogin,
+                            check_icon: !this.autoLogin
+                            }"
+                            @click = "autoLogin = !autoLogin"
+                            ></div>
+                        <label class="login_label" @click = "autoLogin = !autoLogin">로그인 상태 유지</label>                            
+                    </div>
+                    <button class="col login_col_text" @click="this.$router.push({path: '/terms'})" style="border:none; background-color:#ffffff; margin-left: 25px;">회원가입</button>
+                    <button class="col login_col_text" @click="this.$router.push({path: '/terms'})" style="border:none; background-color:#ffffff;">비밀번호를 잊으셨나요?</button>
                 </div>
             </div>
         </div>
@@ -47,13 +57,13 @@
         <div class="row justify-content-center">
             <div style="width:250px; margin-bottom:15px;">
                 <button id="custom-login-btn" @click="kakaoLogin" style="border:none; padding:0px;">
-                    <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="215">
+                    <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="220">
                 </button>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="h-screen dark:bg-gray-800" style="width: 250px;">
-                <button @click="googleLogin" class="px-4 py-2 border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150">
+                <button @click="googleLogin" style="border: none;  width:220px; height:50px; border-radius: 5px;">
                     <img class="w-6 h-6" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" width="25" height="25">
                     <span> Login with Google</span>
                 </button>
@@ -241,6 +251,7 @@
 .login_box {
   flex: none;
   width: 500px;
+  padding: 0px 20px;
 }
 
 .login_icon_first {
@@ -277,7 +288,7 @@
 }
 .login_input_button {
   border-radius: 12px;
-  border: 1px solid #c2c2c2;
+  border: 0px solid #c2c2c2;
   width: 500px;
   height: 79px;
   flex: none;
@@ -299,16 +310,33 @@
   color: #ffffff;
 }
 .login_checkbox {
-  width: 22px;
-  height: 22px;
-  border-radius: 25px;
-  border: 1px solid #c2c2c2;
-  margin-bottom: 12px;
+    appearance: none;
 }
+
+.check_icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+  position: relative;
+  margin-top:2px;
+  background-image: url("/public/icon/autologincheckbox.png");
+  background-repeat: no-repeat;
+}
+
+.check_icon_checked {
+  width: 24px;
+  height: 24px;
+  display: block;
+  position: relative;
+  margin-top:2px;
+  background-image: url("/public/icon/autologincheckboxselected.png");
+  background-repeat: no-repeat;
+}
+
 .login_label {
   font-size: 14px;
   color: #111111;
-  margin-left: 6px;
+  margin-left: 5px;
 }
 .login_input_xbutton {
   position: absolute;

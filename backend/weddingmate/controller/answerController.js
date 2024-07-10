@@ -51,7 +51,7 @@ exports.updateAnswer = async (req, res) => {
     const query =
       "UPDATE answer SET admin_id=?, answer_content=? WHERE answer_id=?";
     let result = await db(query, [admin_id, answer_content, answer_id]);
-    result = result.changedRows;
+    result = result.affectedRows;
 
     if (result == 1) {
       const query = "SELECT * FROM answer WHERE answer_id=?";

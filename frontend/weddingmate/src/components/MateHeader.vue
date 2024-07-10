@@ -176,8 +176,6 @@ export default {
   position: relative;
 }
 
-.common-header_overlay-content {
-}
 
 /* 카테고리 + 이미지 */
 
