@@ -236,7 +236,7 @@ export default {
     goToProductDetail(item_id) {
       this.$router.push({
         name: "productdetail",
-        query: { itemType: this.itemType, item_id },
+        query: { item_id },
       });
     },
 

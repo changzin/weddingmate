@@ -354,7 +354,7 @@ exports.getSelectedReviewDetail = async (req, res) => {
     console.log("review_id : ", review_id);
 
     const query = `
-      SELECT review.review_id, review.review_content, review.review_star, review.review_image_path, review.review_reported, user.user_id, user.user_nickname, review.review_date, 
+      SELECT review.item_id, review.review_id, review.review_content, review.review_star, review.review_image_path, review.review_reported, user.user_id, user.user_nickname, review.review_date, 
         CASE 
           WHEN review.user_id = ? THEN 1 
           ELSE 0 

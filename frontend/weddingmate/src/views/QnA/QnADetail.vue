@@ -52,8 +52,10 @@
           <label class="qnadetail_answer_label">이미지</label>
           <a :href="form.image">
             <div class="qnadetail_answer_image">
-              <img :src="this.$imageFileFormat(QnAResult.qna_image_path)" 
-              class="qnadetail_answer_image_src"/>
+              <img
+                :src="this.$imageFileFormat(QnAResult.qna_image_path)"
+                class="qnadetail_answer_image_src"
+              />
             </div>
           </a>
         </div>
@@ -68,8 +70,19 @@
 
         <!-- 버튼 -->
         <div class="qnadetail_actions">
-          <button type="submit" class="qnadetail_button qnadetail_submit">
-            돌아가기
+         <button
+            type="button"
+            class="qnadetail_button qnadetail_submit"
+            @click="clickToProductDetail"
+          >
+            상품페이지로
+          </button>
+           <button
+            type="button"
+            class="qnadetail_button qnadetail_submit"
+            @click="clickToqnaList"
+          >
+            QnA리스트로
           </button>
         </div>
       </form>
@@ -167,6 +180,22 @@ export default {
           }
 
           this.user_nickname = result.user_nickname.user_nickname;
+
+          const aswerResult = await this.$api(
+            "/answer/getanswer",
+            { qna_id: this.qna_id },
+            "POST"
+          );
+          if (aswerResult.data.answer_content) {
+            this.AnswerContent = aswerResult.data.answer_content;
+            console.log(
+              "aswerResult: ",
+              JSON.parse(JSON.stringify(this.AnswerContent))
+            );
+          }
+          else {
+            console.log("답변자 답글 안닮");
+          }
         } else {
           console.log("fail");
         }
@@ -175,7 +204,7 @@ export default {
       }
     },
 
-     maskNickname(nickname) {
+    maskNickname(nickname) {
       if (nickname.length <= 4) {
         return nickname;
       }
@@ -205,18 +234,28 @@ export default {
 
     // 확인 버튼 클릭 시 동작
     handleSubmit() {
-      if (
-        !this.form.title ||
-        !this.form.content ||
-        !this.form.inquiryType ||
-        !this.form.visibilityType
-      ) {
-        alert("모든 필드를 입력하세요.");
-        return;
-      }
-
       this.$router.go(-1);
     },
+
+     clickToProductDetail() {
+      console.log("this.QnAResult.item_id : ", this.QnAResult.item_id);
+      this.$router.push({
+        name: "productdetail",
+        query: { item_id: this.QnAResult.item_id },
+      });
+    },
+
+    clickToqnaList() {
+      console.log("this.QnAResult.item_id : ", this.QnAResult.item_id);
+
+      this.$router.push({
+        name: "qnAlist",
+        query: { item_id: this.QnAResult.item_id },
+      });
+    },
+
+
+
 
     // 취소 버튼 클릭 시 동작
     handleCancel() {
@@ -360,10 +399,14 @@ export default {
 .qnadetail_button {
   padding: 10px 25px;
   font-size: 16px;
-  border: 1px solid #ddd;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
   background-color: #fff;
   cursor: pointer;
+  color: #555555;
+  padding: 10px 30px;
+
+
 }
 
 .qnadetail_button.qnadetail_cancel {
@@ -373,16 +416,17 @@ export default {
 }
 
 .qnadetail_button.qnadetail_submit {
-  background-color: #f7cac9;
-  color: #555555;
-  font-size: 24px;
-  padding: 20px 50px;
 }
 
 .qnadetail_actions {
   text-align: center;
   margin-top: 50px;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  
 }
+
 
 .qnadetail_label_margin {
   margin-left: 60px;

@@ -10,7 +10,6 @@
 
       <div class="qnalist_search-container">
         <div class="qnalist_search-input-group">
-          <label class="qnalist_search-label">검색</label>
           <div class="qnalist_search-input-wrapper">
             <input
               type="text"
@@ -367,7 +366,6 @@ export default {
   background-color: #f5f5f5;
   border-radius: 5px;
   padding: 10px 20px;
-  margin-left: 50px;
 }
 
 .qnalist_search-input {
