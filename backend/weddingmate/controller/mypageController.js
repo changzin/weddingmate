@@ -12,9 +12,13 @@ exports.paymentList = async(req, res) =>{
         let query ="";
         let responseBody= {};
 
+        //영수증 경로 추가 
+        const orderId = Number(req.body.orderId);
+        console.log(orderId);
+        
         page = !page ? 0 : Number(page) -1;
 
-        query = "SELECT order_info_end_date, box_name, order_info_total_price FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE box.user_id = ? ORDER BY order_info_id LIMIT 15 OFFSET ?;"       
+        query = "SELECT order_info_id,order_info_end_date, box_name, order_info_total_price FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE box.user_id = ? ORDER BY order_info_id LIMIT 15 OFFSET ?;"       
         result = await db(query, [user_id, page * 15]);
 
         query = "SELECT COUNT(*) AS COUNT FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE user_id = ?;";
@@ -41,20 +45,53 @@ exports.paymentList = async(req, res) =>{
 //결제 영수증 건용 추가 
 exports.receiptList = async(req, res)=>{
     try{
+
+
+        const user_id = req.body.user_id;
         const box_id = req.body.box_id
-        const order_info_id = req.body.order_info_id
-        
-        query = 'SELECT box_id,order_info_end_date,order_info_price FROM order_info  WHERE  box_id = ? AND order_info_id = ? ;' ;
-        receipt = await db(query,[box_id,order_info_id])
+        const orderId = Number(req.body.orderId)
+        // const order_info_name = v4();
+        console.log(orderId)
+
+        //order_code 제작 order_info_name 사용
+        orderquery = "SELECT order_info_name FROM order_info WHERE order_info_id = ?; "
+        orderName = await db(orderquery,[orderId])
+        console.log(orderName)
+
+
+        query = `SELECT 
+            b.box_id,
+            b.box_name,
+            o.order_info_name,
+            o.order_info_id,
+            o.order_info_end_date,
+            o.order_info_price,
+            b.user_id,
+            i.item_name
+        FROM
+            order_info AS o
+                INNER JOIN
+            box AS b ON o.order_info_id = b.box_id
+                INNER JOIN
+            box_item AS bi ON b.box_id = bi.box_item_id
+                INNER JOIN
+            item_detail AS ide ON bi.item_detail_id = ide.item_detail_id
+                INNER JOIN
+            item AS i ON ide.item_id = i.item_id
+        WHERE
+            b.user_id = ? AND o.order_info_id = ?`;
+        receipt = await db(query,[user_id,orderId])
         console.log(receipt)
 
+        
         const responseBody ={
             status : 200,
-            receiptList : receipt
+            receiptList : receipt[0],
+            order_code: orderName[0]
         }
         res.json(responseBody);
     }catch(error){
-        console.error(err);
+        console.log(error);
         responseBody = {
             status : 400,
             mesage: "잘못된 페이지 요청입니다"
