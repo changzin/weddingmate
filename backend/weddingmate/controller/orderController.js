@@ -13,7 +13,6 @@ exports.orderData = async (req,res)=>{
         let result = "";
         let responseBody = {};
 
-        
         let query = "SELECT item.item_name, item_detail.item_detail_type, box_item.box_item_quantity, item.item_discount_rate, item.item_price, box_item.box_item_total_price, item_detail.item_detail_quantity from box, box_item, item_detail, item WHERE box.box_id=box_item.box_id AND box_item.item_detail_id=item_detail.item_detail_id AND item_detail.item_id=item.item_id AND box_item.box_id=? AND box.user_id=? AND box.box_ordered='F'";
         console.log(req.body);
         result = await db(query, [orderId, userId]);

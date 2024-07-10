@@ -267,6 +267,7 @@ export default {
         await this.$api(`http://localhost:9090/review/admindelete`, requestBody, "POST");
         this.page = 1;
         await this.getReviewList();
+        alert("리뷰 삭제 완료");
       }
       catch(err){
         console.error(err);

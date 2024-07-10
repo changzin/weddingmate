@@ -75,7 +75,7 @@
                   <select class="form-select admin_member_select" v-model="mode">
                     <option selected value="all">전체</option>
                     <option value="email">이메일</option>
-                    <option value="name">이름</option>
+                    <option value="nickname">닉네임</option>
                   </select>
                   <input type="text" class="form-control admin_member_input" v-model="keyword">                  
                   <button class="btn admin_member_btn_active" @click="search()">검색</button>
@@ -86,6 +86,7 @@
                     <thead>
                       <tr>
                         <th>이름</th>
+                        <th>닉네임</th>
                         <th>이메일</th>
                         <th>가입일</th>
                         <th>회원 유형</th>
@@ -97,6 +98,7 @@
                     <tbody>
                       <tr v-for="(member, index) in memberList" :key="index">
                         <td>{{ member.user_name }}</td>
+                        <td>{{ member.user_nickname }}</td>
                         <td>
                             {{member.user_email}}
                         </td>

@@ -48,7 +48,7 @@
           </div>
         </div>
 
-        <div class="qnadetail_answer_row_large">
+        <div class="qnadetail_answer_row_large" v-if="QnAResult.qna_image_path">
           <label class="qnadetail_answer_label">이미지</label>
           <a :href="form.image">
             <div class="qnadetail_answer_image">

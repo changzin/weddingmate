@@ -68,33 +68,31 @@ this.itemTnImage<template>
       <div class="sidbar_content_container container">
           <div class="sidbar_header d-flex justify-content-center">
               <div class="sidbar_header_title">상품 상세</div>
-              <div style="margin-top: 80px; margin-left: 20px; font-size:23px;">
-                <button @click="deleteItem(this.$route.params.itemId)"><i class="fas fa-trash"></i></button>
-              </div>
+              
           </div>
           <div class="d-flex justify-content-center admin_item_add_small_gap">
               <div class="admin_item_add_row d-flex justify-content-start">
                   <div class="admin_item_add_text">상품명</div>
-                  <input class="admin_item_add_input" type="text" v-model="itemName">
+                  <input class="admin_item_add_input" type="text" v-model="itemName" :disabled="!canUpdate">
               </div>
           </div>
           <div class="d-flex justify-content-center admin_item_add_small_gap">
               <div class="admin_item_add_row d-flex justify-content-start">
                   <div class="admin_item_add_text">업체명</div>
-                  <input class="admin_item_add_input" type="text" v-model="itemFactoryName">
+                   <input class="admin_item_add_input" type="text" v-model="itemFactoryName" :disabled="!canUpdate">
               </div>
           </div>
           <div class="d-flex justify-content-center admin_item_add_small_gap">
               <div class="admin_item_add_row d-flex justify-content-start">
                   <div class="admin_item_add_text">가격</div>
-                  <input class="admin_item_add_input" type="text" style="width: 300px;" v-model="itemPrice">
+                  <input class="admin_item_add_input" type="text" style="width: 300px;" v-model="itemPrice" :disabled="!canUpdate">
                   <div class="admin_item_add_text">원</div>                    
               </div>
           </div>
           <div class="d-flex justify-content-center admin_item_add_big_gap">
               <div class="admin_item_add_row d-flex justify-content-start">
                   <div class="admin_item_add_text">할인율</div>
-                  <input class="admin_item_add_input" type="text" style="width: 200px;" v-model="itemDiscountRate">
+                  <input class="admin_item_add_input" type="text" style="width: 200px;" v-model="itemDiscountRate" :disabled="!canUpdate">
                   <div class="admin_item_add_text">%</div>                    
               </div>
           </div>
@@ -102,7 +100,7 @@ this.itemTnImage<template>
           <div class="d-flex justify-content-center admin_item_add_big_gap">
               <div class="admin_item_add_row d-flex justify-content-start">
                   <div class="admin_item_add_text" style="width: 150px;">제품 썸네일 사진</div>
-                  <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeTnImage($event.target.file);">
+                  <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeTnImage($event.target.file);" :disabled="!canUpdate">
               </div>
           </div>
           
@@ -115,7 +113,7 @@ this.itemTnImage<template>
           <div class="d-flex justify-content-center admin_item_add_big_gap">
               <div class="admin_item_add_row d-flex justify-content-start">
                   <div class="admin_item_add_text" style="width: 150px;">제품 메인 이미지</div>
-                  <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeMainImage($event.target.file);">
+                  <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeMainImage($event.target.file);" :disabled="!canUpdate">
               </div>
           </div>
           <div class="d-flex justify-content-center admin_item_add_big_gap" style="height:300px;" v-if="itemMainImage">
@@ -127,7 +125,7 @@ this.itemTnImage<template>
           <div class="d-flex justify-content-center admin_item_add_big_gap">
               <div class="admin_item_add_row d-flex justify-content-start">
                   <div class="admin_item_add_text" style="width: 150px;">상세 사진</div>
-                  <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeDetailImage($event.target.file);">
+                  <input id="file_tn" type="file" class="form-control" accept="image/png, image/jpeg" style="width: 200px;" @change="changeDetailImage($event.target.file);" :disabled="!canUpdate">
               </div>
           </div>
           <div class="d-flex justify-content-center admin_item_add_big_gap" style="height:300px;" v-if="itemDetailImage">
@@ -177,7 +175,7 @@ this.itemTnImage<template>
                   <div class="d-flex justify-content-start" style="width:600px;">
                       <div class="admin_item_add_text" style="margin-bottom: 30px;" v-if="itemType=='hall'">규모</div>                        
                       <div class="admin_item_add_text" style="margin-bottom: 30px;" v-if="itemType!='hall'">사이즈</div>                        
-                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_size">
+                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_size" :disabled="!canUpdate">
                   </div>                
               </div>
           </div>
@@ -187,7 +185,7 @@ this.itemTnImage<template>
               <div class="d-flex justify-content-center admin_item_add_select_gap">
                   <div class="d-flex justify-content-start" style="width:600px;">
                       <div class="admin_item_add_text" style="margin-bottom: 30px;">퀄리티</div>                        
-                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_quality">
+                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_quality" :disabled="!canUpdate">
                   </div>                
               </div>     
           </div>
@@ -196,7 +194,7 @@ this.itemTnImage<template>
               <div class="d-flex justify-content-center admin_item_add_select_gap">
                   <div class="d-flex justify-content-start" style="width:600px;">
                       <div class="admin_item_add_text" style="margin-bottom: 30px;">지역</div>                        
-                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_local">
+                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_local" :disabled="!canUpdate">
                   </div>                
               </div>     
           </div>
@@ -205,7 +203,7 @@ this.itemTnImage<template>
               <div class="d-flex justify-content-center admin_item_add_select_gap">
                   <div class="d-flex justify-content-start" style="width:600px;">
                       <div class="admin_item_add_text" style="margin-bottom: 30px;">장소</div>                        
-                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_loc">
+                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_loc" :disabled="!canUpdate">
                   </div>                
               </div>     
           </div>
@@ -214,7 +212,7 @@ this.itemTnImage<template>
               <div class="d-flex justify-content-center admin_item_add_select_gap">
                   <div class="d-flex justify-content-start" style="width:600px;">
                       <div class="admin_item_add_text" style="margin-bottom: 30px;">식수인원</div>                        
-                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_ticket">
+                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_ticket" :disabled="!canUpdate">
                   </div>                
               </div>     
           </div>
@@ -223,7 +221,7 @@ this.itemTnImage<template>
               <div class="d-flex justify-content-center admin_item_add_select_gap">
                   <div class="d-flex justify-content-start" style="width:600px;">
                       <div class="admin_item_add_text" style="margin-bottom: 30px;">종류</div>                        
-                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_kind">
+                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_kind" :disabled="!canUpdate">
                   </div>                
               </div>     
           </div>
@@ -232,7 +230,7 @@ this.itemTnImage<template>
               <div class="d-flex justify-content-center admin_item_add_select_gap">
                   <div class="d-flex justify-content-start" style="width:600px;">
                       <div class="admin_item_add_text" style="margin-bottom: 30px;">색상</div>                        
-                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_color">
+                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_color" :disabled="!canUpdate">
                   </div>                
               </div>     
           </div>
@@ -241,7 +239,7 @@ this.itemTnImage<template>
               <div class="d-flex justify-content-center admin_item_add_select_gap">
                   <div class="d-flex justify-content-start" style="width:600px;">
                       <div class="admin_item_add_text" style="margin-bottom: 30px; width: 120px;" >메이크업 종류</div>                        
-                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_makeup">
+                      <input class="admin_item_add_input" type="text" v-model="item.item_detail_makeup" :disabled="!canUpdate">
                   </div>                
               </div>     
           </div>
@@ -267,7 +265,7 @@ this.itemTnImage<template>
           <div class="d-flex justify-content-center admin_item_add_big_gap" v-if="itemType=='dress' || itemType=='giving_dress' || itemType=='shoes'"  style="margin-bottom:30px;">
               <div class="admin_item_add_row d-flex justify-content-start">
                   <div class="admin_item_add_text">재고</div>
-                  <input class="admin_item_add_input" type="text" style="width: 200px;" v-model="item.item_detail_quantity">
+                  <input class="admin_item_add_input" type="text" style="width: 200px;" v-model="item.item_detail_quantity" :disabled="!canUpdate">
               </div>
           </div>
           
@@ -281,7 +279,9 @@ this.itemTnImage<template>
 
           <div class="d-flex justify-content-center admin_item_add_big_gap" style="margin-top: 100px;">
               <button type="button" class="admin_item_add_cancel_button" @click="this.$router.push({path: '/admin/itemlist'})" >취소</button>
-              <button type="button" class="admin_item_add_ok_button" style="margin-left:10px;" @click="updateItem();">수정</button>
+              <button type="button " class="admin_item_add_delete_button" @click="deleteItem(this.$route.params.itemId)" style="margin-left:50px;">상품 삭제</button>
+              <button type="button" class="admin_item_add_ok_button" style="margin-left:50px;" @click="this.canUpdate=false; updateItem();" v-if="canUpdate">수정 완료</button>
+              <button type="button" class="admin_item_add_ok_button" style="margin-left:50px;" @click="this.canUpdate = true" v-if="!canUpdate">수정</button>
           </div>
       </div>
     </div>
@@ -293,6 +293,7 @@ this.itemTnImage<template>
 export default {
 data() {
   return {
+    canUpdate: false,
     // DB에서 받아오는 item과 item 옵션 배열
     itemId: "",
     itemType: "",
@@ -376,28 +377,32 @@ methods: {
   },
   // 옵션 추가를 눌렀을 때 배열에 새로운 객체를 추가하는 방법으로 v-for로 입력 양식을 하나 더 띄운다.
   addDetailList(){
-    this.itemDetailList.push(
-      {
-        item_detail_quantity: 0,
-        item_detail_ticket: '',
-        item_detail_local: '',
-        item_detail_loc: '',
-        item_detail_size: '',
-        item_detail_color: '',
-        item_detail_makeup: '',
-        item_detail_heel_height: '',
-        item_detail_flower_life: '',
-        item_detail_quality: '',
-        item_detail_kind: '',
-        item_detail_type: this.itemType,
-      }
-    );
+    if (this.canUpdate){
+      this.itemDetailList.push(
+        {
+          item_detail_quantity: 0,
+          item_detail_ticket: '',
+          item_detail_local: '',
+          item_detail_loc: '',
+          item_detail_size: '',
+          item_detail_color: '',
+          item_detail_makeup: '',
+          item_detail_heel_height: '',
+          item_detail_flower_life: '',
+          item_detail_quality: '',
+          item_detail_kind: '',
+          item_detail_type: this.itemType,
+        }
+      );
+    }
   },
   // 옵션 삭제를 눌렀을 때, 배열의 인덱스를 받아 배열의 인덱스를 삭제한다.
   async deleteItemDetail(index){
     try{
-      this.itemDetailDeletedList.push(this.itemDetailList[index]['item_detail_id']);
-      this.itemDetailList.splice(index, 1);
+      if (this.canUpdate){
+        this.itemDetailDeletedList.push(this.itemDetailList[index]['item_detail_id']);
+        this.itemDetailList.splice(index, 1);
+      }
     }
     catch(err){
       console.error(err);
@@ -874,22 +879,31 @@ align-items: center;
   color: #FFFFFF;
 }          
 .admin_item_add_ok_button{
-  width:300px;
-  height:80px;
+  width:150px;
+  height:60px;
   border-radius: 12px;
-  font-size:28px;
-  color: #F5F5F5;
+  font-size:18px;
+  color: #888888;
   border: none;
   background-color: #F6C9CA;
 }
-.admin_item_add_cancel_button{
-  width:300px;
-  height:80px;
+.admin_item_add_delete_button{
+  width:150px;
+  height:60px;
   border-radius: 12px;
-  font-size:28px;
+  font-size:18px;
   color: #F5F5F5;
   border: none;
-  background-color: #333333;
+  background-color: #888888;
+}
+.admin_item_add_cancel_button{
+  width:150px;
+  height:60px;
+  border-radius: 12px;
+  font-size:18px;
+  color: #F5F5F5;
+  border: none;
+  background-color: #888888;
 }
 .admin_qna_btn_active{
 background-color: #007BFF;

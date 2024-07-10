@@ -72,8 +72,8 @@
             <div class="d-flex justify-content-center">
               <div class="admin_qna_review-section">
                 <div class="admin_qna_review-header justify-content-end">
-                  <button class="btn admin_qna_btn_active" @click="getUnhasAnswerMemberList()" v-if="hasAnswerOption">미완료 리뷰만 보기</button>
-                  <button class="btn admin_qna_btn_inactive" @click="gethasAnswerMemberList()" v-if="!hasAnswerOption">전체 리뷰 보기</button>
+                  <button class="btn admin_qna_btn_active" @click="getUnhasAnswerMemberList()" >미완료 리뷰만 보기</button>
+                  <button class="btn admin_qna_btn_inactive" @click="gethasAnswerMemberList()" >전체 리뷰 보기</button>
                   <select class="form-select admin_qna_select" v-model="mode">
                     <option selected value="all">전체</option>
                     <option selected value="item">상품문의</option>
@@ -97,16 +97,19 @@
                     <tbody>
                       <tr v-for="(qna, index) in qnaList" :key="index">
                         <td class="admin_qna_type">{{ this.formatQnaType(qna.qna_type)}}</td>
+                        <a @click="this.$router.push({path: `/admin/answer/${qna.qna_id}`})" style="cursor: pointer;">
                         <td class="d-flex justfiy-content-start" style="width: 800px;">
                           <div class="admin_qna_qna-status" v-if="qna.qna_has_answer=='T'">답변 완료</div>
                           <div class="admin_qna_qna-status incomplete" v-if="qna.qna_has_answer=='F'">미완료</div>
                           <div style="margin-top: 5px; margin-left: 20px;">
-                            <a @click="this.$router.push({path: `/admin/answer/${qna.qna_id}`})">{{qna.qna_title}}</a>
+                            {{qna.qna_title}}
                           </div>
                         </td>
+                        </a>
                         <td style="width: 150px;">{{qna.user_nickname}}</td>
                         <td>{{this.$dateFormat(qna.qna_date)}}</td>
                       </tr>
+                      
                     </tbody>
                   </table>
                 </div>

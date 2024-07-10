@@ -194,7 +194,16 @@ export default{
     },
     async addAnswer(){
       try{
-        const result = await this.$api("/answer/add", {access_token: this.accessToken, qna_id: this.qna.qna_id, answer_content: this.answerContent}, "POST");
+        const requestBody = {
+          access_token: this.accessToken, qna_id: this.qna.qna_id, answer_content: this.answerContent
+        };
+
+        if (!this.answerContent){
+          alert("내용을 입력하세요");
+          return;
+        }
+
+        const result = await this.$api("/answer/add", requestBody, "POST");
         if (result.status == 200){
             this.answerId = result.answer_id;
             this.answerContent = result.answer_content;
@@ -214,7 +223,14 @@ export default{
     },
     async updateAnswer(){
       try{
-        const result = await this.$api("/answer/update", {access_token: this.accessToken, answer_id: this.answerId, answer_content: this.answerContent}, "POST");
+        const requestBody = {access_token: this.accessToken, answer_id: this.answerId, answer_content: this.answerContent}
+        const result = await this.$api("/answer/update", requestBody, "POST");
+
+        if (!this.answerContent){
+          alert("내용을 입력하세요");
+          return;
+        }
+
         if (result.status == 200){
             this.answerId = result.answer_id;
             this.answerContent = result.answer_content;
@@ -222,6 +238,7 @@ export default{
             this.answerAdminId = result.admin_id;        
 
             this.canUpdate = false;
+            alert("답변 수정 완료하였습니다.");
         }
         else{
           // 에러 발생
@@ -589,22 +606,23 @@ export default{
         align-items: center;
         margin-bottom: 70px;
     }
-    .admin_answer_ok_button{
-    width:300px;
-    height:80px;
-    border-radius: 12px;
-    font-size:28px;
-    color: #F5F5F5;
-    border: none;
-    background-color: #F6C9CA;
+.admin_answer_ok_button{
+  width:150px;
+  height:60px;
+  border-radius: 12px;
+  font-size:18px;
+  color: #888888;
+  border: none;
+  background-color: #F6C9CA;
 }
+
 .admin_answer_cancel_button{
-    width:300px;
-    height:80px;
-    border-radius: 12px;
-    font-size:28px;
-    color: #F5F5F5;
-    border: none;
-    background-color: #333333;
+  width:150px;
+  height:60px;
+  border-radius: 12px;
+  font-size:18px;
+  color: #F5F5F5;
+  border: none;
+  background-color: #888888;
 }
 </style>
