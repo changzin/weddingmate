@@ -71,17 +71,20 @@
                   getClass('hall'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -300,21 +303,27 @@
                 v-if="isVisibleItemType('dress')"
                 class="productdetail_main_content_selectoption_div"
               >
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
                 </div>
+
+
+
                 <div class="productdetail_main_content_discount_price_div">
                   <span
                     v-if="finally_price !== undefined && finally_price !== null"
@@ -547,17 +556,20 @@
                   getClass('studio'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -838,17 +850,20 @@
                   getClass('makeup'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -1077,17 +1092,20 @@
                   getClass('sdm_package'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -1255,17 +1273,20 @@
                   getClass('giving_dress'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -1501,17 +1522,20 @@
                   getClass('giving_item'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -1894,17 +1918,20 @@
                   getClass('snap'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -2206,17 +2233,20 @@
                   getClass('flower'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -2384,17 +2414,20 @@
                   getClass('music'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -2696,17 +2729,20 @@
                   getClass('shoes'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -2874,17 +2910,20 @@
                   getClass('gift'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                 <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -3385,7 +3424,7 @@
                   </div>
                   <div>
                     {{ qna.qna_title }}
-                  <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
+                    <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
                   </div>
                 </td>
                 <td class="productdetail_qna-section_status-nickname-div">
@@ -3520,7 +3559,7 @@ export default {
             (this.productDetail.item_discount_rate / 100)
         );
       }
-      return 0;
+      return this.productDetail.item_price;
     },
     totalPrice() {
       return this.finally_price * this.quantity;
@@ -3528,9 +3567,6 @@ export default {
     formattedTotalPrice() {
       return this.totalPrice.toLocaleString();
     },
-
-
-
 
     allOptionsSelected() {
       return (
