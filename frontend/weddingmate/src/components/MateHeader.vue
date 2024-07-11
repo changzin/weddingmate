@@ -54,7 +54,7 @@
       </div>
       <!-- 로고 -->
       <div class="text-center">
-        <a class="navbar-brand" @click="this.$router.push({path:'/'})">
+        <a class="navbar-brand" href="#">
           <img src="/headerlogo.png" alt="Logo" />
         </a>
       </div>

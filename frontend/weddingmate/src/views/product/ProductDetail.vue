@@ -5306,13 +5306,20 @@ export default {
 }
 
 .productdetail_main-content_button-container_main-button {
-  font-size: 24px;
+  /* font-size: 24px; */
   color: #888888;
   background-color: #f5f5f5;
   border: 1px solid #f7cac9;
   border-radius: 10px;
-  padding: 25px 90px;
+  padding: 25px 50px;
   cursor: pointer;
+
+  height: 64px;
+    align-items: center;
+    display: flex;
+    /* text-align: center; */
+    font-size: 21px;
+    font-weight: bold;
 }
 
 .productdetail_main_selectoption-div {
