@@ -160,7 +160,7 @@ export default {
         }
       } catch(error){
         console.log(error);
-        alert("페이지 정보 로드  실패");
+        alert("잘못 된 요청입니다");
       }
     },
 

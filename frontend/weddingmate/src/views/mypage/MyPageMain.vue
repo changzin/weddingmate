@@ -18,7 +18,7 @@
         <div class="container-middle-mymenu">
             <div class="content-mymenu_list">
                 <div class="content-mymenu" style="cursor: pointer;" @click="this.$router.push({path:'/mypage/bookmark'})">
-                  <img class="icon" src="/icon/star-solid.svg">
+                  <img class="icon" src="/icon/heart-solid.svg">
                   <div class="font-menu">찜</div>
                 </div>
                 <div class="content-mymenu" style="cursor: pointer;" @click="this.$router.push({path:'/mypage/boxlist'})">

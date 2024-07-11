@@ -23,7 +23,7 @@
                   <div>{{ this.$dayFormat(payment.order_info_end_date) }}</div>
                   <div>{{payment.box_name}}</div>
                   <div>{{this.$numberFormat(payment.order_info_total_price)}}</div>
-                  <div><div @click="goToReceipt(index)" class="receipt">영수증</div></div>
+                  <div><div @click="goToReceipt(index)" class="receipt" style="hover:atfet">영수증</div></div>
               </div>
               <hr class="text">
           </div>
@@ -447,8 +447,9 @@ button.mypage-back{
 .notVisible{
         visibility: hidden;
       }
-.receipt{
-  cursor:pointer
+.receipt:hover{
+  cursor:pointer;
+  text-decoration: underline;
 }
 
   </style>

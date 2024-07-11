@@ -9,6 +9,7 @@
         <hr class="title">
     </div>
     <div class="container-allselect">
+
       <input type="checkbox" v-model="selectAllChecked" @change="toggleAllSelection">
           <div class="font-delete" style ="cursor: pointer;" @click="DelCBookmarkList()" >선택 상품 삭제</div>
         </div>        
@@ -19,7 +20,7 @@
         <div @click="goToBookmark(bookmark)" style="cursor: pointer;"><img class="bookmark_img" :src="$imageFileFormat(bookmark.item_tn_image_path)"></div>
         <div class="container-name_cost">
           <div>{{ bookmark.item_name }}</div>
-          <div class="font-cost">{{ bookmark.item_price }}</div>
+          <div class="font-cost">{{ this.$numberFormat(bookmark.item_price) }}</div>
         </div>
         <div>
         <img class="delete-x" src="/icon/deleteX.png" style ="cursor: pointer;" @click=" DelBookmark(bookmark)">
@@ -156,15 +157,16 @@ export default {
         }
 
         const response = await this.$api("/mypage/bookmarklist/del", requestBody, "post");
-        alert("북마크가 삭제되었습니다.");
- 
         if (response.status === 200) {
+          alert("북마크가 삭제되었습니다.");
           this.$router.go();
           await this.getBookmarkList();
+      } else{
+        alert("북마크를 삭제 할 수 없습니다");
       }
         
       }catch(error){
-        alert("북마크를 삭제할 수 없습니다")
+        alert("잘못된 페이지 요청입니다");
         console.error(error);
 
       }
@@ -179,17 +181,19 @@ export default {
         };
 
         const response = await this.$api("/mypage/bookmarklist/delchecked", requestBody, "post");
-        alert(response.message);
         
         if (response.status === 200) {
+          alert(response.message);
           this.$router.go();
           await this.getBookmarkList();
 
           console.log(this.bookmarkList);
+        } else{
+          alert("북마크를 삭제 할 수 없습니다")
         }
                       
       } catch (error) {
-        alert("체크한 북마크를 삭제할 수 없습니다");
+        alert("잘못된 요청입니다");
         console.error(error);
       }
     },
