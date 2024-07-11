@@ -36,3 +36,29 @@ exports.addReport = async (req, res)=>{
         res.json(responseBody);
     }
 };
+
+exports.reportList = async (req, res)=>{
+    try{
+        const review_id = req.body.review_id;
+        const admin_id = req.body.user_id;
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        query = 'SELECT user.user_nickname, report.report_content FROM report, user WHERE report.user_id=user.user_id AND report.review_id=?';
+
+        result = await db(query, [review_id]);
+        responseBody = {
+            status: 200,
+            reportList: result
+        }
+        res.json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: "신고 실패"
+        };
+        res.json(responseBody);
+    }
+}

@@ -92,11 +92,11 @@ export default {
 
   async getUserName(){
     try{
+
+      // $verifiedUser를 통해 쿠키의 user 정보를 가져옴. 
       const user = await this.$verifiedUser();
-      console.log("user",user);
       this.user =  user.user_nickname;
-      // console.log("this", this.user);
-      // console.log("just user", user);
+
       if(!this. user){
         alert("로그인이 필요합니다");
         this.$router.push({

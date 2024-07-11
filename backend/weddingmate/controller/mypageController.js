@@ -25,7 +25,8 @@ exports.paymentList = async (req, res) => {
       "SELECT COUNT(*) AS COUNT FROM order_info JOIN box ON order_info.box_id = box.box_id WHERE user_id = ?;";
     count = await db(query, [user_id]);
 
-    count = count[0]["COUNT"];
+        count = count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
     responseBody = {
       status: 200,
@@ -43,59 +44,52 @@ exports.paymentList = async (req, res) => {
   }
 };
 
-//결제 영수증 건용 추가
-exports.receiptList = async (req, res) => {
-  try {
-    const user_id = req.body.user_id;
-    const box_id = req.body.box_id;
-    const orderId = Number(req.body.orderId);
-    // const order_info_name = v4();
-    console.log(orderId);
 
-    //order_code 제작 order_info_name 사용
-    orderquery =
-      "SELECT order_info_name FROM order_info WHERE order_info_id = ?; ";
-    orderName = await db(orderquery, [orderId]);
-    console.log(orderName);
+//결제 영수증 건용 추가 
+exports.receiptList = async(req, res)=>{
+    try{
+        console.log(req.body);
 
-    query = `SELECT 
-            b.box_id,
+        const user_id = req.body.user_id;
+        const box_id = req.body.box_id
+        const orderId = Number(req.body.orderId)
+        // const order_info_name = v4();
+        console.log(orderId)
+
+        //order_code 제작 order_info_name 사용
+        orderquery = "SELECT order_info_name FROM order_info WHERE order_info_id = ?; "
+        orderName = await db(orderquery,[orderId])
+        console.log(orderName)
+
+        query = `SELECT 
             b.box_name,
             o.order_info_name,
             o.order_info_id,
             o.order_info_end_date,
             o.order_info_price,
-            b.user_id,
-            i.item_name
+            b.user_id
         FROM
             order_info AS o
-                INNER JOIN
-            box AS b ON o.order_info_id = b.box_id
-                INNER JOIN
-            box_item AS bi ON b.box_id = bi.box_item_id
-                INNER JOIN
-            item_detail AS ide ON bi.item_detail_id = ide.item_detail_id
-                INNER JOIN
-            item AS i ON ide.item_id = i.item_id
+                JOIN
+            box AS b ON o.box_id = b.box_id
         WHERE
             b.user_id = ? AND o.order_info_id = ?`;
-    receipt = await db(query, [user_id, orderId]);
-    console.log(receipt);
 
-    const responseBody = {
-      status: 200,
-      receiptList: receipt[0],
-      order_code: orderName[0],
-    };
-    res.json(responseBody);
-  } catch (error) {
-    console.log(error);
-    responseBody = {
-      status: 400,
-      mesage: "잘못된 페이지 요청입니다",
-    };
-    res.json(responseBody);
-  }
+        receipt = await db(query,[user_id,orderId])
+        const responseBody ={
+            status : 200,
+            receiptList : receipt[0],
+            order_code: orderName[0]
+        }
+        res.json(responseBody);
+    }catch(error){
+        console.log(error);
+        responseBody = {
+            status : 400,
+            mesage: "잘못된 페이지 요청입니다"
+        }
+        res.json(responseBody);
+    }
 };
 
 // 북마크
@@ -128,12 +122,13 @@ exports.bookmarkList = async (req, res) => {
                 item.item_tn_image_path
             ORDER BY 
             bookmark.bookmark_id
-            LIMIT 10 OFFSET ?;`;
-    result = await db(query, [user_id, page * 10]);
-    console.log(result);
-    query = "SELECT COUNT (*) AS COUNT FROM bookmark WHERE user_id = ?";
-    count = await db(query, [user_id]);
-    count = count[0]["COUNT"];
+            LIMIT 10 OFFSET ?;`
+        result = await db(query, [user_id, (page * 10)]);
+        console.log(result);
+        query ="SELECT COUNT (*) AS COUNT FROM bookmark WHERE user_id = ?";
+        count = await db(query, [user_id]);
+        count = count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
     responseBody = {
       status: 200,
@@ -257,11 +252,12 @@ exports.reviewList = async (req, res) => {
                     JOIN item ON review.item_id = item.item_id
                     WHERE user_id = ? LIMIT 10 OFFSET ?`;
 
-    result = await db(query, [user_id, page * 10]);
-    console.log(result);
-    query = "SELECT COUNT(*) AS COUNT FROM review WHERE user_id = ?";
-    count = await db(query, [user_id]);
-    count = count[0]["COUNT"];
+        result = await db(query, [user_id,(page * 10)]);
+        console.log(result);
+        query = "SELECT COUNT(*) AS COUNT FROM review WHERE user_id = ?"
+        count = await db(query,[user_id]);
+        count=count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
     responseBody = {
       status: 200,
@@ -309,37 +305,42 @@ exports.reviewDel = async (req, res) => {
   }
 };
 
+
+
 exports.qnaList = async (req, res) => {
-  try {
-    const user_id = req.body.user_id;
-    let page = req.query.page;
-    let count = [];
-    let result = [];
-    let responseBody = {};
+    try{
+        const user_id = req.body.user_id;
+        let page = req.query.page;
+        let count = [];
+        let result = [];
+        let responseBody = {};
 
-    page = !page ? 0 : Number(page) - 1;
-    query =
-      "SELECT qna_date, qna_title, qna_id FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
-    result = await db(query, [user_id, page * 15]);
+        page = !page ? 0 :Number(page) - 1;
+        query ="SELECT qna_date, qna_title, qna_id FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
+        result = await db(query, [user_id, (page * 15) ]);
 
-    query = "SELECT COUNT (*) AS COUNT FROM qna WHERE user_id = ?";
-    count = await db(query, [user_id]);
-    count = count[0]["COUNT"];
+        query ="SELECT COUNT (*) AS COUNT FROM qna WHERE user_id = ?";
+        count = await db(query, [user_id]);
+        count = count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
-    responseBody = {
-      status: 200,
-      qnaList: result,
-      maxPage: Math.ceil(count / 15),
-    };
-    res.json(responseBody);
-  } catch (error) {
+        responseBody = {
+            status: 200,
+            qnaList : result,
+            maxPage : Math.ceil(count / 15)
+        }
+        res.json(responseBody);
+   
+  } catch (err) {
+    console.error(err);
     responseBody = {
       status: 400,
-      message: "qna를 불러올 수 없습니다",
+      message: err.message,
     };
     res.json(responseBody);
   }
 };
+
 
 // 견적함
 
@@ -380,13 +381,14 @@ exports.boxList = async (req, res) => {
                     FROM (
                         SELECT box.box_id
                         FROM box 
-                        JOIN box_item ON box.box_id = box_item.box_id
-                        WHERE user_id = 2 AND box_ordered = 'F'
+                        LEFT JOIN box_item ON box.box_id = box_item.box_id
+                        WHERE user_id = ? AND box_ordered = 'F'
                         GROUP BY box.box_id, box_name, box_date, box_quantity
                     ) AS grouped_result`;
     count = await db(query, [user_id]);
 
-    count = count[0]["COUNT"];
+        count = count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
     responseBody = {
       status: 200,

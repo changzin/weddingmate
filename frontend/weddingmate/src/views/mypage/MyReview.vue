@@ -142,6 +142,7 @@
             });
           } else  {
           // URL에 파라미터를 추가한다
+          await this.$router.push({path:'/mypage/review', query:{page: this.page} });
 
           // 리뷰 리스트를 가져오기 전에파라미터 갈무리
           this.page = Number(this.$route.query.page);

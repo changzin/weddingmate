@@ -13,7 +13,7 @@
                 </div>
                 <div class="receipt_box">
                     <div class="row">
-                        <div class="col receipt_category1">
+                        <div class="col-2 receipt_category1">
                             주문번호
                         </div>
                         <div class="col receipt_number">
@@ -41,7 +41,7 @@
                             합계
                         </div>
                         <div class="col receipt_total">
-                           {{ receipt.order_info_price}}
+                           {{ $numberFormat(receipt.order_info_price)}}
                         </div>
                     </div>
                       <div class="row">
@@ -78,7 +78,7 @@
     </template>
     
     
-    <script>
+<script>
     export default {
     // props: {
     // order_id: {
@@ -129,50 +129,28 @@
                     box_id :this.box_id
                 }
                 const response = await this.$api(`mypage/payment/receipt`,requestBody,"POST")
-                console.log("왜 안되는데",response);
                 this.receipt = response.receiptList;
-                console.log(this.receipt)
                 //주문번호 받아오기 
                 this.order_code = this.receipt.order_info_name.toUpperCase();
-                console.log(this.order_code);
-
-                // const order_obj = response.order_code
-                // console.log(order_obj);
-                // const order_code = order_obj.order_info_name;
-                // console.log(order_code)
-                // const ordercode = JSON.stringify(this.orderCode);
-                // console.log(ordercode);
-                // for(let order in this.order_code){
-                //    const order_code =this.order_code[order];
-                //    console.log(order_code) 
-                // }
-                // console.log(order_code)
-                // const order_code = orderCode[0].toUpperCase();
-                // console.log(order_code);
-                // for(order_name in response.order_code){
-                //     this.order_code = order_info_name[order_code];
-                // }
-
-                }catch(error){
+            } catch(error){
                 console.log(error);
-                }
+            }
+        },
+        makeOrderInfo(){
+            for(let i = 0; i < this.boxItemList.length; i++){
+            this.order_total_price += this.boxItemList[i].box_item_total_price;
+            }
 
-            },
-    makeOrderInfo(){
-        for(let i = 0; i < this.boxItemList.length; i++){
-          this.order_total_price += this.boxItemList[i].box_item_total_price;
-        }
+            for(let i = 0; i < this.boxItemList.length; i++){
+            this.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
+            }
+            // this.order_price = this.order_total_price - this.order_sale_price;
 
-        for(let i = 0; i < this.boxItemList.length; i++){
-          this.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
-        }
-        // this.order_price = this.order_total_price - this.order_sale_price;
-
-        this.show_order_sale_price = this.$numberFormat(this.order_sale_price);
-        this.show_order_total_price = this.$numberFormat(this.order_total_price);
-        // this.show_order_price = this.$numberFormat(this.order_price);
-      },
-        }
+            this.show_order_sale_price = this.$numberFormat(this.order_sale_price);
+            this.show_order_total_price = this.$numberFormat(this.order_total_price);
+            // this.show_order_price = this.$numberFormat(this.order_price);
+        },
+    }
     }
     </script>
     <style scoped>
@@ -184,7 +162,7 @@
     }
     .receipt_title{
         margin-top: 48px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         text-align: center;
         font-size: 30px;
         font: bold;
@@ -207,16 +185,16 @@
         padding: 0px;
     }
     .receipt_category1{
-        font-size: 24px;
-        margin-top: 44px;
+        font-size: 20px;
+        margin-top: 40px;
         margin-left: 30px;
         padding-left:20px;
         color: #888888;
     }
     .receipt_category2{
-        font-size: 24px;
+        font-size: 20px;
         margin-left: 27px;
-        margin-top: 61px;
+        margin-top: 40px;
         padding-left:20px;
         color: #888888;
     }
@@ -237,21 +215,21 @@
     }
     .receipt_item_name{
         text-align: end;
-        margin-top: 61px;
+        margin-top: 40px;
         margin-right: 28px;
         color: #888888;
         font-size: 24px
     }
     .receipt_total{
         text-align: end;
-        margin-top: 61px;
+        margin-top: 40px;
         margin-right: 28px;
         color: #888888;
         font-size: 24px
     }
     .receipt_total{
         text-align: end;
-        margin-top: 61px;
+        margin-top: 40px;
         margin-right: 28px;
         /* color: #888888; */
         font-size: 24px
@@ -259,23 +237,23 @@
     .receipt_total{
         font-weight: bold;
         text-align: end;
-        margin-top: 61px;
+        margin-top: px;
         margin-right: 28px;
         color: #FF481E;
         font-size: 24px;
     }
     .receipt_company{
         text-align: end;
-        margin-top: 44px;
+        margin-top: 40px;
         margin-right: 28px;
         font-size: 24px;
         color: #FF481E;
     }
     .receipt_body1{
-        margin-top: 32px;
-        margin-left: 62px;
-        width: 820px;
-        font-size: 20px;
+        margin-top: 12px;
+        margin-left: 32px;
+        width: 850px;
+        font-size: 14px;
         /* color: #88888; */
     }
     .receipt_body2{

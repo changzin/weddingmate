@@ -104,16 +104,16 @@
           // URL에 파라미터를 추가한다.
           await this.$router.push({path: '/mypage/payment', query:{page: this.page} });
         
-          // 견적함 리스트를 가져오기 전에 파라미터 갈무리
+          // 결제내역 리스트를 가져오기 전에 파라미터 갈무리
           this.page = Number(this.$route.query.page);
           this.page = (!this.page) ? 1 : this.page;
 
           const requestBody = {
               access_token: this.$getAccessToken(),
-              orderId : this.orderId,
+              orderId : this.orderId, // 영수증 이동을 위해 order_id도 보냄
             }
 
-          // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
+          // 결제내역 정보 다시 가저오고, maxPage를 맞추어준다.
           const response = await this.$api(`/mypage/payment?page=${this.page}`, requestBody, "post");      
           this.paymentList = response.paymentList;
           this.maxPage = response.maxPage;
@@ -162,17 +162,19 @@
       this.isFirstPage = this.page === 1;
       this.isLastPage = this.page === this.maxPage;
     },
+
+    // 영수증으로 이동
     goToReceipt(orderId){
       try{
         // this.orderId = $route.params.orderId;
         // this.$router.push( this.orderId   })
         this.$router.push({ name: 'myreceipt', 
                           params: {orderId:this.paymentList[orderId].order_info_id}   })
-      }catch(err){
-        console.log(err);
-        alert("영수증이 없습니다.")
+        }catch(err){
+          console.log(err);
+          alert("영수증이 없습니다.")
+        }
       }
-    }
     }
   }
   </script>

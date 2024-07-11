@@ -72,8 +72,8 @@
             <div class="d-flex justify-content-center">
               <div class="admin_qna_review-section">
                 <div class="admin_qna_review-header justify-content-end">
-                  <button class="btn admin_qna_btn_active" @click="getUnhasAnswerMemberList()" >미완료 리뷰만 보기</button>
-                  <button class="btn admin_qna_btn_inactive" @click="gethasAnswerMemberList()" >전체 리뷰 보기</button>
+                  <button class="btn admin_qna_btn_active" @click="getUnhasAnswerMemberList()" >미답변 질문만 보기</button>
+                  <button class="btn admin_qna_btn_inactive" @click="gethasAnswerMemberList()" >전체 질문 보기</button>
                   <select class="form-select admin_qna_select" v-model="mode">
                     <option selected value="all">전체</option>
                     <option selected value="item">상품문의</option>
@@ -435,6 +435,7 @@ export default {
 .admin_qna_input{
   width:245px;
   margin-right: 5px;
+  margin-left: 10px;
 }
 .admin_qna_btn_active{
   background-color: #007BFF;

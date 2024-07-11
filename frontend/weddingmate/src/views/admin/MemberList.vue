@@ -70,8 +70,8 @@
             <div class="d-flex justify-content-center">
               <div class="admin_member_review-section">
                 <div class="admin_member_review-header justify-content-end">
-                  <button class="btn admin_member_btn_active" v-if="!blockOption" @click="getBlockMemberList()">차단 회원만 보기</button>
-                  <button class="btn admin_member_btn_inactive" v-if="blockOption" @click="getUnblockMemberList()">모든 회원 보기</button>
+                  <button class="btn admin_member_btn_active" @click="getBlockMemberList()">차단 회원만 보기</button>
+                  <button class="btn admin_member_btn_inactive" @click="getUnblockMemberList()">모든 회원 보기</button>
                   <select class="form-select admin_member_select" v-model="mode">
                     <option selected value="all">전체</option>
                     <option value="email">이메일</option>
@@ -453,6 +453,7 @@ export default {
 .admin_member_input{
   width:245px;
   margin-right: 5px;
+  margin-left: 10px;
 }
 .admin_member_btn_active{
   background-color: #007BFF;
