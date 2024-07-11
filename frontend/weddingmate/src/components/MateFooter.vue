@@ -1,6 +1,4 @@
 <template>
-  <div>
-    
     <!-- 푸터 -->
     <footer class="common__footer">
       <div class="common__footer-content">
@@ -23,7 +21,6 @@
         </div>
       </div>
     </footer>
-  </div>
 </template>
 
 
@@ -45,7 +42,7 @@ export default {
   padding: 20px 0;
   margin-top: 100px;
   font-size: 14px;
-  width: 100vw;
+  width: 100%;
 }
 
 .common__footer-content {
