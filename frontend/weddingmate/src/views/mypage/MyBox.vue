@@ -19,7 +19,7 @@
               <button type="submit" class="boxname_edit2" @click="updateBoxName(box.box_name)" v-if="editingBoxName">저장
             
               </button>
-              <button class="boxdelete" @click="deleteBox(item.boxId)">삭제</button>
+              <button class="boxdelete" @click="deleteBox(box.boxId)">삭제</button>
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@
         </div>
         <div class="container_boxbutton3">
           <!-- <button class="order" >주문 하기</button> -->
-          <button class="order" @click="$router.push({path:`/orderinfo/${boxId}`})">주문 하기</button>
+          <button class="order" @click="goToOrder_info(box.box_id)">주문 하기</button>
         </div>
         <div class="mypage-bottom">
           <button class="mypage-back" @click="$router.push({path:`/mypage`})">마이페이지로</button>
@@ -123,6 +123,7 @@
         box_item_id:{},
         box_name : {},
         box : {},
+        order: {},
         //박스 이름 수정 여부 
         editableBoxName:'',
         editingBoxName: false,
@@ -149,13 +150,6 @@
       // this.goOrderInfo();
     },
     methods: {
-      // 헤더
-      showCategories() {
-        this.isVisible = true;
-      },
-      hideCategories() {
-        this.isVisible = false;
-      },
       
       //개별 상품 제거 
       async DelItem(box_item_id){
@@ -163,7 +157,6 @@
         access_token: this.$getAccessToken(),
         box_item_id: box_item_id
       }
-      console.log(requestBody);
       try{
         const resId = await this.$api("/mybox/del",requestBody,"POST");
         console.log(resId);
@@ -178,9 +171,10 @@
     },
     //견적함 지우기
     async deleteBox(boxId){
+      
      const requestBody = {
         access_token: this.$getAccessToken(),
-        boxId:this.boxId
+        boxId:this.$route.params.boxId
       }
       console.log(requestBody)
       console.log(boxId);
@@ -202,7 +196,6 @@
         box_name : box_name,
         boxId:this.boxId
       }
-      console.log(box_name);
       const update = await this.$api("/mybox/update",requestBody,"POST")
       // this.box_name = update.boxNameUpdate;
       
@@ -257,22 +250,11 @@
             console.error(err)
           }
         },
-        // categorieInItem(item){
-        //   for(let key in item){
-        //     if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name'){
-        //       continue
-        //     }
-            
-        //   }
-        // },
-          //아이템 카테고리 ":" 옵션화  
        optionKorean(item){
            let resultString = "";
-           console.log(item)
             for ( let key in item ){
               if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_detail_type' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name'){
-              continue
-              // }else if(key == 'box_detail_type'){     
+              continue 
               }
               if(!item[key]){
                 continue
@@ -398,9 +380,29 @@
           console.log(this.itemDetails[i].box_item_total_price , this.itemDetails[i].item_discount_rate);
         }
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
-      },
+    },
+
+    async goToOrder_info(boxId)
+    {
+      // const requestBody={
+      //   access_token: this.$getAccessToken(),
+      //   boxId:this.$route.params.boxId
+      // }
+      // const response = await this.$api(`/mybox/order`,requestBody,"POST")
+      // console.log(response)
+      try{
+        this.$router.push({name:'Orderinfo',
+                           params:{boxId:this.itemDetails[boxId].box_id}             })
+      
+        
+        //status 상태로 200이면 route  Else 일시 얼럿으로 주문을 할 수 없습니다. 이면 버튼 잠그기
+      }catch(err){
+        console.log(err);
+        
       }
+    }
   }
+}
   </script>
   
   
