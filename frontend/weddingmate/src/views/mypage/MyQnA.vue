@@ -106,7 +106,7 @@
 
           const requestBody = {
               access_token: this.$getAccessToken()
-            }
+          }
 
           // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
           const response = await this.$api(`/mypage/qnalist?page=${this.page}`, requestBody, "post");      
@@ -121,6 +121,7 @@
       }   
     },
 
+    // qna 상세로 이동
     goToQna(qna){
       this.$router.push({
         name: "qnadetail",

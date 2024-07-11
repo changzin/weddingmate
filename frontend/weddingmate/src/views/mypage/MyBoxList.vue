@@ -45,7 +45,7 @@
     </div>
     <div :class="boxList.length == 0 ? 'no_data' : 'invisible'">생성된 견적함이 없습니다</div>   
     <div class="container-middle">                   
-      <div v-for="(box, index) in boxList" :key="index" class="container-box" @click="goToBox(box)">
+      <div v-for="(box, index) in boxList" :key="index" class="container-box" @click="goToBox(box)" style="cursor: pointer;">
           <div class="box-name">{{ box.box_name }}</div>
           <div class="box-count">담긴 상품 {{box.box_quantity}}개(최근 수정 {{ this.$dayFormat(box.box_date)}})</div>
           <div><hr class="box-hr"></div>
@@ -163,6 +163,8 @@ export default {
         alert("페이지 정보 로드  실패");
       }
     },
+
+    // 견적함을 누르면 해당 견적함으로 이동
     goToBox(box) {
       this.$router.push({
       name: 'mybox',
@@ -170,22 +172,23 @@ export default {
     });
   },
  
-
+    //견적함 정렬 
     async sort(mode) {
       try{
         this.mode = mode;
-
         const requestBody = {
             access_token: this.$getAccessToken(),
             mode : this.mode
           }
+
         // 견적함 정보 다시 가저오고, maxPage를 맞추어준다.
-       const response = await this.$api(`/mypage/boxlist?page=${this.page}`, requestBody, "post");      
+        const response = await this.$api(`/mypage/boxlist?page=${this.page}`, requestBody, "post");      
         this.boxList = response.boxList;
         this.maxPage = response.maxPage;
 
       } catch(error){
-        console.log("정렬 실패");
+        alert("정렬에 실패했습니다");
+        console.log(error);        
       }
     },
 
