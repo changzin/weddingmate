@@ -1818,7 +1818,7 @@
                     @click="copyCurrentLink"
                   >
                     <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -1896,7 +1896,7 @@
                     @click="saveToBookmark"
                   >
                     <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -2213,7 +2213,7 @@
                     @click="saveToBookmark"
                   >
                     <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -2712,7 +2712,7 @@
                     @click="saveToBookmark"
                   >
                     <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -3217,7 +3217,7 @@
                     @click="saveToBookmark"
                   >
                     <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -3639,7 +3639,8 @@ export default {
           this.reviewList = totalproductdetailData.reviewList;
           this.qnaList = totalproductdetailData.qnaList;
           this.BoxResultData = totalproductdetailData.data || [];
-          this.bookmarkResult = totalproductdetailData.bookmarkResult.bookmark_id;
+          this.bookmarkResult =
+            totalproductdetailData.bookmarkResult.bookmark_id;
         } else {
           console.log("fail");
         }
@@ -4885,16 +4886,19 @@ export default {
       // 북마크가 이미 존재할 경우 -> 북마크 delete
       if (this.bookmarkResult) {
         try {
-          console.log("delete해야됨 this.bookmarkResult : ", this.bookmarkResult);
+          console.log(
+            "delete해야됨 this.bookmarkResult : ",
+            this.bookmarkResult
+          );
           const response = await this.$api(
             "/mypage/bookmarklist/del",
             { bookmark_id: this.bookmarkResult },
             "post"
           );
           alert(response.message);
-          if(response.status == 200) {
-             this.bookmarkResult = null;
-             console.log("성공적으로 지움");
+          if (response.status == 200) {
+            this.bookmarkResult = null;
+            console.log("성공적으로 지움");
           }
         } catch (error) {
           console.error(
@@ -4916,13 +4920,12 @@ export default {
             "POST"
           );
 
-          
           if (bookmarkResult.status === 200) {
             alert("찜 넣기 성공");
             this.bookmarkResult = bookmarkResult.data;
             console.log("this.bookmarkResult : ", bookmarkResult.data);
           } else {
-            alert("찜 이미 있음 찜 더 못넣음")
+            alert("찜 이미 있음 찜 더 못넣음");
             alert(bookmarkResult.message);
             console.log("this.bookmarkResult : ", this.bookmarkResult);
           }
@@ -5306,7 +5309,6 @@ export default {
 }
 
 .productdetail_main-content_button-container_main-button {
-  /* font-size: 24px; */
   color: #888888;
   background-color: #f5f5f5;
   border: 1px solid #f7cac9;
@@ -5315,15 +5317,14 @@ export default {
   cursor: pointer;
 
   height: 64px;
-    align-items: center;
-    display: flex;
-    /* text-align: center; */
-    font-size: 21px;
-    font-weight: bold;
+  align-items: center;
+  display: flex;
+  font-size: 21px;
+  font-weight: bold;
 }
 
 .productdetail_main_selectoption-div {
-  font-size: 24px;
+  font-size: 18px;
   margin-top: 30px;
   margin-bottom: 10px;
   font-weight: bold;
