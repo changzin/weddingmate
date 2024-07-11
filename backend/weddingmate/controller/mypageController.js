@@ -25,6 +25,7 @@ exports.paymentList = async(req, res) =>{
         count = await db(query,[user_id]);
 
         count = count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
         responseBody ={
             status: 200,
@@ -126,6 +127,7 @@ exports.bookmarkList = async(req, res) =>{
         query ="SELECT COUNT (*) AS COUNT FROM bookmark WHERE user_id = ?";
         count = await db(query, [user_id]);
         count = count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
         responseBody = {
             status: 200,
@@ -228,6 +230,7 @@ exports.reviewList = async(req, res) =>{
         query = "SELECT COUNT(*) AS COUNT FROM review WHERE user_id = ?"
         count = await db(query,[user_id]);
         count=count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
         responseBody = {
             status: 200,
@@ -293,6 +296,7 @@ exports.qnaList = async (req, res) => {
         query ="SELECT COUNT (*) AS COUNT FROM qna WHERE user_id = ?";
         count = await db(query, [user_id]);
         count = count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
         responseBody = {
             status: 200,
@@ -351,13 +355,14 @@ exports.boxList = async (req, res) => {
                     FROM (
                         SELECT box.box_id
                         FROM box 
-                        JOIN box_item ON box.box_id = box_item.box_id
-                        WHERE user_id = 2 AND box_ordered = 'F'
+                        LEFT JOIN box_item ON box.box_id = box_item.box_id
+                        WHERE user_id = ? AND box_ordered = 'F'
                         GROUP BY box.box_id, box_name, box_date, box_quantity
                     ) AS grouped_result`;
         count = await db(query, [user_id]);
 
         count = count[0]["COUNT"];
+        count = count == 0 ? 1 : count;
 
         responseBody = {
             status: 200,
