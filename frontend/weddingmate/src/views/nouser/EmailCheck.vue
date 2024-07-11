@@ -1,19 +1,31 @@
 <template>
     <MateHeader/>
     <div class="container sign_up_container" style="margin-top: 200px;">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center" v-if="!password">
             <div class="sign_up_header_text">이메일 전송 완료</div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center" v-if="password">
+            <div class="sign_up_header_text">이메일 인증 완료</div>
+        </div>
+        <div class="row justify-content-center" v-if="!password">
             <div class="sign_up_header_text" style="font-size: 16px; margin-bottom: 100px;">입력하신 이메일 함을 확인해주세요</div>
         </div>
 
+        <div class="row justify-content-center" v-if="password">
+            <div class="sign_up_header_text" style="font-size: 16px; margin-bottom: 100px;">비밀번호는 {{ password }} 입니다.</div>
+        </div>
+
         <div class="row justify-content-center" style="margin-bottom:200px;">
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center" v-if="!password">
                 <button class="sign_up_button_last" @click="checkEmailVerfication();">인증 확인</button>
             </div>
-            <div class="row justify-content-center">
-                <div class="sign_up_header_text" style="font-size: 16px; margin-bottom: 100px;">이메일 링크를 클릭해주세요!</div>
+
+            <div class="d-flex justify-content-center" v-if="password">
+                <button class="sign_up_button_last" @click="this.$router.push({path:'/'});">메인으로</button>
+            </div>
+
+            <div class="row justify-content-center" v-if="!password">
+                <div class="sign_up_header_text" style="font-size: 16px; margin-bottom: 10px;">이메일 링크를 클릭해주세요!</div>
             </div>
         </div>
     </div>
@@ -29,9 +41,12 @@ export default{
             userType: "",
             auth: {},
             user: {},
+            findpassword: null,
+            password: null,
         }
     },
     mounted(){
+      this.findpassword = this.$route.query.findpassword;
       this.sendEmailAuth();
     },
     async created(){
@@ -45,7 +60,6 @@ export default{
         async sendEmailAuth(){
             try{
                 this.auth = getAuth(firebaseApp);
-                console.log(this.auth);
                 await sendEmailVerification(this.auth.currentUser);
             }
             catch(err){
@@ -55,11 +69,22 @@ export default{
         async checkEmailVerfication() {
             try{
                 await this.auth.currentUser.reload();
-                console.log("리로드 완료!");
                 if (this.auth.currentUser.emailVerified) {
-                    console.log(this.auth.currentUser.email);
-                    await this.$api("/user/emailisverified", {user_email: this.auth.currentUser.email}, "POST");
-                    this.$router.push({path: '/userlogin'});
+                    if (this.findpassword){
+                        const result = await this.$api('/user/emailreverify', {user_email: this.auth.currentUser.email}, "POST");
+                        if (result.status == 200){
+                            this.password = result.password;
+                        }
+                        else{
+                            alert("오류 발생! 처음부터 다시 시도해주세요.");
+                        }
+                    }
+                    else{
+                        await this.$api("/user/emailisverified", {user_email: this.auth.currentUser.email}, "POST");
+                        alert("이메일 인증 완료됬습니다. 다시 로그인해주세요.")
+                        this.$router.push({path: '/userlogin'});
+                    }
+                    
                 }else{
                     alert("이메일 인증 실패");
                 } 
@@ -78,7 +103,7 @@ export default{
     min-width: 1280px;
 }
 .sign_up_header_text{
-    font-size: 28px;
+    font-size: 35px;
     text-align: center;
     color: #111111;
     margin-bottom: 32px;
@@ -166,12 +191,12 @@ export default{
     margin-right: 18px;
 }
 .sign_up_button_last{
-    width: 310px;
-    height: 78px;
+    width: 160px;
+    height: 60px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 22px;
     color: #FFFFFF;
     background-color: #F6C9CA;
 }

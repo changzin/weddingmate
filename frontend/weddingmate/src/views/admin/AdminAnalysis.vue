@@ -265,25 +265,26 @@ export default {
           this.categoryPieAmountData = result.category_pie_amount_data;
           this.categoryPieReviewData = result.category_pie_review_data;
           this.pieChartData = this.categoryPiePriceData;
+          
           for(let i in this.dayLineData){
             if (i==0){
               continue;
             }
-            this.dayTotalPrice += Number(this.dayLineData[i][1]);  
+            this.dayTotalPrice += this.dayLineData[i][1];  
           }
-          for(let i in this.dayLineData){
+          for(let i in this.monthLineData){
             if (i==0){
               continue;
             }
             this.monthTotalPrice += this.monthLineData[i][1];  
           }
-          for(let i in this.dayLineData){
+          for(let i in this.yearLineData){
             if (i==0){
               continue;
             }
             this.yearTotalPrice += this.yearLineData[i][1];  
           }
-          this.dayAveragePrice = Math.ceil(this.dayTotalPrice / 30);
+           this.dayAveragePrice = Math.ceil(this.dayTotalPrice / 30);
           this.monthAveragePrice = Math.ceil(this.monthTotalPrice / 12);
           this.yearAveragePrice = Math.ceil(this.yearTotalPrice / 10);
         }

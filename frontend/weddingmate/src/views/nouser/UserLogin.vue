@@ -69,6 +69,10 @@
                 </button>
             </div>
         </div>
+        <div class="row justify-content-center">
+            <div id="naverIdLogin" @click="naverUserLogin()"></div>
+            <div >asdf</div>
+        </div>
         
     </div>
     <MateFooter />
@@ -94,6 +98,10 @@
                 this.$router.push({path: '/'});   
             }
         },
+        mounted(){
+            
+
+        },
         methods: {
             async login(){
                 // 파이어베이스로 먼저 인증을 시작한다.
@@ -112,6 +120,7 @@
                             await this.$store.commit("user", {accessToken: result.accessToken});
                         }
                         if (result.type=="local"){
+                        
                             if (this.$route.query.savedUrl){
                                 this.$router.go(-1);    
                             }
@@ -242,6 +251,37 @@
                 console.error(err);
                 alert("예기치 못한 에러로 로그인이 실패했습니다. 다시 시도해 주세요.")
               }
+            },
+            naverInit(){
+                this.naverLogin = new window.naver.LoginWithNaverId({
+                    clientId: "FkAYkKQaYKYBZPgPFIhI",
+                    callbackUrl: "http://localhost:8080/loginBridge",
+                    isPopup: true,
+                    loginButton: {
+                        color: "green", type: 3, height: 60,
+                    },
+                });
+                this.naverLogin.init();
+            },
+            naverUserLogin(){
+                
+                
+                this.naverLogin.init();
+                this.naverLogin.getLoginStatus(async (status)=>{                        
+                        if(status){
+                            console.log(this.naverLogin.user);
+                            var email = this.naverLogin.user.getEmail();
+                            if (email == undefined || email == null){
+                                alert("이메일은 필수 정보입니다. 정보 제공해줘");
+                                this.naverLogin.reprompt();
+                                return;
+                            }
+                        }
+                        else{
+                            console.log("callback 처리 실패");
+                        }
+                    })
+                
             }
         }
     };
