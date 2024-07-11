@@ -90,8 +90,8 @@ exports.myBoxDelete = async(req,res)=>{
     try{
         const user_id = req.body.user_id;
         const boxId = req.body.boxId;
-
-        delectquery = "DELETE FROM box WHERE box_id = ? " 
+        console.log(boxId);
+        delectquery = "DELETE FROM box WHERE box_id = ?;" 
         delectBox = await db(delectquery,[boxId])
         console.log(delectBox);
         const affectedRows = delectBox.affectedRows;
@@ -109,6 +109,35 @@ exports.myBoxDelete = async(req,res)=>{
         responseBody ={
             status : 400,
             message : "myBoxDelete 를 실행할 수 없습니다."
+        }
+    }
+}
+
+exports.myBoxOrder = async(req,res) => {
+    try{
+        const boxId = Number(req.body.boxId)
+        console.log(boxId);
+        const user_id = req.body.user_id
+        console.log(user_id);
+        orderquery = 
+        "SELECT item.item_name, item_detail.item_detail_type, box_item.box_item_quantity, item.item_discount_rate, item.item_price, box_item.box_item_total_price, item_detail.item_detail_quantity from box, box_item, item_detail, item WHERE box.box_id=box_item.box_id AND box_item.item_detail_id=item_detail.item_detail_id AND item_detail.item_id=item.item_id AND box_item.box_id=? AND box.user_id=? AND box.box_ordered='F'";
+        orderBox = (orderquery,[boxId,user_id])
+        console.log(orderBox)
+        const affectedRows = orderBox.affectedRows;
+        if(affectedRows == 1){
+            const responseBody ={
+                status:200,
+                order : orderBox
+            }
+            res.json(responseBody);
+        }else{
+            throw new Error("견적함을 주문 할 수 없습니다.")
+        }
+    }catch(err){
+        console.error(err);
+        responseBody = {
+            status : 400,
+            message : "myBoxOrder 를 실행 할 수 없습니다."
         }
     }
 }

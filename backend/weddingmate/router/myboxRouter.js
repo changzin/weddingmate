@@ -1,5 +1,5 @@
 const express = require('express');
-const {myBoxItemName,myBoxItemDelete,myBoxNameUpdate,myBoxDelete } = require('../controller/myBoxController')
+const {myBoxItemName,myBoxItemDelete,myBoxNameUpdate,myBoxDelete,myBoxOrder } = require('../controller/myBoxController')
 const {loginCheck} = require('../middleware/login');
 const router = express.Router();
 
@@ -11,10 +11,10 @@ router.post('/update',myBoxNameUpdate)
 //행 삭제
 router.post('/delectbox',myBoxDelete)
 
-// router.get('/category',myBoxCategory);
 //견적함 내  상품이름
 router.post('/name',loginCheck,myBoxItemName);
-//견적함 내 상품옵션
+//상품 주문 ㅇ
+router.post('/order',loginCheck,myBoxOrder)
 
 
 
