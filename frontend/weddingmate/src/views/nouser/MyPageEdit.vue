@@ -19,7 +19,7 @@
                 <div class="col sign_up_right">
                 </div>
             </div>
-            <div class="row justify-content-center sign_up_emptycol" v-if="user.user_type=='local'">
+            <div class="row justify-content-center sign_up_emptycol">
                 <div class="col sign_up_left"></div>
                 <div class="col sign_up_middle">
                     <div class="sign_up_little_text sign_up_red" v-if="!userEmailVerify">올바르지 않은 이메일입니다.</div>

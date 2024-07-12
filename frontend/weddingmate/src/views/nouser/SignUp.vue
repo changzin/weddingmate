@@ -142,7 +142,7 @@
             <div class="row sign_up_partition"></div>
             <div class="row justify-content-center" style="margin-bottom:200px;">
                 <div class="d-flex justify-content-center">
-                    <button class="sign_up_button">취소</button>
+                    <button class="sign_up_button" @click="this.$router.push({path: '/userlogin'})">취소</button>
                     <button class="sign_up_button_last" @click="signUp();">
                         <span v-if="userType=='local'">인증 요청</span>
                         <span v-if="userType!='local'">회원가입</span>

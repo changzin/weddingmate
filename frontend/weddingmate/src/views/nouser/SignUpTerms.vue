@@ -55,13 +55,13 @@
         </div>
 
         <div class="row justify-content-center">
-            <div class="d-flex justify-content-center">
-                    <button class="terms_button" @click="this.$router.push({path: '/signup', query: {type: 'local'}})" v-bind:disabled="!termsAll">다음으로</button>
+            <div class="d-flex justify-content-between" style="padding: 0px 490px; margin-top:15px;">
+                <button class="terms_button_black" @click="this.$router.push({path: '/userlogin'})">취소</button>
+                <button class="terms_button" @click="this.$router.push({path: '/signup', query: {type: 'local'}})" v-bind:disabled="!termsAll">다음으로</button>
             </div>
         </div>
         <div class="row justify-content-center" style="margin-bottom: 200px;">
             <div class="d-flex justify-content-center">
-                <button class="terms_button_black" @click="console.log(termsAll)">취소</button>
             </div>
         </div>
     </div>
@@ -158,25 +158,25 @@ export default{
 }
 
 .terms_button{
-    width: 500px;
-    height: 80px;
-    background-color: #F6C9CA;
+    width: 160px;
+    height: 60px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 20px;
     color: #FFFFFF;
+    background-color: #F6C9CA;
 }
 
 .terms_button_black{
-    width: 500px;
-    height: 80px;
-    background-color: #333333;
+    width: 160px;
+    height: 60px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 22px;
     color: #FFFFFF;
+    background-color: #333333;
 }
 .terms_form{
     padding: 30px 0px 0px 20px;

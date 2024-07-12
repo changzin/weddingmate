@@ -118,12 +118,14 @@ methods: {
   padding-left: 13px;
 }
 .login_input_button {
+  width: 200px;
+  height: 60px;
+  border: none;
   border-radius: 12px;
-  border: 0px solid #c2c2c2;
-  width: 500px;
-  height: 79px;
-  flex: none;
-  background-color: #f6c9ca;
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: #FFFFFF;
+  background-color: #F6C9CA;
 }
 .login_text {
   min-width: 450px;
@@ -136,10 +138,10 @@ methods: {
 .login_container {
   min-width: 1280px;
 }
-.login_button_text {
-  font-size: 28px;
+/* .login_button_text {
+  font-size: 15px;
   color: #ffffff;
-}
+} */
 .login_checkbox {
     appearance: none;
 }

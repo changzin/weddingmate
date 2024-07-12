@@ -316,7 +316,7 @@ exports.qnaList = async (req, res) => {
         let responseBody = {};
 
         page = !page ? 0 :Number(page) - 1;
-        query ="SELECT qna_date, qna_title, qna_id FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
+        query ="SELECT qna_date, qna_title, qna_type, qna_id FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
         result = await db(query, [user_id, (page * 15) ]);
 
         query ="SELECT COUNT (*) AS COUNT FROM qna WHERE user_id = ?";
