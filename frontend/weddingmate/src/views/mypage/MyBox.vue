@@ -23,7 +23,7 @@
             </div>
           </div>
         </div>
-        <div class="container-middle" v-for="item in itemDetails" :key="item" >
+        <div class="container-middle" v-for="item in itemList" :key="item.item_detail_type" >
           <div class="container-middle-category_title">
             <div class="title-font">
              {{ getClass(item.item_detail_type) }}
@@ -32,13 +32,13 @@
               <hr class="title" />
             </div>
           </div>
-          <table>
-            <colgroup>
+          <table v-for="name in item.item_name" :key="name.box_item_id">
+            <colgroup >
               <col />
               <col />
               <col />
             </colgroup>
-            <tr class="tr1">
+            <tr class="tr1" >
               <td>상품/옵션 정보</td>
               <td>금액</td>
               <td>변경</td>
@@ -47,24 +47,25 @@
               <td>
                 <div class="container-table_col1">
                   <!-- <input type="checkbox" /> -->
-                  <img class="bookmark" src="http://localhost:8080/icon/icon.png" />
-                  <div class="content-table_col1">
+                  <!-- <img class="bookmark" src="http://localhost:8080/icon/icon.png" /> -->
+                  <img class="bookmark" :src="this.$imageFileFormat(name.item_tn_image_path)" >
+                  <div class="content-table_col1" >
                     <div class="content-table_col1-name">
                       <!-- 제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목 -->
-                      {{ item.item_name }}
+                      {{ name.item_name }}
                     </div>
                     <div class="content-table_col1-option">
                       <div>
-                        {{ optionKorean(item) }}
+                        {{ optionKorean(name) }}
                       </div>
                     </div>
                     
                   </div>
                 </div>
               </td>
-              <td>{{$numberFormat(item.box_item_total_price)}}</td>
+              <td>{{$numberFormat(name.box_item_total_price)}}</td>
               <!-- <td>999,999,999,999,999</td> -->
-              <td><button class="boxdelete" @click="DelItem(item.box_item_id)">삭제</button></td>
+              <td><button class="boxdelete" @click="DelItem(name.box_item_id)">삭제</button></td>
             </tr>
            
           </table>
@@ -77,12 +78,12 @@
             <div class="sellcost"><span>{{ this.$numberFormat(order_info.order_total_price) }}</span>원</div>
             <!-- <div class="sellcost"><span>선택된 체크리스트 금액 합계</span>원</div> -->
           </div>
-          <div><img class="icon" src="http://localhost:8080/icon/icon.png" /></div>
+          <div><img class="icon" src="/icon/minus-solid.svg" /></div>
           <div class="paycontent">
             <div class="sellitle">할인금액</div>
             <div class="sellcost"><span>{{ this.$numberFormat(order_info.order_sale_price) }}</span>원</div>
           </div>
-          <div><img class="icon" src="http://localhost:8080/icon/icon.png" /></div>
+          <div><img class="icon" src="/icon/equals-solid.svg" /></div>
           <div class="paycontent">
             <div class="sellitle">합계</div>
             <div class="sellcost"><span>{{ this.$numberFormat(order_info.order_price) }}</span>원</div>
@@ -90,7 +91,7 @@
         </div>
         <div class="container_boxbutton3">
           <!-- <button class="order" >주문 하기</button> -->
-          <button class="order" @click="goToOrder_info(box.box_id)">주문 하기</button>
+          <button class="order" @click="goToOrder_info()">주문 하기</button>
         </div>
         <div class="mypage-bottom">
           <button class="mypage-back" @click="$router.push({path:`/mypage`})">마이페이지로</button>
@@ -147,7 +148,6 @@
     },
     mounted(){
       this.fetchItem();
-      // this.goOrderInfo();
     },
     methods: {
       
@@ -176,15 +176,16 @@
         access_token: this.$getAccessToken(),
         boxId:this.$route.params.boxId
       }
-      console.log(requestBody)
       console.log(boxId);
       try{
         const delectbox = await this.$api("/mybox/delectbox",requestBody,"POST")
-        console.log(delectbox);
-        if(delectbox.status === 200){
-          await this.fetchItem();
-          this.$router.go();
+        if(delectbox.status == 200){
+          // await this.fetchItem();
+          this.$router.go(-1);
+        }else{
+          throw new Error("아이템이 없습니다.")
         }
+        
       }catch(error){
         console.log(error);
       }
@@ -193,20 +194,17 @@
 
     async updateBoxName(box_name){
       const requestBody = {
+        
         box_name : box_name,
-        boxId:this.boxId
+        boxId:this.$route.params.boxId
       }
       const update = await this.$api("/mybox/update",requestBody,"POST")
-      // this.box_name = update.boxNameUpdate;
       
       try{
         if(update.status === 200){
           await this.fetchItem();
           this.$router.go();
         }
-        // if(editingBoxName == true){
-          
-        // }
       }catch(error){
         console.error(error);
       }
@@ -215,10 +213,6 @@
         //저장버튼 생성
         this.editableBoxName = this.box_name;
         this.editingBoxName = true; 
-      },
-      saveBoxName(){
-        this.box_name = this.editableBoxName
-        this.editingBoxName = false;
       },
          //견적함 상세 정보 가져오기 
       async fetchItem(){
@@ -229,31 +223,84 @@
             boxId:this.boxId
           }
           const response = await this.$api(`/mybox/name`,responseBody,"POST")
-          console.log(response);
+          
+          if(response.status == 200){
           const iName = response.box_itemName.map((item_name)=> item_name);
           //아이템 이름을 담고 있는 배열 iName
-          this.itemDetails = iName.reduce((item_name, now)=>{
-            if(!item_name.some (obj => obj.item_detail_id === now.item_detail_id)){
-              item_name.push(now);
-            }
-            return item_name;
-          },[])
-          
-
-          // 각 아이템들을 하나의 카테고리에 합치기 
+          //아이템 중복처리 
+          this.itemDetails = iName
+          // .reduce((item_name, now)=>{
+          //   if(!item_name.some (obj => obj.item_detail_id === now.item_detail_id)){
+          //     item_name.push(now);
+          //   }
+          //   return item_name;
+          // },[])
           console.log(this.itemDetails);
           this.box = response.box_itemObj;
           console.log(this.box);
           this.makeOrderInfo();
           
+
+
+          //동일 item_detail_type을 가진 아이템을 하나의 item_detail_type에 정렬
+          // 배열itemList 선언 
+          
+            //배열itemList의 인덱스가 0이면 
+            //itemList안에 객체를 넣는다. 키 item_detail_type 의 value는 itemDetails배열안의i번째 인덱스의 item_detail_type 옵션으로 가진다
+            //두번째 키 item_name의 value 는 itemDetails[i]번째 인덱스를 배열로 생성하여 값으로 가진다.
+            //만약 itemList안에 객체가 존재할시 해당 작업을 넘어간다.
+            //해당 배열이 존재하는지 판별하기 위해 check의 값을 false로 지정한다.
+            //j를 itemList의 배열길이만큼 반복시킨다. 
+            //itemList배열[j]인덱스의 type 은 배열itemDetails[i]인덱스의item_details_type과 동일할때
+            //itemList의 j번째 인덱스의 속성 Item_name내에 itemDetails[i]번째 배열을 넣는다. 
+            //check를 true로 만들고 반복문을 종료시킨다.
+            //만약 check가 true가 아니라면 
+            //key itemlist 내에 itemDetails배열을 넣는다0
+          let itemList = [];
+          
+          for (let i=0; i < this.itemDetails.length; i++){
+            console.log(i,itemList)
+            if(itemList.length == 0){
+              itemList.push(
+                
+                {
+                  item_detail_type: this.itemDetails[i].item_detail_type,
+                  item_name:[this.itemDetails[i]]
+                }
+              )
+              console.log(itemList)
+              continue;
+            }
+            let check = false;
+          for(let j = 0; j < itemList.length; j++){
+            if(itemList[j].item_detail_type  == this.itemDetails[i].item_detail_type){
+              itemList[j].item_name.push(this.itemDetails[i]);
+              check = true; 
+              break;
+            }
+          }
+          if(!check){
+              itemList.push({
+                item_detail_type: this.itemDetails[i].item_detail_type,
+                item_name: [this.itemDetails[i]]
+              })
+            }
+          }    
+          
+            this.itemList = itemList;
+          
+          
+            }else{
+              throw new Error("데이터베이스 오류입니다.")
+            }
           }catch(err){
-            console.error(err)
+            console.log(err)
           }
         },
        optionKorean(item){
            let resultString = "";
             for ( let key in item ){
-              if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_detail_type' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name'){
+              if (key=='box_item_id' || key=='user_id' || key == 'box_id' || key == 'item_id' || key == 'item_detail_type' || key == 'item_name' || key == 'item_price' || key == 'box_item_total_price' || key == 'item_detail_id' || key == 'box_name' || key == 'item_tn_image_path'){
               continue 
               }
               if(!item[key]){
@@ -381,21 +428,17 @@
         }
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
     },
-
-    async goToOrder_info(boxId)
+//박스 내 아이템이 있다면 주문이 가능하고 없으면 주문이 잠긴다. 
+    async goToOrder_info()
     {
-      // const requestBody={
-      //   access_token: this.$getAccessToken(),
-      //   boxId:this.$route.params.boxId
-      // }
-      // const response = await this.$api(`/mybox/order`,requestBody,"POST")
-      // console.log(response)
+      //아이템이 없으면 length가 0 이 됨 
       try{
+        if(!this.itemDetails.length == 0){
         this.$router.push({name:'Orderinfo',
-                           params:{boxId:this.itemDetails[boxId].box_id}             })
-      
-        
-        //status 상태로 200이면 route  Else 일시 얼럿으로 주문을 할 수 없습니다. 이면 버튼 잠그기
+                           params:{boxId:this.box.box_id}})
+        }else{
+          alert("견적함 내 상품이 없습니다.")
+        }
       }catch(err){
         console.log(err);
         
@@ -685,11 +728,13 @@ height: 120px;
 border: 1px solid #333333;
 }
 
+
 img.icon{
 height: 30px;
 width: 30px;
-border: 1px solid #333333;
+/* border: 1px solid #333333; */
 }
+
 
 /* table */
 table {

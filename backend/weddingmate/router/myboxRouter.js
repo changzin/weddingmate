@@ -14,7 +14,6 @@ router.post('/delectbox',myBoxDelete)
 //견적함 내  상품이름
 router.post('/name',loginCheck,myBoxItemName);
 //상품 주문 ㅇ
-router.post('/order',loginCheck,myBoxOrder)
 
 
 
