@@ -47,7 +47,7 @@
                         <label class="login_label" @click = "autoLogin = !autoLogin">로그인 상태 유지</label>                            
                     </div>
                     <button class="col login_col_text" @click="this.$router.push({path: '/terms'})" style="border:none; background-color:#ffffff; margin-left: 25px;">회원가입</button>
-                    <button class="col login_col_text" @click="this.$router.push({path: '/terms'})" style="border:none; background-color:#ffffff;">비밀번호를 잊으셨나요?</button>
+                    <button class="col login_col_text" @click="this.$router.push({path: '/findpassword'})" style="border:none; background-color:#ffffff;">비밀번호를 잊으셨나요?</button>
                 </div>
             </div>
         </div>
@@ -70,10 +70,14 @@
             </div>
         </div>
         <div class="row justify-content-center">
-            <div id="naverIdLogin" @click="naverUserLogin()"></div>
-            <div >asdf</div>
+            
+            <div class="naverIdLogin " @click="naverInit()">
+                <img src="/icon/naver-icon-style.png" style="height: 25px; width:25px; margin-right:15px;">
+                <div>네이버로 로그인</div>
+            </div>
         </div>
         
+        <div id="naverIdLogin" hidden></div>
     </div>
     <MateFooter />
 </template>
@@ -252,37 +256,64 @@
                 alert("예기치 못한 에러로 로그인이 실패했습니다. 다시 시도해 주세요.")
               }
             },
-            naverInit(){
-                this.naverLogin = new window.naver.LoginWithNaverId({
-                    clientId: "FkAYkKQaYKYBZPgPFIhI",
-                    callbackUrl: "http://localhost:8080/loginBridge",
-                    isPopup: true,
-                    loginButton: {
-                        color: "green", type: 3, height: 60,
-                    },
-                });
-                this.naverLogin.init();
-            },
-            naverUserLogin(){
-                
-                
-                this.naverLogin.init();
-                this.naverLogin.getLoginStatus(async (status)=>{                        
-                        if(status){
-                            console.log(this.naverLogin.user);
-                            var email = this.naverLogin.user.getEmail();
-                            if (email == undefined || email == null){
-                                alert("이메일은 필수 정보입니다. 정보 제공해줘");
-                                this.naverLogin.reprompt();
+            async naverInit(){
+                try{
+                    // 
+                    this.naverLogin = new window.naver.LoginWithNaverId({
+                        clientId: "FkAYkKQaYKYBZPgPFIhI",
+                        callbackUrl: "http://localhost:8080/loginBridge",
+                        isPopup: true,
+                        loginButton: {
+                            color: "green", type: 3, height: 60,
+                        },
+                    });
+                    this.naverLogin.init();
+                    window.open("/loginBridge", 'test', 'width=600, height=1000', '_blank');
+                    window.call = async (email)=>{
+                        if(email){
+                            const requestBody = {
+                                email: email, 
+                                password: null, 
+                                loginType: "naver"
+                            }
+                            const result = await this.$api("/user/login", requestBody, "POST");
+                            if (result.status == 300){
+                                this.$router.push({
+                                    name: "signup",
+                                    query: { "type": "naver", "email": email }
+                                });
+                                return;
+                            }
+                            if (result.status == 200){
+                                this.$cookies.set("weddingCookie", result.accessToken);
+                                if (this.autoLogin){
+                                    await this.$store.commit("user", {accessToken: result.accessToken})
+                                }
+                                if (this.$route.query.savedUrl){
+                                    this.$router.go(-1);
+                                    return;
+                                }
+                                else{
+                                    this.$router.push({path: '/'});
+                                    return;
+                                }
+                            }
+                            else{
+                                alert("동일한 이메일의 계정이 존재합니다. 다른 이메일을 사용해 주세요");
                                 return;
                             }
                         }
                         else{
-                            console.log("callback 처리 실패");
+                            alert("네이버 이메일을 불러오지 못했습니다. 다시 시도해 주세요.");
+                            return;
                         }
-                    })
-                
-            }
+                    }
+                }
+                catch(err){
+                    console.error(err);
+                    alert("네이버가 응답하지 않습니다. 다시 시도해주세요.");
+                }
+            },
         }
     };
 </script>
@@ -392,5 +423,21 @@
   color: red;
   margin-bottom: 10px;
   text-align: center;
+}
+
+.naverIdLogin{
+    font-weight: bold;
+    border-radius: 5px;
+    display:flex;
+    justify-content: start;    
+    padding-top:13px;
+    width: 220px;
+    margin-right:7px;
+    margin-top: 15px;
+	height :48px;
+	font-size: 15px;
+	background: rgb(3, 199, 90);
+	color: white;
+	border: solid 1px rgba(0, 0, 0, 0.06);
 }
 </style>
