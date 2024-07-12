@@ -5103,7 +5103,7 @@ export default {
 }
 
 #productdetail_app {
-  width: 1980px;
+  width: 1093px;
   min-width: 1980px;
   max-width: 1980px;
 }

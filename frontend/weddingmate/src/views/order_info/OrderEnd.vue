@@ -1,5 +1,5 @@
 <template>
-    <div class="fix-width">
+    <div>
       <!-- 헤더 -->
       <MateHeader />
   

@@ -1,5 +1,5 @@
 <template>
-    <div class="fix-width">
+    <div>
       <!-- 헤더 -->
       <div class="common-header">
         <!-- 로그인 + 회원가입 + 로고 -->
