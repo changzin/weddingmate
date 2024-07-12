@@ -41,11 +41,14 @@ exports.productList = async (req, res) => {
           FROM item 
           JOIN item_detail ON item.item_id = item_detail.item_id 
           WHERE item_detail.item_detail_type = ? AND item_name LIKE ?
+          GROUP BY item.item_id
         `;
       const countResult = await db(countQuery, [itemType, keyword]);
-      const totalCount = countResult[0].totalCount;
-      maxPage = Math.ceil(totalCount / pageSize);
-
+      let totalCount = 0;
+      if (countResult[0] != null){
+        totalCount = countResult[0].totalCount;
+        maxPage = Math.ceil(totalCount / pageSize);
+      }
       // 현재 페이지에 따른 item 데이터 가져오기
       const query = `
           SELECT DISTINCT item.*, item_detail.item_detail_type
@@ -208,11 +211,6 @@ exports.InsertItemIntoBox = async (req, res) => {
 
     // 만약에 박스에 기존 아이템이 담겨져 있을 경우 중복으로 담지 않고 기존 아이템을 업데이트를 해준다
     if (searchSameRecodResult.length > 0) {
-      console.log(
-        " searchSameRecodResult[0].box_item_id : ",
-        searchSameRecodResult[0].box_item_id
-      );
-
       const updateboxItemquery = `
         UPDATE box_item 
         SET 
@@ -285,7 +283,6 @@ exports.Bookmark = async (req, res) => {
     const selectResult = await db(selectQuery, [item_id, user_id]);
     
     if (selectResult.length > 0) {
-      console.log("selectResult : ", selectResult[0]);
       // 데이터 보낼 준비
       const responseBody = {
         status: 201,
@@ -302,7 +299,6 @@ exports.Bookmark = async (req, res) => {
             `;
     const result = await db(query, [item_id, user_id]);
 
-    console.log("result.insertId : ", result.insertId);
 
     // 데이터 보낼 준비
     const responseBody = {
@@ -324,7 +320,6 @@ exports.Bookmark = async (req, res) => {
 
 exports.totalProductDetail = async (req, res) => {
   try {
-    console.log("totalProductDetail. user_id : ", req.body.user_id);
     const user_id = req.body.user_id;
     const itemId = req.params.itemId;
 
@@ -377,9 +372,6 @@ exports.totalProductDetail = async (req, res) => {
   `;
 
     const bookmarkResult = await db(bookmarkQuery, [itemId]);
-    if (bookmarkResult.length > 0) {
-      console.log("bookmarkResult 존재 : ", bookmarkResult);
-    }
 
     const responseBody = {
       status: 200,

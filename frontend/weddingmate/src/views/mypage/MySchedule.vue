@@ -17,8 +17,11 @@
                 <v-date-picker
                   v-model="dateRange"
                   is-range
+                  :attributes="attributes"
                   :popover="{ visibility: 'focus' }"
                   :input-props="{
+                    start: { placeholder: 'Start' },
+                    end: { placeholder: 'End' },
                     start: { placeholder: 'Start' },
                     end: { placeholder: 'End' },
                   }"
@@ -94,22 +97,26 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import "./mypage.css";
 
 export default {
   name: "SearchComponent",
   data() {
     return {
-      ScheduleResult: {},
+      ScheduleResult: {
 
-      // 캘린더
-      dateRange: {
+      },
+      // 캘린더 
+      dateRange: [{
         start: null,
         end: null,
-      },
+      },],
       schedule_title: "",
       calendar_id: 0,
-    };
+      attributes: null,
+      userScheduleShowList: []
+      };
   },
 
    async beforeRouteEnter(to, from, next) {
@@ -142,19 +149,24 @@ export default {
         );
         this.ScheduleResult = result.scheduleList;
         this.calendar_id = result.calendar_id;
-        console.log("calendar_id : ", this.calendar_id);
-
         if (this.ScheduleResult.length <= 0) {
           alert("등록된 스케쥴이 없습니다 스케쥴을 등록해주세요")
         }
-
-
-
         if (this.ScheduleResult) {
-          console.log(
-            "ScheduleResult: ",
-            JSON.parse(JSON.stringify(this.ScheduleResult))
-          );
+            this.userScheduleShowList = [];
+            for(let i of this.ScheduleResult){
+              let startDate = this.formatDate(i.schedule_start);
+              let endDate = this.formatDate(i.schedule_end);
+              console.log(startDate, endDate);
+              this.userScheduleShowList.push([startDate, endDate]);
+            }
+            console.log(this.userScheduleShowList);
+            this.attributes = ref([
+              {
+                highlight: 'green',
+                dates: this.userScheduleShowList
+              },
+            ])
         } else {
           console.log("fail");
         }
@@ -216,10 +228,8 @@ export default {
       );
 
       if(result.status == 200) {
-        
         alert("성공적으로 지웠습니다");
-    await this.fetchScheduleListData();
-
+        await this.fetchScheduleListData();
       }
 
     },

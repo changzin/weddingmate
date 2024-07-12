@@ -5040,8 +5040,9 @@ export default {
       if (this.reportContent == "") {
         alert("신고내용을 입력해주세요");
       }
-
+      
       try {
+       
         const result = await this.$api(
           "/review/reviewreport",
           {
@@ -5051,6 +5052,7 @@ export default {
           },
           "POST"
         );
+        this.reportContent = "";
         if (result.status == 200) {
           alert("신고 완료");
           this.isVisibleReport = false;
@@ -5519,6 +5521,7 @@ export default {
   font-size: 14px;
   color: #333;
   line-height: 1.5;
+  word-break: break-all;
 }
 
 .productdetail_review-section_title-div {
@@ -5614,6 +5617,7 @@ export default {
   display: flex;
   gap: 20px;
   align-items: center;
+  height:75px;
   /* justify-content: center; */
 }
 

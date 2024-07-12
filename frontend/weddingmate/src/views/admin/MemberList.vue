@@ -104,7 +104,7 @@
                         </td>
                         <td>{{this.$dateFormat(member.user_create_date)}}</td>
                         <td>{{member.user_type}}</td>
-                        <td>{{member.user_total_price}}</td>
+                        <td>{{this.$numberFormat(member.user_total_price)}}</td>
                         <td>{{member.user_buy_count}} / {{member.user_review_count}} / {{ member.user_qna_count }} </td>
                         <td>
                             <button class="btn admin_member_block_btn_active" v-if="member.user_block === 'F'" @click="blockUser(member, member.user_id)">block</button>

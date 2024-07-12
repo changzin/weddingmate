@@ -78,7 +78,7 @@
                 <option value="review" @click="changePie(3)">리뷰 갯수</option>
               </select>
             </div>
-            <div class="d-flex justyify-content-center">
+            <div class="d-flex justyify-content-center" v-if="loaded">
               <GChart
                   type="PieChart"
                   :data="pieChartData"
@@ -98,7 +98,7 @@
                 <div style="margin-top: 25px; margin-left: 50px; font-size:20px; ">총 판매금액 : {{ this.$numberFormat(dayTotalPrice) }}  , 일평균 판매금액 : {{ this.$numberFormat(dayAveragePrice) }}</div>
             </div>
             <div
-             class="d-flex justyify-content-center">
+             class="d-flex justyify-content-center" v-if="loaded">
               <GChart
                   type="LineChart"
                   :data="dayLineData"
@@ -117,7 +117,7 @@
             <div class="d-flex justify-content-start">
                 <div style="margin-top: 25px; margin-left: 50px; font-size:20px; ">총 판매금액 : {{ this.$numberFormat(monthTotalPrice) }}  , 월평균 판매금액 : {{ this.$numberFormat(monthAveragePrice) }}</div>
             </div>
-            <div class="d-flex justyify-content-center">
+            <div class="d-flex justyify-content-center" v-if="loaded">
               <GChart
                   type="LineChart"
                   :data="monthLineData"
@@ -136,7 +136,7 @@
             <div class="d-flex justify-content-start">
                 <div style="margin-top: 25px; margin-left: 50px; font-size:20px; ">총 판매금액 : {{ this.$numberFormat(yearTotalPrice) }}  , 연평균 판매금액 : {{ this.$numberFormat(yearAveragePrice) }}</div>
             </div>
-            <div class="d-flex justyify-content-center">
+            <div class="d-flex justyify-content-center" v-if="loaded">
               <GChart
                   type="LineChart"
                   :data="yearLineData"
@@ -164,6 +164,7 @@ export default {
   },
   data () {
     return {
+      loaded: false,
       mode: "price",
       dayTotalPrice: 0,
       monthTotalPrice: 0,
@@ -198,10 +199,11 @@ export default {
       ],
       itemTableData:[
         ['상품명', '회사', '판매 금액', '판매 수량', '가격', '별점', '리뷰 수'],
-        ['#', '#', '#', '#', 0, 0, 0],
+        ['#', 0, 0, 0, 0, 0, 0],
       ],
       pieChartData:[
-        ['카테고리', '금액']
+        ['카테고리', '금액'],
+        ['categoryA', 0]
       ],
       categoryPiePriceData: [],
       categoryPieAmountData: [],
@@ -225,9 +227,9 @@ export default {
       adminNick: "null"
     }
   },
-  async created(){
-    await this.getAnalysisData();
-    await this.getAdminInfo();
+  mounted(){
+    this.getAnalysisData();
+    this.getAdminInfo();
   },
   methods: {
     async getAdminInfo(){
@@ -287,6 +289,7 @@ export default {
            this.dayAveragePrice = Math.ceil(this.dayTotalPrice / 30);
           this.monthAveragePrice = Math.ceil(this.monthTotalPrice / 12);
           this.yearAveragePrice = Math.ceil(this.yearTotalPrice / 10);
+          this.loaded = true;
         }
         else{
           alert("분석 정보를 불러오는 데 실패하였습니다. 다시 시도하세요.");

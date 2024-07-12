@@ -341,6 +341,7 @@ export default {
           alert("신고 완료");
           this.isVisibleReport = false;
         }
+        this.reportContent = "";
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
