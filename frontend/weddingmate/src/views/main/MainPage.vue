@@ -107,7 +107,6 @@
     },
     mounted(){
       this.showBestItem();
-      this.limitBestItem();
     },
 
     methods: {
@@ -119,12 +118,16 @@
       async showBestItem(){
         try{
           const requestBody = {}
-          console.log(requestBody);
-          await this.$api("/bestItem",requestBody,"GET")
 
           //전송한 아이템 가져오기 
-          const result = await this.$api(`http://localhost:9090/bestItem`)
-          this.best_item = result.best_item;
+          const result = await this.$api(`/bestItem`,requestBody,"GET")
+          if (result.status == 200){
+            this.best_item = result.best_item;
+          }
+          else{
+            throw new Error("아이템이 없습니다.")
+          }
+          
         }
         catch(err){
           console.error(err);
