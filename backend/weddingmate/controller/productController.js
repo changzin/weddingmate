@@ -196,8 +196,6 @@ exports.InsertItemIntoBox = async (req, res) => {
     const box_item_schedule_start = req.body.box_item_schedule_start;
     const box_item_schedule_end = req.body.box_item_schedule_end;
 
-
-    
     const searchSamRecodequery = `
               select box_item_id 
               from box_item 
@@ -208,17 +206,13 @@ exports.InsertItemIntoBox = async (req, res) => {
       item_detail_id,
     ]);
 
-
-
     // 만약에 박스에 기존 아이템이 담겨져 있을 경우 중복으로 담지 않고 기존 아이템을 업데이트를 해준다
     if (searchSameRecodResult.length > 0) {
-
       console.log(
         " searchSameRecodResult[0].box_item_id : ",
         searchSameRecodResult[0].box_item_id
       );
 
-      
       const updateboxItemquery = `
         UPDATE box_item 
         SET 
@@ -284,18 +278,37 @@ exports.Bookmark = async (req, res) => {
     // req.body.box_name는 뷰에서 가져온 값
     const item_id = req.body.item_id;
 
-    // Box 데이터 생성
+    // Bookmark 데이터 존재 확인
+    const selectQuery = `
+              select * from bookmark where item_id = ? and user_id = ?
+            `;
+    const selectResult = await db(selectQuery, [item_id, user_id]);
+    
+    if (selectResult.length > 0) {
+      console.log("selectResult : ", selectResult[0]);
+      // 데이터 보낼 준비
+      const responseBody = {
+        status: 201,
+        message: "이미 있는 데이터라 못 넣음",
+      };
+      // 데이터 보내기
+      return res.json(responseBody);
+    }
+
+    // Bookmark 데이터 생성
     const query = `
               INSERT INTO bookmark (item_id, user_id)
         VALUES (?, ?);
             `;
     const result = await db(query, [item_id, user_id]);
 
+    console.log("result.insertId : ", result.insertId);
+
     // 데이터 보낼 준비
     const responseBody = {
       status: 200,
       message: "ProductController.js의 bookmark 데이터 성공",
-      data: result,
+      data: result.insertId,
     };
     // 데이터 보내기
     res.json(responseBody);
@@ -314,8 +327,6 @@ exports.totalProductDetail = async (req, res) => {
     console.log("totalProductDetail. user_id : ", req.body.user_id);
     const user_id = req.body.user_id;
     const itemId = req.params.itemId;
-
-    console.log("itemId : ", itemId);
 
     // item 테이블에서 item_id에 해당하는 데이터 가져오기
     const itemQuery = `SELECT * FROM item WHERE item_id = ?`;
@@ -356,15 +367,26 @@ exports.totalProductDetail = async (req, res) => {
 
     // 견적함
     const boxQuery = `
-    SELECT * FROM box where user_id = ?;
+    SELECT * FROM box where user_id = ? and box_ordered = 'F';
   `;
     const boxResult = await db(boxQuery, [user_id]);
+
+    // 북마크
+    const bookmarkQuery = `
+    SELECT * FROM bookmark where item_id = ?;
+  `;
+
+    const bookmarkResult = await db(bookmarkQuery, [itemId]);
+    if (bookmarkResult.length > 0) {
+      console.log("bookmarkResult 존재 : ", bookmarkResult);
+    }
 
     const responseBody = {
       status: 200,
       message: "ProductController.js의 productDetail 데이터 성공",
       data: {
         item: itemResult[0],
+        bookmarkResult: bookmarkResult[0],
         itemDetails: itemDetailResult,
         reviewList: reviewResult,
         qnaList: qnaResult,

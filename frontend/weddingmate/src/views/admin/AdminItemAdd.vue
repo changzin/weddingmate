@@ -383,6 +383,8 @@ export default {
     },
     async createItem(){
       try{
+        // 검증 추가
+
         const requestBody = {
           access_token: this.$getAccessToken(),
           item_type: this.itemType,
@@ -397,6 +399,10 @@ export default {
           item_detail_image_ext: this.itemDetailImageExt,
           item_main_image: this.itemMainImage,
           item_main_image_ext: this.itemMainImageExt
+        }        
+        if (!this.verifyItemForm()){
+          alert("입력 양식이 올바르지 않습니다.\n값을 입력하지 않았거나, 잘못된 값이 입력되었습니다.")
+          return;
         }
         const result = await this.$api("/product/add", requestBody, "POST");
         if (result.status == 200){
@@ -495,6 +501,98 @@ export default {
       catch(err){
         console.error(err);
       }
+    },
+    
+    verifyItemForm(){
+      if(!this.itemType || !this.itemName || !this.itemFactoryName || !this.itemTnImage || !this.itemTnImageExt || !this.itemDetailImage || !this.itemDetailImageExt || !this.itemMainImage || !this.itemMainImageExt){
+        return false;
+      }
+      if(!Number.isInteger(Number(this.itemPrice)) || !this.itemPrice || Number(this.itemPrice) == 0){
+        return false;
+      }
+      if(!this.itemDiscountRate || !Number.isInteger(Number(this.itemDiscountRate)) || Number(this.itemDiscountRate) < 0 || Number(this.itemDiscountRate) > 100){
+        return false;
+      }
+      if (this.itemType=='giving_mechine' || this.itemType=='giving_package' || this.itemType=='video' || this.itemType == 'mc' || this.itemType=='letter'){
+        if (this.itemDetailList.length != 0){
+          return false;
+        }
+      }
+      else{
+        if(!this.verifyItemDetailList(this.itemType)){
+          return false;
+        }
+      }
+      return true;
+    },
+    verifyItemDetailList(itemType){
+      let verifyList = [];
+      if (itemType == 'hall'){
+        verifyList.push('item_detail_size');
+        verifyList.push('item_detail_ticket');
+        verifyList.push('item_detail_loc');
+        verifyList.push('item_detail_local');
+      }
+      else if (itemType=='sdm_package'){
+        verifyList.push('item_detail_quality');
+        verifyList.push('item_detail_makeup');
+        verifyList.push('item_detail_local');
+      }
+      else if (itemType=='studio'){
+        verifyList.push('item_detail_quality');
+        verifyList.push('item_detail_local');
+      }
+      else if (itemType=='dress'){
+        verifyList.push('item_detail_size');
+        verifyList.push('item_detail_color');
+        verifyList.push('item_detail_quantity');
+      }
+      else if (itemType=='makeup'){
+        verifyList.push('item_detail_makeup');
+        verifyList.push('item_detail_quality');
+      }
+      else if (itemType=='giving_dress'){
+        verifyList.push('item_detail_size');
+        verifyList.push('item_detail_color');
+        verifyList.push('item_detail_quantity');
+      }
+      else if (itemType == 'giving_item'){
+        verifyList.push('item_detail_kind');
+      }
+      else if (itemType == 'snap'){
+        verifyList.push('item_detail_quality');
+      }
+      else if (itemType == 'flower'){
+        verifyList.push('item_detail_flower_life');
+        verifyList.push('item_detail_color');
+        verifyList.push('item_detail_kind');
+      }
+      else if (itemType == 'music'){
+        verifyList.push('item_detail_quality');
+      }
+      else if (itemType == 'shoes'){
+        verifyList.push('item_detail_size');
+        verifyList.push('item_detail_color');
+        verifyList.push('item_detail_heel_height');
+        verifyList.push('item_detail_quantity');
+      }
+      else{
+        return false;
+      }
+
+      for(let i in this.itemDetailList){
+        for(let j in verifyList){
+          const verifyData = this.itemDetailList[i][verifyList[j]];
+          if (!verifyData){
+            return false;
+          }
+          if (verifyList[j] == 'quantity' && !Number.isInteger(Number(verifyList[j]))){
+            return false;
+          }
+        }
+      }
+
+      return true;
     }
   }
 }

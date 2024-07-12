@@ -265,15 +265,18 @@ exports.addProduct = async(req, res)=>{
             throw Error("지원하지 않는 물품 카테고리입니다");
         }
 
+        // item 테이블 INSERT 실행
         query = 'INSERT INTO item(item_factory_name, item_name, item_price, item_discount_rate, item_tn_image_path, item_main_image_path, item_detail_image_path) VALUES(?, ?, ?, ?, ?, ?, ?)';
         result = await db(query, [itemFactoryName, itemName, itemPrice, itemDiscountRate, itemTnImagePath, itemMainImagePath, itemDetailImagePath]);
         if (result.affectedRows != 1){
             throw Error("아이템을 추가할 수 없습니다.");
         }
+        // 추가한 item의 item_id를 가져온다
         query = 'SELECT item_id FROM item WHERE item_factory_name=? AND item_name=? AND item_price=? AND item_discount_rate=? AND item_tn_image_path=? AND item_main_image_path=? AND item_detail_image_path=?'
         result = await db(query, [itemFactoryName, itemName, itemPrice, itemDiscountRate, itemTnImagePath, itemMainImagePath, itemDetailImagePath]);
         const item_id = result[0]['item_id'];
 
+        // 만약 itemDetailList가 0이면, 상세가 없는 타입의 상품이라고 간주하고, itemType만 넣는 쿼리를 실행한다.
         if (itemDetailList.length == 0){
             query = 'INSERT INTO item_detail(item_id, item_detail_type) VALUES(?, ?)';
             result = await db(query, [item_id, itemType]);

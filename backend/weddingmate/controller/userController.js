@@ -310,3 +310,32 @@ exports.edit = async(req, res)=>{
         res.json(responseBody);           
     }
 }
+
+exports.modifyPasswordVerifyEmail = async(req, res)=>{
+    try{
+        const user_email = req.body.user_email;
+        let query = '';
+        let result = '';
+        let responseBody = {};
+
+        query = "SELECT user_password FROM user where user_type='local' AND user_email=? AND user_block='F' AND user_email_verified='T'";
+        result = await db(query, [user_email]);
+
+        if (result.length != 1){
+            throw new Error("이메일을 찾을 수 없습니다");
+        }
+        responseBody = {
+            status: 200,
+            password: result[0].user_password
+        };
+        res.json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        responseBody = {
+            status: 400,
+            message: "이메일이 적합하지 않습니다."
+        };
+        res.json(responseBody);  
+    }
+}

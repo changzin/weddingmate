@@ -9,7 +9,7 @@
         <div class="productdetail_main_content">
           <!-- 상품 상세 -->
           <div class="productdetail_main_content-div">
-            <div class="col-md-6">
+            <div class="col-md-6 productdetail_main_content-div-img_div">
               <img
                 :src="this.$imageFileFormat(productDetail.item_main_image_path)"
                 class="img-fluid"
@@ -71,17 +71,20 @@
                   getClass('hall'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -275,7 +278,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -300,21 +304,25 @@
                 v-if="isVisibleItemType('dress')"
                 class="productdetail_main_content_selectoption_div"
               >
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
                 </div>
+
                 <div class="productdetail_main_content_discount_price_div">
                   <span
                     v-if="finally_price !== undefined && finally_price !== null"
@@ -516,7 +524,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -547,17 +556,20 @@
                   getClass('studio'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -807,7 +819,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -838,17 +851,20 @@
                   getClass('makeup'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -1046,7 +1062,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -1077,17 +1094,20 @@
                   getClass('sdm_package'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -1224,7 +1244,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -1255,17 +1276,20 @@
                   getClass('giving_dress'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -1470,7 +1494,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -1501,17 +1526,20 @@
                   getClass('giving_item'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -1710,7 +1738,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -1788,7 +1817,8 @@
                     type="button"
                     @click="copyCurrentLink"
                   >
-                    <i class="far fa-heart"></i>
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -1865,7 +1895,8 @@
                     type="button"
                     @click="saveToBookmark"
                   >
-                    <i class="far fa-heart"></i>
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -1894,17 +1925,20 @@
                   getClass('snap'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -2098,7 +2132,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -2177,7 +2212,8 @@
                     type="button"
                     @click="saveToBookmark"
                   >
-                    <i class="far fa-heart"></i>
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -2206,17 +2242,20 @@
                   getClass('flower'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -2353,7 +2392,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -2384,17 +2424,20 @@
                   getClass('music'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -2588,7 +2631,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -2667,7 +2711,8 @@
                     type="button"
                     @click="saveToBookmark"
                   >
-                    <i class="far fa-heart"></i>
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -2696,17 +2741,20 @@
                   getClass('shoes'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -2843,7 +2891,8 @@
                       type="button"
                       @click="savetoBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -2874,17 +2923,20 @@
                   getClass('gift'),
                 ]"
               > -->
-                <div style="margin-top: 30px">
+                <div
+                  style="margin-top: 30px"
+                  v-if="
+                    productDetail.item_discount_rate !== undefined &&
+                    productDetail.item_discount_rate !== null &&
+                    productDetail.item_price !== undefined &&
+                    productDetail.item_price !== null
+                  "
+                >
                   <div class="productdetail_main_content_discount_div">
                     {{ productDetail.item_discount_rate }}%
                   </div>
                   <div class="productdetail_main_content_origin_price_div">
-                    <span
-                      v-if="
-                        productDetail.item_price !== undefined &&
-                        productDetail.item_price !== null
-                      "
-                    >
+                    <span>
                       {{ productDetail.item_price.toLocaleString() }}원
                     </span>
                   </div>
@@ -3084,7 +3136,8 @@
                       type="button"
                       @click="saveToBookmark"
                     >
-                      <i class="far fa-heart"></i>
+                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
                     </button>
                     <button
                       class="productdetail_icon-button"
@@ -3163,7 +3216,8 @@
                     type="button"
                     @click="saveToBookmark"
                   >
-                    <i class="far fa-heart"></i>
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
                   </button>
                   <button
                     class="productdetail_icon-button"
@@ -3385,7 +3439,7 @@
                   </div>
                   <div>
                     {{ qna.qna_title }}
-                  <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
+                    <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
                   </div>
                 </td>
                 <td class="productdetail_qna-section_status-nickname-div">
@@ -3480,6 +3534,9 @@ export default {
       qnaList: {},
 
       itemType: "",
+
+      // 북마크
+      bookmarkResult: "",
     };
   },
 
@@ -3520,7 +3577,7 @@ export default {
             (this.productDetail.item_discount_rate / 100)
         );
       }
-      return 0;
+      return this.productDetail.item_price;
     },
     totalPrice() {
       return this.finally_price * this.quantity;
@@ -3528,9 +3585,6 @@ export default {
     formattedTotalPrice() {
       return this.totalPrice.toLocaleString();
     },
-
-
-
 
     allOptionsSelected() {
       return (
@@ -3585,6 +3639,8 @@ export default {
           this.reviewList = totalproductdetailData.reviewList;
           this.qnaList = totalproductdetailData.qnaList;
           this.BoxResultData = totalproductdetailData.data || [];
+          this.bookmarkResult =
+            totalproductdetailData.bookmarkResult.bookmark_id;
         } else {
           console.log("fail");
         }
@@ -4478,6 +4534,7 @@ export default {
           name: "userlogin",
           query: { savedUrl: true },
         });
+        return;
       }
 
       if (this.newBoxName.trim() !== "") {
@@ -4768,6 +4825,7 @@ export default {
           name: "userlogin",
           query: { savedUrl: true },
         });
+        return;
       } else if (
         !this.$dateFormat(this.dateRange.start) &&
         this.showCustomOptions
@@ -4815,22 +4873,68 @@ export default {
     },
 
     async savetoBookmark() {
-      console.log("savetoBookmark");
-      try {
-        await this.$api(
-          "/product/bookmark",
-          {
-            access_token: this.$getAccessToken(),
-            item_id: this.item_id,
-          },
-          "POST"
-        );
-        alert("상품 넣기 성공");
-      } catch (error) {
-        console.error(
-          "ProductDetail.vue fetchData Error fetching product data:",
-          error
-        );
+      const userInfo = await this.$verifiedUser();
+      if (!userInfo) {
+        alert("찜을 이용하고싶으시다면 로그인하세요");
+        this.$router.push({
+          name: "userlogin",
+          query: { savedUrl: true },
+        });
+        return;
+      }
+
+      // 북마크가 이미 존재할 경우 -> 북마크 delete
+      if (this.bookmarkResult) {
+        try {
+          console.log(
+            "delete해야됨 this.bookmarkResult : ",
+            this.bookmarkResult
+          );
+          const response = await this.$api(
+            "/mypage/bookmarklist/del",
+            { bookmark_id: this.bookmarkResult },
+            "post"
+          );
+          alert(response.message);
+          if (response.status == 200) {
+            this.bookmarkResult = null;
+            console.log("성공적으로 지움");
+          }
+        } catch (error) {
+          console.error(
+            "ProductDetail.vue savetoBookmark Error : if (this.bookmarkResult.length > 0) {",
+            error
+          );
+        }
+      }
+      // 북마크가 존재하지 않은 경우 -> 북마크 insert
+      else {
+        try {
+          console.log("bookmark insert해야됨 ");
+          const bookmarkResult = await this.$api(
+            "/product/bookmark",
+            {
+              access_token: this.$getAccessToken(),
+              item_id: this.item_id,
+            },
+            "POST"
+          );
+
+          if (bookmarkResult.status === 200) {
+            alert("찜 넣기 성공");
+            this.bookmarkResult = bookmarkResult.data;
+            console.log("this.bookmarkResult : ", bookmarkResult.data);
+          } else {
+            alert("찜 이미 있음 찜 더 못넣음");
+            alert(bookmarkResult.message);
+            console.log("this.bookmarkResult : ", this.bookmarkResult);
+          }
+        } catch (error) {
+          console.error(
+            "ProductDetail.vue savetoBookmark Error else {:",
+            error
+          );
+        }
       }
     },
 
@@ -4921,6 +5025,7 @@ export default {
           name: "userlogin",
           query: { savedUrl: true },
         });
+        return;
       }
 
       this.isVisibleReport = true;
@@ -5049,6 +5154,13 @@ export default {
   display: flex;
   margin: 0 auto;
   margin-top: 100px;
+}
+
+.productdetail_main_content-div-img_div {
+  width: 640px;
+  max-width: 640px;
+  min-width: 640px;
+  padding-right: 15px;
 }
 
 .productdetail_main_content_maker_div {
@@ -5197,17 +5309,22 @@ export default {
 }
 
 .productdetail_main-content_button-container_main-button {
-  font-size: 24px;
   color: #888888;
   background-color: #f5f5f5;
   border: 1px solid #f7cac9;
   border-radius: 10px;
-  padding: 25px 90px;
+  padding: 25px 50px;
   cursor: pointer;
+
+  height: 64px;
+  align-items: center;
+  display: flex;
+  font-size: 21px;
+  font-weight: bold;
 }
 
 .productdetail_main_selectoption-div {
-  font-size: 24px;
+  font-size: 18px;
   margin-top: 30px;
   margin-bottom: 10px;
   font-weight: bold;
@@ -5585,7 +5702,6 @@ export default {
 
 .report-popup {
   position: fixed;
-  bottom: 70px;
   left: 50%;
   transform: translateX(-50%);
   width: 600px;

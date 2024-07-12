@@ -71,8 +71,8 @@
             <div class="d-flex justify-content-center">
               <div class="admin_review_review-section">
                 <div class="admin_review_review-header justify-content-end">
-                  <button class="btn admin_review_btn_active" v-if="!reportedOption" @click="getReportedReviewList()">신고된 리뷰만 보기</button>
-                  <button class="btn admin_review_btn_inactive" v-if="reportedOption" @click="getUnReportedReviewList()">전체 리뷰 보기</button>
+                  <button class="btn admin_review_btn_active" @click="getReportedReviewList()">신고된 리뷰만 보기</button>
+                  <button class="btn admin_review_btn_inactive" @click="getUnReportedReviewList()">전체 리뷰 보기</button>
                   <select class="form-select admin_review_select" v-model="mode">
                     <option selected value="all">작성자 + 내용</option>
                     <option value="nickname">작성자</option>
@@ -84,12 +84,20 @@
                 <div class="admin_review_review-cards d-flex justify-content-center">
                   <div class="admin_review_review-card" v-for="(review, index) in reviewList" :key="index" style="width:300px;">
                     <div class="admin_review_card-header">
-                      <div class="admin_review_review-section_title-div">
+                      <div class="admin_review_review-section_title-div" style="width:200px;">
                         {{review.user_nickname}}
+                      </div>
+                      <div style="margin-left:20px; cursor:pointer" v-if="review.review_reported=='T'">
+                        <i
+                          class="fas fa-bullhorn"
+                          @click.stop="viewReports(review.review_id)"
+                          v-if="!review.is_current_user"
+                          ></i>
                       </div>
                       <div class="admin_review_card-icons">
                         <a @click="deleteReview(review)"><i class="fas fa-trash"></i></a>
                       </div>
+                      
                     </div>
                     <div class="admin_review_review-section_title-div">
                       <div class="admin_review_card-rating">{{makeStar(review.review_star)}}</div>
@@ -136,7 +144,42 @@
       </div>
     </div>
   </div>
+    <!-- 신고 팝업창 -->
+  <div v-if="isVisibleReport" class="report-overlay">
+    <div class="report-popup">
+      <!-- <div v-if="isVisibleReport" class="report-popup"> -->
+
+      <div class="report-popup_header">
+        <div></div>
+        <div>신고 내역</div>
+        <i
+          class="fas fa-times popupCloseButton"
+          @click="isVisibleReport = false;"
+        ></i>
+      </div>
+      <div class="report-popup_content">
+          <table class="admin_qna_qna-table" style="width:520px; margin-top:10px;">
+            <thead>
+              <tr>
+                <th style="width:110px;">닉네임</th>
+                <th style="width:400px;">신고사유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(report, index) in reportList" :key="index">
+                <td>{{report.user_nickname}}</td>
+                <td>{{report.report_content}}</td>
+              </tr>
+            </tbody>
+          </table>
+        <div class="report-popup_content_footer">
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+
 </template>
     
 <script>
@@ -152,7 +195,9 @@ export default {
       mode: "all",
       prevMode: "all",
       reported: 'F',
-      adminNick: "null"
+      adminNick: "null",
+      isVisibleReport: false,
+      reportList: []
     }
   },
   mounted(){      
@@ -280,6 +325,26 @@ export default {
         star += "★";
       }
       return star;
+    },
+    async viewReports(review_id){
+      try{
+        this.isVisibleReport = true;
+        const requestBody = {
+          review_id: review_id,
+          access_token: this.$getAccessToken()
+        }
+        const result = await this.$api("/report/list", requestBody, "POST");
+        if (result.status == 200){
+          this.reportList = result.reportList;
+        }
+        else{
+          alert("신고 내역을 조회할 수 없습니다");
+        }
+      }
+      catch(err){
+        console.error(err);
+        alert("신고 내역을 조회할 수 없습니다");
+      }
     }
   }
 }
@@ -445,6 +510,7 @@ export default {
 .admin_review_input{
   width:245px;
   margin-right: 5px;
+  margin-left: 10px;
 }
 .admin_review_btn_active{
   background-color: #007BFF;
@@ -473,5 +539,95 @@ div.mypage-bottom{
       .notVisible{
         visibility: hidden;
       }
+      
+    /* 신고 */
+    .report-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px); /* 블러 효과 추가 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999; /* 배경을 덮도록 z-index 설정 */
+    }
 
+    .report-popup {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: flex;
+      border-radius: 12px;
+
+      padding: 20px;
+      /* visibility: collapse; */
+      flex-direction: column;
+    }
+
+    .report-popup_header {
+      display: flex;
+      align-items: center; /* Vertically centers the content */
+      height: 50px;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .popupCloseButton {
+      cursor: pointer;
+    }
+
+    .report-popup_content {
+      width: 100%;
+      flex-grow: 1; /* This makes the content take up the remaining space */
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+    }
+    .report-popup_content_header {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .report-popup_content_input {
+      width: 100%;
+      flex-grow: 1;
+      padding: 10px;
+      box-sizing: border-box;
+      resize: none;
+    }
+
+    .report-popup_content_footer {
+      display: flex;
+      justify-content: center; /* 버튼을 가운데 정렬 */
+      margin-bottom: 30px;
+    }
+
+    .report-popup_content_ok {
+      margin-top: 10px;
+      border: 1px solid black;
+      border-radius: 12px;
+      display: flex;
+      width: 70px;
+      justify-content: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .admin_qna_qna-table th,
+    .admin_qna_qna-table td {
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+    .admin_qna_qna-table th {
+      background-color: #f7f7f7;
+    }
 </style>
