@@ -13,7 +13,12 @@
           'productdetaillist-content_margin',
         ]"
       >
-        <img src="https://via.placeholder.com/1280x500" />
+        <!-- <img src="https://via.placeholder.com/1280x500" /> -->
+          <img
+                class="img-fluid w-100 mateHeaderImage"
+                src="/letterImage.png"
+                alt="letterImage Image"
+              />
       </div>
 
       <!-- 검색 -->
@@ -50,15 +55,59 @@
               />
               <div class="reviewlist_card-body">
                 <div
-                  class="reviewlist_review-section_title-div letter-title-flex"
+                  class="reviewlist_review-section_title-div"
                 >
                   <div class="letter-title-flex_title">
                     {{ product.item_name }}
-                    {{ product.item_price }}
                   </div>
-                  <div class="letter-title-flex-dummy"></div>
-                  <div class="letter-title-flex_per">
-                    {{ product.item_discount_rate }}%
+                  <!-- 가격 -->
+                  <div
+                    v-if="
+                      product.item_discount_rate !== undefined &&
+                      product.item_discount_rate !== null &&
+                      product.item_price !== undefined &&
+                      product.item_price !== null
+                    "
+                  >
+                    <span class="productdetail_main_content_discount_div">
+                      {{ product.item_discount_rate }}%
+                    </span>
+                    <span class="productdetail_main_content_origin_price_div">
+                      {{ product.item_price.toLocaleString() }}원
+                    </span>
+                  </div>
+                  <div
+                    v-if="finally_price !== undefined && finally_price !== null"
+                  >
+                    <span class="productdetail_main_content_discount_price_div">
+                      {{ finally_price(product).toLocaleString() }}원
+                    </span>
+                  </div>
+                  <!-- 별점 -->
+                  <div class="qnawrite_row">
+                    <div class="rating">
+                      <label
+                        v-for="n in 10"
+                        :key="n"
+                        class="rating__label"
+                        :class="{
+                          half: n <= product.item_star_rating * 2,
+                          filled: n <= product.item_star_rating * 2,
+                          half_position: n % 2 !== 0,
+                          filled_position: n % 2 === 0,
+                        }"
+                      >
+                        <input
+                          type="radio"
+                          :id="'star' + n"
+                          class="rating__input"
+                          name="rating"
+                          :value="n"
+                          v-model="rating"
+                        />
+                        <div class="star-icon"></div>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -205,8 +254,7 @@ export default {
       isLastPage: false,
       maxPage: 0,
 
-
-        // 별점
+      // 별점
       rating: 0,
       currentRating: 0,
     };
@@ -246,7 +294,7 @@ export default {
         const response = await this.$api(
           `/product/list/${this.itemType}?page=${this.page}&keyword=${this.searchTitle}`
         );
-
+        console.log(response);
         const productData = response.data;
         const maxPage = response.maxPage;
 
@@ -602,12 +650,6 @@ export default {
   margin-bottom: 10px;
 }
 
-.letter-title-flex {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
 
 .letter-title-flex_title {
   /* 이부분이 flex의 80% 할당 */
@@ -629,7 +671,6 @@ export default {
   align-items: center;
   justify-content: center;
 }
-
 
 /* 별점 */
 .rating {
@@ -670,5 +711,4 @@ export default {
 .rating__label.filled_position .star-icon {
   background-position: right;
 }
-
 </style>

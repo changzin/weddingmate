@@ -1,4 +1,5 @@
 <template>
+<div>
     <MateHeader/>
     <div class="container login_container" style="margin-bottom:200px;">
         <div class="row justify-content-center" style="margin-top:200px;">
@@ -80,6 +81,7 @@
         <div id="naverIdLogin" hidden></div>
     </div>
     <MateFooter />
+</div>
 </template>
 
 <script>

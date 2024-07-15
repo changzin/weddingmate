@@ -1,5 +1,5 @@
 const express = require('express');
-const {adminQnaList, qnaDetail, itemDetail, wholeItemDetail, getSelectedQnADetail, insertQnA, updateSelectedQnADetail,searchItemDetail, isSelectedQnaVisibility, deleteQnA} = require('../controller/qnaController');
+const {adminQnaList, qnaDetail, itemDetail, wholeItemDetail, getSelectedQnADetail, insertQnA, updateSelectedQnADetail,searchItemDetail, isSelectedQnaVisibility, deleteQnA, deleteAdminQnA} = require('../controller/qnaController');
 const {adminLoginCheck, loginCheck, loginFilter} = require('../middleware/login');
 const {upload, uploadUpdate, uploadDelete} = require('../middleware/imageHandler');
 
@@ -16,5 +16,6 @@ router.post('/updateselectedqnadetail',loginCheck, uploadUpdate, updateSelectedQ
 router.post('/searchitemdetail/:item_id', searchItemDetail);
 router.post('/isselectedqnavisibility', loginFilter, isSelectedQnaVisibility); 
 router.post('/deleteqna', loginCheck, uploadDelete, deleteQnA); 
+router.post('/deleteAdminqna', adminLoginCheck, uploadDelete, deleteAdminQnA); 
 
 module.exports = router;

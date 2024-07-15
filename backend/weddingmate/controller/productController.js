@@ -163,7 +163,7 @@ exports.AddBox = async (req, res) => {
     const result = await db(query, [user_id, box_name]);
 
     const query2 = `
-    SELECT * FROM box where user_id = ?;
+    SELECT * FROM box where user_id = ? and box_ordered = 'F';
   `;
     const result2 = await db(query2, [user_id]);
 
