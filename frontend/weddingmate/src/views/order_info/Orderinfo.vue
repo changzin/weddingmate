@@ -42,9 +42,9 @@
                     <tbody v-for="(boxItem,index) in boxItemList" :key="index" >
                         <tr class="order_info_td_line">
                             <td class="order_info_td col-7">{{ boxItem.item_name }}</td>
-                            <td class="col-2">{{ boxItem.item_detail_type }}</td>
+                            <td class="col-2">{{ getClass(boxItem.item_detail_type) }}</td>
                             <td class="col-1">{{ (boxItem.box_item_quantity) ? boxItem.box_item_quantity : 1 }}개</td>
-                            <td class="col-2">{{ this.$numberFormat(boxItem.item_price) }}원</td>
+                            <td class="col-2">{{ this.$numberFormat(boxItem.box_item_total_price) }}원</td>
                         </tr>
                     </tbody>
                 </table>
@@ -192,6 +192,8 @@
         }
         for(let i = 0; i < this.boxItemList.length; i++){
           this.order_info.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
+          let discountedPrice = Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)))
+          this.boxItemList[i].box_item_total_price -= discountedPrice;
         }
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;
       },
@@ -252,6 +254,76 @@
         if(hp == ""){		return true;	}	
         const phoneRule = /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/;	
         return phoneRule.test(hp);
+      },
+      getClass(item) {    
+        // 웨딩홀
+        if (item === "hall") {
+          return "웨딩홀"
+        }
+        // 드레스
+        else if (item === "dress") {
+          return "드레스"
+        }
+        // 스튜디오
+        else if (item === "studio") {
+          return "스튜디오";
+        }
+        // 메이크업
+        else if (item === "makeup") {
+          return "메이크업";
+        }
+        // 스드메
+        else if (item === "sdm_package") {
+          return "스드메";
+        }
+        // 예복
+        else if (item === "giving_dress") {
+          return "예복";
+        }
+        // 예복
+        else if (item === "giving_item") {
+          return "예물";
+        }
+        // 가전
+        else if (item === "giving_mechine") {
+          return "가전";
+        }
+        // 혼수 패키지
+        else if (item === "giving_package") {
+          return  "혼수패키지";
+        }
+        // 본식스냅
+        else if (item === "snap") {
+          return "본식스냅";
+        }
+        // 영상
+        else if (item === "video") {
+          return "영상";
+        }
+        // 부케
+        else if (item === "flower") {
+          return "부케";
+        }
+        // 연주
+        else if (item === "music") {
+          return "연주"
+        }
+        // 사회자
+        else if (item === "mc") {
+          return "사회자"
+        }
+        // 웨딩슈즈
+        else if (item === "shoes") {
+          return "웨딩슈즈"
+        }
+        // 답례품
+        else if (item === "gift") {
+          return "답례품"
+        }
+        // 청첩장
+        else if (item === "letter") {
+          return "청첩장"
+        }
       }
       
     },

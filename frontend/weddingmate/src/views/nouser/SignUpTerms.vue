@@ -7,29 +7,48 @@
 
         <div class="row justify-content-center">
             <div class="term_box term_all_checkbox">
-                <form class="terms_form d-flex justify-content-start" @click="termsOne = true; termsTwo = true;">
-                    <input type="checkbox" class="terms_checkbox" v-model="termsAll">
+                <form class="terms_form d-flex justify-content-start" @click="clickWholeCheck();">
+                    <input type="checkbox" class="terms_checkbox" v-model="termsAll" :disabled="!seeTerms">
                     <span class="form-label">전체 동의</span>
+                    <span class="terms_little_text" style="margin-left:10px;">(약관을 읽으셔야 동의가 가능합니다.)</span>
                 </form>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="term_box term_little_checkbox">
                 <form class="d-flex justify-content-start">
-                    <input type="checkbox" class="terms_checkbox" v-model="termsOne">
-                    <label class="terms_checkbox_text form-label">만 14세 이상입니다</label>
+                    <input type="checkbox" class="terms_checkbox" v-model="termsOne" :disabled="!seeTerms">
+                    <label class="terms_checkbox_text form-label">개인정보 수집 동의</label>
                     <span class="terms_little_text">(필수)</span>
-                    <a class="terms_little_text terms_link"  @click="this.hideOne = !this.hideOne">보기 ></a>
+                    <a class="terms_little_text terms_link"  @click="this.hideOne = !this.hideOne; seeTerms=true;">약관 보기 ></a>
                 </form>
             </div>
         </div>
         <div class="row justify-content-center">
-            <div class="terms_detail term_box"  v-if="!hideOne">
+            <div class="terms_detail" style="height:390px; width:450px;"  v-if="!hideOne">
                 <div class="d-flex justify-content-start">
                     <div class="terms_detail_title"><span>약관 제목</span></div>
                 </div>
                 <div class="d-flex justify-content-start">
-                    <div class="terms_detail_little">약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역</div>
+                    <div class="terms_detail_little">
+                        <pre>
+1. 수집하는 항목 
+    - 성명, 아이디, 비밀번호, 주소, 이메일
+2. 수집 목적 
+    - 성명, 아이디, 비밀번호, 주소 : 서비스 이용에 따른 민원사항의 
+      처리를 위한 본인식별
+    - 이메일 : 회원 인증, 본인식별, 고지사항 전달, 본인 의사 확인, 
+      불만처리 등 의사소통 경로 확보, 새로운 원문이나 서비스, 이벤트 
+      정보 등 최신 정보 안내
+3. 보유 및 이용기간
+    - 회원탈퇴 또는 동의철회 시 지체없이 파기하거나 법령에 따른 
+      보존기간 이후 파기
+    - 부정이용기록은 회원탈퇴 1년 보관 후 파기
+
+* 위 개인정보 수집 및 이용 동의에 대해 거부할 권리가 있습니다. 
+  그러나 동의를 거부할 경우에는 회원가입이 불가합니다.
+                        </pre>                        
+                    </div>
                 </div>
             </div>
         </div>
@@ -37,30 +56,19 @@
             <div class="term_box term_little_checkbox">
                 <form class="d-flex justify-content-start">
                     <input type="checkbox" class="terms_checkbox" v-model="termsTwo">
-                    <label class="terms_checkbox_text form-label">만 14세 이상입니다</label>
+                    <label class="terms_checkbox_text form-label">만 18세 이상입니다</label>
                     <span class="terms_little_text">(필수)</span>
-                    <a class="terms_little_text terms_link" @click="this.hideTwo = !this.hideTwo">보기 ></a>
                 </form>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="terms_detail term_box" v-if="!hideTwo">
-                <div class="d-flex justify-content-start">
-                    <div class="terms_detail_title"><span>약관 제목</span></div>
-                </div>
-                <div class="d-flex justify-content-start">
-                    <div class="terms_detail_little">약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역 약관 상세내역</div>
-                </div>
             </div>
         </div>
 
         <div class="row justify-content-center">
-            <div class="d-flex justify-content-between" style="padding: 0px 490px; margin-top:15px;">
+            <div class="d-flex justify-content-between" style="padding: 0px 510px; margin-top:15px;">
                 <button class="terms_button_black" @click="this.$router.push({path: '/userlogin'})">취소</button>
                 <button class="terms_button" @click="this.$router.push({path: '/signup', query: {type: 'local'}})" v-bind:disabled="!termsAll">다음으로</button>
             </div>
         </div>
-        <div class="row justify-content-center" style="margin-bottom: 200px;">
+        <div class="row justify-content-center" style="margin-bottom: 100px;">
             <div class="d-flex justify-content-center">
             </div>
         </div>
@@ -76,6 +84,7 @@ export default{
             hideTwo: true,
             termsOne: false,
             termsTwo: false,
+            seeTerms:false,
             user: {}
         }
     },
@@ -84,6 +93,18 @@ export default{
         if (this.user){
             alert("로그인 상태입니다. 메인 페이지로 이동합니다.")
             this.$router.push({path: '/'});   
+        }
+    },
+    methods: {
+        clickWholeCheck(){
+            if ((this.termsOne && this.termsTwo) || (!this.termsOne && !this.termsTwo) && this.seeTerms) {
+                this.termsOne = !this.termsOne;
+                this.termsTwo = !this.termsTwo;
+            } 
+            else if (this.seeTerms){
+                this.termsOne = true; 
+                this.termsTwo = true;
+            }
         }
     },
     computed: {
@@ -120,6 +141,7 @@ export default{
     color: #555555;            
 }
 .terms_little_text{
+    margin-top:3px;
     font-size: 16px;
     color: #555555
 }
@@ -158,30 +180,36 @@ export default{
 }
 
 .terms_button{
-    width: 160px;
-    height: 60px;
+    width: 120px;
+    height: 45px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 20px;
+    font-size: 16px;
     color: #FFFFFF;
     background-color: #F6C9CA;
 }
 
 .terms_button_black{
-    width: 160px;
-    height: 60px;
+    width: 120px;
+    height: 45px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 22px;
+    font-size: 16px;
     color: #FFFFFF;
-    background-color: #333333;
+    background-color: #888888;
 }
 .terms_form{
     padding: 30px 0px 0px 20px;
 }
 .form-label{
     margin-left: 10px;
+}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+pre {
+
+  font-family: Noto Sans KR, sans-serif, Avenir, Helvetica, Arial;
+  
 }
 </style>

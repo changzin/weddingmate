@@ -329,6 +329,7 @@ export default {
           alert("신고 완료");
           this.isVisibleReport = false;
         }
+        this.reportContent = "";
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
@@ -533,6 +534,7 @@ export default {
   color: #333;
   /* line-height: 1.5; */
   text-align: left; /* 텍스트를 왼쪽 정렬 */
+  word-break: break-all;
 }
 
 .reviewlist_review-section_title-div {

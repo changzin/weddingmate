@@ -413,25 +413,25 @@ export default{
     height: 70px;
 }
 .sign_up_button{
-    width: 310px;
-    height: 78px;
+    width: 120px;
+    height: 45px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 16px;
     color: #FFFFFF;
     background-color: #333333;
-    margin-right: 18px;
 }
 .sign_up_button_last{
-    width: 310px;
-    height: 78px;
+    width: 120px;
+    height: 45px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 16px;
     color: #FFFFFF;
     background-color: #F6C9CA;
+    margin-left: 30px;
 }
 .sign_up_little_text{
     margin-top:10px;
