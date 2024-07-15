@@ -246,7 +246,7 @@ export default {
         const response = await this.$api(
           `/product/list/${this.itemType}?page=${this.page}&keyword=${this.searchTitle}`
         );
-
+        console.log(response);
         const productData = response.data;
         const maxPage = response.maxPage;
 

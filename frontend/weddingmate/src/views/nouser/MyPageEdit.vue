@@ -105,7 +105,7 @@
             <div class="row sign_up_partition"></div>
             <div class="row justify-content-center" style="margin-bottom:200px;">
                 <div class="d-flex justify-content-center">
-                    <button class="sign_up_button">취소</button>
+                    <button class="sign_up_button" @click="this.$router.go(-1)">취소</button>
                     <button class="sign_up_button_last" @click="editUser();">
                         정보 수정
                     </button>
