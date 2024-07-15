@@ -224,7 +224,6 @@ export default {
       immediate: true,
       handler() {
         this.page = 1;
-        this.searchTitle = "";
         this.fetchProductListData();
       },
     },
