@@ -1,4 +1,5 @@
 <template>
+<div>
     <MateHeader/>
     <div class="container login_container" style="margin-bottom:200px;">
         <div class="row justify-content-center" style="margin-top:200px;">
@@ -72,6 +73,7 @@
         
     </div>
     <MateFooter />
+</div>
 </template>
 
 <script>
