@@ -1,13 +1,9 @@
 <template>
     <div>
-    <MateHeader />
-      <div class="fix-width">
-        <!-- 헤더 -->
-        
-        <!-- 본문 -->
+      <div>
         <div class="container receipt_container">
             <div class="row justify-content-center">
-                <div class="receipt_title">
+                <div class="font-title">
                     구매 영수증
                     <hr class="receipt_hr">
                 </div>
@@ -55,37 +51,24 @@
                     <hr class="receipt_hr">
                     <div>
                         <div class="receipt_body1">
-                            <p>﹒구매 영수증은 세금계산서 등 세무상 증빙서류로 활용할 수 없으며, 거래내역 및 거래금액을
-                                 확인 하는 용도로만 사용 가능합니다. 
+                            <p>﹒구매 영수증은 세금계산서 등 세무상 증빙서류로 활용할 수 없으며,거래내역 및 거래금액을
+                                  확인 하는 용도로만 &nbsp; &nbsp; 사용 가능합니다. 
                             </p>
                         </div>
                 </div>
-                <button type="submit" class="receipt_botten" @click="this.$router.go(-1);">
-                    돌아가기
+                <button type="submit" class="receipt_botten" @click="closeReceipt();">
+                    닫기
                 </button>
+                </div>
             </div>
-        </div>
-    </div>
-             
-
-           
-         
-        <!-- 푸터 -->
-        
+        </div>        
       </div>
-      <MateFooter />
     </div>
-    </template>
+</template>
     
     
 <script>
     export default {
-    // props: {
-    // order_id: {
-    //   type: String,
-    //   required: true,
-    //     },
-    // },
     data() {
         return {
         boxItemList : [],
@@ -102,16 +85,6 @@
         order_code: null
         };
     },
-    async created(){
-       
-        // await this.makeOrder();
-    },
-    // props: {
-    //     order_info_id: {
-    //     type: String,
-    //     required: true,
-    //     }
-    // },
     computed:{
     },
     mounted(){
@@ -119,14 +92,13 @@
         //  this.makeOrder();
     },
     methods: {
-        // 헤더
+      
         async getReceiptList(){
             try{
                 // URL 파라미터 추가 
                 const requestBody = {
                     access_token: this.$getAccessToken(),
                     orderId : this.$route.params.orderId,
-                    box_id :this.box_id
                 }
                 const response = await this.$api(`mypage/payment/receipt`,requestBody,"POST")
                 this.receipt = response.receiptList;
@@ -135,42 +107,46 @@
             } catch(error){
                 console.log(error);
             }
-        },
-        makeOrderInfo(){
-            for(let i = 0; i < this.boxItemList.length; i++){
-            this.order_total_price += this.boxItemList[i].box_item_total_price;
+        }, 
+        async closeReceipt(){
+            try{
+                window.close()
+            }catch(err){
+                console.log(err);
             }
-
-            for(let i = 0; i < this.boxItemList.length; i++){
-            this.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
-            }
-            // this.order_price = this.order_total_price - this.order_sale_price;
-
-            this.show_order_sale_price = this.$numberFormat(this.order_sale_price);
-            this.show_order_total_price = this.$numberFormat(this.order_total_price);
-            // this.show_order_price = this.$numberFormat(this.order_price);
-        },
+        }
     }
-    }
+}
     </script>
     <style scoped>
-     .receipt_container{
-        margin-top: 30px;
-        /* background-color: #f5f5f5; */
-        width: 952px;
-        min-height: 896px;
+    @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+    div{
+    font-family: 'Noto Sans KR', sans-serif;
+        font-size: 16px;
+        color:#555555;
     }
-    .receipt_title{
-        margin-top: 48px;
-        margin-bottom: 10px;
-        text-align: center;
-        font-size: 30px;
-        font: bold;
+    /* font */
+    .font-title{
+    margin-top: 48px;
+    display: grid;
+    place-items: center;
+    color: #333333;
+    font-size: 24px;
+    font-weight: bold;
+    }
+    .font-bar{
+    color:#888888;
+}
+     .receipt_container{
+        /* margin-top: 30px; */
+        /* background-color: #f5f5f5; */
+        width: 888px;
+        max-height: 650;
     }
     .receipt_hr{
         margin-top: 47px;
-        margin-left: 27px;
-        max-width: 904px;
+        margin-left: 10px;
+        max-width: 720px;
         height: 2px;
         background-color: #888888;
         border: none;
@@ -180,59 +156,52 @@
         background-color: #FFFFFF ;
         margin-top: 0px;
         margin-left: 0px;
-        width: 959px;
-        min-height: 742px;
+        width: 800px;
+        max-height: 742px;
         padding: 0px;
     }
     .receipt_category1{
-        font-size: 20px;
-        margin-top: 40px;
+        font-size: 16px;
+        margin-top: 30px;
         margin-left: 30px;
-        padding-left:20px;
+        padding-left:16px;
         color: #888888;
     }
     .receipt_category2{
-        font-size: 20px;
+        font-size: 16px;
         margin-left: 27px;
-        margin-top: 40px;
-        padding-left:20px;
+        margin-top: 30px;
+        padding-left:16px;
         color: #888888;
     }
     .receipt_number{
         text-align: end;
-        margin-top: 44px;
+        margin-top: 30px;
         margin-right: 28px;
         color: #888888;
-        font-size: 24px
+        font-size: 16px
     }
     .receipt_date{
         text-align: end;
-        margin-top: 44px;
+        margin-top: 30px;
         margin-right: 28px;
         width: 155px;
-        font-size: 24px;
+        font-size: 16px;
         color: #888888;
     }
     .receipt_item_name{
         text-align: end;
-        margin-top: 40px;
+        margin-top: 30px;
         margin-right: 28px;
         color: #888888;
-        font-size: 24px
+        font-size: 16px
     }
     .receipt_total{
         text-align: end;
-        margin-top: 40px;
+        margin-top: 30px;
         margin-right: 28px;
         color: #888888;
-        font-size: 24px
-    }
-    .receipt_total{
-        text-align: end;
-        margin-top: 40px;
-        margin-right: 28px;
-        /* color: #888888; */
-        font-size: 24px
+        font-size: 16px
     }
     .receipt_total{
         font-weight: bold;
@@ -240,19 +209,19 @@
         margin-top: px;
         margin-right: 28px;
         color: #FF481E;
-        font-size: 24px;
+        font-size: 16px;
     }
     .receipt_company{
         text-align: end;
         margin-top: 40px;
         margin-right: 28px;
-        font-size: 24px;
+        font-size: 16px;
         color: #FF481E;
     }
     .receipt_body1{
         margin-top: 12px;
         margin-left: 32px;
-        width: 850px;
+        width: 650px;
         font-size: 14px;
         /* color: #88888; */
     }
@@ -260,17 +229,17 @@
         margin-top: 2px;
         margin-left: 80px;
         width: 820px;
-        font-size: 20px;
+        font-size: 16px;
         /* color: #888888; */
     }
     .receipt_botten{
         border: none;
         border-radius: 12px;
-        margin-top: 70px;
-        margin-left: 400px;
+        margin-top: 50px;
+        margin-left: 300px;
         margin-bottom: 23px;
-        width: 200px;
-        height: 60px;
+        width: 120px;
+        height: 40px;
         background-color: #F6C9CA;
         color: #FFFFFF;
         font-size: 20px;

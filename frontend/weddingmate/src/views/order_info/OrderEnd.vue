@@ -1,5 +1,5 @@
 <template>
-    <div class="fix-width">
+    <div>
       <!-- 헤더 -->
       <MateHeader />
   
@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="row justify-content-center">
-            <button class="order_info_button2" style="padding-bottom:25px;" @click="makeOrder();">
+            <button class="order_info_button2" style="padding-bottom:25px;" @click="this.$router.push({path:'/'})">
                 메인으로
             </button>
         </div>  
@@ -42,36 +42,13 @@
                     <div style="width:200px; padding-left: 30px; padding-top:15px;">최종 금액</div>
                     <div style="width:400px; padding-top:15px;">{{this.show_order_price}}원</div>
                 </div>
-                
             </div>
         </div>  
     </div>    
-          
-      <!-- 푸터 -->
-      <footer class="common__footer">
-        <div class="common__footer-content">
-          <nav class="common__footer-nav">
-            <a href="#">회사소개</a> | <a href="#">서비스이용약관</a> |
-            <a href="#">개인정보 취급방침</a> | <a href="#">공지사항</a> |
-            <a href="#">제휴문의</a> |
-            <a href="#">광고문의</a>
-          </nav>
-          <div class="common__footer-details">
-            <p style="margin-bottom: 0px">
-              (주)웨딩메이트 주소: 서울시 서대문구 개인정보 대표: 이창진 전화:
-              02-123-1234 팩스: 02-111-2222
-            </p>
-  
-            <p>
-              해당 사이트에서 판매되는 모든 물품 및 모든 민원에 대한 책임은
-              민원담당자에게 있습니다. 민원담당자: 강문정
-            </p>
-          </div>
-        </div>
-      </footer>
+    <MateFooter />
     </div>
   </template>
-  <MateFooter />
+  
   <script>
   export default {
     data() {

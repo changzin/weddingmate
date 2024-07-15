@@ -280,7 +280,7 @@ this.itemTnImage<template>
           <div class="d-flex justify-content-center admin_item_add_big_gap" style="margin-top: 100px;">
               <button type="button" class="admin_item_add_cancel_button" @click="this.$router.push({path: '/admin/itemlist'})" >취소</button>
               <button type="button " class="admin_item_add_delete_button" @click="deleteItem(this.$route.params.itemId)" style="margin-left:50px;">상품 삭제</button>
-              <button type="button" class="admin_item_add_ok_button" style="margin-left:50px;" @click="this.canUpdate=false; updateItem();" v-if="canUpdate">수정 완료</button>
+              <button type="button" class="admin_item_add_ok_button" style="margin-left:50px;" @click="updateItem();" v-if="canUpdate">수정 완료</button>
               <button type="button" class="admin_item_add_ok_button" style="margin-left:50px;" @click="this.canUpdate = true" v-if="!canUpdate">수정</button>
           </div>
       </div>
@@ -436,7 +436,13 @@ methods: {
         prev_item_detail_image_path: this.prevItemDetailImagePath,
         prev_item_tn_image_path: this.prevItemTnImagePath
       }
+      console.log(requestBody);
+      if (!this.verifyItemForm()){
+          alert("입력 양식이 올바르지 않습니다.\n값을 입력하지 않았거나, 잘못된 값이 입력되었습니다.")
+          return;
+        }
       const result = await this.$api("/product/update", requestBody, "POST");
+      this.canUpdate=false; 
       if (result.status == 200){
         alert("상품 수정 완료했습니다.")
       }
@@ -563,7 +569,103 @@ methods: {
     catch(err){
       console.log(err);
     }
-  }
+  },
+  verifyItemForm(){
+      console.log("---------------------할2인");
+      if(!this.itemType || !this.itemName || !this.itemFactoryName){
+        return false;
+      }
+      console.log("---------------------할인");
+      if(!Number.isInteger(Number(this.itemPrice)) || !this.itemPrice || Number(this.itemPrice) == 0){
+        return false;
+      }
+      if(!Number.isInteger(Number(this.itemDiscountRate)) || Number(this.itemDiscountRate) < 0 || Number(this.itemDiscountRate) > 100){
+        return false;
+      }
+      console.log("---------------------", this.itemType);
+      if (this.itemType=='giving_mechine' || this.itemType=='giving_package' || this.itemType=='video' || this.itemType == 'mc' || this.itemType=='letter'){
+        console.log(this.itemDetailList.length);
+        if (this.itemDetailList.length != 1){
+          return false;
+        }
+      }
+      else{
+        if(!this.verifyItemDetailList(this.itemType)){
+          return false;
+        }
+      }
+      return true;
+    },
+    verifyItemDetailList(itemType){
+      let verifyList = [];
+      if (itemType == 'hall'){
+        verifyList.push('item_detail_size');
+        verifyList.push('item_detail_ticket');
+        verifyList.push('item_detail_loc');
+        verifyList.push('item_detail_local');
+      }
+      else if (itemType=='sdm_package'){
+        verifyList.push('item_detail_quality');
+        verifyList.push('item_detail_makeup');
+        verifyList.push('item_detail_local');
+      }
+      else if (itemType=='studio'){
+        verifyList.push('item_detail_quality');
+        verifyList.push('item_detail_local');
+      }
+      else if (itemType=='dress'){
+        verifyList.push('item_detail_size');
+        verifyList.push('item_detail_color');
+        verifyList.push('item_detail_quantity');
+      }
+      else if (itemType=='makeup'){
+        verifyList.push('item_detail_makeup');
+        verifyList.push('item_detail_quality');
+      }
+      else if (itemType=='giving_dress'){
+        verifyList.push('item_detail_size');
+        verifyList.push('item_detail_color');
+        verifyList.push('item_detail_quantity');
+      }
+      else if (itemType == 'giving_item'){
+        verifyList.push('item_detail_kind');
+      }
+      else if (itemType == 'snap'){
+        verifyList.push('item_detail_quality');
+      }
+      else if (itemType == 'flower'){
+        verifyList.push('item_detail_flower_life');
+        verifyList.push('item_detail_color');
+        verifyList.push('item_detail_kind');
+      }
+      else if (itemType == 'music'){
+        verifyList.push('item_detail_quality');
+      }
+      else if (itemType == 'shoes'){
+        verifyList.push('item_detail_size');
+        verifyList.push('item_detail_color');
+        verifyList.push('item_detail_heel_height');
+        verifyList.push('item_detail_quantity');
+      }
+      else{
+        return false;
+      }
+
+      for(let i in this.itemDetailList){
+        for(let j in verifyList){
+          const verifyData = this.itemDetailList[i][verifyList[j]];
+          if (!verifyData){
+            return false;
+          }
+          console.log(verifyList[j])
+          if (verifyList[j] == 'item_detail_quantity' && !Number.isInteger(Number(verifyData))){
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
 }
 }
 </script>

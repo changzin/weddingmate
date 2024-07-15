@@ -4766,7 +4766,7 @@ export default {
               box_id: this.selectedBoxId,
               item_detail_id: this.selectedItemDetailId,
               box_item_quantity: this.quantity,
-              box_item_total_price: this.finally_price,
+              box_item_total_price:  this.productDetail.item_price,
               box_item_schedule_start: this.$dateFormat(this.dateRange.start),
               box_item_schedule_end: this.$dateFormat(this.dateRange.end),
             },
@@ -4963,8 +4963,9 @@ export default {
       if (this.reportContent == "") {
         alert("신고내용을 입력해주세요");
       }
-
+      
       try {
+       
         const result = await this.$api(
           "/review/reviewreport",
           {
@@ -4974,6 +4975,7 @@ export default {
           },
           "POST"
         );
+        this.reportContent = "";
         if (result.status == 200) {
           alert("신고 완료");
           this.isVisibleReport = false;
@@ -5442,6 +5444,7 @@ export default {
   font-size: 14px;
   color: #333;
   line-height: 1.5;
+  word-break: break-all;
 }
 
 .productdetail_review-section_title-div {
@@ -5537,6 +5540,7 @@ export default {
   display: flex;
   gap: 20px;
   align-items: center;
+  height:75px;
   /* justify-content: center; */
 }
 

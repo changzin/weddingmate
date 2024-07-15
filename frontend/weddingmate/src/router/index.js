@@ -13,6 +13,7 @@ import Orderinfo from '../views/order_info/Orderinfo.vue'
 import UserLogin from '../views/nouser/UserLogin.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
+import FindPassword from '../views/nouser/FindPassword.vue'
 import MemberList from '../views/admin/MemberList'
 import AdminAnswer from '../views/admin/AdminAnswer.vue'
 import AdminItemAdd from '../views/admin/AdminItemAdd.vue'
@@ -24,7 +25,7 @@ import AdminAnalysis from '../views/admin/AdminAnalysis.vue'
 import MySchedule from '../views/mypage/MySchedule.vue'
 import TempVue from '../views/tempVue.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
-
+import LoginBridge from '../views/nouser/LoginBridge.vue'
 import MyPageMain from '../views/mypage/MyPageMain.vue'
 import MyScheduleAdd from '../views/mypage/MyScheduleAdd.vue'
 import MyBookMark from '../views/mypage/MyBookmark.vue'
@@ -246,6 +247,16 @@ const routes = [
     path: '/mypage/edit',
     name: 'MyPageEdit',
     component: MyPageEdit
+  },
+  {
+    path: '/findpassword',
+    name: 'FindPassword',
+    component: FindPassword
+  },
+  {
+    path: '/loginbridge',
+    name: 'LoginBridge',
+    component: LoginBridge
   }
   
 ]

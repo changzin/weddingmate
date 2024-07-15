@@ -1,5 +1,5 @@
 <template>
-  <div class="fix-width">
+  <div>
     <!-- 헤더 -->
     <MateHeader />
 
@@ -17,8 +17,11 @@
                 <v-date-picker
                   v-model="dateRange"
                   is-range
+                  :attributes="attributes"
                   :popover="{ visibility: 'focus' }"
                   :input-props="{
+                    start: { placeholder: 'Start' },
+                    end: { placeholder: 'End' },
                     start: { placeholder: 'Start' },
                     end: { placeholder: 'End' },
                   }"
@@ -66,9 +69,10 @@
         </div>
         <div class="container-middle-schedule">
           <div class="content-schedule-title">일정 목록</div>
+          <div :class="scheduleResult.length === 0 ? 'no_data' : 'invisible'">등록된 일정이<br>없습니다</div>
           <div
             class="content-schedule-text"
-            v-for="(schedule, index) in ScheduleResult"
+            v-for="(schedule, index) in scheduleResult"
             :key="index"
           >
             <div class="font-schedule-date">
@@ -94,22 +98,24 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import "./mypage.css";
 
 export default {
   name: "SearchComponent",
   data() {
     return {
-      ScheduleResult: {},
-
-      // 캘린더
-      dateRange: {
+      scheduleResult: {},
+      // 캘린더 
+      dateRange: [{
         start: null,
         end: null,
-      },
+      },],
       schedule_title: "",
       calendar_id: 0,
-    };
+      attributes: null,
+      userScheduleShowList: []
+      };
   },
 
    async beforeRouteEnter(to, from, next) {
@@ -140,21 +146,27 @@ export default {
           { access_token: this.$getAccessToken() },
           "POST"
         );
-        this.ScheduleResult = result.scheduleList;
+        this.scheduleResult = result.scheduleList;
         this.calendar_id = result.calendar_id;
-        console.log("calendar_id : ", this.calendar_id);
-
-        if (this.ScheduleResult.length <= 0) {
+        if (this.scheduleResult.length <= 0) {
           alert("등록된 스케쥴이 없습니다 스케쥴을 등록해주세요")
         }
-
-
-
-        if (this.ScheduleResult) {
-          console.log(
-            "ScheduleResult: ",
-            JSON.parse(JSON.stringify(this.ScheduleResult))
-          );
+        console.log(this.scheduleResult);
+        if (this.scheduleResult) {
+            this.userScheduleShowList = [];
+            for(let i of this.scheduleResult){
+              let startDate = this.formatDate(i.schedule_start);
+              let endDate = this.formatDate(i.schedule_end);
+              console.log(startDate, endDate);
+              this.userScheduleShowList.push([startDate, endDate]);
+            }
+            console.log(this.userScheduleShowList);
+            this.attributes = ref([
+              {
+                highlight: 'green',
+                dates: this.userScheduleShowList
+              },
+            ])
         } else {
           console.log("fail");
         }
@@ -179,6 +191,10 @@ export default {
         alert("모든 필드를 입력하세요.");
         return;
       }
+      if (this.schedule_title == "") {
+          alert("일정 제목을 입력해 주세요");
+          return;
+        } 
 
       const formattedStartDate = this.formatDate(this.dateRange.start);
       const formattedEndDate = this.formatDate(this.dateRange.end);
@@ -198,7 +214,8 @@ export default {
         if (result.status == 200) {
           alert("완료됨");
           this.fetchScheduleListData();
-        }
+          this.schedule_title = "";
+        } 
       } catch (error) {
         console.error(
           "ProductDetail.vue fetchData Error fetching product data:",
@@ -216,10 +233,8 @@ export default {
       );
 
       if(result.status == 200) {
-        
         alert("성공적으로 지웠습니다");
-    await this.fetchScheduleListData();
-
+        await this.fetchScheduleListData();
       }
 
     },
@@ -251,12 +266,7 @@ export default {
 <style scoped>
 @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
 
-.fix-width {
-  width: 1980px;
-  min-width: 1980px;
-  max-width: 1980px;
-  margin: 0 auto;
-}
+
 
 .qnalist_search-clear-button {
   background: none;
@@ -301,6 +311,17 @@ div {
 }
 
 /* div */
+
+.no_data{
+  text-align: center;
+  font-size: 30px;
+  color:#d3d3d3;
+  padding: 200px;
+  /* border: 1px solid red; */
+}
+.invisible{
+  display: none;
+}
 
 .container0 {
   min-width: var(--container-width);
@@ -548,7 +569,7 @@ div.nav-page {
   color: white;
   font-weight: bold;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   width: 100px;
   height: 40px;
 }

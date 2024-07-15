@@ -43,7 +43,7 @@
             <textarea
               class="qnawrite_input-title-content"
               v-model="form.content"
-              placeholder="문의 내용을 입력하세요"
+              placeholder="리뷰 내용을 입력하세요"
               required
             ></textarea>
             <button

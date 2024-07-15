@@ -100,7 +100,31 @@
                       
                     </div>
                     <div class="admin_review_review-section_title-div">
-                      <div class="admin_review_card-rating">{{makeStar(review.review_star)}}</div>
+                      <div class="admin_review_card-rating">
+                        <div class="rating">
+                          <label
+                            v-for="n in 10"
+                            :key="n"
+                            class="rating__label"
+                            :class="{
+                              half: n <= review.review_star * 2,
+                              filled: n <= review.review_star * 2,
+                              half_position: n % 2 !== 0,
+                              filled_position: n % 2 === 0,
+                            }"
+                          >
+                            <input
+                              type="radio"
+                              :id="'star' + n"
+                              class="rating__input"
+                              name="rating"
+                              :value="n"
+                              v-model="rating"
+                            hidden/>
+                            <div class="star-icon"></div>
+                          </label>
+                        </div>
+                      </div>
                       <div class="admin_review_review-section_date-div">{{this.$dateFormat(review.review_date)}}</div>
                     </div>
                     <img
@@ -488,6 +512,7 @@ export default {
   font-size: 14px;
   color: #333333;
   line-height: 1.5;
+  word-break: break-all;
 }
 
 .admin_review_review-section_title-div {
@@ -629,5 +654,27 @@ div.mypage-bottom{
     }
     .admin_qna_qna-table th {
       background-color: #f7f7f7;
+    }
+    .rating__label .star-icon {
+      width: 12px;
+      height: 24px;
+      display: block;
+      position: relative;
+      left: 0;
+      background-image: url("/src/views/review/star/emptyStar.svg");
+      background-repeat: no-repeat;
+    }
+    .rating__label.half .star-icon {
+      background-image: url("/src/views/review/star/filledStar.svg");
+    }
+
+    .rating__label.filled .star-icon {
+      background-image: url("/src/views/review/star/filledStar.svg");
+    }
+    .rating__label.half_position .star-icon {
+      background-position: left;
+    }
+    .rating__label.filled_position .star-icon {
+      background-position: right;
     }
 </style>

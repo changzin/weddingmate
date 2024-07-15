@@ -51,7 +51,6 @@ exports.receiptList = async(req, res)=>{
         console.log(req.body);
 
         const user_id = req.body.user_id;
-        const box_id = req.body.box_id
         const orderId = Number(req.body.orderId)
         // const order_info_name = v4();
         console.log(orderId)
@@ -79,7 +78,8 @@ exports.receiptList = async(req, res)=>{
         const responseBody ={
             status : 200,
             receiptList : receipt[0],
-            order_code: orderName[0]
+            order_code: orderName[0],
+            mesage : "MyreceiptList 조회 성공"
         }
         res.json(responseBody);
     }catch(error){
@@ -316,7 +316,7 @@ exports.qnaList = async (req, res) => {
         let responseBody = {};
 
         page = !page ? 0 :Number(page) - 1;
-        query ="SELECT qna_date, qna_title, qna_id FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
+        query ="SELECT qna_date, qna_title, qna_type, qna_id FROM qna WHERE user_id = ? LIMIT 15 OFFSET ?";
         result = await db(query, [user_id, (page * 15) ]);
 
         query ="SELECT COUNT (*) AS COUNT FROM qna WHERE user_id = ?";

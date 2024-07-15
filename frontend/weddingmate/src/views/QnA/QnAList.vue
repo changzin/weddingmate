@@ -300,16 +300,16 @@ export default {
     },
 
     formatQnaType(data) {
-      if (data == "delivery") {
+      if (data == "배송" && "delivery") {
         return "배송문의";
-      } else if (data == "cancel") {
+      } else if (data == "반품/취소" && "cancel" ) {
         return "반품/취소";
-      } else if (data == "item") {
+      } else if (data == "상품" && "item" ) {
         return "상품문의";
       } else {
         return "기타";
       }
-    },
+    }
   },
 };
 </script>

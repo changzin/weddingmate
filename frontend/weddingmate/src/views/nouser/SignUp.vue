@@ -142,7 +142,7 @@
             <div class="row sign_up_partition"></div>
             <div class="row justify-content-center" style="margin-bottom:200px;">
                 <div class="d-flex justify-content-center">
-                    <button class="sign_up_button">취소</button>
+                    <button class="sign_up_button" @click="this.$router.push({path: '/userlogin'})">취소</button>
                     <button class="sign_up_button_last" @click="signUp();">
                         <span v-if="userType=='local'">인증 요청</span>
                         <span v-if="userType!='local'">회원가입</span>
@@ -413,25 +413,25 @@ export default{
     height: 70px;
 }
 .sign_up_button{
-    width: 310px;
-    height: 78px;
+    width: 120px;
+    height: 45px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 16px;
     color: #FFFFFF;
     background-color: #333333;
-    margin-right: 18px;
 }
 .sign_up_button_last{
-    width: 310px;
-    height: 78px;
+    width: 120px;
+    height: 45px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 16px;
     color: #FFFFFF;
     background-color: #F6C9CA;
+    margin-left: 30px;
 }
 .sign_up_little_text{
     margin-top:10px;

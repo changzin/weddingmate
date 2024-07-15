@@ -19,7 +19,7 @@
                 <div class="col sign_up_right">
                 </div>
             </div>
-            <div class="row justify-content-center sign_up_emptycol" v-if="user.user_type=='local'">
+            <div class="row justify-content-center sign_up_emptycol">
                 <div class="col sign_up_left"></div>
                 <div class="col sign_up_middle">
                     <div class="sign_up_little_text sign_up_red" v-if="!userEmailVerify">올바르지 않은 이메일입니다.</div>
@@ -105,7 +105,7 @@
             <div class="row sign_up_partition"></div>
             <div class="row justify-content-center" style="margin-bottom:200px;">
                 <div class="d-flex justify-content-center">
-                    <button class="sign_up_button">취소</button>
+                    <button class="sign_up_button" @click="this.$router.go(-1)">취소</button>
                     <button class="sign_up_button_last" @click="editUser();">
                         정보 수정
                     </button>
@@ -311,25 +311,25 @@ export default{
     height: 70px;
 }
 .sign_up_button{
-    width: 310px;
-    height: 78px;
+    width: 120px;
+    height: 45px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 16px;
     color: #FFFFFF;
     background-color: #333333;
-    margin-right: 18px;
 }
 .sign_up_button_last{
-    width: 310px;
-    height: 78px;
+    width: 120px;
+    height: 45px;
     border: none;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 28px;
+    font-size: 16px;
     color: #FFFFFF;
     background-color: #F6C9CA;
+    margin-left: 30px;
 }
 .sign_up_little_text{
     margin-top:10px;
