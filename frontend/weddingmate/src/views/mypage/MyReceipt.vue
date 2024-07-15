@@ -126,7 +126,6 @@
                 const requestBody = {
                     access_token: this.$getAccessToken(),
                     orderId : this.$route.params.orderId,
-                    box_id :this.box_id
                 }
                 const response = await this.$api(`mypage/payment/receipt`,requestBody,"POST")
                 this.receipt = response.receiptList;
@@ -135,23 +134,9 @@
             } catch(error){
                 console.log(error);
             }
-        },
-        makeOrderInfo(){
-            for(let i = 0; i < this.boxItemList.length; i++){
-            this.order_total_price += this.boxItemList[i].box_item_total_price;
-            }
-
-            for(let i = 0; i < this.boxItemList.length; i++){
-            this.order_sale_price += Math.ceil((this.boxItemList[i].box_item_total_price * (this.boxItemList[i].item_discount_rate/100)));
-            }
-            // this.order_price = this.order_total_price - this.order_sale_price;
-
-            this.show_order_sale_price = this.$numberFormat(this.order_sale_price);
-            this.show_order_total_price = this.$numberFormat(this.order_total_price);
-            // this.show_order_price = this.$numberFormat(this.order_price);
-        },
+        },        
     }
-    }
+}
     </script>
     <style scoped>
      .receipt_container{

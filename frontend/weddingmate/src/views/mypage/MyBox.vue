@@ -110,16 +110,10 @@
 
     data() {
       return {
-        // 헤더
-        isVisible: false,
-        ismaintain: false,
         // 본문
         itemList:[],
-        page: 1,
-        maxPage: 0,
         boxId:{},
         iType:[],
-        categories: [],
         itemDetails:[],
         box_item_id:{},
         box_name : {},
@@ -130,12 +124,6 @@
         editingBoxName: false,
         //박스 이름 수정 모달창
         updateBoxModal: false,
-      itemTnImage: null,
-      itemTnImageExt: null,
-      itemMainImage: null,
-      itemMainImageExt: null,
-      itemDetailImage: null,
-      itemDetailImageExt: null,
       order_info:
           {
             "order_total_price": 0,
