@@ -292,6 +292,11 @@ export default {
     min-width: var(--container-width);      
 }
 .no_data{
+  margin-left: var(--container-margin-left);
+    margin-right: var(--container-margin-right);
+    margin-top: 100px;
+    display: grid;
+    width: var(--container-width); 
   text-align: center;
   font-size: 30px;
   color:#d3d3d3;

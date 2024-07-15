@@ -1,7 +1,7 @@
 <template>
   <div>
   <MateHeader />
-    <div class="fix-width">
+    <div>
       <!-- 헤더 -->
       
       <!-- 본문 -->
