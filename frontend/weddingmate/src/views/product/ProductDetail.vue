@@ -1,39 +1,3275 @@
 <template>
-  <div id="productdetail_app">
-    <div class="container-fluid px-0">
-      <div class="content">
-        <!-- 헤더 -->
-        <MateHeader />
-
-        <!-- 콘텐츠 섹션 시작 -->
-        <div class="productdetail_main_content">
-          <!-- 상품 상세 -->
-          <div class="productdetail_main_content-div">
-            <div class="col-md-6 productdetail_main_content-div-img_div">
-              <img
-                :src="this.$imageFileFormat(productDetail.item_main_image_path)"
-                class="img-fluid"
-                alt="Product Image"
-              />
+  <div>
+    <!-- 헤더 -->
+    <MateHeader />
+    <div class="content">
+      <!-- 콘텐츠 섹션 시작 -->
+      <div class="productdetail_main_content">
+        <!-- 상품 상세 -->
+        <div class="productdetail_main_content-div">
+          <div class="col-md-6 productdetail_main_content-div-img_div">
+            <img
+              :src="this.$imageFileFormat(productDetail.item_main_image_path)"
+              class="img-fluid"
+              alt="Product Image"
+            />
+          </div>
+          <div class="col-md-6">
+            <div class="productdetail_main_content_maker_div">
+              {{ productDetail.item_factory_name }}
             </div>
-            <div class="col-md-6">
-              <div class="productdetail_main_content_maker_div">
-                {{ productDetail.item_factory_name }}
+            <div class="productdetail_main_content_name_div">
+              {{ productDetail.item_name }}
+            </div>
+            <div>
+              <div class="main_content_starcount_div">
+                <!-- 별점 -->
+                <div class="rating">
+                  <label
+                    v-for="n in 10"
+                    :key="n"
+                    class="rating__label"
+                    :class="{
+                      half: n <= productDetail.item_star_rating * 2,
+                      filled: n <= productDetail.item_star_rating * 2,
+                      half_position: n % 2 !== 0,
+                      filled_position: n % 2 === 0,
+                    }"
+                  >
+                    <input
+                      type="radio"
+                      :id="'star' + n"
+                      class="rating__input"
+                      name="rating"
+                      :value="n"
+                      v-model="rating"
+                    />
+                    <div class="star-icon"></div>
+                  </label>
+                </div>
+                {{ productDetail.item_star_rating }}
               </div>
-              <div class="productdetail_main_content_name_div">
-                {{ productDetail.item_name }}
+              <div
+                class="productdetail_main_content_reviewcount_div"
+                type="button"
+                @click="goToReviewList"
+              >
+                전체 리뷰 수 : ({{ productDetail.item_review_count }})
               </div>
-              <div>
-                <div class="main_content_starcount_div">
-                  <!-- 별점 -->
+            </div>
+
+            <!-- 웨딩홀 -->
+            <div
+              v-if="isVisibleItemType('hall')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('hall'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 가격 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  ></div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+                <!-- 캘린더 -->
+                <div
+                  class="productdetail_cal collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      {{
+                        dateRange.start && dateRange.end
+                          ? formatDate(dateRange.start) +
+                            " ~ " +
+                            formatDate(dateRange.end)
+                          : "선택되지 않음"
+                      }}
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- 물건담기 -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 드레스 옵션 -->
+            <div
+              v-if="isVisibleItemType('dress')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+
+              <div class="productdetail_main_content_maximum_quantity_div">
+                <div>최대구매수량</div>
+                <div>{{ totalQuantity }}개</div>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form @submit.prevent>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 수량 선택에 따른 금액 표시 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  >
+                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
+                  </div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                <div
+                  :class="['productdetail_cal', selectedItemType_dress_custom]"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      {{
+                        dateRange.start && dateRange.end
+                          ? formatDate(dateRange.start) +
+                            " ~ " +
+                            formatDate(dateRange.end)
+                          : "선택되지 않음"
+                      }}
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+
+                <div
+                  class="box-div collapse"
+                  :class="{ show: showCustomOptions || allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 스튜디오 옵션 -->
+            <div
+              v-if="isVisibleItemType('studio')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('studio'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form @submit.prevent>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 수량 선택에 따른 금액 표시 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  >
+                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
+                  </div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="productdetail_cal collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      {{
+                        dateRange.start && dateRange.end
+                          ? formatDate(dateRange.start) +
+                            " ~ " +
+                            formatDate(dateRange.end)
+                          : "선택되지 않음"
+                      }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                <div
+                  :class="['productdetail_cal', selectedItemType_dress_custom]"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      2024년 12년 30일
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 메이크업 옵션 -->
+            <div
+              v-if="isVisibleItemType('makeup')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('makeup'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form @submit.prevent>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 수량 선택에 따른 금액 표시 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  >
+                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
+                  </div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+                <!-- 캘린더 -->
+                <div
+                  class="productdetail_cal collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      {{
+                        dateRange.start && dateRange.end
+                          ? formatDate(dateRange.start) +
+                            " ~ " +
+                            formatDate(dateRange.end)
+                          : "선택되지 않음"
+                      }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 견적함 -->
+
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 스드메 -->
+            <div
+              v-if="isVisibleItemType('sdm_package')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('sdm_package'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 가격 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  ></div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- 물건담기 -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 예복 -->
+            <div
+              v-if="isVisibleItemType('giving_dress')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('giving_dress'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+
+              <div class="productdetail_main_content_maximum_quantity_div">
+                <div>최대구매수량</div>
+                <div>{{ totalQuantity }}개</div>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form @submit.prevent>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 수량 선택에 따른 금액 표시 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  >
+                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
+                  </div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                <div
+                  :class="['productdetail_cal', selectedItemType_dress_custom]"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      {{
+                        dateRange.start && dateRange.end
+                          ? formatDate(dateRange.start) +
+                            " ~ " +
+                            formatDate(dateRange.end)
+                          : "선택되지 않음"
+                      }}
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+
+                <div
+                  class="box-div collapse"
+                  :class="{ show: showCustomOptions || allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 예물 -->
+            <div
+              v-if="isVisibleItemType('giving_item')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('giving_item'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+
+              <div class="productdetail_main_content_maximum_quantity_div">
+                <div>최대구매수량</div>
+                <div>{{ totalQuantity }}개</div>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form @submit.prevent>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 수량 선택에 따른 금액 표시 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  >
+                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
+                  </div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                <div
+                  :class="['productdetail_cal', selectedItemType_dress_custom]"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      2024년 12년 30일
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 가전 -->
+            <div
+              v-if="isVisibleItemType('giving_mechine')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('giving_mechine'),
+                ]"
+              > -->
+              <div
+                class="box-div collapse"
+                :class="{ show: allOptionsSelected }"
+              >
+                <div class="box-div_header">
+                  <div class="box-div_header_list">견적함 리스트</div>
+                </div>
+                <button
+                  class="box-div_item"
+                  v-for="(BoxItem, index) in BoxResultData"
+                  :key="index"
+                  :class="{ selected: selectedIndex === index }"
+                  @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                  type="button"
+                >
+                  {{ BoxItem.box_name }}
+                </button>
+                <div class="box-div_add">
+                  <div
+                    v-if="!isEditing"
+                    @click="startEditing"
+                    class="box-div_add-item"
+                  >
+                    견적함 이름을 입력하세요
+                  </div>
+                  <input
+                    v-else
+                    class="box-div_add-item"
+                    v-model="newBoxName"
+                    type="text"
+                    placeholder="견적함 이름을 입력하세요"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    @click="saveBoxName"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <div class="productdetail_button-container">
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="copyCurrentLink"
+                >
+                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                </button>
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="copyCurrentLink"
+                >
+                  <i class="fas fa-share-alt"></i>
+                </button>
+                <button
+                  class="productdetail_main-content_button-container_main-button"
+                  @click="insertItemIntoBox"
+                >
+                  물건담기
+                </button>
+              </div>
+            </div>
+
+            <!-- 혼수 패키지 -->
+            <div
+              v-if="isVisibleItemType('giving_package')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('giving_package'),
+                ]"
+              > -->
+              <div
+                class="box-div collapse"
+                :class="{ show: allOptionsSelected }"
+              >
+                <div class="box-div_header">
+                  <div class="box-div_header_list">견적함 리스트</div>
+                </div>
+                <button
+                  class="box-div_item"
+                  v-for="(BoxItem, index) in BoxResultData"
+                  :key="index"
+                  :class="{ selected: selectedIndex === index }"
+                  @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                  type="button"
+                >
+                  {{ BoxItem.box_name }}
+                </button>
+
+                <div class="box-div_add">
+                  <div
+                    v-if="!isEditing"
+                    @click="startEditing"
+                    class="box-div_add-item"
+                  >
+                    견적함 이름을 입력하세요
+                  </div>
+                  <input
+                    v-else
+                    class="box-div_add-item"
+                    v-model="newBoxName"
+                    type="text"
+                    placeholder="견적함 이름을 입력하세요"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    @click="saveBoxName"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <div class="productdetail_button-container">
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="saveToBookmark"
+                >
+                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                </button>
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="copyCurrentLink"
+                >
+                  <i class="fas fa-share-alt"></i>
+                </button>
+                <button
+                  class="productdetail_main-content_button-container_main-button"
+                  @click="insertItemIntoBox"
+                >
+                  물건담기
+                </button>
+              </div>
+            </div>
+
+            <!-- 본식스냅 -->
+            <div
+              v-if="isVisibleItemType('snap')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('snap'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form @submit.prevent>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 수량 선택에 따른 금액 표시 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  >
+                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
+                  </div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                <div
+                  :class="['productdetail_cal', selectedItemType_dress_custom]"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      2024년 12년 30일
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 영상 -->
+            <div
+              v-if="isVisibleItemType('video')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('video'),
+                ]"
+              > -->
+              <div
+                class="box-div collapse"
+                :class="{ show: allOptionsSelected }"
+              >
+                <div class="box-div_header">
+                  <div class="box-div_header_list">견적함 리스트</div>
+                </div>
+                <button
+                  class="box-div_item"
+                  v-for="(BoxItem, index) in BoxResultData"
+                  :key="index"
+                  :class="{ selected: selectedIndex === index }"
+                  @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                  type="button"
+                >
+                  {{ BoxItem.box_name }}
+                </button>
+
+                <div class="box-div_add">
+                  <div
+                    v-if="!isEditing"
+                    @click="startEditing"
+                    class="box-div_add-item"
+                  >
+                    견적함 이름을 입력하세요
+                  </div>
+                  <input
+                    v-else
+                    class="box-div_add-item"
+                    v-model="newBoxName"
+                    type="text"
+                    placeholder="견적함 이름을 입력하세요"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    @click="saveBoxName"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <div class="productdetail_button-container">
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="saveToBookmark"
+                >
+                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                </button>
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="copyCurrentLink"
+                >
+                  <i class="fas fa-share-alt"></i>
+                </button>
+                <button
+                  class="productdetail_main-content_button-container_main-button"
+                  @click="insertItemIntoBox"
+                >
+                  물건담기
+                </button>
+              </div>
+            </div>
+
+            <!-- 부케 -->
+            <div
+              v-if="isVisibleItemType('flower')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('flower'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 가격 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  ></div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- 물건담기 -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 연주 -->
+            <div
+              v-if="isVisibleItemType('music')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('music'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form @submit.prevent>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 수량 선택에 따른 금액 표시 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  >
+                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
+                  </div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                <div
+                  :class="['productdetail_cal', selectedItemType_dress_custom]"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      2024년 12년 30일
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 사회자 -->
+            <div
+              v-if="isVisibleItemType('mc')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('mc'),
+                ]"
+              > -->
+              <div
+                class="box-div collapse"
+                :class="{ show: allOptionsSelected }"
+              >
+                <div class="box-div_header">
+                  <div class="box-div_header_list">견적함 리스트</div>
+                </div>
+                <button
+                  class="box-div_item"
+                  v-for="(BoxItem, index) in BoxResultData"
+                  :key="index"
+                  :class="{ selected: selectedIndex === index }"
+                  @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                  type="button"
+                >
+                  {{ BoxItem.box_name }}
+                </button>
+
+                <div class="box-div_add">
+                  <div
+                    v-if="!isEditing"
+                    @click="startEditing"
+                    class="box-div_add-item"
+                  >
+                    견적함 이름을 입력하세요
+                  </div>
+                  <input
+                    v-else
+                    class="box-div_add-item"
+                    v-model="newBoxName"
+                    type="text"
+                    placeholder="견적함 이름을 입력하세요"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    @click="saveBoxName"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <div class="productdetail_button-container">
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="saveToBookmark"
+                >
+                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                </button>
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="copyCurrentLink"
+                >
+                  <i class="fas fa-share-alt"></i>
+                </button>
+                <button
+                  class="productdetail_main-content_button-container_main-button"
+                  @click="insertItemIntoBox"
+                >
+                  물건담기
+                </button>
+              </div>
+            </div>
+
+            <!-- 웨딩슈즈 -->
+            <div
+              v-if="isVisibleItemType('shoes')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('shoes'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 가격 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  ></div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- 물건담기 -->
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="copyCurrentLink"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 답례품 -->
+            <div
+              v-if="isVisibleItemType('gift')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('gift'),
+                ]"
+              > -->
+              <div
+                style="margin-top: 30px"
+                v-if="
+                  productDetail.item_discount_rate !== undefined &&
+                  productDetail.item_discount_rate !== null &&
+                  productDetail.item_price !== undefined &&
+                  productDetail.item_price !== null
+                "
+              >
+                <div class="productdetail_main_content_discount_div">
+                  {{ productDetail.item_discount_rate }}%
+                </div>
+                <div class="productdetail_main_content_origin_price_div">
+                  <span>
+                    {{ productDetail.item_price.toLocaleString() }}원
+                  </span>
+                </div>
+              </div>
+              <div class="productdetail_main_content_discount_price_div">
+                <span
+                  v-if="finally_price !== undefined && finally_price !== null"
+                >
+                  {{ finally_price.toLocaleString() }}원
+                </span>
+              </div>
+
+              <div class="productdetail_main_content_maximum_quantity_div">
+                <div>최대구매수량</div>
+                <div>{{ totalQuantity }}개</div>
+              </div>
+              <div class="productdetail_main_selectoption-div">옵션 선택</div>
+              <form @submit.prevent>
+                <div class="my-1">
+                  <select
+                    v-for="(optionGroup, index) in optionGroups"
+                    :key="index"
+                    class="form-select my-2"
+                    v-model="selectedOptions[index]"
+                    @change="onOptionChange(index)"
+                    :disabled="!isEnabled(index)"
+                    v-show="isVisible(index)"
+                  >
+                    <option selected disabled value="">선택</option>
+                    <option
+                      v-for="option in optionGroup.options"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                </div>
+                <!-- - + 수량 선택에 따른 금액 표시 -->
+                <div class="collapse" :class="{ show: allOptionsSelected }">
+                  <div class="productdetail_main-content_product-card">
+                    <div class="productdetail_main-content_product-detail p-3">
+                      {{ selectedOptions.join(" + ") }}
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center bg-light p-3"
+                    >
+                      <div class="quantity-control d-flex align-items-center">
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="decreaseQuantity"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          class="form-control text-center mx-2"
+                          v-model="quantity"
+                          readonly
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
+                          @click="increaseQuantity"
+                        >
+                          ＋
+                        </button>
+                      </div>
+                      <div class="font-weight-bold" required>
+                        {{ formattedTotalPrice }}원
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="productdetail_main-content_item_detail_quantity-div"
+                  >
+                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
+                  </div>
+                  <div class="productdetail_total-price-div">
+                    <div class="productdetail_total-price-div_state-div">
+                      총 금액 :
+                    </div>
+                    <div class="productdetail_total-price-div_price-div">
+                      {{ formattedTotalPrice }}원
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 맞춤 선택 후 캘린더 띄워주기-->
+                <div
+                  :class="['productdetail_cal', selectedItemType_dress_custom]"
+                >
+                  날짜 선택
+                  <div class="common-event_calendar">
+                    <div>
+                      <v-date-picker
+                        v-model="dateRange"
+                        is-range
+                        :popover="{ visibility: 'focus' }"
+                        :input-props="{
+                          start: { placeholder: 'Start' },
+                          end: { placeholder: 'End' },
+                        }"
+                      />
+                    </div>
+                    <div class="common-event_calendar_div">
+                      <label
+                        >Start
+                        {{
+                          dateRange.start
+                            ? formatDate(dateRange.start)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                      <label
+                        >End
+                        {{
+                          dateRange.end
+                            ? formatDate(dateRange.end)
+                            : "선택되지 않음"
+                        }}</label
+                      >
+                    </div>
+                    <button
+                      class="common-caldate_save-button"
+                      type="button"
+                      @click="saveEvent"
+                    >
+                      저장
+                    </button>
+                  </div>
+                  <div class="productdetail_cal-div_date-div">
+                    <div>선택된 날짜</div>
+                    <div class="productdetail_cal-div_date">
+                      2024년 12년 30일
+                    </div>
+                  </div>
+                </div>
+                <!-- 견적함 -->
+
+                <div
+                  class="box-div collapse"
+                  :class="{ show: allOptionsSelected }"
+                >
+                  <div class="box-div_header">
+                    <div class="box-div_header_list">견적함 리스트</div>
+                  </div>
+                  <button
+                    class="box-div_item"
+                    v-for="(BoxItem, index) in BoxResultData"
+                    :key="index"
+                    :class="{ selected: selectedIndex === index }"
+                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                    type="button"
+                  >
+                    {{ BoxItem.box_name }}
+                  </button>
+
+                  <div class="box-div_add">
+                    <div
+                      v-if="!isEditing"
+                      @click="startEditing"
+                      class="box-div_add-item"
+                    >
+                      견적함 이름을 입력하세요
+                    </div>
+                    <input
+                      v-else
+                      class="box-div_add-item"
+                      v-model="newBoxName"
+                      type="text"
+                      placeholder="견적함 이름을 입력하세요"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="saveBoxName"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+
+                <div class="productdetail_button-container">
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="saveToBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
+                  <button
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="saveToBookmark"
+                  >
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                  <button
+                    class="productdetail_main-content_button-container_main-button"
+                    type="button"
+                    @click="insertItemIntoBox"
+                  >
+                    물건담기
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 청첩장 -->
+            <div
+              v-if="isVisibleItemType('letter')"
+              class="productdetail_main_content_selectoption_div"
+            >
+              <!-- <div
+                :class="[
+                  'productdetail_main_content_selectoption_div',
+                  getClass('letter'),
+                ]"
+              > -->
+              <div
+                class="box-div collapse"
+                :class="{ show: allOptionsSelected }"
+              >
+                <div class="box-div_header">
+                  <div class="box-div_header_list">견적함 리스트</div>
+                </div>
+                <button
+                  class="box-div_item"
+                  v-for="(BoxItem, index) in BoxResultData"
+                  :key="index"
+                  :class="{ selected: selectedIndex === index }"
+                  @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
+                  type="button"
+                >
+                  {{ BoxItem.box_name }}
+                </button>
+
+                <div class="box-div_add">
+                  <div
+                    v-if="!isEditing"
+                    @click="startEditing"
+                    class="box-div_add-item"
+                  >
+                    견적함 이름을 입력하세요
+                  </div>
+                  <input
+                    v-else
+                    class="box-div_add-item"
+                    v-model="newBoxName"
+                    type="text"
+                    placeholder="견적함 이름을 입력하세요"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    @click="saveBoxName"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <div class="productdetail_button-container">
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="saveToBookmark"
+                >
+                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                </button>
+                <button
+                  class="productdetail_icon-button"
+                  type="button"
+                  @click="copyCurrentLink"
+                >
+                  <i class="fas fa-share-alt"></i>
+                </button>
+                <button
+                  class="productdetail_main-content_button-container_main-button"
+                  @click="insertItemIntoBox"
+                >
+                  물건담기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상세 설명 이미지 -->
+      <div class="text-center productdetail_main-detail-image-div">
+        <img
+          :src="this.$imageFileFormat(productDetail.item_detail_image_path)"
+          class="img-fluid"
+          alt="Detailed Description Image"
+        />
+      </div>
+
+      <!-- 신고 팝업창 -->
+      <div v-if="isVisibleReport" class="report-overlay">
+        <div class="report-popup">
+          <!-- <div v-if="isVisibleReport" class="report-popup"> -->
+
+          <div class="report-popup_header">
+            <div></div>
+            <div>신고 팝업창</div>
+            <i
+              class="fas fa-times popupCloseButton"
+              @click="collapseReportPopup"
+            ></i>
+          </div>
+          <div class="report-popup_content">
+            <div class="report-popup_content_header">신고사유 :</div>
+            <textarea
+              class="report-popup_content_input"
+              v-model="reportContent"
+            ></textarea>
+            <div class="report-popup_content_footer">
+              <div class="report-popup_content_ok" @click="ToReport">전송</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 리뷰 섹션 -->
+      <div class="productdetail_review-section">
+        <div class="productdetail_qna-header">
+          <h2
+            class="productdetail_qna-title"
+            type="button"
+            @click="goToReviewList"
+          >
+            전체 리뷰 &gt;
+          </h2>
+          <button
+            class="productdetail_write-qna-btn"
+            type="button"
+            @click="goToReviewWrite"
+          >
+            <i class="fas fa-pen"></i> 리뷰작성
+          </button>
+        </div>
+
+        <div
+          class="productdetail_review-cards justify-content-start"
+          v-if="reviewList && reviewList.length"
+        >
+          <div
+            class="productdetail_review-card"
+            v-for="(review, index) in reviewList"
+            :key="index"
+            style="margin-left: 20px"
+            @click="goToReviewDetail(review.review_id)"
+          >
+            <div class="productdetail_card-header">
+              <div class="productdetail_review-section_title-div">
+                {{
+                  review.is_current_user
+                    ? review.user_nickname
+                    : maskNickname(review.user_nickname)
+                }}
+              </div>
+              <div class="productdetail_card-icons">
+                <i
+                  class="fas fa-bullhorn"
+                  @click.stop="reviewToReport(review.review_id)"
+                  v-if="!review.is_current_user"
+                ></i>
+                <i
+                  class="fas fa-edit"
+                  @click.stop="gotoReviewModify(review.review_id)"
+                  v-if="review.is_current_user"
+                ></i>
+                <i
+                  class="fas fa-trash"
+                  @click.stop="deleteReview(review)"
+                  v-if="review.is_current_user"
+                ></i>
+              </div>
+            </div>
+            <div class="productdetail_review-section_title-div">
+              <div class="productdetail_card-rating">
+                <!-- 별점 -->
+                <div class="qnawrite_row">
                   <div class="rating">
                     <label
                       v-for="n in 10"
                       :key="n"
                       class="rating__label"
                       :class="{
-                        half: n <= productDetail.item_star_rating * 2,
-                        filled: n <= productDetail.item_star_rating * 2,
+                        half: n <= review.review_star * 2,
+                        filled: n <= review.review_star * 2,
                         half_position: n % 2 !== 0,
                         filled_position: n % 2 === 0,
                       }"
@@ -49,3416 +3285,103 @@
                       <div class="star-icon"></div>
                     </label>
                   </div>
-                  {{ productDetail.item_star_rating }}
-                </div>
-                <div
-                  class="productdetail_main_content_reviewcount_div"
-                  type="button"
-                  @click="goToReviewList"
-                >
-                  전체 리뷰 수 : ({{ productDetail.item_review_count }})
                 </div>
               </div>
-
-              <!-- 웨딩홀 -->
-              <div
-                v-if="isVisibleItemType('hall')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('hall'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 가격 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    ></div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 캘린더 -->
-                  <div
-                    class="productdetail_cal collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        {{
-                          dateRange.start && dateRange.end
-                            ? formatDate(dateRange.start) +
-                              " ~ " +
-                              formatDate(dateRange.end)
-                            : "선택되지 않음"
-                        }}
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- 물건담기 -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
+              <div class="productdetail_review-section_date-div">
+                {{ this.$dateFormat(review.review_date) }}
               </div>
+            </div>
+            <img
+              v-if="review.review_image_path"
+              :src="this.$imageFileFormat(review.review_image_path)"
+              class="productdetail_card-img-top"
+              alt="Review Image"
+            />
+            <img
+              v-else
+              src="https://via.placeholder.com/300x200"
+              class="productdetail_card-img-top"
+              alt="Review Image"
+            />
 
-              <!-- 드레스 옵션 -->
-              <div
-                v-if="isVisibleItemType('dress')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-
-                <div class="productdetail_main_content_maximum_quantity_div">
-                  <div>최대구매수량</div>
-                  <div>{{ totalQuantity }}개</div>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form @submit.prevent>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 수량 선택에 따른 금액 표시 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    >
-                      남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                    </div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
-                  <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        {{
-                          dateRange.start && dateRange.end
-                            ? formatDate(dateRange.start) +
-                              " ~ " +
-                              formatDate(dateRange.end)
-                            : "선택되지 않음"
-                        }}
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: showCustomOptions || allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- </div> -->
-
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 스튜디오 옵션 -->
-              <div
-                v-if="isVisibleItemType('studio')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('studio'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form @submit.prevent>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 수량 선택에 따른 금액 표시 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    >
-                      남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                    </div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="productdetail_cal collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        {{
-                          dateRange.start && dateRange.end
-                            ? formatDate(dateRange.start) +
-                              " ~ " +
-                              formatDate(dateRange.end)
-                            : "선택되지 않음"
-                        }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
-                  <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- </div> -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 메이크업 옵션 -->
-              <div
-                v-if="isVisibleItemType('makeup')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('makeup'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form @submit.prevent>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 수량 선택에 따른 금액 표시 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    >
-                      남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                    </div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 캘린더 -->
-                  <div
-                    class="productdetail_cal collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        {{
-                          dateRange.start && dateRange.end
-                            ? formatDate(dateRange.start) +
-                              " ~ " +
-                              formatDate(dateRange.end)
-                            : "선택되지 않음"
-                        }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 견적함 -->
-
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- </div> -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 스드메 -->
-              <div
-                v-if="isVisibleItemType('sdm_package')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('sdm_package'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 가격 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    ></div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- 물건담기 -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 예복 -->
-              <div
-                v-if="isVisibleItemType('giving_dress')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('giving_dress'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-
-                <div class="productdetail_main_content_maximum_quantity_div">
-                  <div>최대구매수량</div>
-                  <div>{{ totalQuantity }}개</div>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form @submit.prevent>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 수량 선택에 따른 금액 표시 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    >
-                      남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                    </div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
-                  <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        {{
-                          dateRange.start && dateRange.end
-                            ? formatDate(dateRange.start) +
-                              " ~ " +
-                              formatDate(dateRange.end)
-                            : "선택되지 않음"
-                        }}
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: showCustomOptions || allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- </div> -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 예물 -->
-              <div
-                v-if="isVisibleItemType('giving_item')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('giving_item'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-
-                <div class="productdetail_main_content_maximum_quantity_div">
-                  <div>최대구매수량</div>
-                  <div>{{ totalQuantity }}개</div>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form @submit.prevent>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 수량 선택에 따른 금액 표시 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    >
-                      남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                    </div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
-                  <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- </div> -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 가전 -->
-              <div
-                v-if="isVisibleItemType('giving_mechine')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('giving_mechine'),
-                ]"
-              > -->
-                <div
-                  class="box-div collapse"
-                  :class="{ show: allOptionsSelected }"
-                >
-                  <div class="box-div_header">
-                    <div class="box-div_header_list">견적함 리스트</div>
-                  </div>
-                  <button
-                    class="box-div_item"
-                    v-for="(BoxItem, index) in BoxResultData"
-                    :key="index"
-                    :class="{ selected: selectedIndex === index }"
-                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
-                    type="button"
-                  >
-                    {{ BoxItem.box_name }}
-                  </button>
-                  <div class="box-div_add">
-                    <div
-                      v-if="!isEditing"
-                      @click="startEditing"
-                      class="box-div_add-item"
-                    >
-                      견적함 이름을 입력하세요
-                    </div>
-                    <input
-                      v-else
-                      class="box-div_add-item"
-                      v-model="newBoxName"
-                      type="text"
-                      placeholder="견적함 이름을 입력하세요"
-                    />
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      @click="saveBoxName"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div class="productdetail_button-container">
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="copyCurrentLink"
-                  >
-                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                  </button>
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="copyCurrentLink"
-                  >
-                    <i class="fas fa-share-alt"></i>
-                  </button>
-                  <button
-                    class="productdetail_main-content_button-container_main-button"
-                    @click="insertItemIntoBox"
-                  >
-                    물건담기
-                  </button>
-                </div>
-              </div>
-
-              <!-- 혼수 패키지 -->
-              <div
-                v-if="isVisibleItemType('giving_package')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('giving_package'),
-                ]"
-              > -->
-                <div
-                  class="box-div collapse"
-                  :class="{ show: allOptionsSelected }"
-                >
-                  <div class="box-div_header">
-                    <div class="box-div_header_list">견적함 리스트</div>
-                  </div>
-                  <button
-                    class="box-div_item"
-                    v-for="(BoxItem, index) in BoxResultData"
-                    :key="index"
-                    :class="{ selected: selectedIndex === index }"
-                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
-                    type="button"
-                  >
-                    {{ BoxItem.box_name }}
-                  </button>
-
-                  <div class="box-div_add">
-                    <div
-                      v-if="!isEditing"
-                      @click="startEditing"
-                      class="box-div_add-item"
-                    >
-                      견적함 이름을 입력하세요
-                    </div>
-                    <input
-                      v-else
-                      class="box-div_add-item"
-                      v-model="newBoxName"
-                      type="text"
-                      placeholder="견적함 이름을 입력하세요"
-                    />
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      @click="saveBoxName"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div class="productdetail_button-container">
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="saveToBookmark"
-                  >
-                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                  </button>
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="copyCurrentLink"
-                  >
-                    <i class="fas fa-share-alt"></i>
-                  </button>
-                  <button
-                    class="productdetail_main-content_button-container_main-button"
-                    @click="insertItemIntoBox"
-                  >
-                    물건담기
-                  </button>
-                </div>
-              </div>
-
-              <!-- 본식스냅 -->
-              <div
-                v-if="isVisibleItemType('snap')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('snap'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form @submit.prevent>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 수량 선택에 따른 금액 표시 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    >
-                      남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                    </div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
-                  <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- </div> -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 영상 -->
-              <div
-                v-if="isVisibleItemType('video')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('video'),
-                ]"
-              > -->
-                <div
-                  class="box-div collapse"
-                  :class="{ show: allOptionsSelected }"
-                >
-                  <div class="box-div_header">
-                    <div class="box-div_header_list">견적함 리스트</div>
-                  </div>
-                  <button
-                    class="box-div_item"
-                    v-for="(BoxItem, index) in BoxResultData"
-                    :key="index"
-                    :class="{ selected: selectedIndex === index }"
-                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
-                    type="button"
-                  >
-                    {{ BoxItem.box_name }}
-                  </button>
-
-                  <div class="box-div_add">
-                    <div
-                      v-if="!isEditing"
-                      @click="startEditing"
-                      class="box-div_add-item"
-                    >
-                      견적함 이름을 입력하세요
-                    </div>
-                    <input
-                      v-else
-                      class="box-div_add-item"
-                      v-model="newBoxName"
-                      type="text"
-                      placeholder="견적함 이름을 입력하세요"
-                    />
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      @click="saveBoxName"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div class="productdetail_button-container">
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="saveToBookmark"
-                  >
-                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                  </button>
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="copyCurrentLink"
-                  >
-                    <i class="fas fa-share-alt"></i>
-                  </button>
-                  <button
-                    class="productdetail_main-content_button-container_main-button"
-                    @click="insertItemIntoBox"
-                  >
-                    물건담기
-                  </button>
-                </div>
-              </div>
-
-              <!-- 부케 -->
-              <div
-                v-if="isVisibleItemType('flower')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('flower'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 가격 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    ></div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- 물건담기 -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 연주 -->
-              <div
-                v-if="isVisibleItemType('music')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('music'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form @submit.prevent>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 수량 선택에 따른 금액 표시 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    >
-                      남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                    </div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
-                  <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- </div> -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 사회자 -->
-              <div
-                v-if="isVisibleItemType('mc')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('mc'),
-                ]"
-              > -->
-                <div
-                  class="box-div collapse"
-                  :class="{ show: allOptionsSelected }"
-                >
-                  <div class="box-div_header">
-                    <div class="box-div_header_list">견적함 리스트</div>
-                  </div>
-                  <button
-                    class="box-div_item"
-                    v-for="(BoxItem, index) in BoxResultData"
-                    :key="index"
-                    :class="{ selected: selectedIndex === index }"
-                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
-                    type="button"
-                  >
-                    {{ BoxItem.box_name }}
-                  </button>
-
-                  <div class="box-div_add">
-                    <div
-                      v-if="!isEditing"
-                      @click="startEditing"
-                      class="box-div_add-item"
-                    >
-                      견적함 이름을 입력하세요
-                    </div>
-                    <input
-                      v-else
-                      class="box-div_add-item"
-                      v-model="newBoxName"
-                      type="text"
-                      placeholder="견적함 이름을 입력하세요"
-                    />
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      @click="saveBoxName"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div class="productdetail_button-container">
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="saveToBookmark"
-                  >
-                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                  </button>
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="copyCurrentLink"
-                  >
-                    <i class="fas fa-share-alt"></i>
-                  </button>
-                  <button
-                    class="productdetail_main-content_button-container_main-button"
-                    @click="insertItemIntoBox"
-                  >
-                    물건담기
-                  </button>
-                </div>
-              </div>
-
-              <!-- 웨딩슈즈 -->
-              <div
-                v-if="isVisibleItemType('shoes')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('shoes'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 가격 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    ></div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- 물건담기 -->
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="savetoBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="copyCurrentLink"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 답례품 -->
-              <div
-                v-if="isVisibleItemType('gift')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('gift'),
-                ]"
-              > -->
-                <div
-                  style="margin-top: 30px"
-                  v-if="
-                    productDetail.item_discount_rate !== undefined &&
-                    productDetail.item_discount_rate !== null &&
-                    productDetail.item_price !== undefined &&
-                    productDetail.item_price !== null
-                  "
-                >
-                  <div class="productdetail_main_content_discount_div">
-                    {{ productDetail.item_discount_rate }}%
-                  </div>
-                  <div class="productdetail_main_content_origin_price_div">
-                    <span>
-                      {{ productDetail.item_price.toLocaleString() }}원
-                    </span>
-                  </div>
-                </div>
-                <div class="productdetail_main_content_discount_price_div">
-                  <span
-                    v-if="finally_price !== undefined && finally_price !== null"
-                  >
-                    {{ finally_price.toLocaleString() }}원
-                  </span>
-                </div>
-
-                <div class="productdetail_main_content_maximum_quantity_div">
-                  <div>최대구매수량</div>
-                  <div>{{ totalQuantity }}개</div>
-                </div>
-                <div class="productdetail_main_selectoption-div">옵션 선택</div>
-                <form @submit.prevent>
-                  <div class="my-1">
-                    <select
-                      v-for="(optionGroup, index) in optionGroups"
-                      :key="index"
-                      class="form-select my-2"
-                      v-model="selectedOptions[index]"
-                      @change="onOptionChange(index)"
-                      :disabled="!isEnabled(index)"
-                      v-show="isVisible(index)"
-                    >
-                      <option selected disabled value="">선택</option>
-                      <option
-                        v-for="option in optionGroup.options"
-                        :key="option"
-                        :value="option"
-                      >
-                        {{ option }}
-                      </option>
-                    </select>
-                  </div>
-                  <!-- - + 수량 선택에 따른 금액 표시 -->
-                  <div class="collapse" :class="{ show: allOptionsSelected }">
-                    <div class="productdetail_main-content_product-card">
-                      <div
-                        class="productdetail_main-content_product-detail p-3"
-                      >
-                        {{ selectedOptions.join(" + ") }}
-                      </div>
-                      <div
-                        class="d-flex justify-content-between align-items-center bg-light p-3"
-                      >
-                        <div class="quantity-control d-flex align-items-center">
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="decreaseQuantity"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="text"
-                            class="form-control text-center mx-2"
-                            v-model="quantity"
-                            readonly
-                            required
-                          />
-                          <button
-                            type="button"
-                            class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                            @click="increaseQuantity"
-                          >
-                            ＋
-                          </button>
-                        </div>
-                        <div class="font-weight-bold" required>
-                          {{ formattedTotalPrice }}원
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="productdetail_main-content_item_detail_quantity-div"
-                    >
-                      남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                    </div>
-                    <div class="productdetail_total-price-div">
-                      <div class="productdetail_total-price-div_state-div">
-                        총 금액 :
-                      </div>
-                      <div class="productdetail_total-price-div_price-div">
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 맞춤 선택 후 캘린더 띄워주기-->
-                  <div
-                    :class="[
-                      'productdetail_cal',
-                      selectedItemType_dress_custom,
-                    ]"
-                  >
-                    날짜 선택
-                    <div class="common-event_calendar">
-                      <div>
-                        <v-date-picker
-                          v-model="dateRange"
-                          is-range
-                          :popover="{ visibility: 'focus' }"
-                          :input-props="{
-                            start: { placeholder: 'Start' },
-                            end: { placeholder: 'End' },
-                          }"
-                        />
-                      </div>
-                      <div class="common-event_calendar_div">
-                        <label
-                          >Start
-                          {{
-                            dateRange.start
-                              ? formatDate(dateRange.start)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                        <label
-                          >End
-                          {{
-                            dateRange.end
-                              ? formatDate(dateRange.end)
-                              : "선택되지 않음"
-                          }}</label
-                        >
-                      </div>
-                      <button
-                        class="common-caldate_save-button"
-                        type="button"
-                        @click="saveEvent"
-                      >
-                        저장
-                      </button>
-                    </div>
-                    <div class="productdetail_cal-div_date-div">
-                      <div>선택된 날짜</div>
-                      <div class="productdetail_cal-div_date">
-                        2024년 12년 30일
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 견적함 -->
-
-                  <div
-                    class="box-div collapse"
-                    :class="{ show: allOptionsSelected }"
-                  >
-                    <div class="box-div_header">
-                      <div class="box-div_header_list">견적함 리스트</div>
-                    </div>
-                    <button
-                      class="box-div_item"
-                      v-for="(BoxItem, index) in BoxResultData"
-                      :key="index"
-                      :class="{ selected: selectedIndex === index }"
-                      @click="
-                        selectBox(index, BoxItem.box_name, BoxItem.box_id)
-                      "
-                      type="button"
-                    >
-                      {{ BoxItem.box_name }}
-                    </button>
-
-                    <div class="box-div_add">
-                      <div
-                        v-if="!isEditing"
-                        @click="startEditing"
-                        class="box-div_add-item"
-                      >
-                        견적함 이름을 입력하세요
-                      </div>
-                      <input
-                        v-else
-                        class="box-div_add-item"
-                        v-model="newBoxName"
-                        type="text"
-                        placeholder="견적함 이름을 입력하세요"
-                      />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        @click="saveBoxName"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <!-- </div> -->
-
-                  <div class="productdetail_button-container">
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="saveToBookmark"
-                    >
-                      <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                      <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                    </button>
-                    <button
-                      class="productdetail_icon-button"
-                      type="button"
-                      @click="saveToBookmark"
-                    >
-                      <i class="fas fa-share-alt"></i>
-                    </button>
-                    <button
-                      class="productdetail_main-content_button-container_main-button"
-                      type="button"
-                      @click="insertItemIntoBox"
-                    >
-                      물건담기
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- 청첩장 -->
-              <div
-                v-if="isVisibleItemType('letter')"
-                class="productdetail_main_content_selectoption_div"
-              >
-                <!-- <div
-                :class="[
-                  'productdetail_main_content_selectoption_div',
-                  getClass('letter'),
-                ]"
-              > -->
-                <div
-                  class="box-div collapse"
-                  :class="{ show: allOptionsSelected }"
-                >
-                  <div class="box-div_header">
-                    <div class="box-div_header_list">견적함 리스트</div>
-                  </div>
-                  <button
-                    class="box-div_item"
-                    v-for="(BoxItem, index) in BoxResultData"
-                    :key="index"
-                    :class="{ selected: selectedIndex === index }"
-                    @click="selectBox(index, BoxItem.box_name, BoxItem.box_id)"
-                    type="button"
-                  >
-                    {{ BoxItem.box_name }}
-                  </button>
-
-                  <div class="box-div_add">
-                    <div
-                      v-if="!isEditing"
-                      @click="startEditing"
-                      class="box-div_add-item"
-                    >
-                      견적함 이름을 입력하세요
-                    </div>
-                    <input
-                      v-else
-                      class="box-div_add-item"
-                      v-model="newBoxName"
-                      type="text"
-                      placeholder="견적함 이름을 입력하세요"
-                    />
-                    <button
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      @click="saveBoxName"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div class="productdetail_button-container">
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="saveToBookmark"
-                  >
-                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                  </button>
-                  <button
-                    class="productdetail_icon-button"
-                    type="button"
-                    @click="copyCurrentLink"
-                  >
-                    <i class="fas fa-share-alt"></i>
-                  </button>
-                  <button
-                    class="productdetail_main-content_button-container_main-button"
-                    @click="insertItemIntoBox"
-                  >
-                    물건담기
-                  </button>
-                </div>
-              </div>
+            <div class="productdetail_card-body">
+              <p class="productdetail_card-text">
+                {{ review.review_content }}
+              </p>
             </div>
           </div>
         </div>
+        <div v-else>현재 등록된 리뷰가 없습니다</div>
+      </div>
 
-        <!-- 상세 설명 이미지 -->
-        <div class="text-center productdetail_main-detail-image-div">
-          <img
-            :src="this.$imageFileFormat(productDetail.item_detail_image_path)"
-            class="img-fluid"
-            alt="Detailed Description Image"
-          />
-        </div>
-
-        <!-- 신고 팝업창 -->
-        <div v-if="isVisibleReport" class="report-overlay">
-          <div class="report-popup">
-            <!-- <div v-if="isVisibleReport" class="report-popup"> -->
-
-            <div class="report-popup_header">
-              <div></div>
-              <div>신고 팝업창</div>
-              <i
-                class="fas fa-times popupCloseButton"
-                @click="collapseReportPopup"
-              ></i>
-            </div>
-            <div class="report-popup_content">
-              <div class="report-popup_content_header">신고사유 :</div>
-              <textarea
-                class="report-popup_content_input"
-                v-model="reportContent"
-              ></textarea>
-              <div class="report-popup_content_footer">
-                <div class="report-popup_content_ok" @click="ToReport">
-                  전송
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 리뷰 섹션 -->
-        <div class="productdetail_review-section">
-          <div class="productdetail_qna-header">
-            <h2
-              class="productdetail_qna-title"
-              type="button"
-              @click="goToReviewList"
-            >
-              전체 리뷰 &gt;
-            </h2>
-            <button
-              class="productdetail_write-qna-btn"
-              type="button"
-              @click="goToReviewWrite"
-            >
-              <i class="fas fa-pen"></i> 리뷰작성
-            </button>
-          </div>
-
-          <div
-            class="productdetail_review-cards justify-content-start"
-            v-if="reviewList && reviewList.length"
+      <!-- Q&A 섹션 -->
+      <div class="productdetail_qna-section">
+        <div class="productdetail_qna-header">
+          <h2
+            class="productdetail_qna-title"
+            type="button"
+            @click="gotoQnAList"
           >
-            <div
-              class="productdetail_review-card"
-              v-for="(review, index) in reviewList"
+            전체 QnA &gt;
+          </h2>
+          <button
+            class="productdetail_write-qna-btn"
+            type="button"
+            @click="gotoQnaWrite"
+          >
+            <i class="fas fa-pen"></i> QnA작성
+          </button>
+        </div>
+        <table class="productdetail_qna-table" v-if="qnaList && qnaList.length">
+          <thead>
+            <tr>
+              <th style="width: 80px">문의유형</th>
+              <th style="width: 630px">문의/답변</th>
+              <th style="width: 170px">작성자</th>
+              <th style="width: 130px">작성일</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(qna, index) in qnaList"
               :key="index"
-              style="margin-left: 20px"
-              @click="goToReviewDetail(review.review_id)"
+              @click="gotoQnaDetail(qna.qna_id)"
             >
-              <div class="productdetail_card-header">
-                <div class="productdetail_review-section_title-div">
-                  {{
-                    review.is_current_user
-                      ? review.user_nickname
-                      : maskNickname(review.user_nickname)
-                  }}
+              <td>{{ this.formatQnaType(qna.qna_type) }}</td>
+              <td class="productdetail_qna-section_status-title-div">
+                <div
+                  class="productdetail_qna-status"
+                  v-if="qna.qna_has_answer == 'T'"
+                >
+                  답변 완료
                 </div>
-                <div class="productdetail_card-icons">
-                  <i
-                    class="fas fa-bullhorn"
-                    @click.stop="reviewToReport(review.review_id)"
-                    v-if="!review.is_current_user"
-                  ></i>
-                  <i
-                    class="fas fa-edit"
-                    @click.stop="gotoReviewModify(review.review_id)"
-                    v-if="review.is_current_user"
-                  ></i>
-                  <i
-                    class="fas fa-trash"
-                    @click.stop="deleteReview(review)"
-                    v-if="review.is_current_user"
-                  ></i>
+                <div
+                  class="productdetail_qna-status incomplete"
+                  v-if="qna.qna_has_answer == 'F'"
+                >
+                  미완료
                 </div>
-              </div>
-              <div class="productdetail_review-section_title-div">
-                <div class="productdetail_card-rating">
-                  <!-- 별점 -->
-                  <div class="qnawrite_row">
-                    <div class="rating">
-                      <label
-                        v-for="n in 10"
-                        :key="n"
-                        class="rating__label"
-                        :class="{
-                          half: n <= review.review_star * 2,
-                          filled: n <= review.review_star * 2,
-                          half_position: n % 2 !== 0,
-                          filled_position: n % 2 === 0,
-                        }"
-                      >
-                        <input
-                          type="radio"
-                          :id="'star' + n"
-                          class="rating__input"
-                          name="rating"
-                          :value="n"
-                          v-model="rating"
-                        />
-                        <div class="star-icon"></div>
-                      </label>
-                    </div>
-                  </div>
+                <div>
+                  {{ qna.qna_title }}
+                  <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
                 </div>
-                <div class="productdetail_review-section_date-div">
-                  {{ this.$dateFormat(review.review_date) }}
-                </div>
-              </div>
-              <img
-                v-if="review.review_image_path"
-                :src="this.$imageFileFormat(review.review_image_path)"
-                class="productdetail_card-img-top"
-                alt="Review Image"
-              />
-              <img
-                v-else
-                src="https://via.placeholder.com/300x200"
-                class="productdetail_card-img-top"
-                alt="Review Image"
-              />
-
-              <div class="productdetail_card-body">
-                <p class="productdetail_card-text">
-                  {{ review.review_content }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div v-else>현재 등록된 리뷰가 없습니다</div>
-        </div>
-
-        <!-- Q&A 섹션 -->
-        <div class="productdetail_qna-section">
-          <div class="productdetail_qna-header">
-            <h2
-              class="productdetail_qna-title"
-              type="button"
-              @click="gotoQnAList"
-            >
-              전체 QnA &gt;
-            </h2>
-            <button
-              class="productdetail_write-qna-btn"
-              type="button"
-              @click="gotoQnaWrite"
-            >
-              <i class="fas fa-pen"></i> QnA작성
-            </button>
-          </div>
-          <table
-            class="productdetail_qna-table"
-            v-if="qnaList && qnaList.length"
-          >
-            <thead>
-              <tr>
-                <th style="width: 80px">문의유형</th>
-                <th style="width: 630px">문의/답변</th>
-                <th style="width: 170px">작성자</th>
-                <th style="width: 130px">작성일</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(qna, index) in qnaList"
-                :key="index"
-                @click="gotoQnaDetail(qna.qna_id)"
-              >
-                <td>{{ this.formatQnaType(qna.qna_type) }}</td>
-                <td class="productdetail_qna-section_status-title-div">
-                  <div
-                    class="productdetail_qna-status"
-                    v-if="qna.qna_has_answer == 'T'"
-                  >
-                    답변 완료
-                  </div>
-                  <div
-                    class="productdetail_qna-status incomplete"
-                    v-if="qna.qna_has_answer == 'F'"
-                  >
-                    미완료
-                  </div>
-                  <div>
-                    {{ qna.qna_title }}
-                    <i v-if="qna.qna_visibility == 'F'" class="fas fa-lock"></i>
-                  </div>
-                </td>
-                <td class="productdetail_qna-section_status-nickname-div">
-                  {{ maskNickname(qna.user_nickname) }}
-                </td>
-                <td>{{ this.$dateFormat(qna.qna_date) }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div v-else style="text-align: left; font-size: 16px">
-            현재 등록된 QnA가 없습니다
-          </div>
+              </td>
+              <td class="productdetail_qna-section_status-nickname-div">
+                {{ maskNickname(qna.user_nickname) }}
+              </td>
+              <td>{{ this.$dateFormat(qna.qna_date) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else style="text-align: left; font-size: 16px">
+          현재 등록된 QnA가 없습니다
         </div>
       </div>
-      <!-- 콘텐츠 섹션 끝 -->
-
-      <!-- 푸터 -->
-      <MateFooter />
     </div>
+    <!-- 콘텐츠 섹션 끝 -->
+
+    <!-- 푸터 -->
+    <MateFooter />
   </div>
 </template>
 
@@ -5103,9 +5026,9 @@ export default {
 }
 
 #productdetail_app {
-  width: 1093px;
-  min-width: 1980px;
-  max-width: 1980px;
+  width: 1930px;
+  min-width: 1930px;
+  max-width: 1930px;
 }
 
 .productdetail_main-image-section {
