@@ -4,7 +4,7 @@
       <!-- 본문  -->  
       <div class="container productdetail_main_content">
         <div class="main_best_studio_text">
-            베스트 스튜디오
+            베스트 상품
         </div>
         <div class="reviewlist_review-section">
             <!-- 메인이미지 클릭시 item_detail로 전송 -->
@@ -45,7 +45,7 @@
                 <div
                    v-if="finally_price !== undefined && finally_price !== null" > 
                   <span class="productdetail_main_content_discount_price_div">
-                    {{ finally_price(item).toLocaleString() }}원
+                    {{ finally_price(star).toLocaleString() }}원
                   </span>
                 </div>
                 <!-- 별점 -->
@@ -139,6 +139,15 @@
         query: { item_id },
       });
     },
+    finally_price(item) {
+      if (item.item_price && item.item_discount_rate) {
+        return (
+          item.item_price -
+          item.item_price * (item.item_discount_rate / 100)
+        );
+      }
+      return item.item_price;
+    }
 
     }
   }
