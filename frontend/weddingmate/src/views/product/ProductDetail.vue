@@ -1849,13 +1849,13 @@
               </div>
               <div class="productdetail_button-container">
                 <button
-                  class="productdetail_icon-button"
-                  type="button"
-                  @click="saveToBookmark"
-                >
-                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                </button>
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
                 <button
                   class="productdetail_icon-button"
                   type="button"
@@ -2159,13 +2159,13 @@
               </div>
               <div class="productdetail_button-container">
                 <button
-                  class="productdetail_icon-button"
-                  type="button"
-                  @click="saveToBookmark"
-                >
-                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                </button>
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
                 <button
                   class="productdetail_icon-button"
                   type="button"
@@ -2647,13 +2647,13 @@
               </div>
               <div class="productdetail_button-container">
                 <button
-                  class="productdetail_icon-button"
-                  type="button"
-                  @click="saveToBookmark"
-                >
-                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                </button>
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
                 <button
                   class="productdetail_icon-button"
                   type="button"
@@ -3141,13 +3141,13 @@
               </div>
               <div class="productdetail_button-container">
                 <button
-                  class="productdetail_icon-button"
-                  type="button"
-                  @click="saveToBookmark"
-                >
-                  <i class="fas fa-heart" v-if="bookmarkResult"></i>
-                  <i class="far fa-heart" v-if="!bookmarkResult"></i>
-                </button>
+                    class="productdetail_icon-button"
+                    type="button"
+                    @click="savetoBookmark"
+                  >
+                    <i class="fas fa-heart" v-if="bookmarkResult"></i>
+                    <i class="far fa-heart" v-if="!bookmarkResult"></i>
+                  </button>
                 <button
                   class="productdetail_icon-button"
                   type="button"
