@@ -45,7 +45,7 @@
                 <div
                    v-if="finally_price !== undefined && finally_price !== null" > 
                   <span class="productdetail_main_content_discount_price_div">
-                    {{ finally_price(item).toLocaleString() }}원
+                    {{ finally_price(star).toLocaleString() }}원
                   </span>
                 </div>
                 <!-- 별점 -->
@@ -139,6 +139,15 @@
         query: { item_id },
       });
     },
+    finally_price(item) {
+      if (item.item_price && item.item_discount_rate) {
+        return (
+          item.item_price -
+          item.item_price * (item.item_discount_rate / 100)
+        );
+      }
+      return item.item_price;
+    }
 
     }
   }
