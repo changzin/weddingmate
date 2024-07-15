@@ -20,15 +20,6 @@ export default{
 
             console.log(result);
             return result;
-            // return (await axios({
-            //     method: method,
-            //     url,
-            //     data: data
-            // })
-            // .catch(e=>{
-            //     console.log(url);
-            //     console.error(e);
-            // })).data;
         },
         
         // 유저의 쿠킷값과 로컬 스토리지 값을 확인해서 User 정보를 끌어오는 함수

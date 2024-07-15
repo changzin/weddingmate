@@ -56,7 +56,7 @@
             <div class="term_box term_little_checkbox">
                 <form class="d-flex justify-content-start">
                     <input type="checkbox" class="terms_checkbox" v-model="termsTwo">
-                    <label class="terms_checkbox_text form-label">만 14세 이상입니다</label>
+                    <label class="terms_checkbox_text form-label">만 18세 이상입니다</label>
                     <span class="terms_little_text">(필수)</span>
                 </form>
             </div>

@@ -81,7 +81,7 @@ export default{
                     }
                     else{
                         await this.$api("/user/emailisverified", {user_email: this.auth.currentUser.email}, "POST");
-                        alert("이메일 인증 완료됬습니다. 다시 로그인해주세요.")
+                        alert("이메일 인증이 완료됐습니다. 다시 로그인해주세요.")
                         this.$router.push({path: '/userlogin'});
                     }
                     
