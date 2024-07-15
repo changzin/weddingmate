@@ -4843,7 +4843,7 @@ export default {
               box_id: this.selectedBoxId,
               item_detail_id: this.selectedItemDetailId,
               box_item_quantity: this.quantity,
-              box_item_total_price: this.finally_price,
+              box_item_total_price:  this.productDetail.item_price,
               box_item_schedule_start: this.$dateFormat(this.dateRange.start),
               box_item_schedule_end: this.$dateFormat(this.dateRange.end),
             },

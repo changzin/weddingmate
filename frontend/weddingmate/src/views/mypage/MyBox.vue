@@ -51,7 +51,6 @@
                   <img class="bookmark" :src="this.$imageFileFormat(name.item_tn_image_path)" >
                   <div class="content-table_col1" >
                     <div class="content-table_col1-name">
-                      <!-- 제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목제목 -->
                       {{ name.item_name }}
                     </div>
                     <div class="content-table_col1-option">
@@ -423,7 +422,9 @@
         }
 
         for(let i = 0; i < this.itemDetails.length; i++){
+          let discountedPrice = Math.ceil((this.itemDetails[i].box_item_total_price * (this.itemDetails[i].item_discount_rate/100)))
           this.order_info.order_sale_price += Math.ceil((this.itemDetails[i].box_item_total_price * (this.itemDetails[i].item_discount_rate/100)));
+          this.itemDetails[i].box_item_total_price -= discountedPrice;
           console.log(this.itemDetails[i].box_item_total_price , this.itemDetails[i].item_discount_rate);
         }
         this.order_info.order_price = this.order_info.order_total_price - this.order_info.order_sale_price;

@@ -212,19 +212,21 @@ exports.InsertItemIntoBox = async (req, res) => {
     // 만약에 박스에 기존 아이템이 담겨져 있을 경우 중복으로 담지 않고 기존 아이템을 업데이트를 해준다
     if (searchSameRecodResult.length > 0) {
       const updateboxItemquery = `
-        UPDATE box_item 
-        SET 
-          box_item_quantity = ?,
-          box_item_schedule_start = ?,
-          box_item_schedule_end = ?
-        WHERE box_item_id = ?
-            `;
-      const updateboxItemResult = await db(updateboxItemquery, [
-        box_item_quantity,
-        box_item_schedule_start,
-        box_item_schedule_end,
-        searchSameRecodResult[0].box_item_id,
-      ]);
+      UPDATE box_item 
+      SET 
+        box_item_quantity = ?,
+        box_item_schedule_start = ?,
+        box_item_schedule_end = ?,
+        box_item_total_price = ?
+      WHERE box_item_id = ?
+          `;
+    const updateboxItemResult = await db(updateboxItemquery, [
+      box_item_quantity,
+      box_item_schedule_start,
+      box_item_schedule_end,
+      box_item_total_price * box_item_quantity,
+      searchSameRecodResult[0].box_item_id,
+    ]);
       // 데이터 보낼 준비
       const responseBody = {
         status: 200,
