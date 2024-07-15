@@ -4,7 +4,7 @@
       <!-- 본문  -->  
       <div class="container productdetail_main_content">
         <div class="main_best_studio_text">
-            베스트 스튜디오
+            베스트 상품
         </div>
         <div class="reviewlist_review-section">
             <!-- 메인이미지 클릭시 item_detail로 전송 -->

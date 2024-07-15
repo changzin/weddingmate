@@ -146,10 +146,7 @@
     // 영수증으로 이동
     goToReceipt(orderId){
       try{
-        // this.orderId = $route.params.orderId;
-        // this.$router.push( this.orderId   })
-        this.$router.push({ name: 'myreceipt', 
-                          params: {orderId:this.paymentList[orderId].order_info_id}   })
+        window.open(`/mypage/payment/receipt/${this.paymentList[orderId].order_info_id}`,'test','width=888, height=750','_blank');
         }catch(err){
           console.log(err);
           alert("영수증이 없습니다.")
