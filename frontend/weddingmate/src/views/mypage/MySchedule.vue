@@ -148,12 +148,13 @@ export default {
         );
         this.scheduleResult = result.scheduleList;
         this.calendar_id = result.calendar_id;
-        if (this.ScheduleResult.length <= 0) {
+        if (this.scheduleResult.length <= 0) {
           alert("등록된 스케쥴이 없습니다 스케쥴을 등록해주세요")
         }
-        if (this.ScheduleResult) {
+        console.log(this.scheduleResult);
+        if (this.scheduleResult) {
             this.userScheduleShowList = [];
-            for(let i of this.ScheduleResult){
+            for(let i of this.scheduleResult){
               let startDate = this.formatDate(i.schedule_start);
               let endDate = this.formatDate(i.schedule_end);
               console.log(startDate, endDate);
