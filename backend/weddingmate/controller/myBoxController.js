@@ -19,7 +19,8 @@ exports.myBoxItemName = async(req,res)=>{
         const responseBody = {
             status : 200,
             box_itemName : box_name,
-            box_itemObj : boxObj[0]
+            box_itemObj : boxObj[0],
+            message : "myBoxController의 데이터 조회 성공"
         }
         res.json(responseBody);
 
@@ -27,7 +28,7 @@ exports.myBoxItemName = async(req,res)=>{
         console.error(err);
             responseBody = {
                 status : 400,
-                message : "카테고리가 없습니다."
+                message : "잘못된 요청입니다."
             };
             res.json(responseBody);
         }
@@ -43,17 +44,18 @@ exports.myBoxItemDelete = async(req,res)=>{
         if(affectedRows == 1){ 
             const responseBody ={
                 status : 200,
-                boxItem_id : itemDel
+                boxItem_id : itemDel,
+                message:"myBoxController.js내의 box_item을 삭제하였습니다."
             }
             res.json(responseBody);
         }else{
-            throw new Error("선택된 상품을 지울 수 없습니다.")
+            throw new Error("선택된 상품을 삭제 할 수 없습니다.")
         }
     }catch(err){
         console.error(err);
             responseBody = {
                 status : 400,
-                message : "카테고리가 없습니다."
+                message : "선택된 상품을 삭제 할 수 없습니다."
             };
             res.json(responseBody);
         }
@@ -73,7 +75,8 @@ exports.myBoxNameUpdate = async(req, res)=>{
         if(affectedRows == 1){ 
             const responseBody ={
                 status : 200,
-                data : boxNameUpdate
+                data : boxNameUpdate,
+                message : "myBoxController.js 의 box_name을 수정하였습니다."
             }
             res.json(responseBody);
         }else{
@@ -83,7 +86,7 @@ exports.myBoxNameUpdate = async(req, res)=>{
         console.error(err);
         responseBody = {
             status : 400,
-            message : "카테고리가 없습니다."
+            message : "견적함의 이름을 변경 할 수 없습니다."
         };
     
     }       
@@ -101,7 +104,8 @@ exports.myBoxDelete = async(req,res)=>{
         if(affectedRows == 1){ 
             const responseBody ={
                 status : 200,
-                data : delectBox
+                data : delectBox,
+                message : "myBoxController의 box를 삭제하였습니다."
             }
             res.json(responseBody);
         }else{
