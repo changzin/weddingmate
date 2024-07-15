@@ -91,8 +91,8 @@ exports.qnaDetail = async (req, res) => {
     const qna_id = req.body.qna_id;
 
     // answer이 없는 것은 null로 응답을 보내기 위해 left outer join을 활용하였다.
-    const query = `SELECT qna.qna_id, qna.qna_title, qna.qna_content, qna.qna_image_path, qna.qna_date, qna.qna_has_answer, qna.user_nickname, answer.answer_id, answer.admin_id, answer.answer_content, answer.answer_date 
-      from (SELECT qna.qna_id, qna.qna_title, qna.qna_content, qna.qna_image_path, qna.qna_date, qna.qna_has_answer, user.user_nickname FROM qna, user 
+    const query = `SELECT qna.qna_id, qna.qna_title, qna.qna_content, qna.user_id, qna.qna_image_path, qna.qna_date, qna.qna_has_answer, qna.user_nickname, answer.answer_id, answer.admin_id, answer.answer_content, answer.answer_date 
+      from (SELECT qna.qna_id, qna.qna_title, qna.qna_content, qna.qna_image_path, qna.qna_date, qna.qna_has_answer, user.user_nickname, user.user_id FROM qna, user 
       WHERE qna.user_id = user.user_id) qna left join answer on qna.qna_id=answer.qna_id WHERE qna.qna_id=?`;
     let result = await db(query, [qna_id]);
 
@@ -112,6 +112,8 @@ exports.qnaDetail = async (req, res) => {
     res.json(responseBody);
   }
 };
+
+
 
 exports.itemDetail = async (req, res) => {
   try {
@@ -294,6 +296,36 @@ exports.deleteQnA = async (req, res) => {
     res.json(responseBody);
   }
 };
+
+exports.deleteAdminQnA = async(req, res) =>{
+  try {
+    const user_id = req.body.user_id;
+    const qna_id = req.body.qna_id;
+
+    console.log("user_id : ", user_id);
+
+    const query = `
+      DELETE FROM qna 
+      WHERE user_id = ? AND qna_id = ?
+    `;
+    const result = await db(query, [user_id, qna_id]);
+
+    const responseBody = {
+      status: 200,
+      message: "QnAController.js의 insertQnA 데이터 성공",
+      data: result,
+    };
+    // 데이터 보내기
+    res.json(responseBody);
+  } catch (err) {
+    console.error(err);
+    const responseBody = {
+      status: 400,
+      message: err.message,
+    };
+    res.json(responseBody);
+  }
+}
 
 exports.updateSelectedQnADetail = async (req, res) => {
   try {

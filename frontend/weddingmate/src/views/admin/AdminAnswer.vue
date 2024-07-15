@@ -110,10 +110,12 @@
                     </div>
                     <div class="admin_answer_row_large d-flex justify-content-center" v-if="!answerId">
                         <button type="button" class="admin_answer_cancel_button" @click="$router.push({path: '/admin/qna'})" >취소</button>
+                        <button type="button " class="admin_answer_cancel_button" @click="deleteQna()" style="margin-left:10px;">상품 삭제</button>
                         <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" @click="addAnswer();">등록</button>
                     </div>
                     <div class="admin_answer_row_large d-flex justify-content-center" v-if="answerId">
                       <button type="button" class="admin_answer_cancel_button" @click="$router.push({path: '/admin/qna'})" >취소</button>
+                      <button type="button " class="admin_answer_cancel_button" @click="deleteQna()" style="margin-left:10px;">상품 삭제</button>
                       <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" v-if="!canUpdate" @click="canUpdate = true;">수정</button>
                       <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" @click="updateAnswer();" v-if="canUpdate">수정 완료</button>
                     </div>
@@ -249,7 +251,32 @@ export default{
         console.error(err);
         alert("예기치 못한 에러로 답변을 수정할 수 없습니다.")
       }
+    },
+    async deleteQna(){
+      try{
+        const requestBody = {
+          access_token: this.$getAccessToken(),
+          qna_id: this.qna.qna_id,
+          user_id: this.qna.user_id,
+          prev_qna_image_path: this.qna.qna_image_path,
+          upload_type: "qna"
+        }
+        const result = await this.$api('/qna/deleteAdminqna', requestBody, "POST");
+        console.log(result);
+        if (result.status == 200){
+          alert("Q&A 삭제 완료하였습니다");
+          this.$router.push({path:'/admin/qna'});
+        }
+        else{
+          alert("예기치 못한 오류로 인해 리뷰를 삭제할 수 없습니다. 다시 시도해 주세요.");  
+        }
+      }
+      catch(err){
+        console.error(err);
+        alert("예기치 못한 오류로 인해 리뷰를 삭제할 수 없습니다. 다시 시도해 주세요.");
+      }
     }
+    
   }
 }
 </script>

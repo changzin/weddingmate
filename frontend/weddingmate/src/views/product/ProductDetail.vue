@@ -201,13 +201,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
@@ -438,13 +432,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
@@ -590,57 +578,7 @@
                     </option>
                   </select>
                 </div>
-                <!-- - + 수량 선택에 따른 금액 표시 -->
-                <div class="collapse" :class="{ show: allOptionsSelected }">
-                  <div class="productdetail_main-content_product-card">
-                    <div class="productdetail_main-content_product-detail p-3">
-                      {{ selectedOptions.join(" + ") }}
-                    </div>
-                    <div
-                      class="d-flex justify-content-between align-items-center bg-light p-3"
-                    >
-                      <div class="quantity-control d-flex align-items-center">
-                        <button
-                          type="button"
-                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                          @click="decreaseQuantity"
-                        >
-                          −
-                        </button>
-                        <input
-                          type="text"
-                          class="form-control text-center mx-2"
-                          v-model="quantity"
-                          readonly
-                          required
-                        />
-                        <button
-                          type="button"
-                          class="btn btn-outline-secondary productdetail_main-quantity-btn"
-                          @click="increaseQuantity"
-                        >
-                          ＋
-                        </button>
-                      </div>
-                      <div class="font-weight-bold" required>
-                        {{ formattedTotalPrice }}원
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="productdetail_main-content_item_detail_quantity-div"
-                  >
-                    남은 재고 수량 : {{ visibleItemDetailQuantity }}
-                  </div>
-                  <div class="productdetail_total-price-div">
-                    <div class="productdetail_total-price-div_state-div">
-                      총 금액 :
-                    </div>
-                    <div class="productdetail_total-price-div_price-div">
-                      {{ formattedTotalPrice }}원
-                    </div>
-                  </div>
-                </div>
+                 
                 <div
                   class="productdetail_cal collapse"
                   :class="{ show: allOptionsSelected }"
@@ -676,13 +614,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
@@ -733,18 +665,18 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
                     <div class="productdetail_cal-div_date">
-                      2024년 12년 30일
+                      {{
+                        dateRange.start && dateRange.end
+                          ? formatDate(dateRange.start) +
+                            " ~ " +
+                            formatDate(dateRange.end)
+                          : "선택되지 않음"
+                      }}
                     </div>
                   </div>
                 </div>
@@ -965,13 +897,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
@@ -1387,13 +1313,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
@@ -1630,13 +1550,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
@@ -2017,13 +1931,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
@@ -2505,13 +2413,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
@@ -2998,13 +2900,7 @@
                         }}</label
                       >
                     </div>
-                    <button
-                      class="common-caldate_save-button"
-                      type="button"
-                      @click="saveEvent"
-                    >
-                      저장
-                    </button>
+                   
                   </div>
                   <div class="productdetail_cal-div_date-div">
                     <div>선택된 날짜</div>
