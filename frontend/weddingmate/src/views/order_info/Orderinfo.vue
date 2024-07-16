@@ -200,7 +200,7 @@
       async makeOrder(){
         try{
           if (!this.isHpFormat(this.phoneNumber)){
-            alert("전화번호는 필수로 입력해야 합니다.");
+            alert("올바르지 않은 전화번호입니다.");
             return;
           }
           if (!this.isKakaoActive){
@@ -251,7 +251,7 @@
         this.isBil = !this.isBil;
       },
       isHpFormat(hp){	
-        if(hp == ""){		return true;	}	
+        if(hp == ""){		return false;	}	
         const phoneRule = /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/;	
         return phoneRule.test(hp);
       },

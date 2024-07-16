@@ -67,6 +67,9 @@
             <div class="sidbar_header d-flex justify-content-center">
                 <div class="sidbar_header_title">판매 현황</div>
             </div>
+            <div class="justify-content-center">
+                  <button class="btn admin_qna_btn_active_green" @click="getExcel();" style="margin-left:1160px; margin-top:50px;">엑셀 다운로드</button>
+            </div>
             <div class="d-flex justify-content-start">
                 <div style="margin-top: 50px; margin-left: 50px; font-size:23px; font-weight:bold;">품목별 판매 추이</div>
                 <div style="margin-top: 50px; margin-left: 420px; font-size:23px; font-weight:bold;">총 상품별 판매 정보</div>
@@ -156,6 +159,8 @@
     </div>
 </template>
 <script>
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { GChart } from 'vue-google-charts'
 
 export default {
@@ -312,8 +317,96 @@ export default {
       if (mode == "review"){
         this.pieChartData = this.categoryPieReviewData;
       }
-      console.log(this.pieChartData);
-    }
+    },
+    async getExcel() {
+      try{
+        // workbook(엑셀 파일 하나를 구성하는 여러 시트로 이루어진 단위) 생성
+        const workbook = new ExcelJS.Workbook();
+        // sheet 생성
+        const itemWorksheet = workbook.addWorksheet('매출분석_상품별');
+        const itemColumns = Object.keys(this.itemTableData[0]);
+
+        const dayWorksheet = workbook.addWorksheet('매출분석_현월');
+        const dayColumns = Object.keys(this.dayTableData[0]);
+
+        const monthWorksheet = workbook.addWorksheet('매출분석_올해');
+        const monthColumns = Object.keys(this.monthTableData[0]);
+
+        const yearWorksheet = workbook.addWorksheet('매출분석_10년간');
+        const yearColumns = Object.keys(this.yearTableData[0]);
+
+        // worksheet에 컬럼에 대한 정보를 줌
+        // 맨 첫 번째 줄에 컬럼들이 삽입됨
+        itemWorksheet.itemColumns = itemColumns.map((column) => ({
+            header: column, // 컬럼 이름
+            key: column, // data에서 컬럼의 값을 구분하기 위한 key
+            width: 18,
+            style: {
+                font: {
+                    size: 12
+                },
+                alignment: {
+                    vertical: 'middle',
+                }
+            }
+        }));
+
+        dayWorksheet.dayColumns = dayColumns.map((column) => ({
+            header: column, // 컬럼 이름
+            key: column, // data에서 컬럼의 값을 구분하기 위한 key
+            width: 18,
+            style: {
+                font: {
+                    size: 12
+                },
+                alignment: {
+                    vertical: 'middle',
+                }
+            }
+        }));
+
+        monthWorksheet.monthColumns = monthColumns.map((column) => ({
+            header: column, // 컬럼 이름
+            key: column, // data에서 컬럼의 값을 구분하기 위한 key
+            width: 18,
+            style: {
+                font: {
+                    size: 12
+                },
+                alignment: {
+                    vertical: 'middle',
+                }
+            }
+        }));
+
+        yearWorksheet.yearColumns = yearColumns.map((column) => ({
+            header: column, // 컬럼 이름
+            key: column, // data에서 컬럼의 값을 구분하기 위한 key
+            width: 18,
+            style: {
+                font: {
+                    size: 12
+                },
+                alignment: {
+                    vertical: 'middle',
+                }
+            }
+        }));
+
+        // 두 번째 줄부터 데이터 행들을 한꺼번에 입력
+        itemWorksheet.insertRows(1, this.itemTableData);
+        dayWorksheet.insertRows(1, this.dayTableData);
+        monthWorksheet.insertRows(1, this.monthTableData);
+        yearWorksheet.insertRows(1, this.yearTableData);
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer]), '매출 분석.xlsx');
+      }
+      catch(err){
+        console.error(err);
+        alert("예기치 못한 문제로 엑셀을 다운로드할 수 없습니다.")
+      }
+    },
 
   }
   
@@ -552,5 +645,10 @@ export default {
     background-color: #FFFFFF;
     color: #111111;
     border: 1px solid #333333;
+}
+.admin_qna_btn_active_green{
+  background-color: rgb(0, 128, 0);
+  color: #FFFFFF;
+  margin-right: 10px;
 }
 </style>

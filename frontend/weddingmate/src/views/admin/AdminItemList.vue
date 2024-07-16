@@ -100,19 +100,6 @@
                 <!-- 상품들 -->
                 <div class="reviewlist_review-section">
                   <div class="reviewlist_review-cards justify-content-start">
-                    <button class="reviewlist_review-card" v-for="(item, index) in itemList" :key="index" style="margin-left: 20px;" @click="this.$router.push({name: 'adminitemedit', params: {itemId: item.item_id}})">
-                      <img
-                        :src="this.$imageFileFormat(item.item_tn_image_path)"
-                        class="reviewlist_card-img-top"
-                        alt="Review Image"
-                      />
-                      <div class="reviewlist_card-body">
-                        <div class="reviewlist_review-section_title-div">
-                          {{item.item_name}}
-                        </div>
-                      
-                      </div>
-                    </button>
                     <table class="admin_member_qna-table" style="font-size:12px;">
                     <thead>
                       <tr style="height:50px;">
@@ -744,10 +731,15 @@ div.mypage-bottom{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
 .admin_qna_btn_active{
   background-color: #007BFF;
+  color: #FFFFFF;
+  margin-right: 10px;
+}
+.admin_qna_btn_active_green{
+  background-color: rgb(0, 128, 0);
   color: #FFFFFF;
   margin-right: 10px;
 }
