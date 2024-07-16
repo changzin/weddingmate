@@ -105,7 +105,7 @@
 
         <!-- 견적함상세페이지 전송 -->
         <div class="row justify-content-center">
-            <button class="order_info_button1" style="padding-bottom:25px;">
+            <button class="order_info_button1" style="padding-bottom:25px;" @click="this.$router.push({path:'/mypage/boxlist'})">
                 취소
             </button>
             
@@ -460,30 +460,32 @@
             font-size: 14px;
             text-align: center;
         }
+
+    
         .order_info_button1{
-            border: none;
-            margin-top: 26px;
-            width: 300px;
-            height: 60px;
-            border-radius: 12px;
-            background-color: #333333;
-            color: #FFFFFF;
-            font-size: 24px;
-            text-align: center;
-            padding-top: 16px;
+          width: 120px;
+          height: 45px;
+          border: none;
+          border-radius: 12px;
+          margin-bottom: 20px;
+          font-size: 16px;
+          color: #FFFFFF;
+          background-color: #888888;
+          margin-top: 30px;
+          padding-top:10px;
         }
         .order_info_button2{
-            border: none;
-            padding-top: 14px;
-            margin-top: 26px;
-            margin-left: 10px;
-            width: 300px;
-            height: 60px;
-            border-radius: 12px;
-            background-color: #F7CAC9;
-            color: #333333;
-            font-size: 24px;
-            text-align: center;
+          width: 120px;
+          height: 45px;
+          border: none;
+          border-radius: 12px;
+          margin-bottom: 20px;
+          font-size: 16px;
+          color: #FFFFFF;
+          background-color: #F6C9CA;
+          margin-top: 30px;
+          padding-top:10px;
+          margin-left:20px;
         }
         .order_info_defult_icon1 {
             margin-right:16px;
