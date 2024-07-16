@@ -110,12 +110,12 @@
                     </div>
                     <div class="admin_answer_row_large d-flex justify-content-center" v-if="!answerId">
                         <button type="button" class="admin_answer_cancel_button" @click="$router.push({path: '/admin/qna'})" >취소</button>
-                        <button type="button " class="admin_answer_cancel_button" @click="deleteQna()" style="margin-left:10px;">상품 삭제</button>
+                        <button type="button " class="admin_answer_cancel_button" @click="deleteQna()" style="margin-left:10px;">QnA 삭제</button>
                         <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" @click="addAnswer();">등록</button>
                     </div>
                     <div class="admin_answer_row_large d-flex justify-content-center" v-if="answerId">
                       <button type="button" class="admin_answer_cancel_button" @click="$router.push({path: '/admin/qna'})" >취소</button>
-                      <button type="button " class="admin_answer_cancel_button" @click="deleteQna()" style="margin-left:10px;">상품 삭제</button>
+                      <button type="button " class="admin_answer_cancel_button" @click="deleteQna()" style="margin-left:10px;">QnA 삭제</button>
                       <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" v-if="!canUpdate" @click="canUpdate = true;">수정</button>
                       <button type="button" class="admin_answer_ok_button" style="margin-left:10px;" @click="updateAnswer();" v-if="canUpdate">수정 완료</button>
                     </div>
